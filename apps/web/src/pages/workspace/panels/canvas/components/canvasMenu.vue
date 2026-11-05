@@ -488,7 +488,7 @@ watch(() => props.directory, async (directory, _previous, onCleanup) => {
     if (cancelled) return;
     if (!canvases.value.length) {
       try {
-        const canvas = await createCanvasFile(directory, "画布1", controller.signal);
+        const canvas = await createCanvasFile(directory, `${translate("画布")} 1`, controller.signal);
         checkCanvasDirectory(directory, controller.signal);
         mergeCanvases([canvas]);
       } catch (err) {
@@ -496,7 +496,7 @@ watch(() => props.directory, async (directory, _previous, onCleanup) => {
         // 同时打开工作区时，读取另一请求刚创建的默认画布，不覆盖同名文件。
         loadedDirectories.value = loadedDirectories.value.filter(path => path !== "");
         await loadDirectory("");
-        // 画布1.json 若被其他 JSON 占用，则使用下一个空闲名称，保留原文件。
+        // 默认画布文件若被其他 JSON 占用，则使用下一个空闲名称，保留原文件。
         if (!canvases.value.length) {
           const canvas = await createCanvasFile(directory, undefined, controller.signal);
           checkCanvasDirectory(directory, controller.signal);
@@ -672,7 +672,8 @@ async function createCanvasFile(directory: string, name?: string, signal?: Abort
   const flow = { nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } };
   for (let number = 1; ; number++) {
     checkCanvasDirectory(directory, signal);
-    const canvasName = name ?? `画布${number}`;
+    // 默认画布名按当前界面语言生成，避免越南语/英语界面出现中文文件名。
+    const canvasName = name ?? `${translate("画布")} ${number}`;
     const id = `${canvasName}.json`;
     try {
       await files.writeJson(id, { toonflowCanvas: true, ...flow }, true);
