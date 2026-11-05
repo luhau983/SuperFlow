@@ -102,7 +102,7 @@
     "apps/web/src/components/agent/conversation/messageInput.vue",
     "apps/web/src/pages/home/index.vue"
   ],
-  "图片、视频、文档或代码文件": [
+  "图片、视频、文档、代码文件或 ZIP 压缩包": [
     "apps/web/src/components/agent/conversation/messageInput.vue",
     "apps/web/src/pages/home/index.vue"
   ],
@@ -692,7 +692,9 @@
   "画布": [
     "apps/web/src/components/agent/mentionMenu.vue",
     "apps/web/src/components/settings/panels/mcp/index.vue",
-    "apps/web/src/pages/workspace/index.vue"
+    "apps/web/src/pages/home/index.vue",
+    "apps/web/src/pages/workspace/index.vue",
+    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
   ],
   "数据": [
     "apps/web/src/components/agent/mentionMenu.vue"
@@ -1045,6 +1047,15 @@
   "已中断": [
     "apps/web/src/components/agent/toolMessage.vue",
     "apps/web/src/components/settings/panels/mediaModel/providerAgentDialog.vue"
+  ],
+  "ZIP 文件不能超过 500 MB": [
+    "apps/web/src/components/agent/zipAttachments.ts"
+  ],
+  "压缩包中没有可添加的文件": [
+    "apps/web/src/components/agent/zipAttachments.ts"
+  ],
+  "无法解压 ZIP 文件，可能已损坏或已加密": [
+    "apps/web/src/components/agent/zipAttachments.ts"
   ],
   "退出 SuperFlow": [
     "apps/web/src/components/desktopQuit.vue",

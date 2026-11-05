@@ -82,7 +82,7 @@
                   <div v-if="draggingAttachments" class="attachmentDropOverlay" role="status" aria-live="polite">
                     <icon-paperclip :size="20" aria-hidden="true" />
                     <strong>松开添加附件</strong>
-                    <span>图片、视频、文档或代码文件</span>
+                    <span>图片、视频、文档、代码文件或 ZIP 压缩包</span>
                   </div>
                   <input ref="attachmentInput" type="file" :accept="attachmentAccept" multiple hidden :disabled="creating || opening" @change="selectAttachments" />
                   <uiCardContent class="promptBody">
@@ -175,6 +175,7 @@ import { IconQrcode, IconDeviceDesktop, IconHome, IconFolder } from "@tabler/ico
 import modelPopover from "@/components/modelPopover.vue";
 import attachmentList from "@/components/agent/attachmentList.vue";
 import { createPastedTextFile, readTextAttachment } from "@/components/agent/textAttachments";
+import { expandZipAttachments, zipAccept } from "@/components/agent/zipAttachments";
 import type { AgentAttachment } from "@/components/agent/types";
 import logoUrl from "@toonflow/assets/logo.svg";
 import { useWorkspaceStore, type Project } from "@/stores/workspace";
@@ -222,7 +223,7 @@ const prompt = ref("");
 const promptInput = ref<{ $el: HTMLTextAreaElement }>();
 const promptAttachments = ref<AgentAttachment[]>([]);
 const attachmentInput = ref<HTMLInputElement>();
-const attachmentAccept = `image/*,video/*,${readableFileAccept}`;
+const attachmentAccept = `image/*,video/*,${readableFileAccept},${zipAccept}`;
 const draggingAttachments = ref(false);
 let attachmentDragDepth = 0;
 const workspaceStore = useWorkspaceStore();
@@ -392,7 +393,9 @@ function dropAttachments(event: DragEvent) {
   addAttachments(Array.from(event.dataTransfer.files));
 }
 
-function addAttachments(files: File[]) {
+async function addAttachments(files: File[]) {
+  if (creating.value || opening.value) return;
+  files = await expandZipAttachments(files);
   if (creating.value || opening.value) return;
   for (const file of files) {
     const readableMimeType = getReadableFileMimeType(file.name, file.type);

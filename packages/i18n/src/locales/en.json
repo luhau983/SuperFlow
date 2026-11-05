@@ -4030,5 +4030,9 @@
   "已读取{0}个文本文件，{1}个文件命中{2}处。 跳过：二进制或不支持的编码{3}，过大文件{4}，画布{5}，读取失败{6}。": "Read {0} text files; {1} files contain {2} matches. Skipped: binary or unsupported encoding {3}, oversized files {4}, canvases {5}, read failures {6}.",
   "替换预览：{0}个文件，{1}处": "Replacement preview: {0} files, {1} matches",
   "{0}处": "{0} matches",
-  "清空": "Clear all"
+  "清空": "Clear all",
+  "压缩包中没有可添加的文件": "The archive contains no files that can be added",
+  "无法解压 ZIP 文件，可能已损坏或已加密": "Couldn't extract the ZIP file; it may be corrupted or password-protected",
+  "图片、视频、文档、代码文件或 ZIP 压缩包": "Images, videos, documents, code files or ZIP archives",
+  "ZIP 文件不能超过 500 MB": "ZIP files can't exceed 500 MB"
 }

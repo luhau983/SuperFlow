@@ -4066,5 +4066,9 @@
   "已读取{0}个文本文件，{1}个文件命中{2}处。 跳过：二进制或不支持的编码{3}，过大文件{4}，画布{5}，读取失败{6}。": "Đã đọc {0} tệp văn bản; {1} tệp khớp tại {2} vị trí. Bỏ qua: nhị phân hoặc mã hóa không hỗ trợ {3}, tệp quá lớn {4}, bảng vẽ {5}, lỗi đọc {6}.",
   "替换预览：{0}个文件，{1}处": "Xem trước thay thế: {0} tệp, {1} vị trí",
   "{0}处": "{0} vị trí",
-  "清空": "Xóa hết"
+  "清空": "Xóa hết",
+  "压缩包中没有可添加的文件": "Tệp nén không có tệp nào có thể thêm",
+  "无法解压 ZIP 文件，可能已损坏或已加密": "Không giải nén được tệp ZIP, có thể tệp bị hỏng hoặc đã đặt mật khẩu",
+  "图片、视频、文档、代码文件或 ZIP 压缩包": "Hình ảnh, video, tài liệu, tệp mã hoặc tệp nén ZIP",
+  "ZIP 文件不能超过 500 MB": "Tệp ZIP không được vượt quá 500 MB"
 }

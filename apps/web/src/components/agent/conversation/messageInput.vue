@@ -9,7 +9,7 @@
     <div v-if="draggingAttachments" class="attachmentDropHint" role="status">
       <icon-paperclip :size="20" aria-hidden="true" />
       <span>松开添加附件</span>
-      <small>图片、视频、文档或代码文件</small>
+      <small>图片、视频、文档、代码文件或 ZIP 压缩包</small>
     </div>
     <div v-if="editingId" class="editingBanner">
       <span>编辑消息</span>
@@ -176,6 +176,7 @@ import mentionThumbnail from "../mentionThumbnail.vue";
 import { mentionName, mentionParts, mentionThumbnailProps } from "../mentionText";
 import attachmentList from "../attachmentList.vue";
 import { createPastedTextFile, readTextAttachment } from "../textAttachments";
+import { expandZipAttachments, zipAccept } from "../zipAttachments";
 import type { AgentAttachment, AgentMessage } from "../types";
 import contextUsagePopover from "./contextUsage.vue";
 import useVoiceInput from "./useVoiceInput";
@@ -194,7 +195,7 @@ const draftAttachments = ref<AgentAttachment[]>([]);
 const attachmentInput = ref<HTMLInputElement>();
 const draggingAttachments = ref(false);
 let attachmentDragDepth = 0;
-const attachmentAccept = `image/*,video/*,${readableFileAccept}`;
+const attachmentAccept = `image/*,video/*,${readableFileAccept},${zipAccept}`;
 const draftMentions = ref<AgentMention[]>([]);
 const draftMentionTargets = shallowRef<{ key: symbol; element: HTMLElement; mention: AgentMention }[]>([]);
 const draftMentionPreview = ref<InstanceType<typeof mentionContent>>();
@@ -506,9 +507,11 @@ function dropAttachments(event: DragEvent) {
   addAttachments(files);
 }
 
-function addAttachments(files: File[]) {
+async function addAttachments(files: File[]) {
   if (locked.value) return;
   if (running.value) return toast.warning("生成期间仅支持发送文字，请在本轮完成后添加附件");
+  files = await expandZipAttachments(files);
+  if (locked.value) return;
   for (const file of files) {
     const readableMimeType = getReadableFileMimeType(file.name, file.type);
     const mimeType = readableMimeType ?? file.type.split(";")[0]!.trim().toLowerCase();
