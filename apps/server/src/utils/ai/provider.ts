@@ -5,6 +5,7 @@ import conf from "@/utils/conf";
 import { findModelContextLimits } from "@/utils/ai/modelContextLimits";
 import { validateHeaderName, validateHeaderValue } from "node:http";
 import { z } from "zod";
+import { getCodexProvider } from "@/utils/codex/provider";
 
 export const providerHeadersSchema = z.record(
   z.string().refine(name => {
@@ -36,7 +37,7 @@ export const providerSchema = z.object({
   apiUrl: z.url({ protocol: /^https?$/ }),
   apiKey: z.string(),
   headers: providerHeadersSchema.optional(),
-  protocol: z.enum(["openai-completions", "openai-responses", "anthropic-messages"]),
+  protocol: z.enum(["openai-completions", "openai-responses", "anthropic-messages", "openai-codex-responses"]),
   maxRequestImageBytes: z.number().int().positive().max(Number.MAX_SAFE_INTEGER).optional(),
   maxRequestBytes: z.number().int().positive().max(Number.MAX_SAFE_INTEGER).optional(),
   models: z.array(z.object({
@@ -67,7 +68,18 @@ export function getAccountProvider() {
 export function getConfiguredProviders() {
   const providers = conf.get("settings", {}).customProviders;
   const account = getAccountProvider();
-  return [...(account ? [account] : []), ...(Array.isArray(providers) ? providers.filter(item => typeof item?.id !== "string" || item.id.toLowerCase() !== "toonflow") : [])];
+  const codex = getCodexProvider();
+  const reserved = new Set(["toonflow", ...(codex ? [codex.id.toLowerCase()] : [])]);
+  return [
+    ...(account ? [account] : []),
+    ...(codex ? [codex] : []),
+    ...(Array.isArray(providers) ? providers.filter(item => typeof item?.id !== "string" || !reserved.has(item.id.toLowerCase())) : []),
+  ];
+}
+
+/** Codex 与 OpenAI Responses 使用相同的 input 消息结构。 */
+export function usesResponsesInput(protocol: string) {
+  return protocol === "openai-responses" || protocol === "openai-codex-responses";
 }
 
 const builtinModels: Model<KnownApi>[] = getBuiltinProviders().flatMap(provider => getBuiltinModels(provider));

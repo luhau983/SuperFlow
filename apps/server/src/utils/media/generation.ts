@@ -11,6 +11,8 @@ import { lockWorkspaceFiles, resolveWorkspacePath, writeWorkspaceFile } from "@/
 import { beginGeneration, getProviderPrice } from "@/utils/media/billing";
 import { detectMimeType, readPriceReference } from "@/utils/media/priceReference";
 import { modelGateway } from "@/utils/multiTenant/gateway";
+import { codexImageAvailable, requireCodexImage } from "@/utils/codex/auth";
+import { codexImageModel, codexImageRatios, codexMediaProviderId, codexMediaSource, generateCodexImage } from "@/utils/codex/image";
 
 const maxMediaSize = 100 * 1024 * 1024;
 export type MediaGenerationCheckpoint = {
@@ -62,9 +64,13 @@ function imageOptions(value: unknown, pattern: RegExp) {
 
 export async function listMediaModels(): Promise<MediaModel[]> {
   if (modelGateway.enabled()) return modelGateway.catalog(["image", "video", "audio"]);
-  const installedProviders = await listMediaProviders();
+  const installedProviders = (await listMediaProviders()).filter(provider => provider.id !== codexMediaProviderId);
   installedProviders.sort((left, right) => Number(right.id === "toonflow") - Number(left.id === "toonflow"));
-  return installedProviders.filter(provider => provider.id !== "toonflow" || !!getAccountProvider()).flatMap(provider => provider.models.flatMap(model => {
+  const codexModels: MediaModel[] = codexImageAvailable() ? [{
+    providerId: codexMediaProviderId, providerLabel: "Codex", modelId: codexImageModel.id, label: codexImageModel.label, type: "image",
+    supportsPrice: false, mode: ["text", "singleImage", "multiReference"], imageRatios: codexImageRatios,
+  } as MediaModel] : [];
+  return [...codexModels, ...installedProviders.filter(provider => provider.id !== "toonflow" || !!getAccountProvider()).flatMap(provider => provider.models.flatMap(model => {
     if (model.type !== "image" && model.type !== "video" && model.type !== "audio") return [];
     const builtIn = (mediaProviders as readonly Provider[]).find(item => item.id === provider.id)?.models.find(item => item.id === model.id);
     return [{
@@ -78,7 +84,7 @@ export async function listMediaModels(): Promise<MediaModel[]> {
         imageRatios: imageOptions(Array.isArray(model.imageRatios) ? model.imageRatios : builtIn?.imageRatios, /^[1-9]\d{0,3}:[1-9]\d{0,3}$/),
       } : {}),
     } as MediaModel];
-  }));
+  }))];
 }
 
 export async function readReference(cwd: string, reference: MediaReference, mediaType: string, signal?: AbortSignal): Promise<Extract<MediaInput, { type: "base64" }>> {
@@ -204,6 +210,14 @@ async function configuredProvider(request: MediaGenerationRequest, mediaType: "i
     const { upstream } = await modelGateway.resolve(mediaType, request.providerId, request.modelId, modelRouteCipher, request);
     const provider = await loadMediaProviderSource(upstream.source, upstream.config, signal, undefined, directory, saveTaskData, upstream.cloud);
     return { provider, request: { ...request, providerId: provider.id, modelId: upstream.upstreamModelId } };
+  }
+  if (request.providerId === codexMediaProviderId) {
+    if (mediaType !== "image" || request.modelId !== codexImageModel.id) invalid("所选媒体模型不存在或类型不匹配，请重新选择");
+    requireCodexImage();
+    const provider = await loadMediaProviderSource(codexMediaSource, {}, signal, undefined, directory);
+    // 供应商沙箱不能启动进程，生成由宿主直接调用本机 codex。
+    provider.generateImage = parameters => generateCodexImage(parameters, signal);
+    return { provider, request };
   }
   const info = await getMediaProvider(request.providerId);
   if (!resume && !info.models.some(model => model.id === request.modelId && model.type === mediaType)) invalid("所选媒体模型不存在或类型不匹配，请重新选择");

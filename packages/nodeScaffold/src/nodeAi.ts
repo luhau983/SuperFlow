@@ -13,7 +13,7 @@ export type NodeAiModel = {
   modelId: string;
   routeId?: string;
   label: string;
-  protocol: "openai-completions" | "openai-responses" | "anthropic-messages";
+  protocol: "openai-completions" | "openai-responses" | "anthropic-messages" | "openai-codex-responses";
   contextWindow?: number;
   maxOutputTokens?: number;
 };

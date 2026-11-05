@@ -2,6 +2,7 @@ import { InMemoryCredentialStore } from "@earendil-works/pi-ai";
 import { ModelRuntime } from "@earendil-works/pi-coding-agent";
 import type { ThinkingLevel } from "@/lib/modelReasoning";
 import { getConfiguredModel } from "@/utils/ai";
+import { getCodexToken } from "@/utils/codex/auth";
 import { currentIdentity } from "@/utils/multiTenant/context";
 import { t } from "@/lib/i18n";
 
@@ -44,7 +45,17 @@ export async function createAgentModel(providerId: string, modelId: string, thin
       contextWindow: model.contextWindow, maxTokens: model.maxOutputTokens,
     }],
   });
-  if (!provider.apiKey && Object.keys(provider.headers ?? {}).length) {
+  if (provider.protocol === "openai-codex-responses") {
+    // SDK 内置的 openai-codex 走 OAuth 凭据库；改为每次请求向本机 Codex 读取令牌，过期时由 Codex 刷新。
+    const registered = runtime.getProvider(providerId)!;
+    runtime.registerNativeProvider({
+      ...registered,
+      auth: { apiKey: { name: "Codex", resolve: async ({ signal }) => {
+        signal.throwIfAborted();
+        return { auth: { apiKey: await getCodexToken() }, source: "codex" };
+      } } },
+    });
+  } else if (!provider.apiKey && Object.keys(provider.headers ?? {}).length) {
     // ACT: SDK 配置接口不解析无密钥的附加头鉴权；复用模型定义，仅提供本次配置的原始请求头。
     const registered = runtime.getProvider(providerId)!;
     runtime.registerNativeProvider({

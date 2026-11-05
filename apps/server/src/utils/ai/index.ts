@@ -1,6 +1,7 @@
 import { openAICompletionsApi } from "@earendil-works/pi-ai/api/openai-completions.lazy";
 import { openAIResponsesApi } from "@earendil-works/pi-ai/api/openai-responses.lazy";
 import { anthropicMessagesApi } from "@earendil-works/pi-ai/api/anthropic-messages.lazy";
+import { openAICodexResponsesApi } from "@earendil-works/pi-ai/api/openai-codex-responses.lazy";
 import type { AssistantMessage, Context, Model } from "@earendil-works/pi-ai";
 import { z } from "zod";
 import { readReference } from "@/utils/media/generation";
@@ -10,12 +11,13 @@ import { readFile, stat } from "@toonflow/file";
 import { resolveWorkspacePath } from "@/utils/workspace/files";
 import { getReadableFileMimeType } from "@/lib/documentFormats";
 import { readDocument } from "@/utils/documents";
-import { getConfiguredProviders, getModelLimits, getModelReasoning, getProviderBaseUrl, providerSchema } from "@/utils/ai/provider";
+import { getConfiguredProviders, getModelLimits, getModelReasoning, getProviderBaseUrl, providerSchema, usesResponsesInput } from "@/utils/ai/provider";
+import { getCodexToken } from "@/utils/codex/auth";
 import { modelGateway, requireDirectModelAccess } from "@/utils/multiTenant/gateway";
 import { createBillingUsageTracker } from "@/utils/ai/billingUsage";
 
 export { fetchProviderModels } from "@/utils/ai/models";
-export { accountProviderSchema, getAccountProvider, getAccountToken, getConfiguredProviders, getModelLimits, getModelReasoning, providerSchema, reasoningEffortsSchema } from "@/utils/ai/provider";
+export { accountProviderSchema, getAccountProvider, getAccountToken, getConfiguredProviders, getModelLimits, getModelReasoning, providerSchema, reasoningEffortsSchema, usesResponsesInput } from "@/utils/ai/provider";
 
 export async function getConfiguredModel(providerId: string, modelId: string) {
   const execution = modelGateway.enabled() ? await modelGateway.resolve("text", providerId, modelId) : undefined;
@@ -25,7 +27,9 @@ export async function getConfiguredModel(providerId: string, modelId: string) {
     const official = providerId.toLowerCase() === "toonflow";
     throw Object.assign(new Error(official ? "请先登录 SuperFlow 账号并刷新供应商" : "请先在设置中配置模型供应商"), { status: official ? 401 : 400 });
   }
-  const provider = parsed.data;
+  // Codex 令牌只在运行时向本机 Codex 读取，不保存到设置。
+  const provider = parsed.data.protocol === "openai-codex-responses" && !parsed.data.apiKey
+    ? { ...parsed.data, apiKey: await getCodexToken() } : parsed.data;
   const model = resolved?.model ?? provider.models.find(item => item.id === modelId);
   if (!model) throw Object.assign(new Error("所选模型不存在，请重新选择"), { status: 400 });
   const baseUrl = getProviderBaseUrl(provider.apiUrl, provider.protocol);
@@ -82,6 +86,7 @@ const aiApis = {
   "openai-completions": openAICompletionsApi(),
   "openai-responses": openAIResponsesApi(),
   "anthropic-messages": anthropicMessagesApi(),
+  "openai-codex-responses": openAICodexResponsesApi(),
 };
 
 export const aiReferenceSchema = z.discriminatedUnion("dataType", [
@@ -118,7 +123,7 @@ export async function readAiReferences(
 }
 
 export function referenceContent(protocol: string, prompt: string, references: Awaited<ReturnType<typeof readAiReferences>>, referenceOffset = 0) {
-  const textPart = (text: string) => ({ type: protocol === "openai-responses" ? "input_text" : "text", text });
+  const textPart = (text: string) => ({ type: usesResponsesInput(protocol) ? "input_text" : "text", text });
   const content: object[] = [textPart(prompt)];
   references.forEach((item, index) => {
     content.push(textPart(`{{ref ${referenceOffset + index + 1}}}${item.dataType === "STRING" ? `\n${item.value}` : ""}`));
@@ -127,7 +132,7 @@ export function referenceContent(protocol: string, prompt: string, references: A
       content.push(item.dataType === "IMAGE"
         ? { type: "image_url", image_url: { url: item.value } }
         : { type: "video_url", video_url: { url: item.value } });
-    } else if (protocol === "openai-responses") {
+    } else if (usesResponsesInput(protocol)) {
       const extension = item.value.slice(11, item.value.indexOf(";")).replace("quicktime", "mov");
       content.push(item.dataType === "IMAGE"
         ? { type: "input_image", image_url: item.value, detail: "auto" }
@@ -183,7 +188,7 @@ export function streamAi(
     onPayload: async (payload) => {
       let body = payload as Record<string, unknown>;
       if (references.length) {
-        const field = provider.protocol === "openai-responses" ? "input" : "messages";
+        const field = usesResponsesInput(provider.protocol) ? "input" : "messages";
         const messages = body[field] as { role: string; content: unknown }[];
         // ACT: 后续 Anthropic 工具结果也使用 user 角色，附件只补充到最初的输入。
         const firstUser = messages.findIndex(message => message.role === "user");

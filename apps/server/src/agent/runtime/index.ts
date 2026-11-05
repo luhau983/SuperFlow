@@ -9,7 +9,7 @@ import type { SessionEntry } from "@earendil-works/pi-coding-agent";
 import type { CanvasContext, QuestionContext } from "@toonflow/tools-scaffold/runtime";
 import type { AgentEvent, AgentMention, AgentPeerMessage, AgentToolCall } from "@/agent/runtime/types";
 import { agentMentionsSchema, mentionPrompt, snapshotMentions, validateMentionTokens } from "@/agent/runtime/mentions";
-import { readAiReferences, referenceContent } from "@/utils/ai";
+import { readAiReferences, referenceContent, usesResponsesInput } from "@/utils/ai";
 import { createAgentTools } from "@/agent/tools";
 import { createAgentResources } from "@/agent/runtime/resources";
 import { createAgentModel, getAgentModelConfiguration } from "@/agent/runtime/model";
@@ -293,8 +293,8 @@ export async function run(
         }
       }
       if (!mediaMessages.size) return body;
-      const field = provider.protocol === "openai-responses" ? "input" : "messages";
-      const textType = provider.protocol === "openai-responses" ? "input_text" : "text";
+      const field = usesResponsesInput(provider.protocol) ? "input" : "messages";
+      const textType = usesResponsesInput(provider.protocol) ? "input_text" : "text";
       const messages = body[field] as { role?: string; content?: string | { type: string; text?: string }[] }[];
       return { ...body, [field]: await Promise.all(messages.map(async message => {
         if (message.role !== "user") return message;
