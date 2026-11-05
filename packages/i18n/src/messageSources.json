@@ -279,17 +279,17 @@
     "apps/web/src/components/agent/conversation/messageList.vue",
     "apps/web/src/components/agent/conversation.vue"
   ],
-  "{0} 上报": [
+  "{0}上报": [
     "apps/web/src/components/agent/conversation/messageList.vue"
   ],
-  "来自 {0} 的消息": [
+  "来自{0}的消息": [
     "apps/web/src/components/agent/conversation/messageList.vue"
   ],
   "思考": [
     "apps/web/src/components/agent/conversation/messageList.vue",
     "apps/web/src/components/singleAgentDialog.vue"
   ],
-  "{0} 秒": [
+  "{0}秒": [
     "apps/web/src/components/agent/conversation/messageList.vue",
     "apps/web/src/components/settings/panels/account/taskRecords.vue"
   ],
@@ -570,6 +570,22 @@
   "搜索提及内容": [
     "apps/web/src/components/agent/mentionMenu.vue"
   ],
+  "清除": [
+    "apps/web/src/components/agent/mentionMenu.vue",
+    "apps/web/src/components/settings/codexProviderCard.vue",
+    "apps/web/src/components/settings/panels/account/modelCatalog.vue",
+    "apps/web/src/components/settings/panels/account/subAccounts.vue",
+    "apps/web/src/components/settings/panels/account/taskRecords.vue",
+    "apps/web/src/components/settings/panels/developer/index.vue",
+    "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue",
+    "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue",
+    "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
+    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
+    "apps/web/src/pages/workspace/panels/canvas/components/nodeSearch.vue",
+    "apps/web/src/pages/workspace/panels/document/components/fileTree.vue",
+    "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
+  ],
   "可提及内容": [
     "apps/web/src/components/agent/mentionMenu.vue"
   ],
@@ -606,8 +622,7 @@
     "apps/web/src/components/agent/mentionMenu.vue"
   ],
   "已选 {0} 项": [
-    "apps/web/src/components/agent/mentionMenu.vue",
-    "apps/web/src/pages/workspace/panels/document/components/fileTree.vue"
+    "apps/web/src/components/agent/mentionMenu.vue"
   ],
   "↑ ↓ 选择 · Enter 确认 · Esc 关闭": [
     "apps/web/src/components/agent/mentionMenu.vue"
@@ -1308,6 +1323,28 @@
   "留空则使用本机 Codex 登录": [
     "apps/web/src/components/settings/codexProviderCard.vue"
   ],
+  "隐藏密码": [
+    "apps/web/src/components/settings/codexProviderCard.vue",
+    "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue",
+    "apps/web/src/components/settings/panels/account/index.vue",
+    "apps/web/src/components/settings/panels/account/subAccounts.vue",
+    "apps/web/src/components/settings/panels/account/taskRecords.vue",
+    "apps/web/src/components/settings/panels/account/wallet.vue",
+    "apps/web/src/components/settings/panels/multiTenant/index.vue",
+    "apps/web/src/components/settings/panels/network/index.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/mcpImportForm.vue"
+  ],
+  "显示密码": [
+    "apps/web/src/components/settings/codexProviderCard.vue",
+    "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue",
+    "apps/web/src/components/settings/panels/account/index.vue",
+    "apps/web/src/components/settings/panels/account/subAccounts.vue",
+    "apps/web/src/components/settings/panels/account/taskRecords.vue",
+    "apps/web/src/components/settings/panels/account/wallet.vue",
+    "apps/web/src/components/settings/panels/multiTenant/index.vue",
+    "apps/web/src/components/settings/panels/network/index.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/mcpImportForm.vue"
+  ],
   "需为包含 ChatGPT 账号信息的 Codex 访问令牌（JWT）；普通 API Key 请使用“添加自定义供应商”。图片生成始终使用本机 Codex。": [
     "apps/web/src/components/settings/codexProviderCard.vue"
   ],
@@ -1489,10 +1526,10 @@
   "微信交流群": [
     "apps/web/src/components/settings/panels/about/index.vue"
   ],
-  "微信扫码加入交流群": [
+  "展示二维码": [
     "apps/web/src/components/settings/panels/about/index.vue"
   ],
-  "展示二维码": [
+  "微信扫码加入交流群": [
     "apps/web/src/components/settings/panels/about/index.vue"
   ],
   "SuperFlow 交流群二维码": [
@@ -1669,12 +1706,12 @@
   "新密码": [
     "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue"
   ],
+  "请输入至少 6 位的新密码": [
+    "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue"
+  ],
   "新密码至少 6 位": [
     "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue",
     "apps/server/src/utils/channel/toonflow.ts"
-  ],
-  "请输入至少 6 位的新密码": [
-    "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue"
   ],
   "确认密码": [
     "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue",
@@ -1682,6 +1719,9 @@
     "apps/web/src/components/settings/panels/multiTenant/index.vue",
     "packages/multiTenant/adminWeb/pages/users.vue",
     "packages/multiTenant/userWeb/index.vue"
+  ],
+  "请再次输入新密码": [
+    "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue"
   ],
   "两次输入的密码不一致": [
     "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue",
@@ -1691,9 +1731,6 @@
     "apps/server/src/utils/channel/toonflow.ts",
     "packages/multiTenant/adminWeb/pages/users.vue",
     "packages/multiTenant/userWeb/index.vue"
-  ],
-  "请再次输入新密码": [
-    "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue"
   ],
   "重置密码": [
     "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue",
@@ -2000,10 +2037,6 @@
     "apps/web/src/components/settings/panels/account/taskRecords.vue",
     "packages/multiTenant/adminWeb/pages/users.vue"
   ],
-  "清除": [
-    "apps/web/src/components/settings/panels/account/subAccounts.vue",
-    "apps/web/src/components/settings/panels/account/taskRecords.vue"
-  ],
   "新增凭证": [
     "apps/web/src/components/settings/panels/account/subAccounts.vue"
   ],
@@ -2011,24 +2044,7 @@
     "apps/web/src/components/settings/panels/account/subAccounts.vue",
     "apps/web/src/components/settings/panels/account/taskRecords.vue"
   ],
-  "隐藏": [
-    "apps/web/src/components/settings/panels/account/subAccounts.vue",
-    "apps/web/src/components/settings/panels/general/nodeMenuSettings.vue"
-  ],
-  "显示": [
-    "apps/web/src/components/settings/panels/account/subAccounts.vue",
-    "apps/web/src/components/settings/panels/general/nodeMenuSettings.vue"
-  ],
-  "{0} {1} 的凭证": [
-    "apps/web/src/components/settings/panels/account/subAccounts.vue"
-  ],
-  "复制 {0} 的凭证": [
-    "apps/web/src/components/settings/panels/account/subAccounts.vue"
-  ],
   "可用额度": [
-    "apps/web/src/components/settings/panels/account/subAccounts.vue"
-  ],
-  "不限额": [
     "apps/web/src/components/settings/panels/account/subAccounts.vue"
   ],
   "有效期": [
@@ -2050,6 +2066,27 @@
     "packages/multiTenant/adminWeb/pages/providers.vue",
     "packages/multiTenant/adminWeb/pages/users.vue",
     "packages/providerWeb/providerEditor.vue"
+  ],
+  "隐藏": [
+    "apps/web/src/components/settings/panels/account/subAccounts.vue",
+    "apps/web/src/components/settings/panels/general/nodeMenuSettings.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/a2aSettingsDialog.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/agentConnectDialog.vue"
+  ],
+  "显示": [
+    "apps/web/src/components/settings/panels/account/subAccounts.vue",
+    "apps/web/src/components/settings/panels/general/nodeMenuSettings.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/a2aSettingsDialog.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/agentConnectDialog.vue"
+  ],
+  "{0} {1} 的凭证": [
+    "apps/web/src/components/settings/panels/account/subAccounts.vue"
+  ],
+  "复制 {0} 的凭证": [
+    "apps/web/src/components/settings/panels/account/subAccounts.vue"
+  ],
+  "不限额": [
+    "apps/web/src/components/settings/panels/account/subAccounts.vue"
   ],
   "删除凭证 {0}": [
     "apps/web/src/components/settings/panels/account/subAccounts.vue"
@@ -2151,9 +2188,6 @@
   "任务": [
     "apps/web/src/components/settings/panels/account/taskRecords.vue"
   ],
-  "凭证名称 {0}": [
-    "apps/web/src/components/settings/panels/account/taskRecords.vue"
-  ],
   "消费 / 耗时": [
     "apps/web/src/components/settings/panels/account/taskRecords.vue"
   ],
@@ -2161,6 +2195,9 @@
     "apps/web/src/components/settings/panels/account/taskRecords.vue"
   ],
   "详情": [
+    "apps/web/src/components/settings/panels/account/taskRecords.vue"
+  ],
+  "凭证名称{0}": [
     "apps/web/src/components/settings/panels/account/taskRecords.vue"
   ],
   "查看任务 {0} 的详情": [
@@ -2173,6 +2210,9 @@
     "apps/web/src/components/settings/panels/account/taskRecords.vue"
   ],
   "耗时": [
+    "apps/web/src/components/settings/panels/account/taskRecords.vue"
+  ],
+  "{0} 秒": [
     "apps/web/src/components/settings/panels/account/taskRecords.vue"
   ],
   "创建时间": [
@@ -2250,13 +2290,13 @@
   "充值套餐": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
-  "充值到账 {0}": [
+  "充值到账{0}": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
-  "赠送 {0}": [
+  "赠送{0}": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
-  "合计到账 {0}": [
+  "合计到账{0}": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
   "自定义金额": [
@@ -2301,13 +2341,13 @@
   "全部支付金额": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
-  "不超过 {0}": [
+  "不超过{0}": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
-  "超过 {0}": [
+  "超过{0}": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
-  "超过 {0}，不超过 {1}": [
+  "超过{0}，不超过{1}": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
   "充值到账": [
@@ -2334,7 +2374,7 @@
   "生成支付订单": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
-  "版本 {0} · 更新于 {1}": [
+  "版本{0}· 更新于{1}": [
     "apps/web/src/components/settings/panels/account/wallet.vue"
   ],
   "订单": [
@@ -2619,8 +2659,10 @@
   "从 URL 安装": [
     "apps/web/src/components/settings/panels/developer/index.vue"
   ],
-  "{0} 已安装": [
-    "apps/web/src/components/settings/panels/developer/index.vue"
+  "{0}已安装": [
+    "apps/web/src/components/settings/panels/developer/index.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue",
+    "apps/web/src/lib/desktopProtocol.ts"
   ],
   "浏览器持久缓存": [
     "apps/web/src/components/settings/panels/developer/index.vue"
@@ -2647,12 +2689,12 @@
   "修改": [
     "apps/web/src/components/settings/panels/developer/index.vue"
   ],
-  "确定删除这条缓存？": [
-    "apps/web/src/components/settings/panels/developer/index.vue"
-  ],
   "删除 {0}": [
     "apps/web/src/components/settings/panels/developer/index.vue",
     "apps/web/src/pages/home/workspacePicker.vue"
+  ],
+  "确定删除这条缓存？": [
+    "apps/web/src/components/settings/panels/developer/index.vue"
   ],
   "{0} 的值": [
     "apps/web/src/components/settings/panels/developer/index.vue"
@@ -2945,6 +2987,9 @@
   "这些工作目录允许连接设备访问；服务器自带工作区也可使用。首次开启会使用已有项目的工作目录。": [
     "apps/web/src/components/settings/panels/deviceLink/index.vue"
   ],
+  "移除": [
+    "apps/web/src/components/settings/panels/deviceLink/index.vue"
+  ],
   "保存修改": [
     "apps/web/src/components/settings/panels/deviceLink/index.vue",
     "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue",
@@ -3074,26 +3119,26 @@
   "按文件类型选择默认扩展。清除后，有多个可用扩展时会再次询问打开方式。": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
   ],
-  "暂无已安装的文件扩展或默认关联": [
+  "文件类型": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
   ],
-  "文件类型": [
+  "默认扩展": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
   ],
   "画布节点": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/nodeSearch.vue"
   ],
-  "默认扩展": [
+  "{0} 默认扩展": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
   ],
   "自动选择 / 每次询问": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
   ],
-  "{0} 默认扩展": [
+  "{0}（不可用）": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
   ],
-  "{0}（不可用）": [
+  "暂无已安装的文件扩展或默认关联": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
   ],
   "完成": [
@@ -3315,9 +3360,6 @@
   "缩小后可显示更多内容，字体大小仍可单独调整。": [
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
-  "75%（默认）": [
-    "apps/web/src/components/settings/panels/general/ui.vue"
-  ],
   "界面语言立即生效，默认跟随电脑语言。": [
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
@@ -3342,19 +3384,7 @@
   "统一调整界面、聊天和节点中的文字大小。": [
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
-  "较小": [
-    "apps/web/src/components/settings/panels/general/ui.vue"
-  ],
-  "较大": [
-    "apps/web/src/components/settings/panels/general/ui.vue"
-  ],
   "界面圆角": [
-    "apps/web/src/components/settings/panels/general/ui.vue"
-  ],
-  "直角": [
-    "apps/web/src/components/settings/panels/general/ui.vue"
-  ],
-  "圆润": [
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
   "SuperFlow 每一个灵感，都值得被看见": [
@@ -3404,6 +3434,21 @@
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
   "松石绿": [
+    "apps/web/src/components/settings/panels/general/ui.vue"
+  ],
+  "75%（默认）": [
+    "apps/web/src/components/settings/panels/general/ui.vue"
+  ],
+  "较小": [
+    "apps/web/src/components/settings/panels/general/ui.vue"
+  ],
+  "较大": [
+    "apps/web/src/components/settings/panels/general/ui.vue"
+  ],
+  "直角": [
+    "apps/web/src/components/settings/panels/general/ui.vue"
+  ],
+  "圆润": [
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
   "编辑供应商": [
@@ -3534,7 +3579,7 @@
   "搜索模型": [
     "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
   ],
-  "{0} 个结果，已勾选 {1} 个": [
+  "{0}个结果，已勾选{1}个": [
     "apps/web/src/components/settings/panels/languageModel/addCustomProviderDialog.vue"
   ],
   "添加勾选的模型（{0}）": [
@@ -3633,7 +3678,7 @@
   "此供应商已添加，请在供应商列表中编辑": [
     "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue"
   ],
-  "{0} 个模型": [
+  "{0}个模型": [
     "apps/web/src/components/settings/panels/languageModel/index.vue",
     "apps/web/src/components/settings/panels/mediaModel/index.vue",
     "apps/web/src/components/settings/toonflowProviderCard.vue"
@@ -3667,7 +3712,7 @@
   "已关闭": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
-  "{0} 个界面已连接": [
+  "{0}个界面已连接": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
   "首页": [
@@ -3698,7 +3743,7 @@
   "当前本地监听端口：{0}": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
-  "首选端口 {0} 已被占用，已顺延至 {1}。": [
+  "首选端口{0}已被占用，已顺延至{1}。": [
     "apps/web/src/components/settings/panels/mcp/index.vue"
   ],
   "复制 HTTP 配置": [
@@ -4054,7 +4099,7 @@
   "当前代码": [
     "apps/web/src/components/settings/panels/mediaModel/providerAgentDialog.vue"
   ],
-  "· {0} 个模型": [
+  "·{0}个模型": [
     "apps/web/src/components/settings/panels/mediaModel/providerAgentDialog.vue"
   ],
   "供应商模型列表": [
@@ -4625,7 +4670,7 @@
   "下载线路": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
-  "{0} 条可用线路": [
+  "{0}条可用线路": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
   "选择下载线路": [
@@ -4661,7 +4706,7 @@
   "当前仅使用系统安装版。如需使用下载的版本，请在高级设置中切换运行方式。": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
-  "· 组件 {0}/2": [
+  "· 组件{0}/2": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
   "运行方式": [
@@ -4679,10 +4724,10 @@
   "使用系统安装版": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
-  "运行环境：{0} / {1}": [
+  "运行环境：{0}/{1}": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
-  "下载版本：{0} · {1}": [
+  "下载版本：{0}·{1}": [
     "apps/web/src/components/settings/panels/pluginMarket/ffmpeg.vue"
   ],
   "保存在当前 SuperFlow 服务的数据目录，下载后自动复用。": [
@@ -4832,10 +4877,10 @@
   "添加收藏": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
-  "确定从市场删除“{0}”吗？": [
+  "从市场删除 {0}": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
-  "从市场删除 {0}": [
+  "确定从市场删除“{0}”吗？": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "已禁用": [
@@ -4881,16 +4926,16 @@
     "apps/web/src/components/settings/panels/pluginMarket/index.vue",
     "apps/server/src/utils/mcp/servers.ts"
   ],
-  "及其附属文件": [
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
-  ],
-  "确定卸载“{0}”{1}吗？": [
+  "卸载 {0}": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "卸载": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
-  "卸载 {0}": [
+  "及其附属文件": [
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
+  ],
+  "确定卸载“{0}”{1}吗？": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "正在加载插件…": [
@@ -4965,10 +5010,6 @@
   ],
   "{0}已更新": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
-  ],
-  "{0}已安装": [
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue",
-    "apps/web/src/lib/desktopProtocol.ts"
   ],
   "安装插件失败，请重试": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
@@ -5123,7 +5164,7 @@
   "连接成功": [
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue"
   ],
-  "{0} 个工具": [
+  "{0}个工具": [
     "apps/web/src/components/settings/panels/pluginMarket/mcpServers.vue"
   ],
   "查看工具": [
@@ -5226,7 +5267,7 @@
   "插件配置已保存": [
     "apps/web/src/components/settings/panels/pluginMarket/pluginConfigDialog.vue"
   ],
-  "编辑技能 · {0}": [
+  "编辑技能 ·{0}": [
     "apps/web/src/components/settings/panels/pluginMarket/skillEditorDialog.vue"
   ],
   "新建文件": [
@@ -5326,7 +5367,7 @@
   "正在读取插件文件…": [
     "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue"
   ],
-  "{0} 文件，最大 {1} MB": [
+  "{0}文件，最大{1}MB": [
     "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue"
   ],
   "节点截图封面预览": [
@@ -5417,7 +5458,7 @@
   "助手回复": [
     "apps/web/src/components/singleAgentDialog.vue"
   ],
-  "· {0} 秒": [
+  "·{0}秒": [
     "apps/web/src/components/singleAgentDialog.vue"
   ],
   "正在处理…": [
@@ -5464,6 +5505,12 @@
     "apps/web/src/components/ui/breadcrumb/uiBreadcrumbEllipsis.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+  ],
+  "侧栏": [
+    "apps/web/src/components/ui/sidebar/uiSidebar.vue"
+  ],
+  "侧栏导航": [
+    "apps/web/src/components/ui/sidebar/uiSidebar.vue"
   ],
   "切换侧栏": [
     "apps/web/src/components/ui/sidebar/uiSidebarTrigger.vue"
@@ -6052,7 +6099,7 @@
   "稍后配置": [
     "apps/web/src/pages/hello/index.vue"
   ],
-  "© {0} SuperFlow · 保留所有权利。": [
+  "©{0}SuperFlow · 保留所有权利。": [
     "apps/web/src/pages/hello/index.vue"
   ],
   "保存引导状态失败，请重试": [
@@ -6073,6 +6120,10 @@
   ],
   "搜索云端项目": [
     "apps/web/src/pages/home/explore.vue"
+  ],
+  "清空": [
+    "apps/web/src/pages/home/explore.vue",
+    "apps/web/src/pages/workspace/panels/document/components/quickOpen.vue"
   ],
   "发布作品": [
     "apps/web/src/pages/home/explore.vue",
@@ -6151,10 +6202,10 @@
   "克隆项目失败": [
     "apps/web/src/pages/home/exploreDetail.vue"
   ],
-  "制作过程": [
+  "返回作品详情": [
     "apps/web/src/pages/home/exploreProcess.vue"
   ],
-  "返回作品详情": [
+  "制作过程": [
     "apps/web/src/pages/home/exploreProcess.vue"
   ],
   "只读": [
@@ -6181,13 +6232,8 @@
   "首页侧栏": [
     "apps/web/src/pages/home/index.vue"
   ],
-  "展开侧栏": [
-    "apps/web/src/pages/home/index.vue",
-    "packages/multiTenant/adminWeb/index.vue"
-  ],
-  "收起侧栏": [
-    "apps/web/src/pages/home/index.vue",
-    "packages/multiTenant/adminWeb/index.vue"
+  "导航": [
+    "apps/web/src/pages/home/index.vue"
   ],
   "首页导航": [
     "apps/web/src/pages/home/index.vue"
@@ -6333,10 +6379,10 @@
   "请选择非空的 ZIP 压缩包": [
     "apps/web/src/pages/home/publishProjectPicker.vue"
   ],
-  "选择项目": [
+  "返回发布作品": [
     "apps/web/src/pages/home/publishWorkDialog.vue"
   ],
-  "返回发布作品": [
+  "选择项目": [
     "apps/web/src/pages/home/publishWorkDialog.vue"
   ],
   "上传作品": [
@@ -6452,10 +6498,10 @@
     "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue",
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue"
   ],
-  "当前目录为空": [
+  "重命名 {0}": [
     "apps/web/src/pages/home/workspacePicker.vue"
   ],
-  "重命名 {0}": [
+  "当前目录为空": [
     "apps/web/src/pages/home/workspacePicker.vue"
   ],
   "选择此目录": [
@@ -6513,13 +6559,13 @@
   "画布工具": [
     "apps/web/src/pages/workspace/index.vue"
   ],
+  "切换抓手/移动工具": [
+    "apps/web/src/pages/workspace/index.vue"
+  ],
   "移动工具，点击切换为抓手": [
     "apps/web/src/pages/workspace/index.vue"
   ],
   "抓手工具，点击切换为移动": [
-    "apps/web/src/pages/workspace/index.vue"
-  ],
-  "切换抓手/移动工具": [
     "apps/web/src/pages/workspace/index.vue"
   ],
   "搜索节点": [
@@ -6746,10 +6792,10 @@
   "目录操作": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue"
   ],
-  "{0} 个素材": [
+  "{0}个素材": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue"
   ],
-  "· {0} 个文件夹": [
+  "·{0}个文件夹": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetBrowser.vue"
   ],
   "搜索全部素材": [
@@ -6875,13 +6921,16 @@
   "撤销整理": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
+  "显示或隐藏地图": [
+    "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
+  ],
   "隐藏地图": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
   "显示地图": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
-  "显示或隐藏地图": [
+  "网格吸附": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
   "关闭网格吸附": [
@@ -6890,7 +6939,7 @@
   "开启网格吸附": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
-  "网格吸附": [
+  "显示或隐藏连线": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
   "隐藏连线": [
@@ -6899,16 +6948,13 @@
   "显示连线": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
-  "显示或隐藏连线": [
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
-  ],
   "适应视图": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
-  "缩放菜单（滚轮调整缩放）": [
+  "缩放菜单": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
-  "缩放菜单": [
+  "缩放菜单（滚轮调整缩放）": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
   "缩放百分比": [
@@ -7525,6 +7571,9 @@
   "多选": [
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue"
   ],
+  "已选{0}项": [
+    "apps/web/src/pages/workspace/panels/document/components/fileTree.vue"
+  ],
   "剪切": [
     "apps/web/src/pages/workspace/panels/document/components/fileTree.vue",
     "apps/desktop/src/index.ts"
@@ -7706,10 +7755,10 @@
   "输入文本后搜索当前工作区及其子目录。": [
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
   ],
-  "已读取 {0} 个文本文件，{1} 个文件命中 {2} 处。 跳过：二进制或不支持的编码 {3}，过大文件 {4}，画布 {5}，读取失败 {6}。": [
+  "已读取{0}个文本文件，{1}个文件命中{2}处。 跳过：二进制或不支持的编码{3}，过大文件{4}，画布{5}，读取失败{6}。": [
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
   ],
-  "替换预览：{0} 个文件，{1} 处": [
+  "替换预览：{0}个文件，{1}处": [
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
   ],
   "返回结果": [
@@ -7721,7 +7770,7 @@
   "选择替换 {0}": [
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
   ],
-  "{0} 处": [
+  "{0}处": [
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
   ],
   "已替换": [
@@ -9105,6 +9154,9 @@
     "apps/server/src/routes/workspaces/list.ts"
   ],
   "仅允许本机开发页面选择目录": [
+    "apps/server/src/routes/workspaces/selectDirectory.ts"
+  ],
+  "打开本机文件夹选择器失败：": [
     "apps/server/src/routes/workspaces/selectDirectory.ts"
   ],
   "无法打开本机文件夹选择器，请重试": [
@@ -11885,6 +11937,12 @@
     "packages/multiTenant/adminWeb/index.vue"
   ],
   "登录超级管理员账号，管理多租户服务。": [
+    "packages/multiTenant/adminWeb/index.vue"
+  ],
+  "展开侧栏": [
+    "packages/multiTenant/adminWeb/index.vue"
+  ],
+  "收起侧栏": [
     "packages/multiTenant/adminWeb/index.vue"
   ],
   "后台导航": [
