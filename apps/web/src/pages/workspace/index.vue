@@ -135,7 +135,8 @@ import { computed, defineAsyncComponent, nextTick, onMounted, onScopeDispose, pr
 import { onBeforeRouteLeave } from "vue-router";
 import axios from "axios";
 import { IconVector, IconFileText, IconPointer, IconHandStop, IconPlus, IconSearch, IconHelp, IconBook, IconBug, IconBrandWechat, IconBriefcase } from "@tabler/icons-vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { QRCode } from "tdesign-vue-next";
 import settings from "@/components/settings/index.vue";
 import { useWorkspaceStore } from "@/stores/workspace";
@@ -273,7 +274,7 @@ async function flushSave() {
 
 onBeforeRouteLeave(async () => {
   if (canvasPanelRef.value?.saveBusy) {
-    ElMessage.warning("画布操作尚未完成，请稍后退出");
+    toast.warning("画布操作尚未完成，请稍后退出");
     return false;
   }
   try {
@@ -285,7 +286,7 @@ onBeforeRouteLeave(async () => {
       : error instanceof Error
       ? error.message
       : translate("项目保存失败");
-    const leave = await ElMessageBox.confirm(`无法保存项目：${message}。文件或目录可能已被移动或删除。仍然退出将丢弃尚未保存的修改。`, "项目未保存", {
+    const leave = await messageBox.confirm(`无法保存项目：${message}。文件或目录可能已被移动或删除。仍然退出将丢弃尚未保存的修改。`, "项目未保存", {
       type: "warning",
       confirmButtonText: "仍然退出",
       cancelButtonText: "留在项目",
@@ -312,7 +313,7 @@ async function switchPanel(value: string | number | boolean) {
     if (changed) anonymousData.track(value === "canvas" ? "workspace.canvas" : "workspace.document");
     return true;
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "文本保存失败");
+    toast.error(error instanceof Error ? error.message : "文本保存失败");
     return false;
   }
 }

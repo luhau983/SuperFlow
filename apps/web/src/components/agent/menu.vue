@@ -85,7 +85,8 @@
 
 <script setup lang="ts">
 import { nextTick, ref, watch } from "vue";
-import { ElMessageBox, type InputInstance } from "element-plus";
+import { type InputInstance } from "element-plus";
+import messageBox from "@/lib/messageBox";
 import type { AgentHistory } from "./types";
 import type { AgentSubAgent } from "@toonflow/server/agent/types";
 import nodeToolsDialog from "./nodeToolsDialog.vue";
@@ -148,7 +149,7 @@ function saveName(event: Event) {
 }
 
 async function renameHistory(item: AgentHistory) {
-  const result = await ElMessageBox.prompt("请输入对话名称", "重命名对话", {
+  const result = await messageBox.prompt("请输入对话名称", "重命名对话", {
     inputValue: item.name,
     confirmButtonText: "保存",
     cancelButtonText: "取消",

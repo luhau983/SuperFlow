@@ -4025,5 +4025,8 @@
   "Codex 设置已保存": "Đã lưu cài đặt Codex",
   "Codex 图片生成需要链接本机 Codex，请在设置的语言模型中链接 Codex": "Tạo ảnh bằng Codex cần liên kết Codex trên máy, hãy liên kết Codex trong Cài đặt → Mô hình ngôn ngữ",
   "Codex 未链接，请在设置的语言模型中链接 Codex": "Codex chưa được liên kết, hãy liên kết Codex trong Cài đặt → Mô hình ngôn ngữ",
-  "Dịch vụ cloud Toonflow hiện đã tắt.": "Dịch vụ cloud Toonflow hiện đã tắt."
+  "Dịch vụ cloud Toonflow hiện đã tắt.": "Dịch vụ cloud Toonflow hiện đã tắt.",
+  "提示": "Thông báo",
+  "输入的内容无效": "Nội dung nhập không hợp lệ",
+  "切换侧栏": "Bật/tắt thanh bên"
 }

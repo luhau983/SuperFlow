@@ -16,7 +16,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { ref } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 
 const emit = defineEmits<{ saved: []; closed: [] }>();
 const visible = ref(true);
@@ -44,7 +44,7 @@ async function connect() {
     }, { headers: { "x-toonflow-workspace": "1" } });
     if (data.code !== 200) throw new Error(data.message || "连接失败");
     emit("saved");
-    ElMessage.success("远程 Agent 已连接");
+    toast.success("远程 Agent 已连接");
     visible.value = false;
   } catch (cause) {
     error.value = axios.isAxiosError(cause) ? cause.response?.data?.message || cause.message : cause instanceof Error ? cause.message : "连接失败";

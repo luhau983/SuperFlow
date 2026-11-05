@@ -90,7 +90,7 @@
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch, type Component } from "vue";
 import { useVueFlow, type ConnectingHandle, type GraphNode, type HandleType } from "@vue-flow/core";
 import { isTypeCompatible, useNodeEvent, validateConnection, type NodeHandle } from "@toonflow/nodes-scaffold/runtime";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import type { DropdownInstance } from "element-plus";
 import selectionHandle from "./selectionHandle.vue";
 import nodeMenuItems from "./nodeMenuItems.vue";
@@ -313,7 +313,7 @@ async function handleCommand(command: unknown) {
     try {
       await batchHistory(() => runCommand(command));
     } catch (error) {
-      ElMessage.error(error instanceof Error ? error.message : "画布操作失败");
+      toast.error(error instanceof Error ? error.message : "画布操作失败");
     }
     return;
   }
@@ -375,7 +375,7 @@ async function runCommand(command: unknown) {
       flow.removeSelectedElements();
       flow.addSelectedNodes(group);
       flow.nodesSelectionActive.value = true;
-      ElMessage.warning("目标节点的接收规则不允许整组连接，请尝试分别连接。");
+      toast.warning("目标节点的接收规则不允许整组连接，请尝试分别连接。");
     }
     return;
   }
@@ -402,7 +402,7 @@ async function runCommand(command: unknown) {
         validateConnection(item, { sourceNode, targetNode, nodes: flow.getNodes.value, edges: flow.getEdges.value })
     );
   if (connection) flow.addEdges(connection);
-  else ElMessage.warning("节点已创建，但没有兼容的端口可连接。");
+  else toast.warning("节点已创建，但没有兼容的端口可连接。");
   clearConnection();
   menu.value?.handleClose();
 }
@@ -427,7 +427,7 @@ async function deleteSelection(selection = selectedNodes.value) {
     menu.value?.handleClose();
   } catch (error) {
     const message = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
-    ElMessage.error(message || (error instanceof Error ? error.message : "删除选中节点失败"));
+    toast.error(message || (error instanceof Error ? error.message : "删除选中节点失败"));
   } finally {
     selectedNodes.value = selectedNodes.value.filter((node) => flow.findNode(node.id) === node);
     deleting.value = false;

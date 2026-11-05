@@ -13,7 +13,7 @@
 import axios from "axios";
 import { computed, ref, shallowRef, toRaw, watch } from "vue";
 import formCreate, { type Api, type Options } from "@toonflow/provider-web/formCreate";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import type { Plugin } from "./types";
 import { extensionConfig, saveExtensionConfig } from "@/pages/workspace/panels/document/extensions";
 
@@ -51,7 +51,7 @@ async function saveConfig() {
     }
     if (plugin.type === "node") window.dispatchEvent(new Event("toonflow:node-config-updated"));
     visible.value = false;
-    ElMessage.success("插件配置已保存");
+    toast.success("插件配置已保存");
   } catch (error) {
     configError.value = axios.isAxiosError(error)
       ? error.response?.data?.message || "保存失败，请重试；当前填写的内容已保留"

@@ -28,7 +28,9 @@ import { translate } from "@toonflow/i18n/vue";
 import { computed, nextTick, ref, shallowRef } from "vue";
 import axios from "axios";
 import saveFile from "@/lib/saveFile";
-import { ElMessage, ElMessageBox, type DropdownInstance } from "element-plus";
+import { type DropdownInstance } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { IconChevronRight, IconFolder, IconFolderPlus } from "@tabler/icons-vue";
 
 type AssetEntry = { name: string; path: string; type: "file" | "directory"; children?: AssetEntry[] };
@@ -73,7 +75,7 @@ function closeMenu() {
 
 function showError(error: unknown) {
   if (error === "cancel" || error === "close") return;
-  ElMessage.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message);
+  toast.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message);
 }
 
 async function relocate(entry: AssetEntry, target: string) {
@@ -100,7 +102,7 @@ async function createMoveFolder() {
   const entry = activeEntry.value!;
   closeMenu();
   try {
-    const { value } = await ElMessageBox.prompt("新文件夹将创建在素材库根目录", "新建文件夹", {
+    const { value } = await messageBox.prompt("新文件夹将创建在素材库根目录", "新建文件夹", {
       inputValue: "新建文件夹",
       inputPattern: /^[^\\/]+$/,
       inputValidator: value => !!value?.trim() || "请输入文件夹名称",
@@ -130,7 +132,7 @@ async function handleCommand(command: string) {
       await saveFile(() => axios.get<Blob>("/api/assets/read", { params: { path: entry.path, download: true }, responseType: "blob" }).then(({ data }) => data), entry.name);
     }
     if (command === "rename") {
-      const { value } = await ElMessageBox.prompt("名称", "重命名", {
+      const { value } = await messageBox.prompt("名称", "重命名", {
         inputValue: entry.name,
         inputPattern: /^[^\\/]+$/,
         inputValidator: value => !!value?.trim() || "请输入名称",
@@ -141,7 +143,7 @@ async function handleCommand(command: string) {
       await relocate(entry, parent === "." ? value.trim() : parent + "/" + value.trim());
     }
     if (command === "delete") {
-      await ElMessageBox.confirm("确定删除“" + entry.name + "”？", "删除素材", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消" });
+      await messageBox.confirm("确定删除“" + entry.name + "”？", "删除素材", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消" });
       busy.value = true;
       try {
         await axios.delete("/api/assets/remove", { data: { path: entry.path } });

@@ -46,7 +46,7 @@
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import { computed, defineAsyncComponent, onMounted, onBeforeUnmount, ref, shallowRef, type Component } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconPlus, IconSettings, IconEdit, IconTrash, IconDownload, IconCode } from "@tabler/icons-vue";
 import type { MediaProvider } from "@toonflow/provider-web/types";
 import { saveSettings } from "@/stores/settings";
@@ -85,7 +85,7 @@ async function loadProviders() {
     const { data } = await axios.get<{ data: MediaProvider[] }>("/api/providers/media/list");
     if (request === loadRequest) providers.value = data.data;
   } catch (error) {
-    if (request === loadRequest) ElMessage.error(axios.isAxiosError(error) ? error.response?.data?.message || error.message : "读取媒体供应商失败");
+    if (request === loadRequest) toast.error(axios.isAxiosError(error) ? error.response?.data?.message || error.message : "读取媒体供应商失败");
   }
 }
 
@@ -119,9 +119,9 @@ async function fetchModels(provider: MediaProvider) {
     if (data.code !== 200 || !data.data) throw new Error(data.message || "获取模型失败");
     saveProviderItem(data.data);
     invalidateNodeModels("media");
-    ElMessage.success("模型列表已更新");
+    toast.success("模型列表已更新");
   } catch (error) {
-    ElMessage.error(axios.isAxiosError(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "获取模型失败，请重试");
+    toast.error(axios.isAxiosError(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "获取模型失败，请重试");
   } finally { fetchingFile.value = ""; }
 }
 
@@ -144,7 +144,7 @@ async function deleteProvider(provider: MediaProvider) {
     });
   } catch (error) {
     const message = axios.isAxiosError(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : translate("删除失败，请重试");
-    ElMessage.error(deleted ? `供应商已删除，但相关连接配置清理失败：${message}` : message);
+    toast.error(deleted ? `供应商已删除，但相关连接配置清理失败：${message}` : message);
   } finally { deletingFile.value = ""; }
 }
 

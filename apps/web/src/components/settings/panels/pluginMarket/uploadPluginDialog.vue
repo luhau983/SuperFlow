@@ -62,7 +62,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef, useId, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { t, translate } from "@toonflow/i18n/vue";
 import http from "@/lib/http";
 import videoPlayer from "@/components/videoPlayer.vue";
@@ -224,7 +224,7 @@ async function upload() {
       signal: request.signal, headers: { Authorization: `Bearer ${token}` }, timeout: 65000,
     });
     if (request.signal.aborted) return;
-    ElMessage.success(message || (marketPlugin ? "重新提交成功，等待审核" : "上传成功，等待审核"));
+    toast.success(message || (marketPlugin ? "重新提交成功，等待审核" : "上传成功，等待审核"));
     emit("uploaded");
     visible.value = false;
   } catch (error) {
@@ -258,12 +258,12 @@ function selectMedia(event: Event) {
   const extension = video ? /\.(mp4|webm)$/i : /\.(jpe?g|png|webp)$/i;
   const mimeTypes = video ? ["video/mp4", "video/webm"] : ["image/jpeg", "image/png", "image/webp"];
   if (!extension.test(selected.name) || (selected.type && !mimeTypes.includes(selected.type))) {
-    ElMessage.warning(video ? "请选择 MP4 或 WebM 视频" : "请选择 JPG、PNG 或 WebP 截图");
+    toast.warning(video ? "请选择 MP4 或 WebM 视频" : "请选择 JPG、PNG 或 WebP 截图");
     return;
   }
   const maxMegabytes = video ? 100 : 10;
   if (!selected.size || selected.size > maxMegabytes * 1024 * 1024 || selected.name.length > 255) {
-    ElMessage.warning(`素材不能为空、不能超过 ${maxMegabytes} MB，文件名不能超过 255 个字符`);
+    toast.warning(`素材不能为空、不能超过 ${maxMegabytes} MB，文件名不能超过 255 个字符`);
     return;
   }
   clearMedia();

@@ -18,7 +18,8 @@
 
 <script setup lang="ts">
 import { computed, onErrorCaptured, onBeforeUnmount, ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import type { IDockviewPanelProps } from "dockview-vue";
 import type { EditorParams } from "../documentSession";
 import { documentError } from "../documentSession";
@@ -48,19 +49,19 @@ function retry() {
 }
 async function reloadDisk() {
   try {
-    await ElMessageBox.confirm("将重新读取磁盘中的文件，替换当前内容。未保存的修改会丢失，如需保留，请先另存副本。", "载入磁盘版本", { type: "warning", confirmButtonText: "载入", cancelButtonText: "取消" });
+    await messageBox.confirm("将重新读取磁盘中的文件，替换当前内容。未保存的修改会丢失，如需保留，请先另存副本。", "载入磁盘版本", { type: "warning", confirmButtonText: "载入", cancelButtonText: "取消" });
     await session.value.reloadDisk();
-  } catch (error) { if (error !== "cancel" && error !== "close") ElMessage.error(documentError(error)); }
+  } catch (error) { if (error !== "cancel" && error !== "close") toast.error(documentError(error)); }
 }
 async function saveCopy() {
   try {
     const path = context.value.resource.path;
     const dot = path.lastIndexOf(".");
     const suggested = dot > path.lastIndexOf("/") ? `${path.slice(0, dot)} 副本${path.slice(dot)}` : `${path} 副本`;
-    const { value } = await ElMessageBox.prompt("请输入当前工作区内的相对路径，例如“文件夹/副本.txt”。不会覆盖已有的同名文件。", "另存副本", { inputValue: suggested, inputValidator: value => !!value?.trim() || "请输入文件路径", confirmButtonText: "保存", cancelButtonText: "取消" });
+    const { value } = await messageBox.prompt("请输入当前工作区内的相对路径，例如“文件夹/副本.txt”。不会覆盖已有的同名文件。", "另存副本", { inputValue: suggested, inputValidator: value => !!value?.trim() || "请输入文件路径", confirmButtonText: "保存", cancelButtonText: "取消" });
     await context.value.files.write(value.trim(), context.value.text, true);
-    ElMessage.success("副本已保存");
-  } catch (error) { if (error !== "cancel" && error !== "close") ElMessage.error(documentError(error)); }
+    toast.success("副本已保存");
+  } catch (error) { if (error !== "cancel" && error !== "close") toast.error(documentError(error)); }
 }
 </script>
 

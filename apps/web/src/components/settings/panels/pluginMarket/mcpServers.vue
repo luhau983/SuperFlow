@@ -179,7 +179,7 @@
 import axios from "axios";
 import { t, translate } from "@toonflow/i18n/vue";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconPlus, IconFileCode, IconPackage, IconCircleCheck, IconAlertCircle, IconLoader2 } from "@tabler/icons-vue";
 import mcpImportForm from "./mcpImportForm.vue";
 
@@ -309,7 +309,7 @@ function openEditor(server?: McpServerConfig) {
 function finishImport(count: number) {
   editorVisible.value = false;
   refreshKey.value++;
-  ElMessage.success(`已导入 ${count} 个 MCP 服务`);
+  toast.success(`已导入 ${count} 个 MCP 服务`);
 }
 
 function parseRecord(value: string, label: string): Record<string, string> | undefined {
@@ -353,7 +353,7 @@ async function saveServer() {
     if (data.code !== 200) throw new Error(data.message || "保存 MCP 服务失败");
     editorVisible.value = false;
     refreshKey.value++;
-    ElMessage.success("MCP 服务已保存");
+    toast.success("MCP 服务已保存");
   } catch (cause) {
     if (!controller.signal.aborted) editorError.value = errorMessage(cause);
   } finally { saving.value = false; }
@@ -391,7 +391,7 @@ async function setEnabled(server: McpServerConfig, enabled: boolean) {
     if (data.code !== 200) throw new Error(data.message || "更新 MCP 状态失败");
     server.enabled = enabled;
   } catch (cause) {
-    if (!controller.signal.aborted) ElMessage.error(errorMessage(cause));
+    if (!controller.signal.aborted) toast.error(errorMessage(cause));
   } finally { pendingServers.value.delete(server.id); }
 }
 
@@ -403,10 +403,10 @@ async function removeServer(server: McpServerConfig) {
     if (controller.signal.aborted) return;
     if (data.code !== 200) throw new Error(data.message || "删除 MCP 服务失败");
     servers.value = servers.value.filter(item => item.id !== server.id);
-    ElMessage.success("MCP 服务已删除");
+    toast.success("MCP 服务已删除");
   } catch (cause) {
     if (!controller.signal.aborted) {
-      ElMessage.error(errorMessage(cause));
+      toast.error(errorMessage(cause));
       refreshKey.value++;
     }
   } finally { pendingServers.value.delete(server.id); }

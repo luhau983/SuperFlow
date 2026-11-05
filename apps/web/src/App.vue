@@ -9,6 +9,8 @@
       <loadingPage v-model:visible="workspaceStore.projectLoadingVisible" v-model:drawn="workspaceStore.projectLoadingDrawn" :active="workspaceStore.projectLoading" />
       <ffmpegRequired v-if="currentUser?.role !== 'user'" />
       <desktopQuit v-if="actualPlatform.isDesktop" />
+      <messageBoxHost />
+      <uiToaster position="top-center" richColors closeButton :theme="darkTheme ? 'dark' : 'light'" />
       <updateBox
         v-if="updateBoxBuild && !installFailure"
         v-model="updateBoxVisible"
@@ -42,14 +44,15 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, ref, shallowRef, watch, watchEffect } from "vue";
-import { ElMessage, useZIndex } from "element-plus";
+import { useZIndex } from "element-plus";
+import { toast } from "vue-sonner";
 import { elementLocales } from "@toonflow/i18n/elementPlus";
 import { ConfigProvider, type GlobalConfigProvider } from "tdesign-vue-next";
 import tdesignEn from "tdesign-vue-next/es/locale/en_US";
 import { locale } from "@toonflow/i18n/vue";
 import type { updateSnapshot } from "@toonflow/server/desktop";
 import { chatLocale } from "@/lib/i18n";
-import { registerAppearance } from "@/lib/appearance";
+import { darkTheme, registerAppearance } from "@/lib/appearance";
 import { actualPlatform, isMobile } from "@/lib/platform";
 import { saveSettings, settings, uiSettings } from "@/stores/settings";
 import { desktopUpdateSnapshot, stopDesktopUpdateObservation } from "@/stores/desktopUpdate";
@@ -60,6 +63,9 @@ import { useMcpControl } from "@/lib/mcpControl";
 import ffmpegRequired from "@/components/settings/ffmpegRequired.vue";
 import desktopQuit from "@/components/desktopQuit.vue";
 import updateBox from "@/components/updateBox.vue";
+import messageBoxHost from "@/components/messageBoxHost.vue";
+import { uiToaster } from "@/components/ui/sonner";
+import "vue-sonner/style.css";
 import "element-plus/theme-chalk/dark/css-vars.css";
 
 if (currentUser.value?.role !== "user") useMcpControl();
@@ -115,7 +121,7 @@ function rememberUpdateBox() {
   void saveSettings(current => {
     const seenBuilds = Array.isArray(current.updateBoxSeenBuilds) ? current.updateBoxSeenBuilds.filter(value => typeof value === "string") : [];
     return seenBuilds.includes(buildKey) ? undefined : { updateBoxSeenBuilds: [...seenBuilds, buildKey] };
-  }).catch(() => { ElMessage.warning("更新说明的展示记录保存失败，下次启动时可能再次显示。"); });
+  }).catch(() => { toast.warning("更新说明的展示记录保存失败，下次启动时可能再次显示。"); });
 }
 
 function preventPageZoom(event: WheelEvent) {

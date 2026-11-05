@@ -369,7 +369,8 @@ import axios from "axios";
 import parse from "semver/functions/parse";
 import { computed, defineAsyncComponent, markRaw, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import { IconBox, IconBook, IconTool, IconFileText, IconExternalLink, IconSparkles2, IconUpload, IconCloudUpload, IconShare, IconStar, IconStarFilled, IconLink, IconSettings, IconCopy } from "@tabler/icons-vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { toonflowAccountToken as accountToken } from "@/stores/settings";
 import http from "@/lib/http";
 import videoPlayer from "@/components/videoPlayer.vue";
@@ -734,9 +735,9 @@ function errorMessage(error: unknown, fallback: string) {
 async function copyCard(url: string) {
   try {
     await writeClipboardText(url);
-    ElMessage.success("Agent Card 地址已复制");
+    toast.success("Agent Card 地址已复制");
   } catch {
-    await ElMessageBox.alert(url, "Agent Card 地址", { confirmButtonText: "关闭" }).catch(() => {});
+    await messageBox.alert(url, "Agent Card 地址", { confirmButtonText: "关闭" }).catch(() => {});
   }
 }
 
@@ -773,9 +774,9 @@ async function toggleCollection(plugin: Plugin) {
     const current = marketPlugins.value.find(item => item.id === plugin.id);
     if (current) current.isCollected = collected;
     if (selectedType.value === "collection" || marketLoading.value) marketRefreshKey.value++;
-    ElMessage.success(collected ? "收藏成功" : "已取消收藏");
+    toast.success(collected ? "收藏成功" : "已取消收藏");
   } catch (error) {
-    if (!controller.signal.aborted && accountToken.value === token) ElMessage.error(errorMessage(error, "修改收藏失败，请重试"));
+    if (!controller.signal.aborted && accountToken.value === token) toast.error(errorMessage(error, "修改收藏失败，请重试"));
   } finally {
     if (marketMutationController === controller) collectingPlugins.value.delete(plugin.key);
   }
@@ -796,9 +797,9 @@ async function deletePlugin(plugin: Plugin) {
     if (controller.signal.aborted || accountToken.value !== token) return;
     marketRefreshKey.value++;
     pluginExistenceRefreshKey.value++;
-    ElMessage.success(message || "插件已从市场删除");
+    toast.success(message || "插件已从市场删除");
   } catch (error) {
-    if (!controller.signal.aborted && accountToken.value === token) ElMessage.error(errorMessage(error, "删除插件失败，请重试"));
+    if (!controller.signal.aborted && accountToken.value === token) toast.error(errorMessage(error, "删除插件失败，请重试"));
   } finally {
     if (marketMutationController === controller) deletingPlugins.value.delete(plugin.key);
   }
@@ -815,9 +816,9 @@ async function installMarketPlugin(plugin: Plugin) {
     if (data.code !== 200) throw new Error(data.message || "安装插件失败");
     window.dispatchEvent(new CustomEvent("toonflow:plugin-installed", { detail: { type: plugin.type, name: data.data.name } }));
     if (plugin.type === "ext") window.dispatchEvent(new CustomEvent("toonflow:ext-updated", { detail: { name: data.data.name } }));
-    ElMessage.success(action === "更新" ? `${plugin.displayName}已更新` : `${plugin.displayName}已安装`);
+    toast.success(action === "更新" ? `${plugin.displayName}已更新` : `${plugin.displayName}已安装`);
   } catch (error) {
-    ElMessage.error(errorMessage(error, "安装插件失败，请重试"));
+    toast.error(errorMessage(error, "安装插件失败，请重试"));
   } finally {
     pendingPlugins.value.delete(plugin.key);
   }
@@ -844,9 +845,9 @@ async function installFile(event: Event) {
     if (!type) throw new Error("不支持这个安装文件。支持的格式：文件扩展 ext-*.umd.js；Agent .agent.zip；节点 .umd.js；工具 .tool.js；技能 .zip、.md、.tar、.tar.gz、.tgz。");
     if (type === "agent" && !agentMarketEnabled) throw new Error("Agent 功能处于测试阶段，暂未开放安装");
     await installPluginFile(type, file);
-    ElMessage.success(`${pluginTypes[type].label}已安装`);
+    toast.success(`${pluginTypes[type].label}已安装`);
   } catch (error) {
-    ElMessage.error(errorMessage(error, "安装插件失败，请重试"));
+    toast.error(errorMessage(error, "安装插件失败，请重试"));
   } finally {
     installing.value = false;
   }
@@ -882,7 +883,7 @@ async function exportPlugin(plugin: Plugin) {
         .catch(() => null);
       if (typeof data?.message === "string") message = data.message;
     }
-    ElMessage.error(message);
+    toast.error(message);
   } finally {
     exportingPlugins.value.delete(plugin.key);
   }
@@ -918,13 +919,13 @@ async function updatePlugin(plugin: Plugin, action: "setEnabled" | "uninstall", 
         detailsVisible.value = false;
         selectedPlugin.value = undefined;
       }
-      ElMessage.success("插件已卸载");
+      toast.success("插件已卸载");
     } else plugin.enabled = enabled;
     if (plugin.type === "node")
       window.dispatchEvent(new CustomEvent("toonflow:plugin-installed", { detail: { type: plugin.type, name: plugin.name } }));
     if (plugin.type === "ext") window.dispatchEvent(new CustomEvent("toonflow:ext-updated", { detail: { name: plugin.name } }));
   } catch (error) {
-    ElMessage.error(errorMessage(error, `${actionLabel}失败，请重试`));
+    toast.error(errorMessage(error, `${actionLabel}失败，请重试`));
   } finally {
     pendingPlugins.value.delete(plugin.key);
   }

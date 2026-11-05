@@ -125,7 +125,8 @@
 import axios from "axios";
 import { msg, translate, type MessageDescriptor } from "@toonflow/i18n/vue";
 import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { QRCode } from "tdesign-vue-next";
 import { IconFolderPlus, IconQrcode, IconRefresh } from "@tabler/icons-vue";
 import { useWorkspaceStore } from "@/stores/workspace";
@@ -181,9 +182,9 @@ function errorMessage(cause: unknown) {
 async function copyConnectionInfo(value: string) {
   try {
     await writeClipboardText(value);
-    ElMessage.success("已复制");
+    toast.success("已复制");
   } catch {
-    ElMessage.error("复制失败，请手动选择并复制");
+    toast.error("复制失败，请手动选择并复制");
   }
 }
 
@@ -262,7 +263,7 @@ async function saveConfig(enabled = form.enabled) {
     pairingMessage.value = "";
     pairedSuccessfully.value = pairingFinished.value = false;
     autoPairingUrl = "";
-    if (await loadStatus()) ElMessage.success("互联配置已保存");
+    if (await loadStatus()) toast.success("互联配置已保存");
   } catch (cause) {
     form.enabled = status.value.hubEnabled ?? status.value.enabled;
     error.value = errorMessage(cause);
@@ -316,7 +317,7 @@ async function revokeDevice(id: string) {
   revoking.value = true;
   error.value = "";
   try {
-    await ElMessageBox.confirm("撤销后，这个设备将无法继续访问当前 SuperFlow。", "撤销设备授权", { confirmButtonText: "撤销授权", cancelButtonText: "取消", type: "warning" });
+    await messageBox.confirm("撤销后，这个设备将无法继续访问当前 SuperFlow。", "撤销设备授权", { confirmButtonText: "撤销授权", cancelButtonText: "取消", type: "warning" });
     const { data } = await axios.post<ApiResponse<unknown>>("/api/mobileLink/revoke", { id }, { headers });
     if (data.code !== 200) throw new Error(data.message || "撤销授权失败");
     await loadStatus(false);

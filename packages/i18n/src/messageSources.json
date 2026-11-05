@@ -117,6 +117,7 @@
     "apps/web/src/components/agent/menu.vue",
     "apps/web/src/components/agent/nodeToolsDialog.vue",
     "apps/web/src/components/desktopQuit.vue",
+    "apps/web/src/components/messageBoxHost.vue",
     "apps/web/src/components/settings/panels/account/forgotPasswordDialog.vue",
     "apps/web/src/components/settings/panels/account/subAccounts.vue",
     "apps/web/src/components/settings/panels/developer/index.vue",
@@ -804,6 +805,9 @@
     "apps/web/src/components/settings/panels/pluginMarket/agentEditorDialog.vue",
     "apps/web/src/components/settings/panels/pluginMarket/index.vue",
     "apps/web/src/components/settings/panels/pluginMarket/skillEditorDialog.vue",
+    "apps/web/src/components/ui/dialog/uiDialogContent.vue",
+    "apps/web/src/components/ui/dialog/uiDialogScrollContent.vue",
+    "apps/web/src/components/ui/sheet/uiSheetContent.vue",
     "apps/web/src/components/videoPlayer.vue",
     "apps/web/src/pages/workspace/panels/document/components/editorTab.vue",
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue",
@@ -1043,15 +1047,19 @@
     "apps/web/src/components/languageSelect.vue",
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
-  "跟随系统": [
-    "apps/web/src/components/languageSelect.vue",
-    "apps/web/src/components/settings/panels/general/ui.vue"
-  ],
   "正在加载项目": [
     "apps/web/src/components/loadingPage.vue"
   ],
   "图片保存或读取失败": [
     "apps/web/src/components/markdownImage.vue"
+  ],
+  "提示": [
+    "apps/web/src/components/messageBoxHost.vue"
+  ],
+  "确定": [
+    "apps/web/src/components/messageBoxHost.vue",
+    "apps/web/src/components/settings/panels/network/index.vue",
+    "packages/providerWeb/modelEditorDialog.vue"
   ],
   "网络图片": [
     "apps/web/src/components/messageMarkdown.vue"
@@ -1372,8 +1380,10 @@
   "{0}，有新版本可用": [
     "apps/web/src/components/settings/index.vue"
   ],
-  "账号与余额": [
-    "apps/web/src/components/settings/index.vue"
+  "账号": [
+    "apps/web/src/components/settings/index.vue",
+    "packages/multiTenant/adminWeb/pages/users.vue",
+    "packages/multiTenant/userWeb/index.vue"
   ],
   "通用设置": [
     "apps/web/src/components/settings/index.vue"
@@ -1420,11 +1430,6 @@
   ],
   "关于": [
     "apps/web/src/components/settings/index.vue"
-  ],
-  "账号": [
-    "apps/web/src/components/settings/index.vue",
-    "packages/multiTenant/adminWeb/pages/users.vue",
-    "packages/multiTenant/userWeb/index.vue"
   ],
   "请选择非空且不超过 20 MB 的插件文件": [
     "apps/web/src/components/settings/installPluginFile.ts"
@@ -1505,26 +1510,6 @@
     "apps/web/src/components/settings/panels/account/taskRecords.vue",
     "apps/web/src/components/settings/panels/personalization/index.vue",
     "apps/web/src/components/settings/toonflowProviderCard.vue"
-  ],
-  "赞助商": [
-    "apps/web/src/components/settings/panels/about/index.vue"
-  ],
-  "排名不分先后": [
-    "apps/web/src/components/settings/panels/about/index.vue"
-  ],
-  "微信扫码洽谈商务合作": [
-    "apps/web/src/components/settings/panels/about/index.vue",
-    "apps/web/src/components/settings/panels/multiTenant/developmentNotice.vue"
-  ],
-  "成为赞助商": [
-    "apps/web/src/components/settings/panels/about/index.vue"
-  ],
-  "SuperFlow 商务合作二维码": [
-    "apps/web/src/components/settings/panels/about/index.vue",
-    "apps/web/src/components/settings/panels/multiTenant/developmentNotice.vue"
-  ],
-  "查看 {0} 详情": [
-    "apps/web/src/components/settings/panels/about/index.vue"
   ],
   "正在解压并校验更新包": [
     "apps/web/src/components/settings/panels/about/index.vue"
@@ -3397,6 +3382,9 @@
   "沉浸创作": [
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
+  "跟随系统": [
+    "apps/web/src/components/settings/panels/general/ui.vue"
+  ],
   "自动切换": [
     "apps/web/src/components/settings/panels/general/ui.vue"
   ],
@@ -4294,6 +4282,12 @@
   "接受定制化功能开发或私有化部署，欢迎联系我们洽谈需求。": [
     "apps/web/src/components/settings/panels/multiTenant/developmentNotice.vue"
   ],
+  "微信扫码洽谈商务合作": [
+    "apps/web/src/components/settings/panels/multiTenant/developmentNotice.vue"
+  ],
+  "SuperFlow 商务合作二维码": [
+    "apps/web/src/components/settings/panels/multiTenant/developmentNotice.vue"
+  ],
   "开启多租户": [
     "apps/web/src/components/settings/panels/multiTenant/index.vue",
     "packages/multiTenant/adminWeb/pages/configuration.vue"
@@ -4370,10 +4364,6 @@
   ],
   "自定义代理": [
     "apps/web/src/components/settings/panels/network/index.vue"
-  ],
-  "确定": [
-    "apps/web/src/components/settings/panels/network/index.vue",
-    "packages/providerWeb/modelEditorDialog.vue"
   ],
   "控制服务端 AI、媒体等网络请求，保存后生效。": [
     "apps/web/src/components/settings/panels/network/index.vue"
@@ -4752,13 +4742,7 @@
   "插件列表": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
-  "发现插件": [
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
-  ],
   "已安装": [
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
-  ],
-  "网页版市场": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "开发者文档": [
@@ -4770,16 +4754,6 @@
   "搜索": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue",
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
-  ],
-  "上传插件到市场": [
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue",
-    "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue"
-  ],
-  "请先在账号与余额中登录": [
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
-  ],
-  "上传插件": [
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "安装本地插件": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
@@ -4947,6 +4921,9 @@
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "{0} 效果演示": [
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
+  ],
+  "发现插件": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "加载插件市场失败，请重试": [
@@ -5316,6 +5293,9 @@
   "重新提交插件": [
     "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue"
   ],
+  "上传插件到市场": [
+    "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue"
+  ],
   "插件名称": [
     "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue",
     "apps/server/src/utils/channel/toonflow.ts"
@@ -5479,6 +5459,14 @@
   ],
   "请选择已配置的文本模型": [
     "apps/web/src/components/singleAgentDialog.vue"
+  ],
+  "更多": [
+    "apps/web/src/components/ui/breadcrumb/uiBreadcrumbEllipsis.vue",
+    "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
+    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
+  ],
+  "切换侧栏": [
+    "apps/web/src/components/ui/sidebar/uiSidebarTrigger.vue"
   ],
   "构建代码": [
     "apps/web/src/components/updateBox.vue"
@@ -5930,6 +5918,9 @@
   "MCP 调用已取消": [
     "apps/web/src/lib/mcpControl.ts"
   ],
+  "输入的内容无效": [
+    "apps/web/src/lib/messageBox.ts"
+  ],
   "无法确认设备版本（本机：{0}，对方：{1}），建议双方升级到同一版本。": [
     "apps/web/src/lib/mobile.ts"
   ],
@@ -6053,9 +6044,6 @@
     "apps/web/src/pages/hello/index.vue"
   ],
   "快速开始": [
-    "apps/web/src/pages/hello/index.vue"
-  ],
-  "登录 SuperFlow 即可免配置快速开始，直接开启创作。": [
     "apps/web/src/pages/hello/index.vue"
   ],
   "或": [
@@ -6812,10 +6800,6 @@
   ],
   "预览（也可双击素材）": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue"
-  ],
-  "更多": [
-    "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue",
-    "apps/web/src/pages/workspace/panels/canvas/components/canvasMenu.vue"
   ],
   "关闭音频预览": [
     "apps/web/src/pages/workspace/panels/canvas/components/assetLibrary.vue"
@@ -7912,12 +7896,6 @@
   "请在桌面客户端中检查更新。": [
     "apps/web/src/stores/desktopUpdate.ts"
   ],
-  "安装账号供应商失败": [
-    "apps/web/src/stores/settings.ts"
-  ],
-  "安装账号供应商失败，请刷新重试": [
-    "apps/web/src/stores/settings.ts"
-  ],
   "读取模型推理等级失败": [
     "apps/web/src/stores/settings.ts"
   ],
@@ -8230,8 +8208,7 @@
     "apps/server/src/agent/runtime/requests.ts"
   ],
   "SuperFlow 账号已变更，请重新发起请求": [
-    "apps/server/src/agent/runtime/requests.ts",
-    "apps/server/src/utils/media/provider.ts"
+    "apps/server/src/agent/runtime/requests.ts"
   ],
   "历史图片附件记录无效": [
     "apps/server/src/agent/runtime/requests.ts"
@@ -9158,8 +9135,7 @@
     "apps/server/src/utils/ai/files.ts"
   ],
   "请先登录 SuperFlow 账号并刷新供应商": [
-    "apps/server/src/utils/ai/index.ts",
-    "apps/server/src/utils/media/provider.ts"
+    "apps/server/src/utils/ai/index.ts"
   ],
   "请先在设置中配置模型供应商": [
     "apps/server/src/utils/ai/index.ts"
@@ -9226,9 +9202,6 @@
   ],
   "素材查询及游标关闭失败": [
     "apps/server/src/utils/assets/index.ts"
-  ],
-  "渠道未配置，请检查 TOONFLOW_CHANNEL": [
-    "apps/server/src/utils/channel/index.ts"
   ],
   "模型列表响应格式不正确": [
     "apps/server/src/utils/channel/toonflow.ts"
@@ -10469,9 +10442,6 @@
     "apps/server/src/utils/media/provider.ts"
   ],
   "供应商文件已被修改，请刷新页面后再删除": [
-    "apps/server/src/utils/media/provider.ts"
-  ],
-  "只能运行已安装的 SuperFlow 账号供应商": [
     "apps/server/src/utils/media/provider.ts"
   ],
   "供应商不能导入模块，请使用 this.tool 中的宿主工具": [

@@ -150,8 +150,8 @@ function analyze(source: string, id: string) {
       if (node.type === "CallExpression") {
         const callee = node.callee;
         const root = callee.type === "Identifier" ? callee.name : callee.type === "MemberExpression" && callee.object.type === "Identifier" ? callee.object.name : "";
-        if (["ElMessage", "ElMessageBox", "ElNotification"].includes(root)) {
-          for (const argument of node.arguments.slice(0, root === "ElMessageBox" ? 2 : 1)) {
+        if (["ElMessage", "ElMessageBox", "ElNotification", "toast", "messageBox"].includes(root)) {
+          for (const argument of node.arguments.slice(0, root === "ElMessageBox" || root === "messageBox" ? 2 : 1)) {
             if (argument.type === "SpreadElement" || argument.type === "ArgumentPlaceholder") continue;
             const value = displayExpression(argument, code);
             if (value !== sliceNode(argument, code)) replace(offset + argument.start!, offset + argument.end!, value);

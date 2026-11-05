@@ -3989,5 +3989,8 @@
   "Codex 设置已保存": "Codex settings saved",
   "Codex 图片生成需要链接本机 Codex，请在设置的语言模型中链接 Codex": "Codex image generation requires linking local Codex in Settings → Language models",
   "Codex 未链接，请在设置的语言模型中链接 Codex": "Codex is not linked. Link Codex in Settings → Language models",
-  "Dịch vụ cloud Toonflow hiện đã tắt.": "Toonflow cloud services are currently disabled."
+  "Dịch vụ cloud Toonflow hiện đã tắt.": "Toonflow cloud services are currently disabled.",
+  "提示": "Notice",
+  "输入的内容无效": "Invalid input",
+  "切换侧栏": "Toggle sidebar"
 }

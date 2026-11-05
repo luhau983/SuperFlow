@@ -196,7 +196,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { t, translate } from "@toonflow/i18n/vue";
 import { IconGift, IconReceipt } from "@tabler/icons-vue";
 import { Marked } from "marked";
@@ -503,7 +503,7 @@ async function exchangeCode() {
     });
     if (request.signal.aborted || props.token !== token) return;
     code.value = "";
-    ElMessage.success("兑换成功");
+    toast.success("兑换成功");
     emit("balanceChanged");
     page.value = 1;
     await Promise.all([loadOrders(true), loadPlans(), bonusPanel.value?.refresh()]);

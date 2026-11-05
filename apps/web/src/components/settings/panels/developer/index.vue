@@ -145,7 +145,7 @@ import type { updateSnapshot } from "@toonflow/server/desktop";
 import saveFile from "@/lib/saveFile";
 import { actualPlatform, isRemoteConnection, platformSimulation, setPlatformSimulation } from "@/lib/platform";
 import { installPluginFile } from "../../installPluginFile";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import axios from "axios";
 import { IconCode, IconTerminal2, IconFileUpload, IconFileText, IconDownload, IconRefresh, IconEdit, IconTrash } from "@tabler/icons-vue";
 
@@ -177,7 +177,7 @@ async function openUpdateBox() {
     }
     updateBoxVisible.value = true;
   } catch (error) {
-    ElMessage.error(axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "读取版本信息失败");
+    toast.error(axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "读取版本信息失败");
   } finally {
     openingUpdateBox.value = false;
   }
@@ -201,7 +201,7 @@ async function saveCustomUpdateUrl() {
       ...(url || current.desktopUpdateSource !== "custom" ? {} : { desktopUpdateSource: "official" }),
     }));
     customUpdateUrl.value = url;
-    ElMessage.success("自定义更新源已保存");
+    toast.success("自定义更新源已保存");
   } catch (error) {
     updateUrlError.value = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "保存更新源失败";
   } finally {
@@ -217,7 +217,7 @@ async function resetHello() {
     loadStorage();
     await router.replace("/hello");
   } catch {
-    ElMessage.error("重置引导失败，请重试");
+    toast.error("重置引导失败，请重试");
   } finally {
     resettingHello.value = false;
   }

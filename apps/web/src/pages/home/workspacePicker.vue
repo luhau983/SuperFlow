@@ -37,7 +37,8 @@
 import axios from "axios";
 import { translate } from "@toonflow/i18n/vue";
 import { onBeforeUnmount, ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { IconFolder, IconFolderPlus, IconFile, IconChevronDown, IconChevronUp, IconArrowLeft } from "@tabler/icons-vue";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
 import { actualPlatform, isLocalMobile } from "@/lib/platform";
@@ -83,7 +84,7 @@ async function chooseDirectory(): Promise<string | null> {
     void loadDirectory("");
     return await new Promise<string | null>(resolve => { finishSelection = resolve; });
   } catch (error) {
-    ElMessage.error(axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || "无法打开文件夹选择器，请重试" : "无法打开文件夹选择器，请重试");
+    toast.error(axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || "无法打开文件夹选择器，请重试" : "无法打开文件夹选择器，请重试");
     return null;
   }
   finally { selecting.value = false; finishSelection = undefined; }
@@ -111,14 +112,14 @@ async function manageEntry(action: "mkdir" | "rename" | "remove", entry?: Worksp
   editing.value = true;
   try {
     if (action === "remove" && entry) {
-      await ElMessageBox.confirm(entry.type === "directory"
+      await messageBox.confirm(entry.type === "directory"
         ? `确定删除文件夹“${entry.name}”及其全部内容？此操作无法撤销。`
         : `确定删除文件“${entry.name}”？此操作无法撤销。`, "删除确认", {
         type: "warning", confirmButtonText: "删除", cancelButtonText: "取消",
       });
       await files.remove(entry.path, entry.type === "directory");
     } else {
-      const { value } = await ElMessageBox.prompt("请输入名称", action === "mkdir" ? "新建文件夹" : "重命名", {
+      const { value } = await messageBox.prompt("请输入名称", action === "mkdir" ? "新建文件夹" : "重命名", {
         inputValue: entry?.name ?? "新建文件夹",
         inputValidator: value => {
           const name = value?.trim();
@@ -138,7 +139,7 @@ async function manageEntry(action: "mkdir" | "rename" | "remove", entry?: Worksp
     }
     await loadDirectory(directory.path);
   } catch (error) {
-    if (error !== "cancel" && error !== "close") ElMessage.error(axios.isAxiosError<{ message?: string }>(error)
+    if (error !== "cancel" && error !== "close") toast.error(axios.isAxiosError<{ message?: string }>(error)
       ? error.response?.data?.message || "操作失败，请重试" : error instanceof Error ? error.message : "操作失败，请重试");
   } finally { editing.value = false; }
 }

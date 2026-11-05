@@ -8,7 +8,7 @@
     <slot>
       <icon-dots class="size-4" />
     </slot>
-    <span class="sr-only">More</span>
+    <span class="sr-only">更多</span>
   </span>
 </template>
 

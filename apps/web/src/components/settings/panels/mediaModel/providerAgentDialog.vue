@@ -91,7 +91,7 @@
 import axios from "axios";
 import { translate } from "@toonflow/i18n/vue";
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconBrowser, IconDownload, IconFileCode, IconInfoCircle } from "@tabler/icons-vue";
 import type { ToolCall } from "@toonflow/tools-scaffold/runtime";
 import type { SingleAgentStatus } from "@toonflow/server/singleAgent/types";
@@ -250,13 +250,13 @@ async function downloadSource() {
   if (!generatedProvider.value || downloading.value) return;
   downloading.value = true;
   try { await saveFile(new Blob([generatedSource.value], { type: "text/plain;charset=utf-8" }), generatedProvider.value.fileName); }
-  catch (error) { ElMessage.error(error instanceof Error ? error.message : "下载文件失败"); }
+  catch (error) { toast.error(error instanceof Error ? error.message : "下载文件失败"); }
   finally { downloading.value = false; }
 }
 
 async function copyText(value: string) {
   try { await writeClipboardText(value); }
-  catch { ElMessage.error("复制失败"); }
+  catch { toast.error("复制失败"); }
 }
 </script>
 

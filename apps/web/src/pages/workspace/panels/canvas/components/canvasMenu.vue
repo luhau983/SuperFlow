@@ -75,7 +75,9 @@ import axios from "axios";
 import { locale, translate } from "@toonflow/i18n/vue";
 import { computed, inject, nextTick, onBeforeUnmount, ref, shallowRef, watch, type ShallowRef } from "vue";
 import { Panel, useVueFlow, type FlowExportObject } from "@vue-flow/core";
-import { ElMessage, ElMessageBox, type DropdownInstance, type FilterNodeMethodFunction, type InputInstance, type LoadFunction, type TreeInstance } from "element-plus";
+import { type DropdownInstance, type FilterNodeMethodFunction, type InputInstance, type LoadFunction, type TreeInstance } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { IconVector, IconCheck, IconChevronDown, IconChevronUp, IconChevronRight, IconDots, IconFolder, IconFolderOpen, IconFolderPlus, IconPlus, IconSearch } from "@tabler/icons-vue";
 import { useWorkspaceStore } from "@/stores/workspace";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
@@ -328,7 +330,7 @@ watch(() => props.directory, async (directory, _previous, onCleanup) => {
   } catch (err) {
     if (!cancelled) {
       loadError.value = errorMessage(err, "读取画布失败");
-      if (!props.initialCanvasId) ElMessage.error(loadError.value);
+      if (!props.initialCanvasId) toast.error(loadError.value);
     }
   } finally {
     if (!cancelled) { busy.value = false; initialized.value = true; }
@@ -420,7 +422,7 @@ async function handleSwitchCanvas(canvasId: string) {
   try {
     await switchCanvas(canvasId);
   } catch (err) {
-    if (props.directory === directory) ElMessage.error(errorMessage(err, "切换画布失败"));
+    if (props.directory === directory) toast.error(errorMessage(err, "切换画布失败"));
   }
 }
 
@@ -435,11 +437,11 @@ async function removeCanvas(canvas: Canvas) {
     const nextCanvas = await findRemainingCanvas(files, id, treeController.signal);
     checkCanvasDirectory(directory, treeController.signal);
     if (!nextCanvas) {
-      ElMessage.warning("项目里需要保留至少一个画布。你可以先新建一个，再删除这个画布。");
+      toast.warning("项目里需要保留至少一个画布。你可以先新建一个，再删除这个画布。");
       return;
     }
     mergeCanvases([nextCanvas]);
-    const confirmed = await ElMessageBox.confirm(`确定删除画布“${canvas.name}”吗？对应的“${id}”文件及仅由这个画布使用的素材也会删除，其他画布共用的素材会保留。删除后无法恢复。`, "删除画布", {
+    const confirmed = await messageBox.confirm(`确定删除画布“${canvas.name}”吗？对应的“${id}”文件及仅由这个画布使用的素材也会删除，其他画布共用的素材会保留。删除后无法恢复。`, "删除画布", {
       type: "warning", confirmButtonText: "删除", cancelButtonText: "取消", closeOnClickModal: false,
     }).then(() => true, () => false);
     if (!confirmed) return;
@@ -477,9 +479,9 @@ async function removeCanvas(canvas: Canvas) {
       const failed = results.flatMap((result, index) => result.status === "rejected" ? [assetDirectories[index]] : []);
       if (failed.length) throw new Error(`画布已删除，但 ${failed.length} 个素材目录清理失败：${failed.join("、")}`);
     });
-    if (props.directory === directory) ElMessage.success("画布已删除");
+    if (props.directory === directory) toast.success("画布已删除");
   } catch (err) {
-    if (props.directory === directory) ElMessage.error(errorMessage(err, "删除画布失败"));
+    if (props.directory === directory) toast.error(errorMessage(err, "删除画布失败"));
   } finally {
     if (props.directory === directory) busy.value = false;
   }
@@ -565,7 +567,7 @@ async function handleAddCanvas() {
     busy.value = false;
     await editCanvas(canvas);
   } catch (err) {
-    if (props.directory === directory) ElMessage.error(errorMessage(err, "新增画布失败"));
+    if (props.directory === directory) toast.error(errorMessage(err, "新增画布失败"));
   } finally {
     if (props.directory === directory) busy.value = false;
   }
@@ -665,13 +667,13 @@ async function createMoveFolder() {
   const directory = props.directory;
   itemMenu.value?.handleClose();
   try {
-    const { value } = await ElMessageBox.prompt("新文件夹将创建在画布根目录", "新建文件夹", {
+    const { value } = await messageBox.prompt("新文件夹将创建在画布根目录", "新建文件夹", {
       inputValue: "新建文件夹", confirmButtonText: "创建并移动", cancelButtonText: "取消",
       inputValidator: name => { try { normalizeFolderName(name); return true; } catch (error) { return (error as Error).message; } },
     });
     if (directory !== props.directory) return;
     await moveEntry(normalizeFolderName(value), true);
-  } catch (error) { if (error !== "cancel" && error !== "close") ElMessage.error(errorMessage(error, "创建文件夹失败")); }
+  } catch (error) { if (error !== "cancel" && error !== "close") toast.error(errorMessage(error, "创建文件夹失败")); }
 }
 
 async function handleItemCommand(command: string) {
@@ -692,14 +694,14 @@ async function handleItemCommand(command: string) {
   renameError.value = "";
   try {
     if (command === "rename") {
-      const { value } = await ElMessageBox.prompt("文件夹名称", "重命名", {
+      const { value } = await messageBox.prompt("文件夹名称", "重命名", {
         inputValue: entry.name, confirmButtonText: "保存", cancelButtonText: "取消",
         inputValidator: name => { try { normalizeFolderName(name); return true; } catch (error) { return (error as Error).message; } },
       });
       const name = normalizeFolderName(value);
       if (name !== entry.name) await relocateEntry(entry, `${parentPath(entry.path) ? `${parentPath(entry.path)}/` : ""}${name}`, directory);
     } else if (command === "delete") {
-      await ElMessageBox.confirm(`确定删除文件夹“${entry.name}”？`, "删除文件夹", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消" });
+      await messageBox.confirm(`确定删除文件夹“${entry.name}”？`, "删除文件夹", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消" });
       checkCanvasDirectory(directory);
       // 只删除真实空目录；隐藏文件和普通文档也应阻止删除，不能依据过滤后的画布树递归删除。
       await useWorkspaceFiles(directory).remove(entry.path);

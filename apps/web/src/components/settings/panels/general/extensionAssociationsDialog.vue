@@ -24,7 +24,8 @@
 
 <script setup lang="ts">
 import { computed, ref, shallowRef, watch } from "vue";
-import { ElAlert, ElButton, ElDialog, ElMessage, ElOption, ElSelect, ElTable, ElTableColumn } from "element-plus";
+import { ElAlert, ElButton, ElDialog, ElOption, ElSelect, ElTable, ElTableColumn } from "element-plus";
+import { toast } from "vue-sonner";
 import { extensionAssociations, listExtensions, setExtensionAssociation, type InstalledExtension } from "@/pages/workspace/panels/document/extensions";
 
 const visible = defineModel<boolean>({ required: true });
@@ -54,7 +55,7 @@ watch(visible, async value => {
 async function save(suffix: string, id: string) {
   saving.value = true;
   try { await setExtensionAssociation(suffix, id || undefined); }
-  catch (cause) { ElMessage.error(cause instanceof Error ? cause.message : "保存默认打开方式失败"); }
+  catch (cause) { toast.error(cause instanceof Error ? cause.message : "保存默认打开方式失败"); }
   finally { saving.value = false; }
 }
 </script>

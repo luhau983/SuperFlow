@@ -53,7 +53,7 @@
 import axios from "axios";
 import { t, translate } from "@toonflow/i18n/vue";
 import { onBeforeUnmount, ref, shallowRef, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconArrowLeft, IconShare, IconTopologyStar3, IconCopy, IconX } from "@tabler/icons-vue";
 import type { ExploreDetail, ExploreProcess } from "@toonflow/server/channel";
 import http from "@/lib/http";
@@ -115,7 +115,7 @@ async function shareProject() {
   actionError.value = "";
   try {
     await writeClipboardText(detail.value.shareUrl);
-    ElMessage.success("分享链接已复制");
+    toast.success("分享链接已复制");
   } catch (error) {
     actionError.value = errorMessage(error, "复制分享链接失败");
   } finally {
@@ -158,7 +158,7 @@ async function cloneProject() {
     cloneStatus.value = t`已下载到 ${directory}`;
     await workspace.addProject(directory, project.title);
     cloneStatus.value = t`已添加到项目列表 · ${directory}`;
-    ElMessage.success("项目已克隆并添加到项目列表");
+    toast.success("项目已克隆并添加到项目列表");
   } catch (error) {
     if (!signal.aborted) cloneError.value = errorMessage(error, "克隆项目失败");
   } finally {

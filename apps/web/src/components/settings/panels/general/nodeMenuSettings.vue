@@ -122,7 +122,8 @@
 import axios from "axios";
 import { translate } from "@toonflow/i18n/vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Component } from "vue";
-import { ElMessage, type InputInstance } from "element-plus";
+import { type InputInstance } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconBox, IconFolder, IconFolderOpen, IconFolderMinus, IconRestore, IconChevronRight, IconEdit, IconEye, IconEyeOff, IconPlus, IconDragDrop, IconFileText, IconPhoto, IconVideo, IconMusic, IconMusicBolt, IconCube3dSphere, IconPhotoAi, IconCameraAi } from "@tabler/icons-vue";
 import { normalizeNodeMenu, resolveNodeMenu, serializeNodeMenu, type NodeMenuItem } from "@toonflow/server/nodeMenu";
 import { generalSettings, updateGeneralSettings } from "@/stores/settings";
@@ -307,7 +308,7 @@ function renameItem() {
   if (!item) return;
   const label = itemName.value.trim();
   if (!item.type && !label) {
-    ElMessage.warning("分组名称不能为空");
+    toast.warning("分组名称不能为空");
     itemName.value = item.label;
     return;
   }

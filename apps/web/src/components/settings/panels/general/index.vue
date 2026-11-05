@@ -101,7 +101,7 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { defaultUiSettings, generalSettings, uiSettings, updateGeneralSettings, updateUiSettings } from "@/stores/settings";
 import { publicWeb } from "@/stores/multiTenant";
 import { getNotificationPermission, requestNotificationPermission } from "@/lib/notification";
@@ -123,7 +123,7 @@ async function authorizeNotifications() {
   if (requestingPermission.value) return;
   requestingPermission.value = true;
   try { notificationPermission.value = await requestNotificationPermission(); }
-  catch { ElMessage.error("请求通知授权失败，请检查浏览器的网站设置"); }
+  catch { toast.error("请求通知授权失败，请检查浏览器的网站设置"); }
   finally { requestingPermission.value = false; }
 }
 

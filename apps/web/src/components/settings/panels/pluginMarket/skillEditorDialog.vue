@@ -66,7 +66,8 @@
 <script setup lang="ts">
 import axios from "axios";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { IconChevronRight, IconFile, IconFilePlus, IconFolder, IconFolderOpen } from "@tabler/icons-vue";
 import type { Plugin } from "./types";
 
@@ -226,7 +227,7 @@ async function handleNodeDrop(draggingNode: { data: Record<string, unknown> }, d
       if (selectedPath.value === sourcePath) selectedPath.value = targetPath;
       await loadFiles();
     } catch (error) {
-      ElMessage.error(errorMessage(error, "移动文件失败，请重试"));
+      toast.error(errorMessage(error, "移动文件失败，请重试"));
       treeVersion.value++;
     } finally {
       moving.value = false;
@@ -244,7 +245,7 @@ async function handleNodeDrop(draggingNode: { data: Record<string, unknown> }, d
     if (data.code !== 200) throw new Error(data.message || "保存顺序失败");
     await loadFiles();
   } catch (error) {
-    ElMessage.error(errorMessage(error, "保存顺序失败，请重试"));
+    toast.error(errorMessage(error, "保存顺序失败，请重试"));
     treeVersion.value++;
   } finally {
     moving.value = false;
@@ -256,7 +257,7 @@ async function createFile() {
   const directory = selectedPath.value.includes("/") ? selectedPath.value.slice(0, selectedPath.value.lastIndexOf("/")) : "";
   let fileName: string;
   try {
-    const { value } = await ElMessageBox.prompt(directory ? `新文件将创建在“${directory}”目录` : "新文件将创建在技能根目录", "新建文件", {
+    const { value } = await messageBox.prompt(directory ? `新文件将创建在“${directory}”目录` : "新文件将创建在技能根目录", "新建文件", {
       inputPattern: /^[^\\/]+$/,
       inputValidator: value => !!value?.trim() || "请输入文件名称",
       inputErrorMessage: "名称不能包含斜杠",
@@ -273,7 +274,7 @@ async function createFile() {
     await loadFiles();
     await selectFile(path);
   } catch (error) {
-    ElMessage.error(errorMessage(error, "创建文件失败，请重试"));
+    toast.error(errorMessage(error, "创建文件失败，请重试"));
   } finally {
     creating.value = false;
   }
@@ -284,7 +285,7 @@ async function close(done?: () => void) {
   if (draft.value !== original.value || dirtyPaths.value.size) {
     confirming.value = true;
     try {
-      await ElMessageBox.confirm("修改尚未保存，确定放弃修改并关闭吗？", "未保存的修改", { confirmButtonText: "放弃修改", cancelButtonText: "继续编辑", type: "warning" });
+      await messageBox.confirm("修改尚未保存，确定放弃修改并关闭吗？", "未保存的修改", { confirmButtonText: "放弃修改", cancelButtonText: "继续编辑", type: "warning" });
     } catch { return; }
     finally { confirming.value = false; }
   }
@@ -304,9 +305,9 @@ async function save() {
     drafts.delete(path);
     dirtyPaths.value.delete(path);
     emit("saved");
-    ElMessage.success("已保存");
+    toast.success("已保存");
   } catch (error) {
-    ElMessage.error(errorMessage(error, "保存文件失败，请重试"));
+    toast.error(errorMessage(error, "保存文件失败，请重试"));
   } finally {
     saving.value = false;
   }

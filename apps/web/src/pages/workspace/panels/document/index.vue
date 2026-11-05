@@ -10,7 +10,7 @@
 <script setup lang="ts">
 import { onActivated, onBeforeUnmount, onDeactivated, ref, shallowReactive, shallowRef, watch } from "vue";
 import { DockviewVue, type DockviewApi, type DockviewReadyEvent } from "dockview-vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import type { ExtResource } from "@toonflow/ext-scaffold/runtime";
 import { useWorkspaceStore } from "@/stores/workspace";
 import { settings, settingsStorage } from "@/stores/settings";
@@ -219,7 +219,7 @@ async function onEditorReady({ api }: DockviewReadyEvent) {
   finally { if (!lifetime.signal.aborted) ready.value = true; }
 }
 
-function reportError(error: unknown) { ElMessage.error(documentError(error)); }
+function reportError(error: unknown) { toast.error(documentError(error)); }
 
 function relativePath(path: string) {
   const parts = path.replaceAll("\\", "/").split("/").filter(part => part && part !== ".");
@@ -370,7 +370,7 @@ async function tabAction(id: string, action: TabAction) {
     keepOpen(id);
     if (session.context.resource.kind === "canvasNode") {
       // ACT: 画布节点保留唯一运行实例，分屏只移动，不能复制 Teleport 的挂载目标。
-      if (panel.group.panels.length < 2) { ElMessage.info("画布节点只有一个视图，请先打开另一标签再移动到分屏"); return; }
+      if (panel.group.panels.length < 2) { toast.info("画布节点只有一个视图，请先打开另一标签再移动到分屏"); return; }
       panel.api.moveTo({ group: panel.group, position: action === "splitRight" ? "right" : "bottom" });
     } else {
       const viewId = `${id}:${crypto.randomUUID()}`;

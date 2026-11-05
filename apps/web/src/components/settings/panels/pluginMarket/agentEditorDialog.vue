@@ -24,7 +24,8 @@
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { IconBook, IconFile } from "@tabler/icons-vue";
 import messageMarkdown from "@/components/messageMarkdown.vue";
 import type { Plugin } from "./types";
@@ -69,7 +70,7 @@ async function close(done?: () => void) {
   if (saving.value || confirming.value) return;
   if (files.value.some(file => file.content !== file.original)) {
     confirming.value = true;
-    try { await ElMessageBox.confirm("修改尚未保存，确定放弃修改并关闭吗？", "未保存的修改", { confirmButtonText: "放弃修改", cancelButtonText: "继续编辑", type: "warning" }); }
+    try { await messageBox.confirm("修改尚未保存，确定放弃修改并关闭吗？", "未保存的修改", { confirmButtonText: "放弃修改", cancelButtonText: "继续编辑", type: "warning" }); }
     catch { return; }
     finally { confirming.value = false; }
   }
@@ -88,7 +89,7 @@ async function save() {
     if (data.code !== 200) throw new Error(data.message || "保存失败");
     file.original = content;
     emit("saved");
-    ElMessage.success("已保存");
+    toast.success("已保存");
   } catch (cause) { error.value = errorMessage(cause); }
   finally { saving.value = false; }
 }

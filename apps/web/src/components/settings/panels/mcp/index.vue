@@ -72,7 +72,8 @@
 import { translate } from "@toonflow/i18n/vue";
 import { computed, onMounted, ref, watch } from "vue";
 import axios from "axios";
-import { ElMessage, type InputInstance } from "element-plus";
+import { type InputInstance } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconCopy, IconDownload, IconFileText, IconRefresh, IconTerminal2 } from "@tabler/icons-vue";
 import { saveSettings, settings } from "@/stores/settings";
 import saveFile from "@/lib/saveFile";
@@ -145,7 +146,7 @@ async function setEnabled(enabled: boolean) {
     });
     await refreshStatus();
   } catch (error) {
-    ElMessage.error(errorMessage(error));
+    toast.error(errorMessage(error));
   } finally {
     saving.value = false;
   }
@@ -154,7 +155,7 @@ async function setEnabled(enabled: boolean) {
 async function savePort() {
   const port = portDraft.value;
   if (port === undefined || !Number.isInteger(port) || port < 1 || port > 65535) {
-    ElMessage.error("端口必须是 1 到 65535 的整数");
+    toast.error("端口必须是 1 到 65535 的整数");
     return;
   }
   saving.value = true;
@@ -166,7 +167,7 @@ async function savePort() {
     });
     await refreshStatus();
   } catch (error) {
-    ElMessage.error(errorMessage(error));
+    toast.error(errorMessage(error));
   } finally {
     saving.value = false;
   }
@@ -185,7 +186,7 @@ async function copyConfig(transport: "http" | "stdio") {
 async function copyText(content: string, title: string, hasCredential = false) {
   try {
     await writeClipboardText(content);
-    ElMessage.success(`${title}已复制`);
+    toast.success(`${title}已复制`);
     return;
   } catch {
     // ACT: HTTP 页面或剪贴板权限受限时保留手动复制入口。
@@ -208,7 +209,7 @@ async function handleSkill(action: "view" | "copy" | "download") {
     if (action === "view") skillVisible.value = true;
     else await copyText(skillContent.value, "Skill");
   } catch (error) {
-    ElMessage.error(errorMessage(error));
+    toast.error(errorMessage(error));
   } finally {
     skillAction.value = "";
   }

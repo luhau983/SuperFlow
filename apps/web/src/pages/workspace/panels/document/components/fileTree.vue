@@ -84,7 +84,8 @@ import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowReactive, s
 import axios from "axios";
 import type { IDockviewPanelProps } from "dockview-vue";
 import type { DropdownInstance } from "element-plus";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/vue-virtual";
 import { IconBox, IconChevronRight, IconFile, IconFilePlus, IconFileSearch, IconFocus2, IconFolder, IconFolderOpen, IconFolderPlus, IconVector, IconListCheck, IconLoader2, IconRefresh, IconSearch } from "@tabler/icons-vue";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
@@ -213,7 +214,7 @@ function storageKey(workspaceDirectory = directory.value ?? "") {
 function persistTreeState(workspaceDirectory = directory.value) {
   if (!workspaceDirectory) return;
   try { settingsStorage.setItem(storageKey(workspaceDirectory), JSON.stringify({ expandedKeys: expandedKeys.value })); }
-  catch { ElMessage.warning("无法保存文件树展开状态"); }
+  catch { toast.warning("无法保存文件树展开状态"); }
 }
 function loadTreeState() {
   expandedKeys.value = [];
@@ -418,7 +419,7 @@ async function executeFileAction(action: FileAction, item: FileTreeItem, target?
 function showActionError(error: unknown) {
   if (error === "cancel" || error === "close") return;
   const message = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : undefined;
-  ElMessage.error(message || (error instanceof Error ? error.message : "文件操作失败"));
+  toast.error(message || (error instanceof Error ? error.message : "文件操作失败"));
 }
 
 async function handleCommand(command: string, item = menuItem.value, source = clipboard.value) {
@@ -483,7 +484,7 @@ async function handleCommand(command: string, item = menuItem.value, source = cl
       }
       if (source.cut && usingClipboard) clipboard.value = undefined;
     } else if (command === "rename" && item.path) {
-      const { value } = await ElMessageBox.prompt("名称", "重命名", {
+      const { value } = await messageBox.prompt("名称", "重命名", {
         inputValue: item.name,
         inputValidator: value => !!value?.trim() && !/[\\/\0]/.test(value) && ![".", ".."].includes(value.trim()) || "请输入有效名称，不能包含斜杠",
         confirmButtonText: "保存", cancelButtonText: "取消",
@@ -500,7 +501,7 @@ async function handleCommand(command: string, item = menuItem.value, source = cl
       if (!items.length) return;
       total = items.length;
       const detail = item.type === "node" ? t`该节点会从画布中删除。` : items.some(item => item.type === "directory" || item.type === "canvas") ? t`所选文件夹的全部内容、画布的全部节点会一并删除。` : "";
-      await ElMessageBox.confirm(`删除${items.length === 1 ? `“${items[0]!.name}”` : `这 ${items.length} 项`}？${detail}此操作不可恢复。`, item.type === "node" ? "删除节点" : "删除文件", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消", closeOnClickModal: false });
+      await messageBox.confirm(`删除${items.length === 1 ? `“${items[0]!.name}”` : `这 ${items.length} 项`}？${detail}此操作不可恢复。`, item.type === "node" ? "删除节点" : "删除文件", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消", closeOnClickModal: false });
       if (currentDirectory !== directory.value) return;
       for (const entry of items) {
         if (currentDirectory !== directory.value) throw new Error("工作目录已切换");
@@ -514,11 +515,11 @@ async function handleCommand(command: string, item = menuItem.value, source = cl
       await executeFileAction(command, item);
       return;
     } else return;
-    if (total > 1) ElMessage.success(`已完成 ${completed} / ${total} 项`);
+    if (total > 1) toast.success(`已完成 ${completed} / ${total} 项`);
   } catch (error) {
     if (total > 1 && error !== "cancel" && error !== "close") {
       const message = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : error instanceof Error ? error.message : translate("文件操作失败");
-      ElMessage.error(`已完成 ${completed} / ${total} 项，剩余未执行：${message}`);
+      toast.error(`已完成 ${completed} / ${total} 项，剩余未执行：${message}`);
     } else showActionError(error);
   } finally { busy.value = false; if (changed && currentDirectory === directory.value) refreshTree(); }
 }
@@ -636,7 +637,7 @@ async function createEntry(folder: boolean, item = currentItem()) {
   const destination = item.type === "directory" ? item.path : parentPath(item.path);
   let value: string;
   try {
-    ({ value } = await ElMessageBox.prompt(`在“${destination || "工作区根目录"}”中新建${folder ? "文件夹" : "文件"}`, folder ? "新建文件夹" : "新建文件", {
+    ({ value } = await messageBox.prompt(`在“${destination || "工作区根目录"}”中新建${folder ? "文件夹" : "文件"}`, folder ? "新建文件夹" : "新建文件", {
       inputValue: folder ? "新建文件夹" : "文档.md",
       inputValidator: name => !!name?.trim() && !/[\\/\0]/.test(name) && ![".", ".."].includes(name.trim()) || "请输入有效名称，不能包含斜杠",
       confirmButtonText: "创建",
@@ -658,7 +659,7 @@ async function createEntry(folder: boolean, item = currentItem()) {
     }
   } catch (error) {
     const message = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : undefined;
-    ElMessage.error(message || (error instanceof Error ? error.message : "创建文件失败"));
+    toast.error(message || (error instanceof Error ? error.message : "创建文件失败"));
   } finally {
     creating.value = false;
   }

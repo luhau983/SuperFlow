@@ -42,7 +42,7 @@
 
 <script setup lang="ts">
 import { computed, defineAsyncComponent, ref, shallowRef, type Component } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { customProviders, saveSettings, type CustomProvider } from "@/stores/settings";
 import { IconPlus, IconSettings, IconEdit, IconTrash } from "@tabler/icons-vue";
 import { languageProviders } from "@toonflow/providers";
@@ -84,7 +84,7 @@ async function deleteProvider(id: string) {
       if (!Array.isArray(current)) throw new Error("配置格式错误");
       return { customProviders: current.filter(item => item?.id !== id) };
     });
-  } catch { ElMessage.error("删除失败，请重试"); }
+  } catch { toast.error("删除失败，请重试"); }
   finally { deletingId.value = ""; }
 }
 </script>

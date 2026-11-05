@@ -72,7 +72,8 @@
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import { getRectOfNodes, useVueFlow, type GraphNode, type Node, type XYPosition } from "@vue-flow/core";
-import { ElButton, ElCard, ElColorPicker, ElMessage, ElPopover } from "element-plus";
+import { ElButton, ElCard, ElColorPicker, ElPopover } from "element-plus";
+import { toast } from "vue-sonner";
 import {
   IconCopyPlus, IconBoxMultiple, IconDeselect,
   IconLayoutGrid, IconLayoutColumns, IconLayoutRows,
@@ -328,7 +329,7 @@ function startDragCopy(selection: GraphNode[], withEdges: boolean) {
         finishGroupDrag(flow.getNodes.value, created);
       });
     } catch (error) {
-      if (!signal.aborted) ElMessage.error(error instanceof Error ? error.message : "拖动复制失败");
+      if (!signal.aborted) toast.error(error instanceof Error ? error.message : "拖动复制失败");
     } finally {
       signal.removeEventListener("abort", finish);
       busy.value = false;
@@ -374,7 +375,7 @@ async function operate(command: "duplicate" | "group" | "ungroup" | "mergeGroup"
       }
     });
   } catch (error) {
-    if (!signal.aborted) ElMessage.error(error instanceof Error ? error.message : "选区操作失败");
+    if (!signal.aborted) toast.error(error instanceof Error ? error.message : "选区操作失败");
   } finally {
     busy.value = false;
   }

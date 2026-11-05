@@ -1,5 +1,5 @@
 import axios from "axios";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import type { useVueFlow } from "@vue-flow/core";
 import { uploadNodeFile } from "@toonflow/nodes-scaffold/workspaceFiles";
 import type { NodeOutput } from "@toonflow/nodes-scaffold/values";
@@ -129,5 +129,5 @@ export async function importCanvasFiles(droppedFiles: File[], position: { x: num
 }
 
 function showError(error: unknown) {
-  ElMessage.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : error instanceof Error ? error.message : "文件导入失败");
+  toast.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : error instanceof Error ? error.message : "文件导入失败");
 }

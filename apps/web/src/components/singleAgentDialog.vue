@@ -67,7 +67,7 @@ export type SingleAgentDialogResult = SingleAgentResult & { messages: AgentMessa
 import axios from "axios";
 import { translate } from "@toonflow/i18n/vue";
 import { computed, nextTick, onBeforeUnmount, reactive, ref, useSlots, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconArrowUp, IconChevronRight, IconPlayerPause, IconPlayerPlay, IconPlayerStopFilled } from "@tabler/icons-vue";
 import type { SingleAgentEvent } from "@toonflow/server/singleAgent/types";
 import type { ThinkingLevel } from "@toonflow/server/modelReasoning";
@@ -297,7 +297,7 @@ function stop() {
 
 async function copyMessage(content: string) {
   try { await writeClipboardText(content); }
-  catch { ElMessage.error("复制失败"); }
+  catch { toast.error("复制失败"); }
 }
 
 function updateFollowing() {

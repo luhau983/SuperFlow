@@ -94,7 +94,7 @@
 import { translate } from "@toonflow/i18n/vue";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import axios from "axios";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { isLocalMobile } from "@/lib/platform";
 import { IconDownload, IconRefresh } from "@tabler/icons-vue";
 import { saveSettings, settings } from "@/stores/settings";
@@ -213,7 +213,7 @@ async function updateConfig(patch: Partial<FfmpegConfig>) {
     });
     return props.visible && !readController.signal.aborted ? await refreshStatus() : false;
   } catch (error) {
-    ElMessage.error(errorMessage(error));
+    toast.error(errorMessage(error));
     return false;
   } finally {
     saving.value = false;

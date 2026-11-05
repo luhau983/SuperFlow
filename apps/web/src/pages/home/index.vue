@@ -124,7 +124,9 @@ import axios from "axios";
 import { storeToRefs } from "pinia";
 import { computed, defineAsyncComponent, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
-import { ElMessage, ElMessageBox, type InputInstance, type ScrollbarInstance } from "element-plus";
+import { type InputInstance, type ScrollbarInstance } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { getReadableFileMimeType, readableFileAccept } from "@toonflow/server/documentFormats";
 import {
   IconQrcode, IconDeviceDesktop, IconHome,
@@ -297,7 +299,7 @@ function pasteAttachments(event: ClipboardEvent) {
   } catch (error) {
     event.preventDefault();
     event.stopImmediatePropagation();
-    ElMessage.error(error instanceof Error ? error.message : "添加附件失败，请重试");
+    toast.error(error instanceof Error ? error.message : "添加附件失败，请重试");
   }
 }
 
@@ -352,19 +354,19 @@ function addAttachments(files: File[]) {
     const readableMimeType = getReadableFileMimeType(file.name, file.type);
     const mimeType = readableMimeType ?? file.type.split(";")[0]!.trim().toLowerCase();
     if (!readableMimeType && !/^(image|video)\//.test(mimeType)) {
-      ElMessage.warning("只支持图片、视频和受支持的文本或文档文件");
+      toast.warning("只支持图片、视频和受支持的文本或文档文件");
       continue;
     }
     if (!file.size || file.size > 100 * 1024 * 1024) {
-      ElMessage.warning("附件不能为空且不能超过 100 MB");
+      toast.warning("附件不能为空且不能超过 100 MB");
       continue;
     }
     if (mimeType === "text/plain" && file.size > 400000) {
-      ElMessage.warning("文本附件不能超过 400 KB（400000 字节），请缩减内容后重试。");
+      toast.warning("文本附件不能超过 400 KB（400000 字节），请缩减内容后重试。");
       continue;
     }
     if (promptAttachments.value.length >= 20) {
-      ElMessage.warning("每条消息最多添加 20 个附件");
+      toast.warning("每条消息最多添加 20 个附件");
       break;
     }
     promptAttachments.value.push({ name: file.name, path: "", mimeType, file });
@@ -384,7 +386,7 @@ async function restoreAttachment(index: number) {
     promptInput.value?.focus();
     promptInput.value?.textarea?.setSelectionRange(prompt.value.length, prompt.value.length);
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "取回文本失败，请重试");
+    toast.error(error instanceof Error ? error.message : "取回文本失败，请重试");
   }
 }
 
@@ -406,7 +408,7 @@ async function openProject(project: Project) {
     try { await workspaceStore.openProject(directory); }
     catch (err) {
       if (!axios.isAxiosError(err) || err.response?.status !== 404) throw err;
-      const reselect = await ElMessageBox.confirm(`项目“${project.name}”的文件夹不存在，是否重新选择文件夹？`, "工作目录不存在", {
+      const reselect = await messageBox.confirm(`项目“${project.name}”的文件夹不存在，是否重新选择文件夹？`, "工作目录不存在", {
         confirmButtonText: "重新选择", cancelButtonText: "取消", type: "warning",
       }).then(() => true, () => false);
       if (!reselect) return;
@@ -416,7 +418,7 @@ async function openProject(project: Project) {
     }
     await enterWorkspace();
   } catch (err) {
-    ElMessage.error(axios.isAxiosError<{ message?: string }>(err)
+    toast.error(axios.isAxiosError<{ message?: string }>(err)
       ? err.response?.data.message || "无法打开项目，请重试"
       : err instanceof Error ? err.message : "无法打开项目，请重试");
   } finally { opening.value = false; }
@@ -439,12 +441,12 @@ async function exportProject(project: Project) {
         ? await error.response.data.text().then(JSON.parse).catch(() => null) : error.response?.data;
       if (typeof data?.message === "string") message = data.message;
     }
-    ElMessage.error(message);
+    toast.error(message);
   } finally { exportingDirectory.value = ""; }
 }
 
 async function renameProject(project: Project) {
-  const result = await ElMessageBox.prompt("请输入项目名称", "重命名项目", {
+  const result = await messageBox.prompt("请输入项目名称", "重命名项目", {
     inputValue: project.name, confirmButtonText: "保存", cancelButtonText: "取消",
     inputValidator: value => !!value?.trim() || "项目名称不能为空",
   }).catch(() => null);
@@ -458,7 +460,7 @@ async function createProject(fromPrompt = true) {
   creating.value = true;
   try {
     const { directory, empty } = await useWorkspaceFiles(path).list();
-    if (fromPrompt && !empty) return ElMessage.warning("该文件夹不为空，请重新选择空文件夹；已有项目请使用“新建项目”入口或点击项目列表打开。");
+    if (fromPrompt && !empty) return toast.warning("该文件夹不为空，请重新选择空文件夹；已有项目请使用“新建项目”入口或点击项目列表打开。");
     if (empty) await useWorkspaceFiles(directory).writeJson("画布1.json", { toonflowCanvas: true, nodes: [], edges: [], viewport: { x: 0, y: 0, zoom: 1 } }, true);
     await workspaceStore.openProject(directory);
     if (fromPrompt && (prompt.value.trim() || promptAttachments.value.length)) {
@@ -466,7 +468,7 @@ async function createProject(fromPrompt = true) {
     }
     await enterWorkspace();
   } catch (err) {
-    ElMessage.error(axios.isAxiosError<{ message?: string }>(err)
+    toast.error(axios.isAxiosError<{ message?: string }>(err)
       ? err.response?.data.message || "无法打开或创建项目，请重试"
       : err instanceof Error ? err.message : "无法打开或创建项目，请重试");
   } finally {

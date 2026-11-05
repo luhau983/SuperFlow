@@ -14,7 +14,7 @@
 
 <script setup lang="ts">
 import { computed, ref } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconFileZip, IconFolderOpen } from "@tabler/icons-vue";
 import { useWorkspaceStore } from "@/stores/workspace";
 import projectCard from "./projectCard.vue";
@@ -34,7 +34,7 @@ function selectFolder(event: Event) {
   if (!files.length) return;
   const name = files[0]!.webkitRelativePath.split("/")[0];
   if (!name || !files.every(file => file.webkitRelativePath.startsWith(`${name}/`))) {
-    ElMessage.warning("无法读取文件夹，请重新选择");
+    toast.warning("无法读取文件夹，请重新选择");
     return;
   }
   emit("select", { name, files });
@@ -46,7 +46,7 @@ function selectArchive(event: Event) {
   input.value = "";
   if (!file) return;
   if (!/\.zip$/i.test(file.name) || !file.size) {
-    ElMessage.warning("请选择非空的 ZIP 压缩包");
+    toast.warning("请选择非空的 ZIP 压缩包");
     return;
   }
   emit("select", { name: file.name, files: [file] });

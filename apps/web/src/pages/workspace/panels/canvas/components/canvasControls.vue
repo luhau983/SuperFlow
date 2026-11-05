@@ -121,7 +121,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { Panel, useVueFlow, type XYPosition } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
 import { IconMap, IconMagnet, IconFocusCentered } from "@tabler/icons-vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { currentUser } from "@/stores/multiTenant";
 import { arrangeCanvas } from "../arrangeCanvas";
 
@@ -183,7 +183,7 @@ async function arrangeNodes() {
       undoPopoverVisible.value = true;
     });
   } catch (error) {
-    if (!controller.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "整理画布失败");
+    if (!controller.signal.aborted) toast.error(error instanceof Error ? error.message : "整理画布失败");
   } finally {
     arrangeController = undefined;
     arranging.value = false;
@@ -203,7 +203,7 @@ async function undoArrange() {
       undoPopoverVisible.value = false;
     });
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "撤销整理失败");
+    toast.error(error instanceof Error ? error.message : "撤销整理失败");
   }
 }
 </script>

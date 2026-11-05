@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import http from "@/lib/http";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconBrandOpenai } from "@tabler/icons-vue";
 import { t, translate } from "@toonflow/i18n/vue";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
@@ -83,12 +83,12 @@ async function loadStatus() {
   try {
     applyStatus(await http<CodexStatus>({ method: "GET", url: "/api/codex/status" }));
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "读取 Codex 状态失败");
+    toast.error(error instanceof Error ? error.message : "读取 Codex 状态失败");
   }
 }
 
 function showError(error: unknown) {
-  ElMessage.error(error instanceof Error ? error.message : "操作失败");
+  toast.error(error instanceof Error ? error.message : "操作失败");
 }
 
 async function request(path: "link" | "unlink") {
@@ -109,7 +109,7 @@ async function saveSettings(key?: string) {
       method: "PUT", url: "/api/codex/save", data: { apiUrl: apiUrl.value.trim(), ...(key === undefined ? {} : { apiKey: key }) },
     }));
     apiKey.value = "";
-    ElMessage.success("Codex 设置已保存");
+    toast.success("Codex 设置已保存");
   } catch (error) {
     showError(error);
   } finally {

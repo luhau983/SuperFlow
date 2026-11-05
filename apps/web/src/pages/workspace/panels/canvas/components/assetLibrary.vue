@@ -99,7 +99,8 @@
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import axios from "axios";
 import { t } from "@toonflow/i18n/vue";
-import { ElMessage, ElTree, type InputInstance, type TreeNodeData } from "element-plus";
+import { ElTree, type InputInstance, type TreeNodeData } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconChevronRight, IconDots, IconEye, IconFile, IconFolder, IconFolderOpen, IconFolderPlus, IconMusic, IconPhoto, IconSearch, IconUpload, IconVideo, IconX } from "@tabler/icons-vue";
 import type { NodeOutput } from "@toonflow/nodes-scaffold/values";
 import { mentionAssetType } from "@toonflow/server/agent/mentionSources";
@@ -139,7 +140,7 @@ const folderSaving = ref(false);
 const assetMenuRef = ref<InstanceType<typeof assetMenu>>();
 const previewAsset = ref<{ name: string; url: string; kind: "image" | "audio" | "video" }>();
 const { src: mediaSrc, preparing, error: previewError, handleError, handleLoaded } = useMediaPreview(() => previewAsset.value?.url, () => previewAsset.value?.kind ?? "image");
-watch(previewError, error => { if (error && previewAsset.value?.kind === "image") ElMessage.error(error); });
+watch(previewError, error => { if (error && previewAsset.value?.kind === "image") toast.error(error); });
 let loadRequest = 0;
 onBeforeUnmount(() => { loadRequest++; });
 
@@ -256,7 +257,7 @@ async function loadEntries() {
 
 function showError(error: unknown, name?: string) {
   const message = axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message;
-  ElMessage.error(name ? `${name}：${message}` : message);
+  toast.error(name ? `${name}：${message}` : message);
 }
 
 async function uploadFiles(event: Event) {
@@ -279,7 +280,7 @@ async function uploadFiles(event: Event) {
       }
     }
     if (uploaded) {
-      ElMessage.success(t`已上传 ${uploaded} 个素材`);
+      toast.success(t`已上传 ${uploaded} 个素材`);
       await refreshAssets();
     }
   } finally {
@@ -357,7 +358,7 @@ async function saveAsset() {
       : new Blob([String(output.value)]);
     await axios.put("/api/assets/save", content, { params: { path }, headers: { "Content-Type": "application/octet-stream" } });
     saveVisible.value = false;
-    ElMessage.success("已保存到素材库");
+    toast.success("已保存到素材库");
     await loadEntries();
   } catch (error) {
     showError(error);

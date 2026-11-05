@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import { ref } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import type { AgentToolCall } from "@toonflow/server/agent/types";
 import http from "@/lib/http";
 
@@ -24,7 +24,7 @@ async function answer(approved: boolean) {
     await http({ method: "POST", url: "/api/agent/answer", data: { directory, callId, values: { approved } } });
   } catch (error) {
     if (submitted.value === callId) submitted.value = "";
-    ElMessage.error(error instanceof Error ? error.message : "请求失败");
+    toast.error(error instanceof Error ? error.message : "请求失败");
   }
 }
 </script>

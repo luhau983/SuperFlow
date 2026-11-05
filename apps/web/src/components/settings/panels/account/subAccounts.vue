@@ -90,7 +90,8 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref, useId, watch } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { t, translate } from "@toonflow/i18n/vue";
 import { IconCopy, IconEye, IconEyeOff, IconPlus, IconSearch } from "@tabler/icons-vue";
 import type { CreateSubAccountParams, SubAccount, SubAccountsPage } from "@toonflow/server/channel";
@@ -164,9 +165,9 @@ async function copyCredential(account: SubAccount) {
   if (!props.visible || !token) return;
   try {
     await writeClipboardText(account.credential);
-    if (props.visible && props.token === token) ElMessage.success("凭证已复制");
+    if (props.visible && props.token === token) toast.success("凭证已复制");
   } catch {
-    if (props.visible && props.token === token) ElMessage.error("复制凭证失败");
+    if (props.visible && props.token === token) toast.error("复制凭证失败");
   }
 }
 
@@ -246,7 +247,7 @@ async function createAccount() {
   try {
     await http<null>({ method: "POST", url: "/api/channel/subAccounts/create", data, signal: request.signal, headers: { Authorization: `Bearer ${token}` } });
     if (request.signal.aborted || props.token !== token) return;
-    ElMessage.success("凭证已创建");
+    toast.success("凭证已创建");
     createVisible.value = false;
     search.value = "";
     activeSearch.value = "";
@@ -267,14 +268,14 @@ async function removeAccount(account: SubAccount) {
   deleteConfirmation = request;
   deletingId.value = account.id;
   try {
-    await ElMessageBox.confirm(`删除凭证“${account.name}”后，该凭证将无法继续使用。`, "删除凭证", {
+    await messageBox.confirm(`删除凭证“${account.name}”后，该凭证将无法继续使用。`, "删除凭证", {
       confirmButtonText: "删除", cancelButtonText: "取消", type: "warning",
     });
     if (deleteConfirmation === request) deleteConfirmation = undefined;
     if (request.signal.aborted || props.token !== token || !props.visible) return;
     await http<null>({ method: "POST", url: "/api/channel/subAccounts/remove", data: { id: account.id }, signal: request.signal, headers: { Authorization: `Bearer ${token}` } });
     if (request.signal.aborted || props.token !== token) return;
-    ElMessage.success("凭证已删除");
+    toast.success("凭证已删除");
     page.value = Math.min(page.value, Math.max(1, Math.ceil(Math.max(0, total.value - 1) / pageSize.value)));
     await refresh();
   } catch (error) {
@@ -301,7 +302,7 @@ function cancelRequests() {
   createRequest?.abort();
   removeRequest?.abort();
   if (deleteConfirmation) {
-    ElMessageBox.close();
+    messageBox.close();
     deleteConfirmation = undefined;
   }
   listLoading.value = false;

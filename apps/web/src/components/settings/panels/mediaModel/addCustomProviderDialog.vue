@@ -114,7 +114,7 @@ import axios from "axios";
 import { computed, defineAsyncComponent, onBeforeUnmount, ref, shallowRef, watch, type Component } from "vue";
 import formCreate, { type Api, type Options } from "@toonflow/provider-web/formCreate";
 import { IconFileCode, IconCode, IconFolderOpen, IconCopy, IconSparkles, IconLink } from "@tabler/icons-vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { mediaProviders } from "@toonflow/providers";
 import { modelIcon } from "@toonflow/model-icons";
 import messageMarkdown from "@/components/messageMarkdown.vue";
@@ -319,9 +319,9 @@ async function addProvider() {
 async function copyPrompt() {
   try {
     await writeClipboardText(developmentPrompt.value);
-    ElMessage.success("提示词已复制，发给其他 AI 后跟着回答问题即可");
+    toast.success("提示词已复制，发给其他 AI 后跟着回答问题即可");
   } catch {
-    ElMessage.error("复制失败，请展开「查看完整提示词」后手动复制");
+    toast.error("复制失败，请展开「查看完整提示词」后手动复制");
   }
 }
 </script>

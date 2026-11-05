@@ -152,7 +152,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { translate } from "@toonflow/i18n/vue";
 import { IconChartBar, IconCreditCard, IconExternalLink, IconGift, IconLogout, IconRefresh, IconWallet } from "@tabler/icons-vue";
 import logoUrl from "@toonflow/assets/logo.svg";
@@ -315,7 +315,7 @@ async function refreshCaptcha() {
     captchaImage.value = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(result.svg)}`;
     originalCaptcha.value = result.captcha;
   } catch (error) {
-    if (!request.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "获取图形验证码失败");
+    if (!request.signal.aborted) toast.error(error instanceof Error ? error.message : "获取图形验证码失败");
   } finally {
     if (captchaRequest === request) captchaLoading.value = false;
   }
@@ -336,12 +336,12 @@ async function submitLogin() {
     });
     const saved = await saveSettings(() => request.signal.aborted ? undefined : { toonflowAccount: result });
     if (saved && !request.signal.aborted) {
-      ElMessage.success("登录成功");
+      toast.success("登录成功");
       emit("loggedIn");
     }
   } catch (error) {
     if (!request.signal.aborted) {
-      ElMessage.error(error instanceof Error ? error.message : "登录失败");
+      toast.error(error instanceof Error ? error.message : "登录失败");
       void refreshCaptcha();
     }
   } finally {
@@ -367,9 +367,9 @@ async function submitRegister() {
     clearForms();
     loginForm.account = phone;
     authTab.value = "login";
-    ElMessage.success("注册成功，请登录");
+    toast.success("注册成功，请登录");
   } catch (error) {
-    if (!request.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "注册失败");
+    if (!request.signal.aborted) toast.error(error instanceof Error ? error.message : "注册失败");
   } finally {
     if (authRequest === request) submitting.value = false;
   }
@@ -380,9 +380,9 @@ async function logout() {
   loggingOut.value = true;
   try {
     await saveSettings(() => ({ toonflowAccount: null }));
-    ElMessage.success("已退出登录");
+    toast.success("已退出登录");
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "退出登录失败");
+    toast.error(error instanceof Error ? error.message : "退出登录失败");
   } finally {
     loggingOut.value = false;
   }

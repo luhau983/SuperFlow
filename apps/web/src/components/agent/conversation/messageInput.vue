@@ -55,7 +55,7 @@
 import { locale, t, translate } from "@toonflow/i18n/vue";
 import { computed, inject, ref, shallowRef, watch } from "vue";
 import { IconArrowUp, IconMicrophone, IconPaperclip, IconPhoto, IconPlayerStopFilled } from "@tabler/icons-vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { getReadableFileMimeType, readableFileAccept } from "@toonflow/server/documentFormats";
 import type { AgentContext, AgentMention, AgentStats } from "@toonflow/server/agent/types";
 import type { CanvasContext } from "@toonflow/tool-canvas/runtime";
@@ -148,7 +148,7 @@ watch(running, value => {
 function submitDraft(mode: "steer" | "followUp" = "followUp") {
   if (locked.value || !props.active || (running.value && editingId.value)) return;
   if (running.value && (draftAttachments.value.length || sender?.getTagData().mention.length)) {
-    ElMessage.warning("生成期间仅支持发送文字，请先移除附件和提及；当前草稿已保留");
+    toast.warning("生成期间仅支持发送文字，请先移除附件和提及；当前草稿已保留");
     return;
   }
   if (running.value) emit("submit", mode);
@@ -200,7 +200,7 @@ async function insertMentions(mentions: AgentMention[]) {
   const instance = sender;
   if (!instance || locked.value || running.value || !props.active) return;
   const currentIds = new Set(instance.getTagData().mention.map(item => item.id));
-  if (currentIds.size + mentions.length > 20) return ElMessage.warning("每条消息最多提及 20 个输出或素材");
+  if (currentIds.size + mentions.length > 20) return toast.warning("每条消息最多提及 20 个输出或素材");
   insertingMentions = true;
   try {
     if (mentionPosition?.node.instance.$el.isConnected) mentionPosition.node.instance.focus(mentionPosition.node.offset);
@@ -212,7 +212,7 @@ async function insertMentions(mentions: AgentMention[]) {
       await instance.setMention({ id: mention.id, name: mentionName(mention) });
     }
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "添加提及失败");
+    toast.error(error instanceof Error ? error.message : "添加提及失败");
   } finally {
     mentionQuery.value = undefined;
     mentionPosition = undefined;
@@ -242,7 +242,7 @@ async function fillPrompt(prompt: string, attachments?: AgentAttachment[]) {
   const instance = sender;
   if (!instance || locked.value) return false;
   if (running.value && attachments?.length) {
-    ElMessage.warning("生成期间仅支持发送文字，当前草稿已保留");
+    toast.warning("生成期间仅支持发送文字，当前草稿已保留");
     return false;
   }
   draftMentions.value = [];
@@ -331,7 +331,7 @@ async function restoreTextAttachment(index: number) {
     await instance.setText(`${instance.isEmpty(false) ? "" : "\n"}${text}`);
     if (sender === instance) draftAttachments.value = draftAttachments.value.filter(item => item !== attachment);
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "还原文本附件失败，请重试");
+    toast.error(error instanceof Error ? error.message : "还原文本附件失败，请重试");
   } finally {
     restoringAttachment.value = false;
   }
@@ -346,7 +346,7 @@ function pasteAttachments(event: ClipboardEvent) {
     } catch (error) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      ElMessage.warning(error instanceof Error ? error.message : "无法添加文本附件");
+      toast.warning(error instanceof Error ? error.message : "无法添加文本附件");
       return;
     }
   }
@@ -399,24 +399,24 @@ function dropAttachments(event: DragEvent) {
 
 function addAttachments(files: File[]) {
   if (locked.value) return;
-  if (running.value) return ElMessage.warning("生成期间仅支持发送文字，请在本轮完成后添加附件");
+  if (running.value) return toast.warning("生成期间仅支持发送文字，请在本轮完成后添加附件");
   for (const file of files) {
     const readableMimeType = getReadableFileMimeType(file.name, file.type);
     const mimeType = readableMimeType ?? file.type.split(";")[0]!.trim().toLowerCase();
     if (!readableMimeType && !/^(image|video)\//.test(mimeType)) {
-      ElMessage.warning("只支持图片、视频和受支持的文本或文档文件");
+      toast.warning("只支持图片、视频和受支持的文本或文档文件");
       continue;
     }
     if (!file.size || file.size > 100 * 1024 * 1024) {
-      ElMessage.warning("附件不能为空且不能超过 100 MB");
+      toast.warning("附件不能为空且不能超过 100 MB");
       continue;
     }
     if (mimeType === "text/plain" && file.size > 400000) {
-      ElMessage.warning("文本附件不能超过 400 KB（400000 字节），请缩减内容后重试。");
+      toast.warning("文本附件不能超过 400 KB（400000 字节），请缩减内容后重试。");
       continue;
     }
     if (draftAttachments.value.length >= 20) {
-      ElMessage.warning("每条消息最多添加 20 个附件");
+      toast.warning("每条消息最多添加 20 个附件");
       break;
     }
     draftAttachments.value.push({ name: file.name, path: "", mimeType, file });

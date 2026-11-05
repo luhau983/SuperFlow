@@ -56,7 +56,7 @@
 <script setup lang="ts">
 import { defineAsyncComponent, ref } from "vue";
 import { useRouter } from "vue-router";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconArrowLeft, IconDevices } from "@tabler/icons-vue";
 import { customProviders, multiTenantEnabled } from "@/stores/settings";
 import { useHelloStore } from "@/stores/hello";
@@ -89,7 +89,7 @@ async function completeSetup() {
     anonymousData.track(view.value === "custom" ? "onboarding.complete" : "onboarding.skip");
     await router.replace("/home");
   } catch {
-    ElMessage.error("保存引导状态失败，请重试");
+    toast.error("保存引导状态失败，请重试");
   } finally {
     saving.value = false;
   }

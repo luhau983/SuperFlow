@@ -40,7 +40,7 @@
 import { computed, onBeforeUnmount, ref, watch, type ComponentPublicInstance } from "vue";
 import axios from "axios";
 import { translate } from "@toonflow/i18n/vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { useWorkspaceStore } from "@/stores/workspace";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
 import { stopAgent } from "@/lib/agentControl";
@@ -186,8 +186,8 @@ function setConversationRun(item: OpenConversation, runId: string) {
 async function newConversation(source?: { file?: string; message: AgentMessage }) {
   if (loading.value || historyLoading.value) return;
   const directory = workspaceStore.project?.directory;
-  if (!directory) return ElMessage.warning("请先打开项目");
-  if (source && (!source.file || !(source.message.entryId || source.message.replyTo))) return ElMessage.warning("消息尚未保存，请稍后创建分支");
+  if (!directory) return toast.warning("请先打开项目");
+  if (source && (!source.file || !(source.message.entryId || source.message.replyTo))) return toast.warning("消息尚未保存，请稍后创建分支");
   const initialModel = conversationRefs.get(conversationKey.value)?.getSelectedModel();
   const currentRequest = ++requestId;
   const errorMessage = source ? "创建对话分支失败" : "新建对话失败";
@@ -205,7 +205,7 @@ async function newConversation(source?: { file?: string; message: AgentMessage }
     showConversation(session).initialModel = initialModel;
     initialized.value = true;
   } catch (error) {
-    if (currentRequest === requestId) ElMessage.error(axios.isAxiosError(error)
+    if (currentRequest === requestId) toast.error(axios.isAxiosError(error)
       ? error.response?.data?.message || errorMessage
       : error instanceof Error ? error.message : errorMessage);
   } finally {
@@ -246,7 +246,7 @@ async function loadHistory(openLatest = false) {
       initialized.value = true;
     }
   } catch (error) {
-    if (currentRequest === requestId) ElMessage.error(error instanceof Error ? error.message : "读取历史对话失败");
+    if (currentRequest === requestId) toast.error(error instanceof Error ? error.message : "读取历史对话失败");
   } finally {
     if (currentRequest === requestId) {
       historyLoading.value = false;
@@ -271,7 +271,7 @@ async function selectConversation(file: string) {
     showConversation(session);
     initialized.value = true;
   } catch (error) {
-    if (currentRequest === requestId) ElMessage.error(error instanceof Error ? error.message : "读取对话失败");
+    if (currentRequest === requestId) toast.error(error instanceof Error ? error.message : "读取对话失败");
   } finally {
     if (currentRequest === requestId) loading.value = false;
   }
@@ -282,7 +282,7 @@ async function renameConversation(file: string, value: string) {
   const item = history.value.find(item => item.file === file);
   const nextName = value.trim();
   if (!directory || loading.value || historyLoading.value || (!item && file !== sessionFile.value)) return;
-  if (!nextName || nextName.length > 80) return ElMessage.warning("请输入 1–80 个字符的对话名称");
+  if (!nextName || nextName.length > 80) return toast.warning("请输入 1–80 个字符的对话名称");
   if (nextName === (file === sessionFile.value ? name.value : item?.name)) return;
   const currentRequest = ++requestId;
   loading.value = true;
@@ -296,7 +296,7 @@ async function renameConversation(file: string, value: string) {
     const opened = conversations.value.find(item => item.file === file);
     if (opened) opened.name = data.data.name;
   } catch (error) {
-    if (currentRequest === requestId) ElMessage.error(axios.isAxiosError(error)
+    if (currentRequest === requestId) toast.error(axios.isAxiosError(error)
       ? error.response?.data?.message || "重命名对话失败"
       : error instanceof Error ? error.message : "重命名对话失败");
   } finally {
@@ -307,7 +307,7 @@ async function renameConversation(file: string, value: string) {
 async function removeConversation(file: string) {
   const directory = workspaceStore.project?.directory;
   if (!directory || loading.value || historyLoading.value || history.value.length <= 1 || !history.value.some(item => item.file === file)) return;
-  if (!/^[\w-]+\.jsonl$/.test(file)) return ElMessage.error("对话文件名无效");
+  if (!/^[\w-]+\.jsonl$/.test(file)) return toast.error("对话文件名无效");
   const currentRequest = ++requestId;
   loading.value = true;
   try {
@@ -320,7 +320,7 @@ async function removeConversation(file: string) {
     }
     conversations.value = conversations.value.filter(item => item.file !== file);
   } catch (error) {
-    if (currentRequest === requestId) ElMessage.error(axios.isAxiosError(error)
+    if (currentRequest === requestId) toast.error(axios.isAxiosError(error)
       ? error.response?.data?.message || "移除历史对话失败"
       : error instanceof Error ? error.message : "移除历史对话失败");
   } finally {
@@ -335,7 +335,7 @@ function stopProject(directory = projectDirectory) {
     for (const stop of stops) stop.finish(true);
   }).catch(error => {
     for (const stop of stops) stop.finish(false);
-    ElMessage.error(error instanceof Error ? error.message : "停止生成失败，请重试");
+    toast.error(error instanceof Error ? error.message : "停止生成失败，请重试");
   });
 }
 

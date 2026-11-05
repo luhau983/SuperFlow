@@ -26,7 +26,7 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, reactive, ref, useId, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import http from "@/lib/http";
 import smsCodeButton from "./smsCodeButton.vue";
 
@@ -55,11 +55,11 @@ async function submit() {
       },
     });
     if (request.signal.aborted) return;
-    ElMessage.success(message || "密码重置成功，请重新登录");
+    toast.success(message || "密码重置成功，请重新登录");
     emit("reset", phone);
     visible.value = false;
   } catch (error) {
-    if (!request.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "重置密码失败");
+    if (!request.signal.aborted) toast.error(error instanceof Error ? error.message : "重置密码失败");
   } finally {
     if (controller === request) submitting.value = false;
   }

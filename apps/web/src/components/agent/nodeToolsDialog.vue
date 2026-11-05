@@ -46,7 +46,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { ref, useId, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { translate } from "@toonflow/i18n/vue";
 import { nodeToolPermissionsSchema } from "@toonflow/tool-canvas/runtime";
 import { agentNodeToolPermissions, saveSettings } from "@/stores/settings";
@@ -102,7 +102,7 @@ async function saveConfig() {
   try {
     await saveSettings(() => ({ agentNodeTools: config }));
     visible.value = false;
-    ElMessage.success("节点工具权限已保存，对所有对话生效");
+    toast.success("节点工具权限已保存，对所有对话生效");
   } catch (error) {
     saveError.value = axios.isAxiosError(error)
       ? error.response?.data?.message || "保存失败，请重试；当前填写的内容已保留"

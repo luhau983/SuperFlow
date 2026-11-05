@@ -1,5 +1,5 @@
 import { h } from "vue";
-import { ElMessageBox } from "element-plus";
+import messageBox from "@/lib/messageBox";
 import { translate } from "@toonflow/i18n/vue";
 
 export const pluginTypeLabels = { node: "节点", ext: "文件扩展", tool: "工具", skill: "技能", provider: "供应商", agent: "Agent" };
@@ -16,7 +16,7 @@ export async function confirmPluginInstall(details: InstallDetails, signal?: Abo
   const abort = () => dismiss?.();
   signal?.addEventListener("abort", abort, { once: true });
   try {
-    const confirmed = await ElMessageBox.confirm(({ cancel }) => {
+    const confirmed = await messageBox.confirm(({ cancel }) => {
       dismiss = cancel;
       if (signal?.aborted) queueMicrotask(cancel);
       const label = details.type && Object.hasOwn(pluginTypeLabels, details.type) ? pluginTypeLabels[details.type as keyof typeof pluginTypeLabels] : "插件名称";

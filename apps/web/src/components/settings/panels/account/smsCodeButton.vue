@@ -61,7 +61,7 @@ function loadCaptcha() {
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import http from "@/lib/http";
 
 const props = defineProps<{ phone: string; disabled?: boolean; visible?: boolean; isForget?: boolean }>();
@@ -116,7 +116,7 @@ async function openCaptcha() {
       if (result.ret !== 0) return closeCaptcha();
       if (!result.ticket || !result.randstr) {
         closeCaptcha();
-        ElMessage.error("人机验证失败，请重试");
+        toast.error("人机验证失败，请重试");
         return;
       }
       submitted = true;
@@ -130,9 +130,9 @@ async function openCaptcha() {
         retryAt.value = timestamp;
         try { localStorage.setItem(storageKey, JSON.stringify({ phone, retryAt: timestamp })); } catch { /* ACT: 浏览器禁用存储时仅保留当前页面倒计时。 */ }
         updateCountdown();
-        ElMessage.success("验证码已发送，请查收短信");
+        toast.success("验证码已发送，请查收短信");
       } catch (error) {
-        if (!request.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "发送短信验证码失败");
+        if (!request.signal.aborted) toast.error(error instanceof Error ? error.message : "发送短信验证码失败");
       } finally {
         if (controller === request) closeCaptcha();
       }
@@ -141,7 +141,7 @@ async function openCaptcha() {
   } catch (error) {
     if (!request.signal.aborted) {
       closeCaptcha();
-      ElMessage.error(error instanceof Error ? error.message : "人机验证码加载失败，请重试");
+      toast.error(error instanceof Error ? error.message : "人机验证码加载失败，请重试");
     }
   } finally {
     if (controller === request) loading.value = false;

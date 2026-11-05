@@ -71,7 +71,8 @@
 
 <script setup lang="ts">
 import { nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
-import { ElMessage, type ButtonInstance } from "element-plus";
+import { type ButtonInstance } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconArrowLeft, IconCloudUpload, IconFolder, IconPhotoPlus, IconPlus } from "@tabler/icons-vue";
 import axios from "axios";
 import { zip } from "fflate";
@@ -123,11 +124,11 @@ watch(projectPickerVisible, async value => {
 
 function selectMedia(file: File | undefined, kind: "work" | "cover") {
   if (!file || submitting.value) return;
-  if (!file.size) { ElMessage.warning("文件内容为空，请重新选择"); return; }
-  if (file.name.length > 255) { ElMessage.warning("文件名不能超过 255 个字符"); return; }
+  if (!file.size) { toast.warning("文件内容为空，请重新选择"); return; }
+  if (file.name.length > 255) { toast.warning("文件名不能超过 255 个字符"); return; }
   const extension = kind === "work" ? /\.(mp4|webm)$/i : /\.(jpe?g|png|webp)$/i;
   if (!extension.test(file.name) || (file.type && !file.type.startsWith(kind === "work" ? "video/" : "image/"))) {
-    ElMessage.warning(kind === "cover" ? "封面仅支持 JPG、PNG、WebP 图片" : "作品仅支持 MP4、WebM 视频");
+    toast.warning(kind === "cover" ? "封面仅支持 JPG、PNG、WebP 图片" : "作品仅支持 MP4、WebM 视频");
     return;
   }
   const target = kind === "work" ? work : cover;
@@ -204,10 +205,10 @@ async function uploadFile(file: File, kind: ExploreUploadSignatureParams["kind"]
 async function publishWork() {
   if (submitting.value || projectPickerVisible.value || !visible.value) return;
   const token = toonflowAccountToken.value;
-  if (!token) { ElMessage.warning("请先在账号设置中登录"); return; }
+  if (!token) { toast.warning("请先在账号设置中登录"); return; }
   const title = name.value.trim();
-  if (!title || title.length > 80) { ElMessage.warning("请填写不超过 80 字的作品名称"); return; }
-  if (!work.value || !cover.value) { ElMessage.warning("请选择作品视频和封面"); return; }
+  if (!title || title.length > 80) { toast.warning("请填写不超过 80 字的作品名称"); return; }
+  if (!work.value || !cover.value) { toast.warning("请选择作品视频和封面"); return; }
   const video = work.value.file;
   const image = cover.value.file;
   const project = selectedProject.value;
@@ -230,7 +231,7 @@ async function publishWork() {
       signal: request.signal, headers: { Authorization: `Bearer ${token}` }, timeout: 65000,
     });
     request.signal.throwIfAborted();
-    ElMessage.success("作品已提交，等待审核");
+    toast.success("作品已提交，等待审核");
     visible.value = false;
   } catch (error) {
     if (!request.signal.aborted) uploadError.value = error instanceof Error ? error.message : "作品提交失败，请重试";

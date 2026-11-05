@@ -222,7 +222,7 @@ import { translate, t } from "@toonflow/i18n/vue";
 import { computed, defineAsyncComponent, onMounted, onBeforeUnmount, ref } from "vue";
 import { publicWeb } from "@/stores/multiTenant";
 import axios from "axios";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { actualPlatform, isMobile, isLocalDesktop, isRemoteConnection } from "@/lib/platform";
 import { QRCode } from "tdesign-vue-next";
 import {
@@ -302,7 +302,7 @@ const sponsors = ref<Sponsor[]>([]);
 //   try {
 //     sponsors.value = await http<Sponsor[]>({ method: "GET", url: "/api/channel/community/getSponsorList", signal: controller.signal });
 //   } catch (error) {
-//     if (!controller.signal.aborted) ElMessage.error(getUpdateError(error));
+//     if (!controller.signal.aborted) toast.error(getUpdateError(error));
 //   }
 // });
 
@@ -345,7 +345,7 @@ async function saveUpdateSource(source: string) {
   try {
     await saveSettings(() => ({ desktopUpdateSource: source }));
   } catch (error) {
-    ElMessage.error(getUpdateError(error));
+    toast.error(getUpdateError(error));
   } finally {
     sourceSaving.value = false;
   }
@@ -358,7 +358,7 @@ async function saveAutoUpdate(enabled: boolean) {
     await saveSettings(() => ({ desktopAutoUpdate: enabled }));
     if (enabled) void startDesktopUpdate().catch(() => {});
   } catch (error) {
-    ElMessage.error(getUpdateError(error));
+    toast.error(getUpdateError(error));
   } finally {
     autoUpdateSaving.value = false;
   }

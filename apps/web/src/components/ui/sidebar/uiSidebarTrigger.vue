@@ -8,7 +8,7 @@
     @click="toggleSidebar"
   >
     <icon-layout-sidebar />
-    <span class="sr-only">Toggle Sidebar</span>
+    <span class="sr-only">切换侧栏</span>
   </uiButton>
 </template>
 

@@ -65,7 +65,7 @@ import { locale, translate } from "@toonflow/i18n/vue";
 import { computed, inject, onBeforeUnmount, reactive, ref, watch } from "vue";
 import axios from "axios";
 import { IconCornerDownRight, IconListDetails, IconLoader2, IconPencil, IconTrash } from "@tabler/icons-vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { getReadableFileExtension, getReadableFileMimeType } from "@toonflow/server/documentFormats";
 import { useNodeModelSelection } from "@toonflow/nodes-scaffold/nodeAi";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
@@ -220,9 +220,9 @@ async function sendQueuedMessage(streamingBehavior: "steer" | "followUp") {
   const sessionFile = props.sessionFile;
   if (!props.active || props.disabled || submitting.value || stopping.value || projectStops.value > 0 || compacting.value
     || deletingId.value || restoringAttachment.value || voiceActive.value || editingId.value || !instance || !draft || !prompt) return;
-  if (draft.attachments.length || draft.mentionedIds.length) return ElMessage.warning("生成中的排队和引导仅支持文字，附件和提及请在本轮结束后发送");
-  if (!directory || !sessionFile || !expectedRunId) return ElMessage.warning("对话正在准备，请稍后发送");
-  if (!model) return ElMessage.warning("请先选择模型");
+  if (draft.attachments.length || draft.mentionedIds.length) return toast.warning("生成中的排队和引导仅支持文字，附件和提及请在本轮结束后发送");
+  if (!directory || !sessionFile || !expectedRunId) return toast.warning("对话正在准备，请稍后发送");
+  if (!model) return toast.warning("请先选择模型");
   const requestController = new AbortController();
   const requestRunId = crypto.randomUUID();
   queueController = requestController;
@@ -282,8 +282,8 @@ async function sendQueuedMessage(streamingBehavior: "steer" | "followUp") {
         }
       }
       if (!requestController.signal.aborted) {
-        if (refreshed) ElMessage.warning(message);
-        else ElMessage.error(message);
+        if (refreshed) toast.warning(message);
+        else toast.error(message);
       }
     }
   } finally {
@@ -296,9 +296,9 @@ async function sendQueuedMessage(streamingBehavior: "steer" | "followUp") {
 async function copyMessage(content: string) {
   try {
     await writeClipboardText(content);
-    ElMessage.success("已复制");
+    toast.success("已复制");
   } catch {
-    ElMessage.error("复制失败，请重试");
+    toast.error("复制失败，请重试");
   }
 }
 
@@ -308,7 +308,7 @@ async function updateQueuedMessage(message: AgentQueuedMessage, action: "steer" 
   const queueRunId = queue.value.runId;
   if (queueLocked.value || !instance || !draft || !directory || !props.sessionFile || !queueRunId || queueRunId !== runId) return;
   if (action === "edit" && (draft.prompt.trim() || draft.attachments.length || draft.mentionedIds.length)) {
-    return ElMessage.warning("请先发送或清空输入框，再编辑排队消息");
+    return toast.warning("请先发送或清空输入框，再编辑排队消息");
   }
   submitting.value = true;
   queueAction.value = { id: message.id, type: action };
@@ -331,11 +331,11 @@ async function updateQueuedMessage(message: AgentQueuedMessage, action: "steer" 
     if (axios.isAxiosError(error) && !error.response) {
       if (action === "edit") {
         await instance.fillQueuedMessage(message.content);
-        ElMessage.warning("取回结果未确认，文字已保留到输入框；原消息可能仍会执行，请核对对话后再发送");
-      } else ElMessage.warning("操作结果未确认，请核对队列状态后重试");
+        toast.warning("取回结果未确认，文字已保留到输入框；原消息可能仍会执行，请核对对话后再发送");
+      } else toast.warning("操作结果未确认，请核对队列状态后重试");
     } else {
       const detail = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : undefined;
-      ElMessage.error(detail || (error instanceof Error ? error.message : "操作排队消息失败"));
+      toast.error(detail || (error instanceof Error ? error.message : "操作排队消息失败"));
     }
   } finally {
     queueAction.value = undefined;
@@ -364,7 +364,7 @@ async function deleteMessage(item: AgentMessage) {
       !(item.replyTo && message.role === "assistant" && !message.report && !message.agentMessage && message.replyTo === item.replyTo));
   } catch (error) {
     const message = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : undefined;
-    ElMessage.error(message || (error instanceof Error ? error.message : "删除消息失败"));
+    toast.error(message || (error instanceof Error ? error.message : "删除消息失败"));
   } finally {
     deletingId.value = undefined;
   }
@@ -412,7 +412,7 @@ async function stopMessage() {
     if ((!runId || runIds.includes(runId)) && !controller && !receivingForwardedStream) receiveEvent({ type: "done" });
   } catch (error) {
     remoteRunning.value = !!runId || pendingRunIds.size > 0;
-    ElMessage.error(error instanceof Error ? error.message : "停止生成失败，请重试");
+    toast.error(error instanceof Error ? error.message : "停止生成失败，请重试");
   } finally {
     stopping.value = false;
   }
@@ -480,15 +480,15 @@ async function sendMessage(source?: AgentMessage) {
     : draft?.mentionedIds ?? [];
   const references = source && !editing ? source.mentions ?? [] : draft?.mentions ?? [];
   const mentions = references.filter(mention => mentionedIds.includes(mention.id)).map(mention => ({ ...mention }));
-  if (mentionedIds.some(id => !mentions.some(mention => mention.id === id))) return ElMessage.warning("存在无法读取的提及，请删除后重新选择");
+  if (mentionedIds.some(id => !mentions.some(mention => mention.id === id))) return toast.warning("存在无法读取的提及，请删除后重新选择");
   if (!source && editingId.value !== undefined) return;
   const resendIndex = source ? messages.value.findIndex(item => item.id === source.id) : -1;
   if (source && (source.role !== "user" || resendIndex < 0)) return;
   const resendFrom = source ? source.entryId ?? messages.value.slice(resendIndex + 1).find(item => item.role === "user" && item.entryId)?.entryId : undefined;
   if (locked.value || !instance || (!prompt && !attachments.length)) return;
   const model = selectedModelChoice.value;
-  if (!directory) return ElMessage.warning("请先打开项目");
-  if (!model) return ElMessage.warning("请先选择模型");
+  if (!directory) return toast.warning("请先打开项目");
+  if (!model) return toast.warning("请先选择模型");
 
   const requestController = new AbortController();
   const requestRunId = crypto.randomUUID();
@@ -670,11 +670,11 @@ async function sendMessage(source?: AgentMessage) {
     finishStats(requestController.signal.aborted ? "cancelled" : "failed");
     const responseMessage = (error as { response?: { data?: { message?: string } } })?.response?.data?.message;
     const message = requestController.signal.aborted || stoppedRunIds.has(requestRunId) ? translate("已停止生成") : responseMessage || (error instanceof Error ? error.message : translate("发送失败，请重试"));
-    if ((source && !accepted) || !ownsStream) { userMessage.error = message; ElMessage.error(message); }
+    if ((source && !accepted) || !ownsStream) { userMessage.error = message; toast.error(message); }
     else if (isSuperseded()) {
       reply.error = message;
       reply.streaming = false;
-      if (!messages.value.includes(reply)) { userMessage.error = message; ElMessage.error(message); }
+      if (!messages.value.includes(reply)) { userMessage.error = message; toast.error(message); }
     }
     else stream.receive({ type: "error", message });
   } finally {

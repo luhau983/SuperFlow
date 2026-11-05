@@ -7,7 +7,8 @@
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref } from "vue";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { actualPlatform } from "@/lib/platform";
 import ffmpeg from "./panels/pluginMarket/ffmpeg.vue";
 
@@ -20,12 +21,12 @@ events.onmessage = async event => {
   catch { return; }
   if (data?.type !== "required" || pending || visible.value) return;
   if (actualPlatform.isLocalMobile) {
-    ElMessage.warning("未检测到可用的 FFmpeg，无法继续这项音视频处理。当前移动端版本暂不支持在应用内安装 FFmpeg。");
+    toast.warning("未检测到可用的 FFmpeg，无法继续这项音视频处理。当前移动端版本暂不支持在应用内安装 FFmpeg。");
     return;
   }
   pending = true;
   try {
-    await ElMessageBox.confirm("这项音视频处理需要 FFmpeg，但尚未检测到可用版本。现在下载并安装吗？", "需要 FFmpeg", {
+    await messageBox.confirm("这项音视频处理需要 FFmpeg，但尚未检测到可用版本。现在下载并安装吗？", "需要 FFmpeg", {
       confirmButtonText: "下载并安装", cancelButtonText: "暂不下载", closeOnClickModal: false,
     });
     if (events.readyState !== EventSource.CLOSED) visible.value = true;

@@ -28,7 +28,7 @@
 <script setup lang="ts">
 import axios from "axios";
 import { onBeforeUnmount, onMounted, ref } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { saveSettings, settings } from "@/stores/settings";
 
 const visible = defineModel<boolean>({ default: false });
@@ -71,7 +71,7 @@ async function save() {
   saveError.value = "";
   try {
     await saveSettings(() => ({ agentSystemPrompt }));
-    ElMessage.success("系统提示词已保存");
+    toast.success("系统提示词已保存");
     visible.value = false;
   } catch (error) {
     saveError.value = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || "保存失败，请重试；当前内容已保留" : error instanceof Error ? error.message : "保存失败，请重试；当前内容已保留";

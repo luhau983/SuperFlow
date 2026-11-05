@@ -129,7 +129,8 @@
 import { msg, translate } from "@toonflow/i18n/vue";
 import { computed, onActivated, reactive, ref, watch } from "vue";
 import axios from "axios";
-import { ElMessage, ElMessageBox } from "element-plus";
+import { toast } from "vue-sonner";
+import messageBox from "@/lib/messageBox";
 import { IconDeviceFloppy, IconEdit, IconEye, IconRefresh, IconTrash } from "@tabler/icons-vue";
 import { saveSettings, settings } from "@/stores/settings";
 import messageMarkdown from "@/components/messageMarkdown.vue";
@@ -213,7 +214,7 @@ async function loadDocument(document: DocumentState, name: "agents" | "memory", 
 async function reloadDocument(document: DocumentState, name: "agents" | "memory") {
   if (isDirty(document)) {
     try {
-      await ElMessageBox.confirm("重新加载将放弃当前文档未保存的修改，读取最新内容。", "重新加载", {
+      await messageBox.confirm("重新加载将放弃当前文档未保存的修改，读取最新内容。", "重新加载", {
         confirmButtonText: "放弃修改并加载",
         cancelButtonText: "继续编辑",
         type: "warning",
@@ -229,7 +230,7 @@ async function saveDocument(document: DocumentState, name: "agents" | "memory") 
   if (!document.loaded || document.loading || document.saving || document.conflict || !isDirty(document)) return;
   const content = document.content;
   if (content.length > maxLength) {
-    ElMessage.error(`内容不能超过 ${maxLength} 个字符`);
+    toast.error(`内容不能超过 ${maxLength} 个字符`);
     return;
   }
   document.saving = true;
@@ -248,12 +249,12 @@ async function saveDocument(document: DocumentState, name: "agents" | "memory") 
     document.savedContent = data.data.content;
     document.revision = data.data.revision;
     if (document.content === content) document.content = data.data.content;
-    ElMessage.success(`${name === "agents" ? "SuperFlow 说明" : "本地记忆"}已保存`);
+    toast.success(`${name === "agents" ? "SuperFlow 说明" : "本地记忆"}已保存`);
     return true;
   } catch (error) {
     if (axios.isAxiosError(error) && error.response?.status === 409) document.conflict = true;
     document.error = document.conflict ? conflictMessage.id : errorMessage(error);
-    ElMessage.error(getDocumentError(document));
+    toast.error(getDocumentError(document));
   } finally {
     document.saving = false;
   }
@@ -268,7 +269,7 @@ async function setMemoryEnabled(memoryEnabled: boolean) {
       return { personalization: { ...(value && typeof value === "object" && !Array.isArray(value) ? value : {}), memoryEnabled } };
     });
   } catch (error) {
-    ElMessage.error(errorMessage(error));
+    toast.error(errorMessage(error));
   } finally {
     savingMemorySetting.value = false;
   }
@@ -286,9 +287,9 @@ async function viewMemory() {
   try {
     await loadDocument(memoryDocument, "memory");
     if (memoryDocument.loaded) memoryVisible.value = true;
-    else ElMessage.error(getDocumentError(memoryDocument));
+    else toast.error(getDocumentError(memoryDocument));
   } catch (error) {
-    ElMessage.error(errorMessage(error));
+    toast.error(errorMessage(error));
   } finally {
     memoryAction.value = "";
   }
@@ -304,11 +305,11 @@ async function deleteMemory() {
   try {
     const memory = await readMemory();
     if (!memory.content && !isDirty(memoryDocument)) {
-      ElMessage.info("暂无本地记忆");
+      toast.info("暂无本地记忆");
       return;
     }
     try {
-      await ElMessageBox.confirm("将删除所有工作区共用的本地记忆及未保存的记忆修改，此操作无法撤销。SuperFlow 说明会保留。", "删除本地记忆", {
+      await messageBox.confirm("将删除所有工作区共用的本地记忆及未保存的记忆修改，此操作无法撤销。SuperFlow 说明会保留。", "删除本地记忆", {
         confirmButtonText: "删除",
         cancelButtonText: "取消",
         type: "warning",
@@ -325,9 +326,9 @@ async function deleteMemory() {
     if (data.code !== 200) throw new Error(data.message || "删除本地记忆失败，请重试");
     Object.assign(memoryDocument, data.data, { savedContent: data.data.content, loaded: true, conflict: false, error: "" });
     memoryEditing.value = false;
-    ElMessage.success("本地记忆已删除");
+    toast.success("本地记忆已删除");
   } catch (error) {
-    ElMessage.error(
+    toast.error(
       axios.isAxiosError(error) && error.response?.status === 409 ? "本地记忆已更新，未删除任何内容。请重新查看后重试。" : errorMessage(error)
     );
   } finally {

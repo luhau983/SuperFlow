@@ -24,7 +24,7 @@
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import type { ThinkingLevel } from "@toonflow/server/modelReasoning";
 import { useNodeModelSelection } from "@toonflow/nodes-scaffold/nodeAi";
 import modelPopover from "@/components/modelPopover.vue";
@@ -90,7 +90,7 @@ async function save() {
     if (data.code !== 200) throw new Error(data.message || "保存 A2A 设置失败");
     applySettings(data.data);
     emit("saved");
-    ElMessage.success("A2A 设置已保存");
+    toast.success("A2A 设置已保存");
   } catch (cause) { error.value = errorMessage(cause); }
   finally { saving.value = false; }
 }

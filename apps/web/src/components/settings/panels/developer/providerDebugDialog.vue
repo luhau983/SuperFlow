@@ -22,7 +22,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
 import axios from "axios";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { IconFolderOpen, IconRefresh, IconDownload } from "@tabler/icons-vue";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
 import { actualPlatform } from "@/lib/platform";
@@ -127,7 +127,7 @@ async function install() {
     await axios.post("/api/providers/media/add", { source: source.value }, { signal: owner.signal });
     owner.signal.throwIfAborted();
     invalidateNodeModels("media");
-    ElMessage.success("供应商已安装，可在媒体模型设置中配置使用");
+    toast.success("供应商已安装，可在媒体模型设置中配置使用");
   } catch (error) { if (!owner.signal.aborted) showError(error); }
   finally { if (controller === owner) { controller = undefined; action.value = ""; } }
 }

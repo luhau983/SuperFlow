@@ -135,7 +135,7 @@ import { t, translate } from "@toonflow/i18n/vue";
 import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, onScopeDispose, provide, ref, shallowReactive, shallowRef, watch } from "vue";
 import axios from "axios";
 import { debounce } from "lodash-es";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { actualPlatform, isMobile } from "@/lib/platform";
 import { storeToRefs } from "pinia";
 import { IconUnlink } from "@tabler/icons-vue";
@@ -371,13 +371,13 @@ async function selectAsset(entry: { name: string; path: string; type: string }) 
         if (importedId && !connected) {
           if (created && findNode(importedId) === created) flow.removeNodes(importedId, true);
           await useWorkspaceFiles(selection.directory).remove(`assets/${importedId}`, true).catch(cleanupError => {
-            if (cleanupError?.response?.data?.data?.code !== "ENOENT") ElMessage.error(cleanupError?.response?.data?.message || cleanupError.message);
+            if (cleanupError?.response?.data?.data?.code !== "ENOENT") toast.error(cleanupError?.response?.data?.message || cleanupError.message);
           });
         }
       }
     });
   } catch (error) {
-    if (!selection.signal.aborted) ElMessage.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message);
+    if (!selection.signal.aborted) toast.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message);
   } finally {
     if (assetSelection.value === selection) assetSelecting.value = false;
   }
@@ -631,7 +631,7 @@ async function dropFiles(event: DragEvent) {
   try {
     await canvasHistory.batch(() => dropCanvasFiles(event, { directory, availableNodes: availableNodes.value, signal: canvasController.signal, flow }));
   } catch (error) {
-    ElMessage.error(error instanceof Error ? error.message : "文件导入失败");
+    toast.error(error instanceof Error ? error.message : "文件导入失败");
   }
 }
 
@@ -648,7 +648,7 @@ function selectFiles(position: { x: number; y: number }) {
     try {
       await canvasHistory.batch(async () => { await importCanvasFiles(files, position, context); });
     } catch (error) {
-      ElMessage.error(error instanceof Error ? error.message : "文件导入失败");
+      toast.error(error instanceof Error ? error.message : "文件导入失败");
     }
   };
   input.click();
@@ -679,7 +679,7 @@ async function changeHistory(direction: "undo" | "redo") {
     await canvasHistory[direction]();
     edgeDisconnect.value = undefined;
   } catch (error) {
-    ElMessage.error(
+    toast.error(
       axios.isAxiosError<{ message?: string }>(error)
         ? error.response?.data.message || "恢复画布失败"
         : error instanceof Error
@@ -709,7 +709,7 @@ const saveCanvas = debounce((directory: string, fileName: string) => {
     } catch (err) {
       saveError = err;
       canvasSaveError.value = axios.isAxiosError<{ message?: string }>(err) ? err.response?.data.message || err.message : err instanceof Error ? err.message : "画布保存失败";
-      ElMessage.error(
+      toast.error(
         axios.isAxiosError<{ message?: string }>(err)
           ? err.response?.data.message || "画布保存失败"
           : err instanceof Error
@@ -951,7 +951,7 @@ async function copySelectedNodes() {
   copyingNodes = true;
   try {
     if (nodes.length === 1 && await copyImageNodeToClipboard(directory, { data: nodes[0]!.data ?? {} })) {
-      ElMessage.success("已复制图片");
+      toast.success("已复制图片");
       return;
     }
     const ids = new Set(nodes.map(node => node.id));
@@ -970,7 +970,7 @@ async function copySelectedNodes() {
     const edges = snapshot.edges.filter(edge => ids.has(edge.source) && ids.has(edge.target));
     await copyNodesToClipboard(copies, edges, directory);
   } catch (error) {
-    if (!signal.aborted) ElMessage.error(error instanceof Error ? error.message : "节点复制失败");
+    if (!signal.aborted) toast.error(error instanceof Error ? error.message : "节点复制失败");
   } finally {
     copyingNodes = false;
   }
@@ -1019,7 +1019,7 @@ async function importCanvasContent(files: File[], position: { x: number; y: numb
     await canvasHistory.batch(async () => { await importCanvasFiles(files, position, { directory, availableNodes: availableNodes.value, signal: canvasSignal, flow }); });
     return true;
   } catch (error) {
-    if (!canvasSignal.aborted) ElMessage.error(error instanceof Error ? error.message : "剪贴板内容导入失败");
+    if (!canvasSignal.aborted) toast.error(error instanceof Error ? error.message : "剪贴板内容导入失败");
     return false;
   }
 }
@@ -1065,7 +1065,7 @@ async function pasteClipboardNode(position: { x: number; y: number }, command?: 
       ? t`无法读取剪贴板，请在画布上按 ${shortcutLabel(pasteShortcut)} 粘贴`
       : translate("无法读取剪贴板，请允许浏览器访问剪贴板");
     if (!canvasSignal.aborted)
-      ElMessage.error(
+      toast.error(
         error instanceof DOMException && error.name === "NotAllowedError" ? clipboardMessage : error instanceof Error ? error.message : "剪贴板内容粘贴失败"
       );
     return false;
@@ -1172,7 +1172,7 @@ function updateCanvasKeys(event: KeyboardEvent) {
     void canvasHistory
       .batch(() => menu.deleteSelection(nodes))
       .catch((error) => {
-        ElMessage.error(error instanceof Error ? error.message : "节点删除失败");
+        toast.error(error instanceof Error ? error.message : "节点删除失败");
       });
     return;
   }
@@ -1336,7 +1336,7 @@ async function loadRemoteNodes(reloadName?: string, requireReload = false) {
           console.error("加载远端节点失败", node, error);
           // 保存拒绝时旧组件仍可用，不从节点菜单中移除；脚本加载错误仍排除。
           if (nodeTypes.value[nodeType] && !nodeErrors.value[nodeType]) {
-            if (reloadNames.has(node.name) && !signal.aborted) ElMessage.warning({
+            if (reloadNames.has(node.name) && !signal.aborted) toast.warning({
               message: `${node.displayName}已安装，但当前节点无法刷新。请等待任务结束后，点击节点右上角的刷新按钮。`,
               grouping: true,
             });

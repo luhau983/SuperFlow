@@ -48,7 +48,7 @@
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
-import { ElMessage } from "element-plus";
+import { toast } from "vue-sonner";
 import { saveSettings, settings } from "@/stores/settings";
 
 type NetworkSettings = {
@@ -122,10 +122,10 @@ async function saveNetwork() {
   try {
     const network = readForm();
     await saveSettings(() => ({ network }));
-    ElMessage.success("网络设置已保存");
+    toast.success("网络设置已保存");
   } catch (cause) {
     requestError.value = errorMessage(cause);
-    if (controller.signal.aborted) ElMessage.error(requestError.value);
+    if (controller.signal.aborted) toast.error(requestError.value);
   } finally {
     saving.value = false;
   }
