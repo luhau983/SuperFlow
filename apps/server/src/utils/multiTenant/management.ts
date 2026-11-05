@@ -59,7 +59,7 @@ export async function releaseUserReservation(req: Request, userId: string, reque
 export async function readOwnBalance(req: Request) {
   assertAppRequest(req);
   const user = requestIdentity(req);
-  if (!user) throw Object.assign(new Error("请先登录 Toonflow"), { status: 401 });
+  if (!user) throw Object.assign(new Error("请先登录 SuperFlow"), { status: 401 });
   if (user.role !== "user") return { wallets: [], transactions: [] };
   return modelGateway.readBalance(user.id);
 }

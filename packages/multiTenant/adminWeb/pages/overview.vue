@@ -16,7 +16,7 @@
 
     <section class="accessSection" aria-labelledby="overviewAccessTitle">
       <h2 id="overviewAccessTitle">{{ translate("创作入口") }}</h2>
-      <p class="sectionDescription">{{ translate("通过此地址登录或注册 Toonflow。") }}</p>
+      <p class="sectionDescription">{{ translate("通过此地址登录或注册 SuperFlow。") }}</p>
       <code v-if="creationUrl" class="creationUrl" dir="ltr">{{ creationUrl }}</code>
     </section>
 

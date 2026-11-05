@@ -11,10 +11,10 @@
     <el-tabs v-model="activeTab" class="providerTabs">
       <el-tab-pane :label="translate('文本供应商')" name="text" />
       <el-tab-pane :label="translate('媒体供应商')" name="media" />
-      <el-tab-pane :label="translate('Toonflow 云端')" name="cloud" />
+      <el-tab-pane :label="translate('SuperFlow 云端')" name="cloud" />
     </el-tabs>
     <section v-if="activeTab === 'cloud'" class="cloudSection" aria-labelledby="providerCloudTitle">
-      <header class="sectionHeading"><h2 id="providerCloudTitle">{{ translate("Toonflow 云端凭据") }}</h2><el-tag :type="cloudConfigured ? 'success' : 'info'" size="small">{{ cloudConfigured ? translate("已配置") : translate("未配置") }}</el-tag></header>
+      <header class="sectionHeading"><h2 id="providerCloudTitle">{{ translate("SuperFlow 云端凭据") }}</h2><el-tag :type="cloudConfigured ? 'success' : 'info'" size="small">{{ cloudConfigured ? translate("已配置") : translate("未配置") }}</el-tag></header>
       <p>{{ translate("使用平台专用云端凭据同步上游模型，凭据不会返回创作端。") }}</p>
       <el-form class="cloudForm" labelPosition="top" :disabled="busy || !loaded" @submit.prevent="syncCloud">
         <el-form-item class="tokenField" :label="translate('云端访问令牌')" for="providerCloudToken"><el-input id="providerCloudToken" v-model="cloudToken" type="password" autocomplete="off" :maxlength="16384" /></el-form-item>

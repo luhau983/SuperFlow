@@ -20,7 +20,7 @@
       </div>
       <div v-else class="welcomeContent">
         <h1 id="welcomeTitle">快速开始</h1>
-        <p class="description">登录 Toonflow 即可免配置快速开始，直接开启创作。</p>
+        <p class="description">登录 SuperFlow 即可免配置快速开始，直接开启创作。</p>
         <accountPanel v-if="!loggedIn" class="accountContent" @loggedIn="startWithAccount" />
         <el-button v-else class="startButton" type="primary" :loading="saving" @click="completeSetup">开始使用</el-button>
         <div class="secondaryActions">
@@ -37,14 +37,14 @@
 
       <footer class="pageFooter">
         <el-button class="deviceLink" size="small" :icon="IconDevices" @click="mobileConnectVisible = true">{{ mobileConnectionLabel }}</el-button>
-        <p>© {{ new Date().getFullYear() }} Toonflow · 保留所有权利。</p>
+        <p>© {{ new Date().getFullYear() }} SuperFlow · 保留所有权利。</p>
       </footer>
     </section>
     <div class="artPanel" aria-hidden="true">
       <bg class="artBg" />
       <div class="artBrand">
         <span class="artLogo" v-html="logoSvg" />
-        <span class="artName">Toonflow</span>
+        <span class="artName">SuperFlow</span>
       </div>
     </div>
     <mobileConnect v-model="mobileConnectVisible" />
@@ -102,7 +102,7 @@ async function completeSetup() {
   padding: 8px;
   background: var(--el-bg-color);
   color: var(--el-text-color-primary);
-  font-family: "Inter", "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-family: var(--el-font-family);
 
   .pageLanguage {
     position: fixed;
@@ -292,12 +292,7 @@ async function completeSetup() {
           display: block;
           width: 100%;
           height: 100%;
-        }
-
-        :deep(path) {
-          fill: #fff;
-        }
-      }
+        }      }
 
       .artName {
         font-size: 30px;

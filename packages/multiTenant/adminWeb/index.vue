@@ -3,8 +3,8 @@
     <template v-if="loading || !authenticated">
       <header class="authHeader">
         <div class="brand">
-          <img class="brandLogo" :src="logoUrl" alt="Toonflow" />
-          <span class="brandName">Toonflow</span>
+          <img class="brandLogo" :src="logoUrl" alt="SuperFlow" />
+          <span class="brandName">SuperFlow</span>
           <span class="brandContext">{{ translate("超管后台") }}</span>
         </div>
       </header>
@@ -34,8 +34,8 @@
       <aside id="adminSidebar" class="sidebar" :aria-label="translate('超管后台')">
         <div class="sidebarHeader">
           <div class="sidebarBrand">
-            <img class="sidebarLogo" :src="logoUrl" alt="Toonflow" />
-            <span class="brandName">Toonflow</span>
+            <img class="sidebarLogo" :src="logoUrl" alt="SuperFlow" />
+            <span class="brandName">SuperFlow</span>
           </div>
           <button class="sidebarToggle" type="button" :aria-label="sidebarCollapsed ? translate('展开侧栏') : translate('收起侧栏')" :title="sidebarCollapsed ? translate('展开侧栏') : translate('收起侧栏')" :aria-expanded="!sidebarCollapsed" aria-controls="adminSidebar" @click="sidebarCollapsed = !sidebarCollapsed">
             <icon-layout-sidebar-left-expand v-if="sidebarCollapsed" :size="18" aria-hidden="true" />
@@ -293,7 +293,7 @@ onBeforeUnmount(() => {
       gap: 10px;
       min-width: 0;
 
-      .brandLogo { width: 30px; height: 30px; object-fit: contain; .dark & { filter: invert(1); } }
+      .brandLogo { width: 30px; height: 30px; object-fit: contain; }
       .brandName { font-size: 20px; font-weight: 600; letter-spacing: -0.5px; }
       .brandContext { margin-inline-start: 6px; color: var(--el-text-color-regular); overflow-wrap: anywhere; }
     }
@@ -357,7 +357,7 @@ onBeforeUnmount(() => {
         min-width: 0;
         overflow: hidden;
 
-        .sidebarLogo { width: 30px; height: 30px; flex-shrink: 0; object-fit: contain; .dark & { filter: invert(1); } }
+        .sidebarLogo { width: 30px; height: 30px; flex-shrink: 0; object-fit: contain; }
         .brandName { overflow: hidden; font-size: 20px; font-weight: 600; letter-spacing: -0.5px; white-space: nowrap; }
       }
       .sidebarToggle {

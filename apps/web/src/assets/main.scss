@@ -1,4 +1,5 @@
 html:root {
+  --el-font-family: "Open Sans Variable", "Open Sans", "PingFang SC", "Microsoft YaHei", sans-serif;
   --ui-radius: 8px;
   --ui-radius-small: calc(var(--ui-radius) * 0.5);
   --ui-radius-large: calc(var(--ui-radius) * 1.5);
@@ -39,6 +40,7 @@ html:root {
 html,
 body,
 #app {
+  font-family: var(--el-font-family);
   margin: 0;
 }
 

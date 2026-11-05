@@ -44,7 +44,7 @@ function assertUserRequest(req: Request) {
   let source: URL | undefined;
   try { source = new URL(req.get("origin") ?? req.get("referer") ?? ""); } catch { /* 来源无效时统一拒绝。 */ }
   if (!source || !["http:", "https:"].includes(source.protocol) || source.host !== req.get("host") || req.get("x-toonflow-workspace") !== "1") {
-    throw Object.assign(new Error("只允许 Toonflow 页面访问账号接口"), { status: 403 });
+    throw Object.assign(new Error("只允许 SuperFlow 页面访问账号接口"), { status: 403 });
   }
 }
 function assertControlRequest(req: Request) {

@@ -52,10 +52,10 @@ export async function loadModelCloud(token: string, signal?: AbortSignal): Promi
     parsed = parseAccountProviderSources(sources);
   } catch {
     if (signal?.aborted) fail("请求已取消", 499);
-    fail("平台 Toonflow 云端配置获取失败", 502);
+    fail("平台 SuperFlow 云端配置获取失败", 502);
   }
   const payload = cloudSchema.safeParse({ accountToken: token, ...parsed });
-  if (!payload.success) fail("平台 Toonflow 云端配置无效", 502);
+  if (!payload.success) fail("平台 SuperFlow 云端配置无效", 502);
   return JSON.parse(JSON.stringify(payload.data));
 }
 
@@ -107,7 +107,7 @@ const textAdapter: ModelAdapter<TextUpstream, TextCapabilities, Cloud> = {
       async available(type, { cloud }) {
         if (type !== "text") return [];
         return cloud?.language.models.map(model => ({ target: "toonflowCloud" as const,
-          providerId: "toonflow", providerLabel: "Toonflow", modelId: model.id, label: model.label, type })) ?? [];
+          providerId: "toonflow", providerLabel: "SuperFlow", modelId: model.id, label: model.label, type })) ?? [];
       },
       async resolve(route, resources) {
         if (route.providerId.toLowerCase() !== "toonflow") fail("平台模型上游配置无效", 503);
@@ -271,7 +271,7 @@ const mediaAdapter: ModelAdapter<MediaUpstream, MediaCapabilities, Cloud> = {
       async available(type, { cloud }) {
         if (type === "text") return [];
         return cloud?.mediaModels.filter(model => model.type === type).map(model => ({ target: "toonflowCloud" as const,
-          providerId: "toonflow", providerLabel: "Toonflow", modelId: model.id, label: model.label, type })) ?? [];
+          providerId: "toonflow", providerLabel: "SuperFlow", modelId: model.id, label: model.label, type })) ?? [];
       },
       async resolve(route, resources) {
         if (route.providerId.toLowerCase() !== "toonflow") fail("平台模型上游配置无效", 503);

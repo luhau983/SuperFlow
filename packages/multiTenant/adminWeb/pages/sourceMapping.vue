@@ -2,7 +2,7 @@
   <article class="sourceMappingPage">
     <header class="pageHeading">
       <h1>{{ translate("数据源映射") }}</h1>
-      <p>{{ translate("为业务能力选择由多租户后端处理，或经后端转发至 Toonflow 云端。") }}</p>
+      <p>{{ translate("为业务能力选择由多租户后端处理，或经后端转发至 SuperFlow 云端。") }}</p>
     </header>
     <el-alert class="draftNotice" :title="translate('本页保存其他业务来源草稿；模型请求使用“模型路由”中的已启用映射。')" type="info" :closable="false" showIcon />
     <el-alert v-if="requestError" class="requestError" :title="requestError" type="error" :closable="false" showIcon />
@@ -15,7 +15,7 @@
         </div>
         <el-select :id="`sourceMapping${item.key}`" v-model="mappings[item.key]" :aria-label="item.label" :aria-describedby="`sourceMappingDescription${item.key}`">
           <el-option value="backend" :label="translate('多租户后端处理')" />
-          <el-option value="toonflowCloud" :label="translate('Toonflow 云端')" />
+          <el-option value="toonflowCloud" :label="translate('SuperFlow 云端')" />
         </el-select>
       </div>
     </el-form>

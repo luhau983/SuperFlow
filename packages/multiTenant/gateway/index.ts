@@ -86,9 +86,9 @@ export function createModelGateway<Upstreams extends ModelMap, Catalogs extends 
 
   async function readCloud(revision: number): Promise<Cloud> {
     const raw = await routeAccess(() => routing.readCloud(revision));
-    if (!raw) fail("请先配置平台 Toonflow 云端凭据", 503);
+    if (!raw) fail("请先配置平台 SuperFlow 云端凭据", 503);
     try { return options.cloud.parse(raw); }
-    catch { fail("平台 Toonflow 云端配置无效", 503); }
+    catch { fail("平台 SuperFlow 云端配置无效", 503); }
   }
 
   async function providerAccess<T>(operation: () => Promise<T> | T, status: 400 | 503 = 503) {
@@ -182,7 +182,7 @@ export function createModelGateway<Upstreams extends ModelMap, Catalogs extends 
   async function reserve<K extends ModelType>(execution: ModelExecution<Upstreams[K]>, context: ModelRequestContext) {
     if (!options.enabled()) fail("多租户模型路由尚未开启", 403);
     const input = contextSchema.parse(context);
-    if (!input.actor) fail("请先登录 Toonflow", 401);
+    if (!input.actor) fail("请先登录 SuperFlow", 401);
     const route = modelRouteSchema.parse(execution.route);
     const revision = revisionSchema.parse(execution.revision);
     const adapter = options.adapters[route.type];
@@ -300,10 +300,10 @@ export function createModelGateway<Upstreams extends ModelMap, Catalogs extends 
       try { cloud = await options.cloud.load(accountToken, signal); }
       catch {
         if (signal?.aborted) fail("请求已取消", 499);
-        fail("平台 Toonflow 云端配置获取失败", 502);
+        fail("平台 SuperFlow 云端配置获取失败", 502);
       }
       try { cloud = options.cloud.parse(cloud); }
-      catch { fail("平台 Toonflow 云端配置无效", 502); }
+      catch { fail("平台 SuperFlow 云端配置无效", 502); }
       signal?.throwIfAborted();
       return routeAccess(() => routing.saveCloud(JSON.parse(JSON.stringify(cloud)), revision));
     },
@@ -325,7 +325,7 @@ export function createModelGateway<Upstreams extends ModelMap, Catalogs extends 
         const label = options.formatPrice(route.salePrice);
         const attributes = await routeAccess(() => adapter.publicModel(execution));
         if (!attributes || typeof attributes !== "object" || Array.isArray(attributes)) fail("平台模型能力配置无效", 503);
-        catalog.push({ ...attributes, providerId: "multiTenant", providerLabel: "Toonflow", routeId: route.id, modelId: getPublicModelId(route),
+        catalog.push({ ...attributes, providerId: "multiTenant", providerLabel: "SuperFlow", routeId: route.id, modelId: getPublicModelId(route),
           label: `${route.label} · ${label}`, salePrice: route.salePrice, priceLabel: label });
       }
       return catalog;

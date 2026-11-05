@@ -138,7 +138,7 @@ function parseModelJson<T>(value: string, schema: z.ZodType<T>): T {
 }
 
 function authenticated(options: AuthenticatedOptions) {
-  if (typeof options?.token !== "string" || !options.token.trim()) fail("请先在账号与余额中登录 Toonflow 账号", 401);
+  if (typeof options?.token !== "string" || !options.token.trim()) fail("请先在账号与余额中登录 SuperFlow 账号", 401);
   return { token: options.token.trim(), signal: options.signal };
 }
 
@@ -211,14 +211,14 @@ export class Toonflow implements Channel {
       body = await response.json() as typeof body;
     } catch {
       if (params.signal?.aborted) fail("请求已取消", 499);
-      if (timeout.aborted) fail("Toonflow 请求超时，请重试", 504);
-      if (response && !response.ok) fail(t`Toonflow 请求失败（HTTP ${response.status}）`, response.status >= 400 && response.status <= 599 ? response.status : 502);
-      fail(response ? "Toonflow 响应格式不正确" : "Toonflow 请求失败，请检查网络连接", 502);
+      if (timeout.aborted) fail("SuperFlow 请求超时，请重试", 504);
+      if (response && !response.ok) fail(t`SuperFlow 请求失败（HTTP ${response.status}）`, response.status >= 400 && response.status <= 599 ? response.status : 502);
+      fail(response ? "SuperFlow 响应格式不正确" : "SuperFlow 请求失败，请检查网络连接", 502);
     }
     if (params.signal?.aborted) fail("请求已取消", 499);
     if (!response.ok || body?.code !== 200) {
       const status = !response.ok ? response.status : body?.code;
-      let message = typeof body?.message === "string" && body.message.trim() ? body.message : "Toonflow 请求失败";
+      let message = typeof body?.message === "string" && body.message.trim() ? body.message : "SuperFlow 请求失败";
       const input = params.data as Record<string, unknown> | null | undefined;
       const verify = input?.verify as Record<string, unknown> | null | undefined;
       for (const secret of [...(params.sensitiveValues ?? []), params.token, input?.key, input?.code, input?.password, input?.newPassword, input?.confirmPassword, input?.captcha,

@@ -163,7 +163,7 @@ export async function multiTenantAccess(req: Request, res: Response, next: NextF
   }
   const user: AuthIdentity | null = !publicWeb && authenticateHost(req)
     ? { id: "admin", userName: "", role: "admin" } : await authenticateWeb(req);
-  if (!user) throw Object.assign(new Error("请先登录 Toonflow"), { status: 401 });
+  if (!user) throw Object.assign(new Error("请先登录 SuperFlow"), { status: 401 });
   res.locals.multiTenantUser = user;
   if (!["GET", "HEAD", "OPTIONS"].includes(req.method)) getAppOrigin(req);
   if (user.role === "admin") return runWithIdentity(user, next);

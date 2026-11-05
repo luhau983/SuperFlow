@@ -3,8 +3,8 @@
     <div class="authContent">
       <header class="authHeader">
         <div class="brand">
-          <img v-if="logoUrl" class="brandLogo" :src="logoUrl" alt="Toonflow" />
-          <span class="brandName">Toonflow</span>
+          <img v-if="logoUrl" class="brandLogo" :src="logoUrl" alt="SuperFlow" />
+          <span class="brandName">SuperFlow</span>
         </div>
       </header>
       <main class="authMain">
@@ -35,7 +35,7 @@
       <slot name="art" />
       <div class="artBrand">
         <img v-if="logoUrl" class="artLogo" :src="logoUrl" alt="" />
-        <span>Toonflow</span>
+        <span>SuperFlow</span>
       </div>
     </aside>
   </div>
@@ -160,7 +160,7 @@ onBeforeUnmount(() => {
         align-items: center;
         gap: 10px;
 
-        .brandLogo { width: 30px; height: 30px; object-fit: contain; .dark & { filter: invert(1); } }
+        .brandLogo { width: 30px; height: 30px; object-fit: contain; }
         .brandName { font-size: 20px; font-weight: 600; line-height: 1.4; letter-spacing: -0.5px; }
       }
     }
@@ -231,7 +231,7 @@ onBeforeUnmount(() => {
       font-weight: 600;
       letter-spacing: 0.4px;
 
-      .artLogo { width: 44px; height: 44px; object-fit: contain; filter: brightness(0) invert(1); }
+      .artLogo { width: 44px; height: 44px; object-fit: contain; }
     }
   }
 

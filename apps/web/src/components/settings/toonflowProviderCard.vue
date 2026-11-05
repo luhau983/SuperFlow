@@ -6,7 +6,7 @@
       </div>
       <div class="providerInfo">
         <div class="providerHeading">
-          <el-text class="providerName" tag="strong">Toonflow</el-text>
+          <el-text class="providerName" tag="strong">SuperFlow</el-text>
           <div class="providerBadges">
             <el-tag class="officialTag" size="small" effect="plain">官方</el-tag>
             <el-tag size="small" type="info" effect="plain">内置</el-tag>
@@ -27,7 +27,7 @@
     v-model="catalogVisible"
     class="toonflowCatalogDialog"
     :class="{ catalogReady: !!toonflowAccountToken }"
-    title="Toonflow"
+    title="SuperFlow"
     :width="toonflowAccountToken ? 'min(1040px, calc(100vw - 32px))' : 'min(520px, calc(100vw - 32px))'"
     alignCenter
     appendToBody
@@ -36,12 +36,12 @@
       <div class="catalogHeading">
         <img class="catalogLogo" :src="logoUrl" alt="" />
         <div class="catalogTitle">
-          <h2 :id="titleId">Toonflow</h2>
+          <h2 :id="titleId">SuperFlow</h2>
           <span>{{ scope === "text" ? "文本模型" : "媒体模型" }}</span>
         </div>
       </div>
     </template>
-    <el-alert v-if="!toonflowAccountToken" title="请先在账号与余额中登录 Toonflow 账号" type="info" :closable="false" showIcon />
+    <el-alert v-if="!toonflowAccountToken" title="请先在账号与余额中登录 SuperFlow 账号" type="info" :closable="false" showIcon />
     <modelCatalog
       v-else-if="catalogVisible"
       class="dialogCatalog"
@@ -90,8 +90,6 @@ const providerLoaded = computed(() => !!toonflowAccountToken.value && !!props.pr
         width: 42px;
         height: 42px;
         object-fit: contain;
-
-        .dark & { filter: invert(1); }
       }
     }
 
@@ -226,8 +224,6 @@ const providerLoaded = computed(() => !!toonflowAccountToken.value && !!props.pr
       width: 40px;
       height: 40px;
       object-fit: contain;
-
-      .dark & { filter: invert(1); }
     }
 
     .catalogTitle {

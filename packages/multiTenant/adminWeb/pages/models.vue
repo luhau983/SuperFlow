@@ -59,7 +59,7 @@
           <section class="forwardFields" :aria-label="translate('平台转发目标')">
             <div class="formGrid">
               <el-form-item :label="translate('目标来源')" for="modelRouteTarget" required>
-                <el-select id="modelRouteTarget" v-model="form.target" @change="sourceChanged"><el-option value="backend" :label="translate('第三方模型')" /><el-option value="toonflowCloud" :label="translate('Toonflow 云端')" /></el-select>
+                <el-select id="modelRouteTarget" v-model="form.target" @change="sourceChanged"><el-option value="backend" :label="translate('第三方模型')" /><el-option value="toonflowCloud" :label="translate('SuperFlow 云端')" /></el-select>
               </el-form-item>
               <el-form-item :label="translate('目标供应商')" for="modelRouteProvider" required>
                 <el-select id="modelRouteProvider" v-model="form.providerId" filterable :noDataText="translate('当前没有可用的供应商')" @change="providerChanged">
@@ -148,7 +148,7 @@ function blankPrice(type: ModelRoute["type"]): ModelPrice {
   return type === "text" ? { mode: "perMillionTokens", currency: "CNY", input: "", output: "", cacheRead: "", cacheWrite: "" } : { mode: "perRequest", currency: "CNY", amount: "" };
 }
 function typeLabel(type: ModelRoute["type"]) { return translate({ text: "文本", image: "图片", video: "视频", audio: "音频" }[type]); }
-function targetLabel(target: ModelRoute["target"]) { return translate(target === "backend" ? "第三方模型" : "Toonflow 云端"); }
+function targetLabel(target: ModelRoute["target"]) { return translate(target === "backend" ? "第三方模型" : "SuperFlow 云端"); }
 function providerLabel(route: ModelRoute) { return availableModels.value.find(item => item.target === route.target && item.providerId === route.providerId && item.type === route.type)?.providerLabel ?? route.providerId; }
 function applySnapshot(snapshot: ModelRoutingSnapshot) { routes.value = modelRoutesSchema.parse(snapshot.routes); revision.value = snapshot.revision; loaded.value = true; }
 function showError(cause: unknown, fallback: string, inForm = false) {
