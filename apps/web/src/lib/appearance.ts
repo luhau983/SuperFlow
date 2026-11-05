@@ -18,7 +18,7 @@ export function registerAppearance() {
     root.style.setProperty("--el-color-primary", primaryColor);
     for (let level = 1; level <= 9; level++) {
       root.style.setProperty(`--el-color-primary-light-${level}`,
-        `color-mix(in srgb, ${primaryColor} ${100 - level * 10}%, ${dark ? "#141414" : "#fff"})`);
+        `color-mix(in srgb, ${primaryColor} ${100 - level * 10}%, var(--background))`);
     }
     root.style.setProperty("--el-color-primary-dark-2", `color-mix(in srgb, ${primaryColor} 80%, ${dark ? "#fff" : "#000"})`);
   });

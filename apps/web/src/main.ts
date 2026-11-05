@@ -1,6 +1,7 @@
 import { createApp, h, nextTick, ref, type App } from "vue";
 import { ElButton, ElResult } from "element-plus";
 import "@fontsource-variable/open-sans";
+import "@/assets/tailwind.css";
 import "@/assets/main.scss";
 import "element-plus/es/components/message-box/style/css";
 import "element-plus/es/components/button/style/css";

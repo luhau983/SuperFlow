@@ -1,0 +1,8 @@
+export { default as uiSheet } from "./uiSheet.vue"
+export { default as uiSheetClose } from "./uiSheetClose.vue"
+export { default as uiSheetContent } from "./uiSheetContent.vue"
+export { default as uiSheetDescription } from "./uiSheetDescription.vue"
+export { default as uiSheetFooter } from "./uiSheetFooter.vue"
+export { default as uiSheetHeader } from "./uiSheetHeader.vue"
+export { default as uiSheetTitle } from "./uiSheetTitle.vue"
+export { default as uiSheetTrigger } from "./uiSheetTrigger.vue"

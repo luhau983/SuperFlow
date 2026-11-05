@@ -37,6 +37,35 @@ html:root {
   .el-tag { --el-tag-border-radius: var(--ui-radius-small); }
 }
 
+// Element Plus 中性色跟随 shadcn 主题变量（定义于 tailwind.css）；需高于 Element Plus 暗色变量 html.dark 的优先级。
+html:root,
+html.dark:root {
+  --el-bg-color: var(--background);
+  --el-bg-color-page: var(--background);
+  --el-bg-color-overlay: var(--popover);
+  --el-text-color-primary: var(--foreground);
+  --el-text-color-regular: color-mix(in oklch, var(--foreground) 85%, var(--background));
+  --el-text-color-secondary: var(--muted-foreground);
+  --el-text-color-placeholder: color-mix(in oklch, var(--muted-foreground) 80%, var(--background));
+  --el-border-color: var(--input);
+  --el-border-color-light: var(--border);
+  --el-border-color-lighter: var(--border);
+  --el-border-color-extra-light: var(--border);
+  --el-border-color-dark: color-mix(in oklch, var(--input) 80%, var(--foreground));
+  --el-border-color-darker: color-mix(in oklch, var(--input) 65%, var(--foreground));
+  --el-fill-color: var(--muted);
+  --el-fill-color-light: var(--muted);
+  --el-fill-color-lighter: var(--accent);
+  --el-fill-color-extra-light: color-mix(in oklch, var(--muted) 50%, var(--background));
+  --el-fill-color-blank: var(--background);
+  --td-bg-color-container: var(--card);
+  --td-bg-color-page: var(--background);
+  --td-text-color-primary: var(--foreground);
+  --td-text-color-secondary: var(--muted-foreground);
+  --td-component-border: var(--border);
+  --td-component-stroke: var(--border);
+}
+
 html,
 body,
 #app {

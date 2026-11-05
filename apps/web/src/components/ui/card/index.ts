@@ -1,0 +1,7 @@
+export { default as uiCard } from "./uiCard.vue"
+export { default as uiCardAction } from "./uiCardAction.vue"
+export { default as uiCardContent } from "./uiCardContent.vue"
+export { default as uiCardDescription } from "./uiCardDescription.vue"
+export { default as uiCardFooter } from "./uiCardFooter.vue"
+export { default as uiCardHeader } from "./uiCardHeader.vue"
+export { default as uiCardTitle } from "./uiCardTitle.vue"
