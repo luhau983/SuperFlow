@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { execFile } from "node:child_process";
+import { join } from "node:path";
 import { promisify } from "node:util";
 import { realpath } from "@toonflow/file";
 import u from "@/utils";
@@ -41,14 +42,17 @@ try {
 on error number -128
   return ""
 end try`;
+  // ACT: 启动环境的 PATH 可能不含 System32（如由开发工具启动），用系统目录下的绝对路径调用 PowerShell。
+  const powershell = join(process.env.SystemRoot || "C:\\Windows", "System32", "WindowsPowerShell", "v1.0", "powershell.exe");
   try {
     const { stdout } = process.platform === "win32"
-      ? await runFile("powershell.exe", ["-NoProfile", "-NonInteractive", "-STA", "-Command", windowsScript], { windowsHide: true })
+      ? await runFile(powershell, ["-NoProfile", "-NonInteractive", "-STA", "-Command", windowsScript], { windowsHide: true })
       : await runFile("/usr/bin/osascript", ["-e", macScript]);
     const selected = stdout.replace(/\r?\n$/, "");
     const directory = selected ? await realpath(selected) : null;
     res.json(success({ native: true, directory }));
-  } catch {
+  } catch (cause) {
+    console.error("打开本机文件夹选择器失败：", cause);
     res.status(500).json(error("无法打开本机文件夹选择器，请重试", null, 500));
   }
 });
