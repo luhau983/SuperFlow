@@ -54,10 +54,12 @@ export const accountProviderSchema = providerSchema.extend({
   icon: z.string().optional(), version: z.string().optional(),
 });
 
-export function getAccountToken() {
-  const account = conf.get("settings", {}).toonflowAccount as { token?: unknown } | null | undefined;
-  return typeof account?.token === "string" ? account.token.trim() : "";
-}
+// ACT: 暂停 Toonflow 云凭据读取，不清除磁盘上的账号与供应商配置。
+// export function getAccountToken() {
+//   const account = conf.get("settings", {}).toonflowAccount as { token?: unknown } | null | undefined;
+//   return typeof account?.token === "string" ? account.token.trim() : "";
+// }
+export function getAccountToken(): string { return ""; }
 
 export function getAccountProvider() {
   const accountToken = getAccountToken();

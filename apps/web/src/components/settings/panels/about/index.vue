@@ -103,6 +103,7 @@
       </div>
     </el-card>
 
+    <!-- 暂停 Toonflow 云赞助信息。
     <section class="sponsorPanel" aria-label="赞助商">
       <h3 class="sponsorTitle">
         <icon-gift :size="20" aria-hidden="true" />
@@ -145,6 +146,7 @@
         </el-popover>
       </div>
     </section>
+    -->
 
     <el-dialog v-model="privacyVisible" title="隐私" width="min(660px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
       <privacy />
@@ -295,13 +297,14 @@ const resultMessage = computed(() => {
 
 const sponsors = ref<Sponsor[]>([]);
 
-onMounted(async () => {
-  try {
-    sponsors.value = await http<Sponsor[]>({ method: "GET", url: "/api/channel/community/getSponsorList", signal: controller.signal });
-  } catch (error) {
-    if (!controller.signal.aborted) ElMessage.error(getUpdateError(error));
-  }
-});
+// ACT: 暂停 Toonflow 云赞助信息请求。
+// onMounted(async () => {
+//   try {
+//     sponsors.value = await http<Sponsor[]>({ method: "GET", url: "/api/channel/community/getSponsorList", signal: controller.signal });
+//   } catch (error) {
+//     if (!controller.signal.aborted) ElMessage.error(getUpdateError(error));
+//   }
+// });
 
 onMounted(async () => {
   if (!actualPlatform.isDesktop) return;

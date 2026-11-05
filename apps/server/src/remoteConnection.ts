@@ -6,7 +6,6 @@ import { resolve } from "node:path";
 import { isIP } from "node:net";
 import { readFile, rm, writeAtomic } from "@toonflow/file";
 import { getLocale, languageRequest, translateError, translateMessage } from "./lib/i18n";
-import { isRtlLocale } from "@toonflow/i18n";
 import { getRuntimePlatform } from "@/lib/platform";
 
 type RemoteConnection = { url: string; name: string; deviceToken: string; appVersion?: string };
@@ -270,5 +269,5 @@ function showConnectionError(response: express.Response, message: string, page =
     ? `<script>fetch("/api/desktop/ready",{method:"POST",headers:{"x-toonflow-desktop":"1","Content-Type":"application/json"},body:JSON.stringify({failed:true})}).catch(()=>{});</script>`
     : "";
   // 错误页来自本机，远端离线时仍可主动独立运行。返回200避免原生HTTP错误遮住恢复按钮。
-  response.status(200).type("html").send(`<!doctype html><html lang="${locale}" dir="${isRtlLocale(locale) ? "rtl" : "ltr"}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SuperFlow</title><style>body{font:16px system-ui;background:#fff;color:#303133;text-align:center;padding:8vh 24px}button{padding:12px 20px;margin:12px;border:1px solid #dcdfe6;border-radius:8px;background:#fff;color:#409eff;font:inherit}</style></head><body><h2>${title}</h2><p>${Bun.escapeHTML(message)}</p><button onclick="location.reload()">${retry}</button><button data-error="${failure}" onclick="this.disabled=true;fetch('/api/connection/disconnect',{method:'POST',headers:{'x-toonflow-workspace':'1','Accept-Language':'${locale}'}}).then(async r=>{if(!r.ok)throw Error();if((await r.json()).restart==='mobile')location.href='toonflow://restart'}).catch(()=>{this.disabled=false;alert(this.dataset.error)})">${disconnect}</button>${desktopReadyScript}</body></html>`);
+  response.status(200).type("html").send(`<!doctype html><html lang="${locale}" dir="ltr"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>SuperFlow</title><style>body{font:16px system-ui;background:#fff;color:#303133;text-align:center;padding:8vh 24px}button{padding:12px 20px;margin:12px;border:1px solid #dcdfe6;border-radius:8px;background:#fff;color:#409eff;font:inherit}</style></head><body><h2>${title}</h2><p>${Bun.escapeHTML(message)}</p><button onclick="location.reload()">${retry}</button><button data-error="${failure}" onclick="this.disabled=true;fetch('/api/connection/disconnect',{method:'POST',headers:{'x-toonflow-workspace':'1','Accept-Language':'${locale}'}}).then(async r=>{if(!r.ok)throw Error();if((await r.json()).restart==='mobile')location.href='toonflow://restart'}).catch(()=>{this.disabled=false;alert(this.dataset.error)})">${disconnect}</button>${desktopReadyScript}</body></html>`);
 }

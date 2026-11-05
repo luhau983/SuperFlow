@@ -1,6 +1,6 @@
 import { setLocaleFallback, t, translateMessage } from "@toonflow/server/i18n";
 import { setRuntimeHost } from "@toonflow/server/platform";
-import { detectLocale, normalizeLocale } from "@toonflow/i18n";
+import { normalizeLocale } from "@toonflow/i18n";
 import { execFile } from "node:child_process";
 import { randomBytes } from "node:crypto";
 import { AsyncLocalStorage } from "node:async_hooks";
@@ -108,7 +108,7 @@ async function start() {
       return null;
     });
     setLocaleFallback(() => normalizeLocale(startupSettings?.settings?.ui?.language)
-      ?? detectLocale([Intl.DateTimeFormat().resolvedOptions().locale]));
+      ?? "vi");
     if (process.platform === "darwin") {
       // ACT: WKWebView 的 Command 编辑快捷键由原生菜单角色交给当前响应者处理。
       ApplicationMenu.setApplicationMenu([

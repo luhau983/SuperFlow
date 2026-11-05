@@ -1,6 +1,5 @@
 import { createApp, h, nextTick, ref, type App } from "vue";
 import { ElButton, ElResult } from "element-plus";
-import { isRtlLocale } from "@toonflow/i18n";
 import "@fontsource-variable/open-sans";
 import "@/assets/main.scss";
 import "element-plus/es/components/message-box/style/css";
@@ -13,12 +12,11 @@ import { createCreationApp } from "@/bootstrap/creation";
 import { actualPlatform } from "@/lib/platform";
 import { getMissingBrowserFeatures } from "@/lib/browserCapabilities";
 import { publicWeb } from "@/stores/multiTenant";
-import { detectLocale, locale, setLocale, translate } from "@toonflow/i18n/vue";
+import { locale, translate } from "@toonflow/i18n/vue";
 
-setLocale(detectLocale(navigator.languages));
 document.documentElement.classList.toggle("dark", window.matchMedia("(prefers-color-scheme: dark)").matches);
 document.documentElement.lang = locale.value;
-document.documentElement.dir = isRtlLocale(locale.value) ? "rtl" : "ltr";
+document.documentElement.dir = "ltr";
 let app: App<Element> | undefined;
 const requiresWebView2Update = actualPlatform.isDesktop && actualPlatform.isWindows
   && [Map.groupBy, URL.canParse, Promise.withResolvers].some(method => typeof method !== "function");

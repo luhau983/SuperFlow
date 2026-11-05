@@ -1,29 +1,9 @@
 import axios, { type AxiosInstance } from "axios";
 import { computed, watch } from "vue";
-import { detectLocale, isRtlLocale } from "@toonflow/i18n";
 import { locale, setLocale, translate } from "@toonflow/i18n/vue";
 import { uiSettings } from "@/stores/settings";
 import type { LocaleConfig } from "vue-stream-markdown";
-import "dayjs/locale/zh-cn";
-import "dayjs/locale/zh-tw";
-import "dayjs/locale/ja";
-import "dayjs/locale/ru";
 import "dayjs/locale/vi";
-import "dayjs/locale/th";
-import "dayjs/locale/ko";
-import "dayjs/locale/hi";
-import "dayjs/locale/id";
-import "dayjs/locale/ms";
-import "dayjs/locale/tl-ph";
-import "dayjs/locale/bn";
-import "dayjs/locale/ur";
-import "dayjs/locale/ta";
-import "dayjs/locale/te";
-import "dayjs/locale/mr";
-import "dayjs/locale/pa-in";
-import "dayjs/locale/ar";
-import "dayjs/locale/fa";
-import "dayjs/locale/tr";
 
 export function registerApiLanguage(client: AxiosInstance) {
   const interceptor = client.interceptors.request.use(config => {
@@ -36,19 +16,17 @@ export function registerApiLanguage(client: AxiosInstance) {
 }
 
 export function registerLanguage() {
-  const applyLanguage = () => setLocale(uiSettings.value.language === "system" ? detectLocale(navigator.languages) : uiSettings.value.language);
+  const applyLanguage = () => setLocale(uiSettings.value.language);
   const stopSettings = watch(() => uiSettings.value.language, applyLanguage, { immediate: true, flush: "sync" });
   const stopDocument = watch(locale, value => {
     document.documentElement.lang = value;
-    document.documentElement.dir = isRtlLocale(value) ? "rtl" : "ltr";
+    document.documentElement.dir = "ltr";
   }, { immediate: true });
   const stopRequests = registerApiLanguage(axios);
-  window.addEventListener("languagechange", applyLanguage);
   return () => {
     stopSettings();
     stopDocument();
     stopRequests();
-    window.removeEventListener("languagechange", applyLanguage);
   };
 }
 

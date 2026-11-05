@@ -1,7 +1,9 @@
 <template>
   <div class="providerList">
     <div class="itemList">
+      <!-- 暂停 Toonflow 云模型。
       <toonflowProviderCard scope="text" :provider="customProviders.find(item => item.id.toLowerCase() === 'toonflow')" />
+      -->
       <codexProviderCard />
       <el-card v-for="item in visibleProviders" :key="item.id" class="providerItem" shadow="never">
         <div class="providerHeader">
@@ -44,7 +46,7 @@ import { ElMessage } from "element-plus";
 import { customProviders, saveSettings, type CustomProvider } from "@/stores/settings";
 import { IconPlus, IconSettings, IconEdit, IconTrash } from "@tabler/icons-vue";
 import { languageProviders } from "@toonflow/providers";
-import toonflowProviderCard from "../../toonflowProviderCard.vue";
+// import toonflowProviderCard from "../../toonflowProviderCard.vue";
 import codexProviderCard from "../../codexProviderCard.vue";
 
 defineProps<{ visible?: boolean }>();

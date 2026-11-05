@@ -1,4 +1,4 @@
-import { readdir, readFile, writeAtomic, mkdir } from "@toonflow/file";
+import { readdir, readFile, writeAtomic } from "@toonflow/file";
 import { resolve, relative } from "node:path";
 import { parse } from "@babel/parser";
 import type { Node } from "@babel/types";
@@ -58,8 +58,5 @@ async function scan(directory: string) {
   }
 }
 for (const path of ["apps/web/src", "apps/server/src", "apps/desktop/src", "apps/mobile/src", "packages/mcp/src", "packages/ffmpeg/src", "packages/multiTenant", "packages/providerWeb"]) await scan(resolve(root, path));
-const messages = Object.fromEntries([...catalog].sort(([left], [right]) => left.localeCompare(right, "zh-CN")).map(([message]) => [message, message]));
-await mkdir(resolve(import.meta.dirname, "locales"), { recursive: true });
-await writeAtomic(resolve(import.meta.dirname, "locales/zhCn.json"), JSON.stringify(messages, null, 2) + "\n");
 await writeAtomic(resolve(import.meta.dirname, "messageSources.json"), JSON.stringify(Object.fromEntries([...catalog].map(([key, value]) => [key, [...value]])), null, 2) + "\n");
 console.log(`Extracted ${catalog.size} messages`);

@@ -3,15 +3,17 @@
     <div class="marketToolbar">
       <div class="marketHeader">
         <nav class="marketNav" aria-label="插件列表">
-          <button class="navButton" type="button" :aria-pressed="isMarketTab" @click="activeTab = 'discover'">发现插件</button>
+          <!-- <button class="navButton" type="button" :aria-pressed="isMarketTab" @click="activeTab = 'discover'">发现插件</button> -->
           <button class="navButton" type="button" :aria-pressed="activeTab === 'installed'" @click="activeTab = 'installed'">已安装</button>
           <button class="navButton" type="button" :aria-pressed="activeTab === 'mcp'" @click="activeTab = 'mcp'">MCP</button>
           <button class="navButton" type="button" :aria-pressed="activeTab === 'ffmpeg'" @click="activeTab = 'ffmpeg'">FFmpeg</button>
         </nav>
         <div class="marketLinks">
+          <!-- 暂停 Toonflow 云市场。
           <el-button tag="a" href="https://api.toonflow.net/console/plugIn" target="_blank" rel="noopener noreferrer" size="small" text :icon="IconExternalLink">
             网页版市场
           </el-button>
+          -->
           <el-button tag="a" href="https://qcn7xdsqgc4z.feishu.cn/docx/KNBNd9naqolsy6xjAOCcEAkqnRd" target="_blank" rel="noopener noreferrer" size="small" text :icon="IconBook">
             开发者文档
           </el-button>
@@ -23,6 +25,7 @@
           <el-button size="small" nativeType="submit">搜索</el-button>
         </form>
         <div class="marketActions">
+          <!--
           <el-button
             size="small"
             type="primary"
@@ -31,6 +34,7 @@
             :disabled="!accountToken"
             :title="accountToken ? '上传插件到市场' : '请先在账号与余额中登录'"
             @click="openUpload()">上传插件</el-button>
+          -->
           <template v-if="activeTab === 'installed'">
             <el-button size="small" type="primary" :icon="IconUpload" :loading="installing" aria-label="安装本地插件" @click="pluginFileInput?.click()">
               安装插件
@@ -395,7 +399,8 @@ const pluginTypes = {
   agent: { label: "Agent", path: agentMarketEnabled ? "agents" : null, icon: IconSparkles2, tagType: "danger" },
 } as const;
 const tabs = { get discover() { return translate("发现插件"); }, get installed() { return translate("已安装"); }, mcp: "MCP", ffmpeg: "FFmpeg" } as const;
-const activeTab = ref<keyof typeof tabs>("discover");
+// const activeTab = ref<keyof typeof tabs>("discover");
+const activeTab = ref<keyof typeof tabs>("installed");
 const isMarketTab = computed(() => activeTab.value === "discover");
 const marketPage = ref(1);
 const marketPageSize = 20;

@@ -1,6 +1,6 @@
 import { computed, onScopeDispose, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
-import { translate } from "@toonflow/i18n/vue";
+import { locale, translate } from "@toonflow/i18n/vue";
 import { createBrowserAsr, isBrowserAsrSupported, type BrowserAsrState } from "@toonflow/asr";
 import type xSender from "x-sender";
 
@@ -153,7 +153,7 @@ export default function useVoiceInput(options: {
         }
       }
       const asr = createBrowserAsr({
-        lang: "zh-CN",
+        lang: locale.value,
         continuous: true,
         onStateChange(state) {
           if (voiceAsr !== asr || state === "destroyed") return;

@@ -11,7 +11,7 @@ import desktopRequest from "@/lib/desktop";
 import { getRuntimePlatform } from "@/lib/platform";
 import initializePlugins from "@/utils/plugins/initialize";
 import { languageRequest, setLocaleFallback, translateError, translateMessage } from "@/lib/i18n";
-import { detectLocale, normalizeLocale } from "@toonflow/i18n";
+import { normalizeLocale } from "@toonflow/i18n";
 
 const autoInstallProviders = ["apiMart.ts", "metaso.ts", "compshare.ts"];
 
@@ -59,7 +59,7 @@ export async function createApp({
   const { initializeNetwork } = await import("@/utils/network");
   await initializeNetwork();
   setLocaleFallback(() => normalizeLocale((conf.get("settings", {}).ui as { language?: unknown } | undefined)?.language)
-    ?? detectLocale([Intl.DateTimeFormat().resolvedOptions().locale]));
+    ?? "vi");
   if (dataDirectory && toolsRoot)
     await initializePlugins(resolve(dataDirectory, "tools"), toolsRoot, /^[a-z][a-zA-Z0-9]*\.tool\.js$/, pluginRevision);
   if (dataDirectory && nodesRoot) await initializePlugins(resolve(dataDirectory, "nodes"), nodesRoot, /^[a-z][a-zA-Z0-9]*\.umd\.js$/, pluginRevision);

@@ -1,42 +1,17 @@
 import { IntlMessageFormat } from "intl-messageformat";
 import { escapeMessageText } from "./messageText.ts";
 export { escapeMessageText } from "./messageText.ts";
-import zhTw from "./locales/zhTw.json";
 import en from "./locales/en.json";
-import ja from "./locales/ja.json";
-import ru from "./locales/ru.json";
 import vi from "./locales/vi.json";
-import th from "./locales/th.json";
-import ko from "./locales/ko.json";
-import hi from "./locales/hi.json";
-import id from "./locales/id.json";
-import ms from "./locales/ms.json";
-import fil from "./locales/fil.json";
-import bn from "./locales/bn.json";
-import ur from "./locales/ur.json";
-import ta from "./locales/ta.json";
-import te from "./locales/te.json";
-import mr from "./locales/mr.json";
-import pa from "./locales/pa.json";
-import ar from "./locales/ar.json";
-import fa from "./locales/fa.json";
-import tr from "./locales/tr.json";
 
-export type Locale = "zh-CN" | "zh-TW" | "en" | "ja" | "ru" | "vi" | "th" | "ko" | "hi"
-  | "id" | "ms" | "fil" | "bn" | "ur" | "ta" | "te" | "mr" | "pa" | "ar" | "fa" | "tr";
+export type Locale = "vi" | "en";
 export interface MessageDescriptor { id: string; values?: Record<string, unknown> }
 export const supportedLocales: { code: Locale; name: string }[] = [
-  { code: "zh-CN", name: "简体中文" }, { code: "zh-TW", name: "繁體中文" },
-  { code: "en", name: "English" }, { code: "ja", name: "日本語" },
-  { code: "ru", name: "Русский" }, { code: "vi", name: "Tiếng Việt" },
-  { code: "th", name: "ไทย" }, { code: "ko", name: "한국어" }, { code: "hi", name: "हिन्दी" },
-  { code: "id", name: "Bahasa Indonesia" }, { code: "ms", name: "Bahasa Melayu" }, { code: "fil", name: "Filipino" },
-  { code: "bn", name: "বাংলা" }, { code: "ur", name: "اردو" }, { code: "ta", name: "தமிழ்" },
-  { code: "te", name: "తెలుగు" }, { code: "mr", name: "मराठी" }, { code: "pa", name: "ਪੰਜਾਬੀ" },
-  { code: "ar", name: "العربية" }, { code: "fa", name: "فارسی" }, { code: "tr", name: "Türkçe" },
+  { code: "vi", name: "Tiếng Việt" },
+  { code: "en", name: "English" },
 ];
-const catalogs: Record<string, Record<string, string>> = { "zh-TW": zhTw, en, ja, ru, vi, th, ko, hi, id, ms, fil, bn, ur, ta, te, mr, pa, ar, fa, tr };
-let activeLocale: Locale = "zh-CN";
+const catalogs: Record<Locale, Record<string, string>> = { vi, en };
+let activeLocale: Locale = "vi";
 const listeners = new Set<(locale: Locale) => void>();
 const formatters = new Map<string, IntlMessageFormat>();
 
@@ -45,16 +20,7 @@ export function normalizeLocale(value: unknown): Locale | undefined {
   let language: Intl.Locale;
   try { language = new Intl.Locale(value.trim().replaceAll("_", "-")); }
   catch { return; }
-  const script = language.maximize().script;
-  if (language.language === "zh") {
-    if (script === "Hans") return "zh-CN";
-    if (script === "Hant") return "zh-TW";
-    return;
-  }
-  const base = language.language === "tl" ? "fil" : language.language === "in" ? "id" : language.language;
-  const locale = supportedLocales.find(item => item.code === base)?.code;
-  // ACT: 每种新增语言只提供一种文字体系；pa-Arab/pa-PK 等不能误用 Gurmukhi 译文。
-  return locale && script === new Intl.Locale(locale).maximize().script ? locale : undefined;
+  return supportedLocales.find(item => item.code === language.language)?.code;
 }
 
 export function detectLocale(languages: readonly string[]): Locale {
@@ -62,10 +28,8 @@ export function detectLocale(languages: readonly string[]): Locale {
     const locale = normalizeLocale(language);
     if (locale) return locale;
   }
-  return "en";
+  return "vi";
 }
-
-export function isRtlLocale(locale: Locale): boolean { return ["ar", "fa", "ur"].includes(locale); }
 
 export function getLocale(): Locale { return activeLocale; }
 export function setLocale(locale: Locale) {

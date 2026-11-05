@@ -6,7 +6,7 @@ import type { CallToolResult, ReadResourceResult, Resource } from "@modelcontext
 import { Router } from "express";
 import type { Request } from "express";
 import type { MessageDescriptor } from "@toonflow/i18n";
-import { detectLocale, msg, translate } from "@toonflow/i18n";
+import { msg, translate } from "@toonflow/i18n";
 
 export type { ReadResourceResult, Resource } from "@modelcontextprotocol/server";
 
@@ -47,7 +47,7 @@ function toToolResult(value: unknown): CallToolResult {
 
 export function createMcpRouter(options: McpOptions) {
   const translateMessage = options.translate ?? ((message: string | MessageDescriptor) => translate(message, undefined,
-    detectLocale([Intl.DateTimeFormat().resolvedOptions().locale])));
+    "vi"));
   const translateError = options.translateError ?? ((error: unknown) => translateMessage(error instanceof Error ? error.message : String(error)));
   const createServer = () => {
     const resources = options.resources;
