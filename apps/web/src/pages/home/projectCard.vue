@@ -1,6 +1,6 @@
 <template>
   <uiCard class="projectCard">
-    <button class="projectEntry" type="button" :disabled="disabled" :title="project.directory" :aria-label="`${translate(actionLabel)} ${project.name}`" @click="emit('select')">
+    <button class="projectEntry" type="button" :disabled="disabled" :title="project.directory" :aria-label="`${actionLabel ? translate(actionLabel) : translate('打开项目')} ${project.name}`" @click="emit('select')">
       <projectCover :directory="project.directory" />
       <span class="projectInfo">
         <span class="projectName" :title="project.name">{{ project.name }}</span>
@@ -34,12 +34,12 @@ import { uiButton } from "@/components/ui/button";
 import { uiCard } from "@/components/ui/card";
 import { uiDropdownMenu, uiDropdownMenuContent, uiDropdownMenuItem, uiDropdownMenuTrigger } from "@/components/ui/dropdownMenu";
 
-withDefaults(defineProps<{
+defineProps<{
   project: Project;
   disabled?: boolean;
   actionLabel?: string;
   actionsLoading?: boolean;
-}>(), { actionLabel: "打开项目" });
+}>();
 const emit = defineEmits<{ select: [] }>();
 const menuVisible = ref(false);
 </script>

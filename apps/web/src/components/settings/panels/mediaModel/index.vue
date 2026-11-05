@@ -1,9 +1,7 @@
 <template>
   <div class="providerList">
     <div class="itemList">
-      <!-- 暂停 Toonflow 云模型。
       <toonflowProviderCard scope="media" :provider="providers.find(item => item.id === 'toonflow')" />
-      -->
       <uiCard v-for="item in visibleProviders" :key="item.fileName" class="providerItem" style="gap:0; padding:0">
         <div class="cardBody" :style="{ padding: '20px' }">
           <div class="providerHeader">
@@ -87,7 +85,7 @@ import { IconPlus, IconSettings, IconEdit, IconTrash, IconDownload, IconCode } f
 import type { MediaProvider } from "@toonflow/provider-web/types";
 import { saveSettings } from "@/stores/settings";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
-// import toonflowProviderCard from "../../toonflowProviderCard.vue";
+import toonflowProviderCard from "../../toonflowProviderCard.vue";
 
 defineProps<{ visible?: boolean }>();
 const mediaProviderDialog = shallowRef<Component>();

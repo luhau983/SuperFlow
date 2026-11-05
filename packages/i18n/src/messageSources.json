@@ -1428,10 +1428,8 @@
   "{0}，有新版本可用": [
     "apps/web/src/components/settings/index.vue"
   ],
-  "账号": [
-    "apps/web/src/components/settings/index.vue",
-    "packages/multiTenant/adminWeb/pages/users.vue",
-    "packages/multiTenant/userWeb/index.vue"
+  "账号与余额": [
+    "apps/web/src/components/settings/index.vue"
   ],
   "通用设置": [
     "apps/web/src/components/settings/index.vue"
@@ -1478,6 +1476,11 @@
   ],
   "关于": [
     "apps/web/src/components/settings/index.vue"
+  ],
+  "账号": [
+    "apps/web/src/components/settings/index.vue",
+    "packages/multiTenant/adminWeb/pages/users.vue",
+    "packages/multiTenant/userWeb/index.vue"
   ],
   "请选择非空且不超过 20 MB 的插件文件": [
     "apps/web/src/components/settings/installPluginFile.ts"
@@ -4798,7 +4801,13 @@
   "插件列表": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
+  "发现插件": [
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
+  ],
   "已安装": [
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
+  ],
+  "网页版市场": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "开发者文档": [
@@ -4810,6 +4819,16 @@
   "搜索": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue",
     "apps/web/src/pages/workspace/panels/document/components/workspaceSearch.vue"
+  ],
+  "上传插件到市场": [
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue",
+    "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue"
+  ],
+  "请先在账号与余额中登录": [
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
+  ],
+  "上传插件": [
+    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "安装本地插件": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
@@ -4977,9 +4996,6 @@
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "{0} 效果演示": [
-    "apps/web/src/components/settings/panels/pluginMarket/index.vue"
-  ],
-  "发现插件": [
     "apps/web/src/components/settings/panels/pluginMarket/index.vue"
   ],
   "加载插件市场失败，请重试": [
@@ -5343,9 +5359,6 @@
     "apps/web/src/components/settings/panels/pluginMarket/skillEditorDialog.vue"
   ],
   "重新提交插件": [
-    "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue"
-  ],
-  "上传插件到市场": [
     "apps/web/src/components/settings/panels/pluginMarket/uploadPluginDialog.vue"
   ],
   "插件名称": [
@@ -6104,6 +6117,9 @@
   "快速开始": [
     "apps/web/src/pages/hello/index.vue"
   ],
+  "登录 SuperFlow 即可免配置快速开始，直接开启创作。": [
+    "apps/web/src/pages/hello/index.vue"
+  ],
   "或": [
     "apps/web/src/pages/hello/index.vue"
   ],
@@ -6370,6 +6386,9 @@
   ],
   "无法打开或创建项目，请重试": [
     "apps/web/src/pages/home/index.vue"
+  ],
+  "打开项目": [
+    "apps/web/src/pages/home/projectCard.vue"
   ],
   "最近打开 {0}": [
     "apps/web/src/pages/home/projectCard.vue"
@@ -7956,6 +7975,12 @@
   "请在桌面客户端中检查更新。": [
     "apps/web/src/stores/desktopUpdate.ts"
   ],
+  "安装账号供应商失败": [
+    "apps/web/src/stores/settings.ts"
+  ],
+  "安装账号供应商失败，请刷新重试": [
+    "apps/web/src/stores/settings.ts"
+  ],
   "读取模型推理等级失败": [
     "apps/web/src/stores/settings.ts"
   ],
@@ -8268,7 +8293,8 @@
     "apps/server/src/agent/runtime/requests.ts"
   ],
   "SuperFlow 账号已变更，请重新发起请求": [
-    "apps/server/src/agent/runtime/requests.ts"
+    "apps/server/src/agent/runtime/requests.ts",
+    "apps/server/src/utils/media/provider.ts"
   ],
   "历史图片附件记录无效": [
     "apps/server/src/agent/runtime/requests.ts"
@@ -9198,7 +9224,8 @@
     "apps/server/src/utils/ai/files.ts"
   ],
   "请先登录 SuperFlow 账号并刷新供应商": [
-    "apps/server/src/utils/ai/index.ts"
+    "apps/server/src/utils/ai/index.ts",
+    "apps/server/src/utils/media/provider.ts"
   ],
   "请先在设置中配置模型供应商": [
     "apps/server/src/utils/ai/index.ts"
@@ -9265,6 +9292,9 @@
   ],
   "素材查询及游标关闭失败": [
     "apps/server/src/utils/assets/index.ts"
+  ],
+  "渠道未配置，请检查 TOONFLOW_CHANNEL": [
+    "apps/server/src/utils/channel/index.ts"
   ],
   "模型列表响应格式不正确": [
     "apps/server/src/utils/channel/toonflow.ts"
@@ -10505,6 +10535,9 @@
     "apps/server/src/utils/media/provider.ts"
   ],
   "供应商文件已被修改，请刷新页面后再删除": [
+    "apps/server/src/utils/media/provider.ts"
+  ],
+  "只能运行已安装的 SuperFlow 账号供应商": [
     "apps/server/src/utils/media/provider.ts"
   ],
   "供应商不能导入模块，请使用 this.tool 中的宿主工具": [

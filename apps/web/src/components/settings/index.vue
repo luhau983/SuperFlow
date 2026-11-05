@@ -83,9 +83,7 @@ import {
 } from "@tabler/icons-vue";
 
 const allSettingsPanels = [
-  // ACT: 暂停云账号入口；多租户本地账号页保留。
-  // { id: "account", label: "账号与余额", icon: IconUserCircle, component: defineAsyncComponent(() => import("./panels/account/index.vue")) },
-  { id: "account", label: "账号", icon: IconUserCircle, component: userAccount },
+  { id: "account", label: "账号与余额", icon: IconUserCircle, component: defineAsyncComponent(() => import("./panels/account/index.vue")) },
   { id: "general", label: "通用设置", icon: IconSettings, component: defineAsyncComponent(() => import("./panels/general/index.vue")) },
   {
     id: "languageModel",
@@ -120,7 +118,6 @@ const allSettingsPanels = [
 ];
 const publicAccountPanel = { ...allSettingsPanels[0]!, get label() { return translate("账号"); } };
 const settingsPanels = computed(() => allSettingsPanels.filter(item => {
-  if (item.id === "account" && !publicWeb.value) return false;
   if (publicWeb.value && currentUser.value?.role === "user") return ["account", "general", "about"].includes(item.id);
   if (publicWeb.value && ["multiTenant", "deviceLink", "network", "mcp", "developer", "pluginMarket"].includes(item.id)) return false;
   return !multiTenantEnabled.value || !["languageModel", "mediaModel", "developer"].includes(item.id);

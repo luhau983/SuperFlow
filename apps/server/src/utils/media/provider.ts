@@ -378,7 +378,7 @@ export async function listMediaProviders() {
   const path = await directory();
   if (!path) return [];
   const files = await readdir(path, { withFileTypes: true });
-  return Promise.all(files.filter(file => file.isFile() && file.name.toLowerCase() !== "toonflow.ts" && mediaProviderFileSchema.safeParse(file.name).success)
+  return Promise.all(files.filter(file => file.isFile() && mediaProviderFileSchema.safeParse(file.name).success)
     .sort((left, right) => left.name.localeCompare(right.name)).map(async file => {
       let current = { fileName: file.name, id: file.name.slice(0, -3), source: "", revision: "" };
       try {
@@ -540,9 +540,6 @@ export async function loadMediaProviderSource(source: string, config: Record<str
   signal?.throwIfAborted();
   const { id, value } = parseProvider(source);
   if (platformAccount && id !== "toonflow") invalid("账号媒体供应商 ID 必须为 toonflow", 403);
-  // ACT: 旧项目或平台路由也不能运行缓存的 Toonflow 云供应商。
-  if (id === "toonflow") invalid("Dịch vụ cloud Toonflow hiện đã tắt.", 503);
-  /* 暂停 Toonflow 云媒体执行，保留原实现。
   if (id === "toonflow") {
     if (!platformAccount) {
       const installed = await getMediaProvider(id);
@@ -561,7 +558,6 @@ export async function loadMediaProviderSource(source: string, config: Record<str
     // 导出的媒体 token 用于配置和脱敏；请求实现也可直接使用源码中内嵌的凭据。
     if (typeof token === "string") config = { ...config, token };
   }
-  */
   // ACT: VM 只隔离可信供应商的全局上下文；不可信代码需要独立进程等更强隔离。
   const context = createContext({
     Buffer, atob, btoa, URL, URLSearchParams, TextEncoder, TextDecoder, Blob,

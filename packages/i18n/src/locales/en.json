@@ -4034,5 +4034,6 @@
   "压缩包中没有可添加的文件": "The archive contains no files that can be added",
   "无法解压 ZIP 文件，可能已损坏或已加密": "Couldn't extract the ZIP file; it may be corrupted or password-protected",
   "图片、视频、文档、代码文件或 ZIP 压缩包": "Images, videos, documents, code files or ZIP archives",
-  "ZIP 文件不能超过 500 MB": "ZIP files can't exceed 500 MB"
+  "ZIP 文件不能超过 500 MB": "ZIP files can't exceed 500 MB",
+  "打开项目": "Open project"
 }

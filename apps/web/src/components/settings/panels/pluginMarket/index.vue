@@ -3,17 +3,15 @@
     <div class="marketToolbar">
       <div class="marketHeader">
         <nav class="marketNav" aria-label="插件列表">
-          <!-- <button class="navButton" type="button" :aria-pressed="isMarketTab" @click="activeTab = 'discover'">发现插件</button> -->
+          <button class="navButton" type="button" :aria-pressed="isMarketTab" @click="activeTab = 'discover'">发现插件</button>
           <button class="navButton" type="button" :aria-pressed="activeTab === 'installed'" @click="activeTab = 'installed'">已安装</button>
           <button class="navButton" type="button" :aria-pressed="activeTab === 'mcp'" @click="activeTab = 'mcp'">MCP</button>
           <button class="navButton" type="button" :aria-pressed="activeTab === 'ffmpeg'" @click="activeTab = 'ffmpeg'">FFmpeg</button>
         </nav>
         <div class="marketLinks">
-          <!-- 暂停 Toonflow 云市场。
-          <el-button tag="a" href="https://api.toonflow.net/console/plugIn" target="_blank" rel="noopener noreferrer" size="small" text :icon="IconExternalLink">
-            网页版市场
-          </el-button>
-          -->
+          <uiButton variant="ghost" type="button" size="sm" asChild>
+            <a href="https://api.toonflow.net/console/plugIn" target="_blank" rel="noopener noreferrer"><component :is="IconExternalLink" aria-hidden="true" />网页版市场</a>
+          </uiButton>
           <uiButton variant="ghost" type="button" size="sm" asChild>
             <a href="https://qcn7xdsqgc4z.feishu.cn/docx/KNBNd9naqolsy6xjAOCcEAkqnRd" target="_blank" rel="noopener noreferrer"><component :is="IconBook" aria-hidden="true" />开发者文档</a>
           </uiButton>
@@ -37,16 +35,13 @@
           <uiButton variant="outline" type="submit" size="sm">搜索</uiButton>
         </form>
         <div class="marketActions">
-          <!--
-          <el-button
-            size="small"
-            type="primary"
-            plain
-            :icon="IconCloudUpload"
+          <uiButton
+            variant="outline"
+            type="button"
+            size="sm"
             :disabled="!accountToken"
             :title="accountToken ? '上传插件到市场' : '请先在账号与余额中登录'"
-            @click="openUpload()">上传插件</el-button>
-          -->
+            @click="openUpload()"><component :is="IconCloudUpload" aria-hidden="true" />上传插件</uiButton>
           <template v-if="activeTab === 'installed'">
             <uiButton aria-label="安装本地插件" @click="pluginFileInput?.click()" variant="default" type="button" :disabled="(installing)" size="sm"><icon-loader-2 v-if="installing" class="animate-spin" aria-hidden="true" /><component :is="IconUpload" aria-hidden="true" />安装插件</uiButton>
             <input
@@ -455,8 +450,7 @@ const pluginTypes = {
   agent: { label: "Agent", path: agentMarketEnabled ? "agents" : null, icon: IconSparkles2, tagType: "danger" },
 } as const;
 const tabs = { get discover() { return translate("发现插件"); }, get installed() { return translate("已安装"); }, mcp: "MCP", ffmpeg: "FFmpeg" } as const;
-// const activeTab = ref<keyof typeof tabs>("discover");
-const activeTab = ref<keyof typeof tabs>("installed");
+const activeTab = ref<keyof typeof tabs>("discover");
 const isMarketTab = computed(() => activeTab.value === "discover");
 const marketPage = ref(1);
 const marketPageSize = 20;

@@ -20,11 +20,9 @@
       </div>
       <div v-else class="welcomeContent">
         <h1 id="welcomeTitle">快速开始</h1>
-        <!-- 暂停 Toonflow 云登录，保留原入口以便恢复。
         <p class="description">登录 SuperFlow 即可免配置快速开始，直接开启创作。</p>
         <accountPanel v-if="!loggedIn" class="accountContent" @loggedIn="startWithAccount" />
-        <el-button v-else class="startButton" type="primary" :loading="saving" @click="completeSetup">开始使用</el-button>
-        -->
+        <uiButton v-else class="startButton" type="button" :disabled="saving" @click="completeSetup"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />开始使用</uiButton>
         <div class="secondaryActions">
           <template v-if="!multiTenantEnabled">
             <uiButton class="secondaryButton" @click="view = 'custom'" variant="outline" type="button" :disabled="(saving)"><icon-key class="buttonIcon" />配置第三方模型</uiButton>
@@ -55,7 +53,7 @@ import { defineAsyncComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import { toast } from "vue-sonner";
 import { IconArrowLeft, IconDevices } from "@tabler/icons-vue";
-import { customProviders, multiTenantEnabled } from "@/stores/settings";
+import { customProviders, multiTenantEnabled, toonflowAccountToken } from "@/stores/settings";
 import { useHelloStore } from "@/stores/hello";
 import anonymousData from "@/lib/anonymousData";
 import logoSvg from "@toonflow/assets/logo.svg?raw";
@@ -63,27 +61,27 @@ import bg from "./bg.vue";
 import languageSelect from "@/components/languageSelect.vue";
 import { mobileConnectionLabel } from "@/lib/mobile";
 
-// const accountPanel = defineAsyncComponent(() => import("@/components/settings/panels/account/index.vue"));
+const accountPanel = defineAsyncComponent(() => import("@/components/settings/panels/account/index.vue"));
 const languageModel = defineAsyncComponent(() => import("@/components/settings/panels/languageModel/index.vue"));
 const mobileConnect = defineAsyncComponent(() => import("@/components/mobileConnect.vue"));
 const mobileConnectVisible = ref(false);
 const view = ref<"welcome" | "custom">("welcome");
-// const loggedIn = ref(!!toonflowAccountToken.value);
+const loggedIn = ref(!!toonflowAccountToken.value);
 const saving = ref(false);
 const router = useRouter();
 const hello = useHelloStore();
 
-// function startWithAccount() {
-//   loggedIn.value = true;
-//   void completeSetup();
-// }
+function startWithAccount() {
+  loggedIn.value = true;
+  void completeSetup();
+}
 
 async function completeSetup() {
   if (saving.value) return;
   saving.value = true;
   try {
     await hello.complete();
-    anonymousData.track(view.value === "custom" ? "onboarding.complete" : "onboarding.skip");
+    anonymousData.track(view.value === "custom" || toonflowAccountToken.value ? "onboarding.complete" : "onboarding.skip");
     await router.replace("/home");
   } catch {
     toast.error("保存引导状态失败，请重试");
