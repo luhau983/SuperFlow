@@ -22,7 +22,8 @@ export async function sendFile(res: Response, path: string, options: Parameters<
       res.once("finish", finish);
       res.once("close", finish);
       try {
-        res.sendFile(path, options, error => {
+        // 调用方传入的是已校验的绝对路径；Express 默认忽略任一层级的点目录（如安装在 .claude、.config 下），会误报 404。
+        res.sendFile(path, { dotfiles: "allow", ...options }, error => {
           if (error) complete(error);
           else if (res.writableFinished || res.destroyed) complete();
         });
