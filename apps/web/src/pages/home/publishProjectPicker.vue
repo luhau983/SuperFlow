@@ -1,18 +1,24 @@
 <template>
   <div class="projectPicker">
     <div class="sourceActions">
-      <el-button :icon="IconFolderOpen" @click="folderInput?.click()">选择文件夹</el-button>
-      <el-button :icon="IconFileZip" @click="archiveInput?.click()">选择 ZIP 压缩包</el-button>
+      <uiButton @click="folderInput?.click()" variant="outline" type="button"><component :is="IconFolderOpen" aria-hidden="true" />选择文件夹</uiButton>
+      <uiButton @click="archiveInput?.click()" variant="outline" type="button"><component :is="IconFileZip" aria-hidden="true" />选择 ZIP 压缩包</uiButton>
       <input ref="folderInput" type="file" webkitdirectory multiple hidden @change="selectFolder" />
       <input ref="archiveInput" type="file" accept=".zip,application/zip,application/x-zip-compressed" hidden @change="selectArchive" />
     </div>
     <div v-if="projects.length" class="projectItems">
-      <projectCard v-for="project in projects" :key="project.directory" :project="project" actionLabel="选择项目" @select="emit('select', { name: project.name, directory: project.directory })" />
+      <projectCard
+        v-for="project in projects"
+        :key="project.directory"
+        :project="project"
+        actionLabel="选择项目"
+        @select="emit('select', { name: project.name, directory: project.directory })" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { uiButton } from "@/components/ui/button";
 import { computed, ref } from "vue";
 import { toast } from "vue-sonner";
 import { IconFileZip, IconFolderOpen } from "@tabler/icons-vue";
@@ -61,7 +67,7 @@ function selectArchive(event: Event) {
     gap: 8px;
     margin-bottom: 20px;
 
-    .el-button { margin: 0; }
+    [data-slot="button"] { margin: 0; }
   }
 
   .projectItems {

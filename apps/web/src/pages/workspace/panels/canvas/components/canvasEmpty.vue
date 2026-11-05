@@ -14,7 +14,9 @@
         @pointerdown.stop
         @dblclick.stop
         @click.stop="emit('create', item.type)">
-        <span class="actionIcon"><component :is="getNodeIcon(item.type) ?? IconBox" :size="22" aria-hidden="true" /></span>
+        <span class="actionIcon">
+          <component :is="getNodeIcon(item.type) ?? IconBox" :size="22" aria-hidden="true" />
+        </span>
         <span>{{ item.label }}</span>
       </button>
     </div>
@@ -52,7 +54,7 @@ const actions = [
     display: flex;
     align-items: center;
     gap: 12px;
-    color: var(--el-text-color-secondary);
+    color: var(--muted-foreground);
     font-size: 14px;
     font-weight: 500;
   }
@@ -72,10 +74,10 @@ const actions = [
       max-width: 100%;
       min-height: 56px;
       padding: 6px 8px;
-      border: 1px solid var(--el-border-color-light);
+      border: 1px solid var(--border);
       border-radius: 16px;
-      background: var(--el-fill-color-light);
-      color: var(--el-text-color-primary);
+      background: var(--card);
+      color: var(--foreground);
       font: inherit;
       font-size: 14px;
       font-weight: 600;
@@ -85,12 +87,12 @@ const actions = [
       transition: background-color 0.15s, border-color 0.15s;
 
       &:hover:not(:disabled) {
-        background: var(--el-fill-color);
-        border-color: var(--el-border-color-darker);
+        background: var(--accent);
+        border-color: var(--ring);
       }
 
       &:focus-visible {
-        outline: 2px solid var(--el-color-primary);
+        outline: 2px solid var(--ring);
         outline-offset: 3px;
       }
 
@@ -106,7 +108,7 @@ const actions = [
         flex: 0 0 40px;
         height: 40px;
         border-radius: 12px;
-        background: var(--el-fill-color-darker);
+        background: var(--muted);
       }
     }
   }

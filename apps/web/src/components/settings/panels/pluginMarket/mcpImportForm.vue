@@ -1,50 +1,107 @@
 <template>
-  <el-form class="importForm" labelPosition="top" :disabled="importing" @submit.prevent="importServers">
-    <el-form-item :label="mode === 'json' ? '配置文件' : 'DXT 包'">
-      <div class="fileSource">
-        <input ref="fileInput" type="file" :accept="mode === 'json' ? '.json' : '.dxt,.mcpb'" hidden @change="selectFile" />
-        <el-input :modelValue="fileName" :prefixIcon="mode === 'json' ? IconFileCode : IconPackage" placeholder="尚未选择文件" readonly aria-label="已选择的 MCP 文件" />
-        <el-button :icon="IconFolderOpen" :loading="reading" @click="fileInput?.click()">选择文件</el-button>
-      </div>
-    </el-form-item>
-    <template v-if="mode === 'json'">
-      <el-form-item label="JSON 配置">
-        <el-input v-model="source" class="sourceInput" type="textarea" :rows="10" resize="none" :disabled="reading" :maxlength="1024 * 1024" autocomplete="off" spellcheck="false" dir="ltr" />
-        <el-text class="fieldHint" size="small" type="info">支持 mcpServers 批量配置、带 name 的单个配置或配置数组，导入后新增服务。</el-text>
-      </el-form-item>
-    </template>
-    <template v-else-if="packageInfo">
-      <div class="packageInfo">
-        <div class="packageHeading">
-          <el-text tag="strong">{{ packageInfo.name }}</el-text>
-          <el-tag size="small" type="info" effect="plain">v{{ packageInfo.version }}</el-tag>
+  <form class="importForm uiForm" @submit.prevent="importServers">
+    <fieldset class="formFields" :disabled="importing">
+      <div class="formField">
+        <uiLabel :for="portFieldId + '-1'">{{ mode === 'json' ? '配置文件' : 'DXT 包' }}</uiLabel>
+        <div class="fileSource">
+          <input ref="fileInput" type="file" :accept="mode === 'json' ? '.json' : '.dxt,.mcpb'" hidden @change="selectFile" />
+          <div class="inputGroup">
+            <component :is="mode === 'json' ? IconFileCode : IconPackage" aria-hidden="true" />
+            <uiInput
+              :id="portFieldId + '-1'"
+              :modelValue="fileName"
+              placeholder="尚未选择文件"
+              readonly
+              aria-label="已选择的 MCP 文件"
+              :disabled="(importing) || (false)"></uiInput>
+          </div>
+          <uiButton @click="fileInput?.click()" variant="outline" type="button" :disabled="(reading) || (importing)"><icon-loader-2 v-if="reading" class="animate-spin" aria-hidden="true" /><component :is="IconFolderOpen" aria-hidden="true" />选择文件</uiButton>
         </div>
-        <el-text v-if="packageInfo.description" class="packageDescription" size="small" type="info">{{ packageInfo.description }}</el-text>
       </div>
-      <el-form-item v-for="field in fields" :key="field.key" :label="field.title" :required="field.required">
-        <el-switch v-if="field.type === 'boolean'" v-model="field.booleanValue" :aria-label="field.title" />
-        <el-input-number v-else-if="field.type === 'number'" v-model="field.numberValue" :min="field.min" :max="field.max" controlsPosition="right" :aria-label="field.title" />
-        <el-input
-          v-else
-          v-model="field.textValue"
-          :type="field.multiple ? 'textarea' : field.sensitive ? 'password' : 'text'"
-          :showPassword="!field.multiple && field.sensitive"
-          :rows="3"
-          autocomplete="off"
-          spellcheck="false"
-          :aria-label="field.title" />
-        <el-text v-if="field.description" class="fieldHint" size="small" type="info">{{ field.description }}</el-text>
-        <el-text v-if="field.multiple" class="fieldHint" size="small" type="info">每行一个路径。</el-text>
-      </el-form-item>
-    </template>
-    <el-alert v-if="error" class="importError" :title="error" type="error" :closable="false" showIcon />
-  </el-form>
+      <template v-if="mode === 'json'">
+        <div class="formField">
+          <uiLabel :for="portFieldId + '-2'">JSON 配置</uiLabel>
+          <uiTextarea
+            :id="portFieldId + '-2'"
+            v-model="source"
+            class="sourceInput"
+            :maxlength="1024 * 1024"
+            autocomplete="off"
+            spellcheck="false"
+            dir="ltr"
+            :disabled="(importing) || (reading)"
+            :rows="10"
+            style="field-sizing:fixed; resize:none"></uiTextarea>
+          <span class="fieldHint" data-ui-text="info">支持 mcpServers 批量配置、带 name 的单个配置或配置数组，导入后新增服务。</span>
+        </div>
+      </template>
+      <template v-else-if="packageInfo">
+        <div class="packageInfo">
+          <div class="packageHeading">
+            <strong data-ui-text="default">{{ packageInfo.name }}</strong>
+            <uiBadge variant="outline">v{{ packageInfo.version }}</uiBadge>
+          </div>
+          <span v-if="packageInfo.description" class="packageDescription" data-ui-text="info">{{ packageInfo.description }}</span>
+        </div>
+        <div v-for="field in fields" :key="field.key" :required="field.required" class="formField">
+          <uiLabel :for="portFieldId + '-3' + '-' + String(field.key)">{{ field.title }}</uiLabel>
+          <uiSwitch
+            :id="portFieldId + '-3' + '-' + String(field.key)"
+            v-if="field.type === 'boolean'"
+            v-model="field.booleanValue"
+            :aria-label="field.title"
+            :disabled="(importing)"></uiSwitch>
+          <uiNumberField class="numberField" v-else-if="field.type === 'number'" v-model="field.numberValue" :min="field.min" :max="field.max">
+            <uiNumberFieldContent>
+              <uiNumberFieldDecrement />
+              <uiNumberFieldInput :aria-label="field.title" />
+              <uiNumberFieldIncrement />
+            </uiNumberFieldContent>
+          </uiNumberField>
+          <div v-else class="inputGroup">
+            <uiInput
+              v-model="field.textValue"
+              :type="field.multiple ? 'textarea' : field.sensitive ? 'password' : 'text'"
+              :showPassword="!field.multiple && field.sensitive"
+              autocomplete="off"
+              spellcheck="false"
+              :aria-label="field.title"
+              :disabled="(importing) || (false)"></uiInput>
+            <uiButton
+              @mousedown.prevent
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              :aria-label="passwordVisible1[String(field.key)] ? '隐藏密码' : '显示密码'"
+              :disabled="importing"
+              @click="passwordVisible1[String(field.key)] = !passwordVisible1[String(field.key)]">
+              <icon-eye-off v-if="passwordVisible1[String(field.key)]" />
+              <icon-eye v-else />
+            </uiButton>
+          </div>
+          <span v-if="field.description" class="fieldHint" data-ui-text="info">{{ field.description }}</span>
+          <span v-if="field.multiple" class="fieldHint" data-ui-text="info">每行一个路径。</span>
+        </div>
+      </template>
+      <uiAlert v-if="error" class="importError" variant="destructive">
+        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ error }}</uiAlertTitle>
+      </uiAlert>
+    </fieldset>
+  </form>
 </template>
 
 <script setup lang="ts">
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiNumberField, uiNumberFieldContent, uiNumberFieldInput, uiNumberFieldDecrement, uiNumberFieldIncrement } from "@/components/ui/numberField";
+import { uiSwitch } from "@/components/ui/switch";
+import { uiBadge } from "@/components/ui/badge";
+import { uiTextarea } from "@/components/ui/textarea";
+import { uiButton } from "@/components/ui/button";
+import { uiInput } from "@/components/ui/input";
+import { uiLabel } from "@/components/ui/label";
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
-import { computed, onBeforeUnmount, ref } from "vue";
+import { computed, onBeforeUnmount, ref, useId } from "vue";
 import { IconFileCode, IconPackage, IconFolderOpen } from "@tabler/icons-vue";
 
 type DxtField = {
@@ -180,6 +237,9 @@ async function importServers() {
     emit("busy", false);
   }
 }
+
+const passwordVisible1 = ref<Record<string, boolean>>({});
+const portFieldId = useId();
 </script>
 
 <style scoped lang="scss">
@@ -188,10 +248,10 @@ async function importServers() {
     display: flex;
     width: 100%;
     gap: 8px;
-    .el-input { min-width: 0; }
-    .el-button { flex-shrink: 0; }
+    :is(.el-input, [data-slot="input"], .inputGroup) { min-width: 0; }
+    [data-slot="button"] { flex-shrink: 0; }
   }
-  .sourceInput :deep(.el-textarea__inner) {
+  .sourceInput :deep(textarea[data-slot="textarea"]) {
     height: min(28dvh, 240px);
     min-height: 140px;
     padding: 12px;

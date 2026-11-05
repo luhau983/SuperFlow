@@ -1,81 +1,260 @@
 <template>
   <panel class="canvasMenuPanel" position="top-left">
-    <el-card class="canvasMenu" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
-      <div class="menuContent">
-        <el-input v-model="projectNameDraft" class="workspaceNameInput" :style="{ '--workspaceName': JSON.stringify(projectNameDraft || ' ') }" size="small" :title="directory" :disabled="!workspaceStore.project" aria-label="项目名称"
-          @keydown.stop @keydown.enter="saveProjectName" @keydown.esc.prevent="projectNameDraft = workspaceName" @blur="saveProjectName" />
-        <el-divider direction="vertical" />
-        <el-popover v-model:visible="canvasListVisible" trigger="click" placement="bottom-start" :width="320" :showArrow="false" :disabled="!directory">
-          <template #reference>
-            <el-button class="canvasTrigger" text :loading="busy" :disabled="busy || !directory" aria-label="切换画布" :aria-expanded="canvasListVisible">
-              <span>{{ activeCanvasName }}</span><component :is="canvasListVisible ? IconChevronUp : IconChevronDown" :size="14" aria-hidden="true" />
-            </el-button>
-          </template>
-          <div ref="canvasPicker" class="canvasPicker" @keydown.esc="canvasListVisible = false">
-            <div class="pickerToolbar">
-              <el-input v-model="searchQuery" :prefixIcon="IconSearch" placeholder="搜索画布" aria-label="搜索画布" clearable @keydown.esc.stop="searchQuery = ''" />
-              <el-button class="iconButton" text :icon="IconFolderPlus" :disabled="pickerBusy || editingId !== null || folderDraft !== null" title="新建文件夹" aria-label="新建画布文件夹" @click="startFolder" />
-              <el-button class="iconButton" text :icon="IconPlus" :disabled="pickerBusy || editingId !== null || folderDraft !== null" title="新增画布" aria-label="新增画布" @click="handleAddCanvas" />
-            </div>
-            <el-scrollbar v-loading="loadingTree" maxHeight="min(440px, calc(100dvh - 198px))">
-              <el-tree v-if="canvasListVisible" ref="canvasTree" class="canvasTree" :data="treeEntries" nodeKey="path" :props="{ label: 'name', isLeaf: entry => entry.type === 'file' || entry.draft || entry.empty === true }" lazy :load="loadTreeNode" :defaultExpandedKeys="expandedFolders" :autoExpandParent="false" :icon="IconChevronRight" :currentNodeKey="activeCanvasId" :filterNodeMethod="filterEntry" highlightCurrent emptyText="" @nodeClick="selectEntry" @nodeExpand="expandFolder" @nodeCollapse="collapseFolder">
-                <template #default="{ data, node }">
-                  <div class="canvasEntry" :title="data.path" @contextmenu="openItemMenu($event, data)">
-                    <component v-if="data.type === 'directory'" :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder" class="folderIcon" :size="18" aria-hidden="true" />
-                    <icon-vector v-else class="canvasIcon" :size="18" />
-                    <el-input v-if="data.draft" ref="folderInput" v-model="folderDraft" class="nameEditor" size="small" aria-label="文件夹名称" :disabled="busy" :maxlength="120" @click.stop @keydown.stop @keydown.enter.prevent="saveFolder" @keydown.esc.prevent="cancelFolder" @blur="saveFolder" />
-                    <el-input v-else-if="editingId === data.path" ref="nameInput" v-model="canvasName" class="nameEditor" size="small" :disabled="busy" :maxlength="120" :aria-label="newCanvasId === data.path ? '新画布名称' : '画布名称'" @click.stop @keydown.stop @keydown.enter="saveCanvas" @keydown.esc.prevent="finishEdit" @blur="saveCanvas" />
-                    <span v-else class="entryName">{{ data.name }}</span>
-                    <icon-check v-if="activeCanvasId === data.path" class="selectedIcon" :size="16" aria-hidden="true" />
-                    <el-button v-if="!data.draft && editingId !== data.path" class="moreButton" text :icon="IconDots" :disabled="pickerBusy || editingId !== null || folderDraft !== null" :aria-label="'更多 ' + data.name" title="更多" @click.stop="openItemMenu($event, data)" />
-                  </div>
-                </template>
-              </el-tree>
-            </el-scrollbar>
-            <el-text v-if="renameError" type="danger" role="alert">{{ renameError }}</el-text>
+    <uiCard class="canvasMenu" style="gap:0; padding:0">
+      <div class="cardBody" :style="{ padding: '2px 4px' }">
+        <div class="menuContent">
+          <div class="workspaceNameInput" :style="{ '--workspaceName': JSON.stringify(projectNameDraft || ' ') }">
+            <uiInput
+              v-model="projectNameDraft"
+              class="workspaceNameValue"
+              :title="directory"
+              :disabled="!workspaceStore.project"
+              aria-label="项目名称"
+              @keydown.stop
+              @keydown.enter="saveProjectName"
+              @keydown.esc.prevent="projectNameDraft = workspaceName"
+              @blur="saveProjectName" />
           </div>
-        </el-popover>
+          <uiSeparator orientation="vertical"></uiSeparator>
+          <uiPopover v-model:open="canvasListVisible">
+            <uiPopoverTrigger asChild>
+              <uiButton
+                class="canvasTrigger"
+                aria-label="切换画布"
+                :aria-expanded="canvasListVisible"
+                variant="ghost"
+                type="button"
+                :disabled="(busy || !directory) || (busy)">
+                <icon-loader-2 v-if="busy" class="animate-spin" aria-hidden="true" />
+                <span>{{ activeCanvasName }}</span>
+                <component :is="canvasListVisible ? IconChevronUp : IconChevronDown" :size="14" aria-hidden="true" />
+              </uiButton>
+            </uiPopoverTrigger>
+            <uiPopoverContent
+              class="hoverPanel "
+              side="bottom"
+              align="start"
+              :sideOffset="8"
+              :style="{ width: '320px', maxWidth: 'calc(100vw - 24px)' }">
+              <div ref="canvasPicker" class="canvasPicker" @keydown.esc="canvasListVisible = false">
+                <div class="pickerToolbar">
+                  <div class="inputGroup">
+                    <component :is="IconSearch" aria-hidden="true" />
+                    <uiInput v-model="searchQuery" placeholder="搜索画布" aria-label="搜索画布" @keydown.esc.stop="searchQuery = ''"></uiInput>
+                    <uiButton
+                      @mousedown.prevent
+                      v-if="searchQuery"
+                      type="button"
+                      variant="ghost"
+                      size="icon-sm"
+                      aria-label="清除"
+                      @click="searchQuery = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
+                      <icon-x />
+                    </uiButton>
+                  </div>
+                  <uiButton
+                    class="iconButton"
+                    title="新建文件夹"
+                    aria-label="新建画布文件夹"
+                    @click="startFolder"
+                    variant="ghost"
+                    type="button"
+                    :disabled="(pickerBusy || editingId !== null || folderDraft !== null)">
+                    <component :is="IconFolderPlus" aria-hidden="true" />
+                  </uiButton>
+                  <uiButton
+                    class="iconButton"
+                    title="新增画布"
+                    aria-label="新增画布"
+                    @click="handleAddCanvas"
+                    variant="ghost"
+                    type="button"
+                    :disabled="(pickerBusy || editingId !== null || folderDraft !== null)">
+                    <component :is="IconPlus" aria-hidden="true" />
+                  </uiButton>
+                </div>
+                <div
+                  class="portLoading"
+                  :aria-busy="loadingTree"
+                  style="overflow:auto; overscroll-behavior:contain"
+                  :style="{ maxHeight: 'min(440px, calc(100dvh - 198px))', height: undefined }">
+                  <el-tree
+                    v-if="canvasListVisible"
+                    ref="canvasTree"
+                    class="canvasTree"
+                    :data="treeEntries"
+                    nodeKey="path"
+                    :props="{ label: 'name', isLeaf: entry => entry.type === 'file' || entry.draft || entry.empty === true }"
+                    lazy
+                    :load="loadTreeNode"
+                    :defaultExpandedKeys="expandedFolders"
+                    :autoExpandParent="false"
+                    :icon="IconChevronRight"
+                    :currentNodeKey="activeCanvasId"
+                    :filterNodeMethod="filterEntry"
+                    highlightCurrent
+                    emptyText=""
+                    @nodeClick="selectEntry"
+                    @nodeExpand="expandFolder"
+                    @nodeCollapse="collapseFolder">
+                    <template #default="{ data, node }">
+                      <div class="canvasEntry" :title="data.path" @contextmenu="openItemMenu($event, data)">
+                        <component
+                          v-if="data.type === 'directory'"
+                          :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder"
+                          class="folderIcon"
+                          :size="18"
+                          aria-hidden="true" />
+                        <icon-vector v-else class="canvasIcon" :size="18" />
+                        <uiInput
+                          v-if="data.draft"
+                          ref="folderInput"
+                          :modelValue="folderDraft ?? ''"
+                          @update:modelValue="folderDraft = String($event)"
+                          class="nameEditor"
+                          aria-label="文件夹名称"
+                          :disabled="busy"
+                          :maxlength="120"
+                          @click.stop
+                          @keydown.stop
+                          @keydown.enter.prevent="saveFolder"
+                          @keydown.esc.prevent="cancelFolder"
+                          @blur="saveFolder"></uiInput>
+                        <uiInput
+                          v-else-if="editingId === data.path"
+                          ref="nameInput"
+                          v-model="canvasName"
+                          class="nameEditor"
+                          :disabled="busy"
+                          :maxlength="120"
+                          :aria-label="newCanvasId === data.path ? '新画布名称' : '画布名称'"
+                          @click.stop
+                          @keydown.stop
+                          @keydown.enter="saveCanvas"
+                          @keydown.esc.prevent="finishEdit"
+                          @blur="saveCanvas"></uiInput>
+                        <span v-else class="entryName">{{ data.name }}</span>
+                        <icon-check v-if="activeCanvasId === data.path" class="selectedIcon" :size="16" aria-hidden="true" />
+                        <uiButton
+                          v-if="!data.draft && editingId !== data.path"
+                          class="moreButton"
+                          :aria-label="'更多 ' + data.name"
+                          title="更多"
+                          @click.stop="openItemMenu($event, data)"
+                          variant="ghost"
+                          type="button"
+                          :disabled="(pickerBusy || editingId !== null || folderDraft !== null)">
+                          <component :is="IconDots" aria-hidden="true" />
+                        </uiButton>
+                      </div>
+                    </template>
+                  </el-tree>
+                  <div v-if="loadingTree" class="portLoadingMask" aria-hidden="true">
+                    <icon-loader-2 class="animate-spin" />
+                  </div>
+                </div>
+                <span v-if="renameError" role="alert" data-ui-text="danger">{{ renameError }}</span>
+              </div>
+            </uiPopoverContent>
+          </uiPopover>
+        </div>
       </div>
-    </el-card>
-    <div class="menuExtension"><slot /></div>
+    </uiCard>
+    <div class="menuExtension">
+      <slot />
+    </div>
   </panel>
   <panel v-if="providerBalances.length" class="balanceMenuPanel" position="top-right">
     <div class="balanceList" tabindex="0" aria-label="供应商余额">
-      <el-card v-for="item in providerBalances" :key="item.id" class="balanceCard" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
-        <el-button class="balanceTrigger" text :loading="item.loading" :title="item.error || `点击刷新 ${item.label} 余额`" :aria-label="`刷新 ${item.label} 余额`" @click="refreshProviderBalance(item.id)">
-          <span class="providerLabel">{{ item.label }}</span>
-          <span>{{ item.balance ? `${balanceFormat.format(Math.min(item.balance.balance, item.balance.keyBalance ?? Infinity))} ${item.balance.unit}` : '—' }}</span>
-        </el-button>
-      </el-card>
+      <uiCard v-for="item in providerBalances" :key="item.id" class="balanceCard" style="gap:0; padding:0">
+        <div class="cardBody" :style="{ padding: '2px 4px' }">
+          <uiButton
+            class="balanceTrigger"
+            :title="item.error || `点击刷新 ${item.label} 余额`"
+            :aria-label="`刷新 ${item.label} 余额`"
+            @click="refreshProviderBalance(item.id)"
+            variant="ghost"
+            type="button"
+            :disabled="(item.loading)">
+            <icon-loader-2 v-if="item.loading" class="animate-spin" aria-hidden="true" />
+            <span class="providerLabel">{{ item.label }}</span>
+            <span>{{ item.balance ? `${balanceFormat.format(Math.min(item.balance.balance, item.balance.keyBalance ?? Infinity))} ${item.balance.unit}` : '—' }}</span>
+          </uiButton>
+        </div>
+      </uiCard>
     </div>
   </panel>
-  <el-dropdown ref="itemMenu" trigger="contextmenu" virtualTriggering :virtualRef="menuAnchor" placement="bottom-start" :showArrow="false" :hideOnClick="false" :appendTo="canvasPicker" popperClass="canvasActionMenu" @command="handleItemCommand" @visibleChange="(opened: boolean) => { if (!opened) moveVisible = false; }">
+  <el-dropdown
+    ref="itemMenu"
+    trigger="contextmenu"
+    virtualTriggering
+    :virtualRef="menuAnchor"
+    placement="bottom-start"
+    :showArrow="false"
+    :hideOnClick="false"
+    :appendTo="canvasPicker"
+    popperClass="canvasActionMenu"
+    @command="handleItemCommand"
+    @visibleChange="(opened: boolean) => { if (!opened) moveVisible = false; }">
     <template #dropdown>
       <el-dropdown-menu v-if="menuEntry">
         <el-dropdown-item command="move" :disabled="pickerBusy">
-          <el-popover v-model:visible="moveVisible" trigger="hover" placement="right-start" :width="220" :offset="0" :showArrow="false" :showAfter="0" :hideAfter="150" :appendTo="canvasPicker">
-            <template #reference><span class="moveTrigger"><span class="moveLabel">移动到</span><icon-chevron-right :size="14" /></span></template>
-            <div class="moveDestinations" role="menu" aria-label="移动到目录" @click.stop @keydown.stop>
-              <el-button text :icon="IconFolderPlus" :disabled="pickerBusy" role="menuitem" @click="createMoveFolder">新建文件夹</el-button>
-              <el-scrollbar maxHeight="260px">
-                <el-button v-for="folder in moveFolders" :key="folder.path" text :icon="IconFolder" :disabled="pickerBusy || destinationDisabled(folder.path)" role="menuitem" :title="folder.label" @click="moveEntry(folder.path)">{{ folder.label }}</el-button>
-              </el-scrollbar>
-            </div>
-          </el-popover>
+          <hover-card-root v-model:open="moveVisible" :openDelay="0" :closeDelay="150">
+            <hover-card-trigger asChild>
+              <span class="moveTrigger">
+                <span class="moveLabel">移动到</span>
+                <icon-chevron-right :size="14" />
+              </span>
+            </hover-card-trigger>
+            <hover-card-portal :to="canvasPicker">
+              <hover-card-content
+                class="hoverPanel "
+                side="right"
+                align="start"
+                :sideOffset="0"
+                :style="{ width: '220px', maxWidth: 'calc(100vw - 24px)', zIndex: hoverZIndex }">
+                <div class="moveDestinations" role="menu" aria-label="移动到目录" @click.stop @keydown.stop>
+                  <uiButton role="menuitem" @click="createMoveFolder" variant="ghost" type="button" :disabled="(pickerBusy)"><component :is="IconFolderPlus" aria-hidden="true" />新建文件夹</uiButton>
+                  <div style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: '260px', height: undefined }">
+                    <uiButton
+                      v-for="folder in moveFolders"
+                      :key="folder.path"
+                      role="menuitem"
+                      :title="folder.label"
+                      @click="moveEntry(folder.path)"
+                      variant="ghost"
+                      type="button"
+                      :disabled="(pickerBusy || destinationDisabled(folder.path))"><component :is="IconFolder" aria-hidden="true" />{{ folder.label }}</uiButton>
+                  </div>
+                </div>
+              </hover-card-content>
+            </hover-card-portal>
+          </hover-card-root>
         </el-dropdown-item>
         <el-dropdown-item command="rename" :disabled="pickerBusy">重命名</el-dropdown-item>
-        <el-dropdown-item class="deleteAction" command="delete" :disabled="pickerBusy || (menuEntry.type === 'directory' && !menuEntry.empty)" :title="menuEntry.type === 'directory' && !menuEntry.empty ? '请先移出或删除文件夹内的内容' : undefined">删除</el-dropdown-item>
+        <el-dropdown-item
+          class="deleteAction"
+          command="delete"
+          :disabled="pickerBusy || (menuEntry.type === 'directory' && !menuEntry.empty)"
+          :title="menuEntry.type === 'directory' && !menuEntry.empty ? '请先移出或删除文件夹内的内容' : undefined">删除</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
 </template>
 
 <script setup lang="ts">
+import { useLayerZIndex } from "@/lib/layerZIndex";
+import { HoverCardRoot, HoverCardTrigger, HoverCardPortal, HoverCardContent } from "reka-ui";
+import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
+import { uiButton } from "@/components/ui/button";
+import { uiSeparator } from "@/components/ui/separator";
+import { uiInput } from "@/components/ui/input";
+import { uiCard } from "@/components/ui/card";
 import axios from "axios";
 import { locale, translate } from "@toonflow/i18n/vue";
 import { computed, inject, nextTick, onBeforeUnmount, ref, shallowRef, watch, type ShallowRef } from "vue";
 import { Panel, useVueFlow, type FlowExportObject } from "@vue-flow/core";
-import { type DropdownInstance, type FilterNodeMethodFunction, type InputInstance, type LoadFunction, type TreeInstance } from "element-plus";
+import { type DropdownInstance, type FilterNodeMethodFunction, type LoadFunction, type TreeInstance } from "element-plus";
 import { toast } from "vue-sonner";
 import messageBox from "@/lib/messageBox";
 import { IconVector, IconCheck, IconChevronDown, IconChevronUp, IconChevronRight, IconDots, IconFolder, IconFolderOpen, IconFolderPlus, IconPlus, IconSearch } from "@tabler/icons-vue";
@@ -122,7 +301,7 @@ const initialized = ref(false);
 const loadError = ref("");
 const editingId = ref<string | null>(null);
 const newCanvasId = ref<string | null>(null);
-const nameInput = ref<InputInstance>();
+const nameInput = ref<{ $el: HTMLInputElement }>();
 const canvasName = ref("");
 const renameError = ref("");
 const { toObject, setNodes, setEdges, setViewport } = useVueFlow();
@@ -138,7 +317,7 @@ const searchQuery = ref("");
 const loadingTree = ref(false);
 const pickerBusy = computed(() => busy.value || loadingTree.value);
 const folderDraft = ref<string | null>(null);
-const folderInput = ref<InputInstance>();
+const folderInput = ref<{ $el: HTMLInputElement }>();
 const draftFolderPath = crypto.randomUUID();
 const itemMenu = ref<DropdownInstance>();
 const menuAnchor = shallowRef({ getBoundingClientRect: () => new DOMRect() });
@@ -579,8 +758,8 @@ async function editCanvas(canvas: { id: string; name: string }) {
   canvasName.value = canvas.name;
   renameError.value = "";
   await nextTick();
-  nameInput.value?.focus();
-  nameInput.value?.select();
+  nameInput.value?.$el.focus();
+  nameInput.value?.$el.select();
 }
 
 async function startFolder() {
@@ -589,8 +768,8 @@ async function startFolder() {
   renameError.value = "";
   folderDraft.value = "新建文件夹";
   await nextTick();
-  folderInput.value?.focus();
-  folderInput.value?.select();
+  folderInput.value?.$el.focus();
+  folderInput.value?.$el.select();
 }
 
 function cancelFolder() { if (!busy.value) folderDraft.value = null; }
@@ -810,6 +989,9 @@ function syncDocumentNode(canvasId: string, nodeId: string, handleId: string, te
 }
 
 defineExpose({ getCanvases, peekCanvases, initialized, addCanvas, switchCanvas, renameCanvas, syncCanvasPath, syncDocumentNode, loadError });
+
+const hoverZIndex = ref(useLayerZIndex());
+watch(moveVisible, open => { if (open) hoverZIndex.value = useLayerZIndex(); });
 </script>
 
 <style lang="scss" scoped>
@@ -860,7 +1042,7 @@ defineExpose({ getCanvases, peekCanvases, initialized, addCanvas, switchCanvas, 
     align-items: center;
     gap: 4px;
     margin-bottom: 8px;
-    .el-input { flex: 1; min-width: 0; }
+    :is(.el-input, [data-slot="input"], .inputGroup) { flex: 1; min-width: 0; }
     .iconButton { flex-shrink: 0; }
   }
 
@@ -900,7 +1082,7 @@ defineExpose({ getCanvases, peekCanvases, initialized, addCanvas, switchCanvas, 
 :global(.canvasActionMenu .deleteAction) { color: var(--el-color-danger); }
 
 .moveDestinations {
-  .el-button {
+  [data-slot="button"] {
     display: flex;
     justify-content: flex-start;
     width: 100%;
@@ -935,6 +1117,8 @@ defineExpose({ getCanvases, peekCanvases, initialized, addCanvas, switchCanvas, 
     .el-divider { margin: 0 3px; }
 
     .workspaceNameInput {
+      position: relative;
+      display: inline-grid;
       width: auto;
       height: 28px;
       min-width: 2em;
@@ -948,14 +1132,18 @@ defineExpose({ getCanvases, peekCanvases, initialized, addCanvas, switchCanvas, 
         visibility: hidden;
       }
 
-      :deep(.el-input__wrapper) {
+      .workspaceNameValue {
         position: absolute;
         inset: 0;
+        width: 100%;
+        height: 100%;
+        padding: 0 7px;
+        border: 0;
         background: transparent;
         box-shadow: none;
       }
 
-      :deep(.el-input__inner) {
+      :deep(input[data-slot="input"]) {
         font-family: inherit;
         font-weight: inherit;
         letter-spacing: inherit;

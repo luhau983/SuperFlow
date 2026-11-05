@@ -1,57 +1,86 @@
 <template>
   <section class="taskRecords" aria-label="任务记录" :aria-busy="loading">
     <div class="recordsToolbar">
-      <el-form class="searchForm" @submit.prevent="submitSearch">
-        <el-input v-model="search" class="taskSearch" :prefixIcon="IconSearch" placeholder="搜索任务 ID" aria-label="搜索任务 ID" clearable @clear="clearSearch" />
-        <el-button type="primary" nativeType="submit" :disabled="loading">查询</el-button>
-        <el-button :disabled="loading || (!search && !activeSearch)" @click="clearSearch">清除</el-button>
-      </el-form>
-      <el-button :icon="IconChartBar" @click="consumptionVisible = true">消耗查询</el-button>
+      <form class="searchForm uiForm" @submit.prevent="submitSearch">
+        <fieldset class="formFields">
+          <div class="inputGroup">
+            <component :is="IconSearch" aria-hidden="true" />
+            <uiInput v-model="search" class="taskSearch" placeholder="搜索任务 ID" aria-label="搜索任务 ID"></uiInput>
+            <uiButton
+              @mousedown.prevent
+              v-if="search"
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="清除"
+              @click="search = ''; clearSearch(); ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
+              <icon-x />
+            </uiButton>
+          </div>
+          <uiButton variant="default" type="submit" :disabled="(loading)">查询</uiButton>
+          <uiButton @click="clearSearch" variant="outline" type="button" :disabled="(loading || (!search && !activeSearch))">清除</uiButton>
+        </fieldset>
+      </form>
+      <uiButton @click="consumptionVisible = true" variant="outline" type="button"><component :is="IconChartBar" aria-hidden="true" />消耗查询</uiButton>
     </div>
-    <el-alert v-if="errorMessage" :title="errorMessage" type="error" :closable="false" showIcon>
-      <el-button size="small" @click="refresh">重试</el-button>
-    </el-alert>
-    <div v-loading="loading" class="recordsList">
-      <el-table :data="records" rowKey="id" emptyText="">
-        <el-table-column label="任务" minWidth="220">
-          <template #default="{ row }">
-            <div class="taskIdentity">
-              <div class="modelHeading">
-                <div class="modelAvatar" aria-hidden="true"><modelIcon :model="row.modelName" :size="24" /></div>
-                <div class="modelLabels">
-                  <strong>{{ row.modelName }}</strong>
-                  <span v-if="row.keyName" class="keyName">凭证名称 {{ row.keyName }}</span>
+    <uiAlert v-if="errorMessage" variant="destructive">
+      <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ errorMessage }}</uiAlertTitle>
+      <uiButton @click="refresh" variant="outline" type="button" size="sm">重试</uiButton>
+    </uiAlert>
+    <div :aria-busy="loading" class="recordsList portLoading">
+      <div class="tableViewport" :style="{ maxHeight: undefined, height: undefined }">
+        <uiTable>
+          <uiTableHeader>
+            <uiTableRow>
+              <uiTableHead :style="{ minWidth: '220px', textAlign: 'left' }">任务</uiTableHead>
+              <uiTableHead :style="{ minWidth: '100px', textAlign: 'left' }">状态</uiTableHead>
+              <uiTableHead :style="{ minWidth: '110px', textAlign: 'left' }">消费 / 耗时</uiTableHead>
+              <uiTableHead :style="{ minWidth: '165px', textAlign: 'left' }">创建 / 完成时间</uiTableHead>
+              <uiTableHead :style="{ minWidth: '65px', textAlign: 'right' }">详情</uiTableHead>
+            </uiTableRow>
+          </uiTableHeader>
+          <uiTableBody>
+            <uiTableRow v-for="(row, $index) in records" :key="row.id">
+              <uiTableCell :style="{ textAlign: 'left' }">
+                <div class="taskIdentity">
+                  <div class="modelHeading">
+                    <div class="modelAvatar" aria-hidden="true">
+                      <modelIcon :model="row.modelName" :size="24" />
+                    </div>
+                    <div class="modelLabels">
+                      <strong>{{ row.modelName }}</strong>
+                      <span v-if="row.keyName" class="keyName">凭证名称{{ row.keyName }}</span>
+                    </div>
+                  </div>
+                  <span class="taskId">{{ row.taskId }}</span>
                 </div>
-              </div>
-              <span class="taskId">{{ row.taskId }}</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="状态" width="100">
-          <template #default="{ row }">
-            <el-tag :type="statusType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag>
-          </template>
-        </el-table-column>
-        <el-table-column label="消费 / 耗时" minWidth="110">
-          <template #default="{ row }">
-            <div class="recordMetrics">
-              <span>{{ formatAmount(row.amount) }}</span>
-              <span v-if="row.duration !== null" class="duration">{{ numberFormat.format(row.duration) }} 秒</span>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="创建 / 完成时间" minWidth="165">
-          <template #default="{ row }">
-            <div class="recordTimes">
-              <time>{{ formatTime(row.createdAt) }}</time>
-              <time v-if="row.completedAt !== null" class="completedTime">{{ formatTime(row.completedAt) }}</time>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="详情" width="65" align="right">
-          <template #default="{ row }"><el-button link type="primary" :aria-label="`查看任务 ${row.taskId} 的详情`" @click="openDetails(row as TaskRecord)">查看</el-button></template>
-        </el-table-column>
-      </el-table>
+              </uiTableCell>
+              <uiTableCell :style="{ textAlign: 'left' }">
+                <uiBadge variant="secondary">{{ statusLabel(row.status) }}</uiBadge>
+              </uiTableCell>
+              <uiTableCell :style="{ textAlign: 'left' }">
+                <div class="recordMetrics">
+                  <span>{{ formatAmount(row.amount) }}</span>
+                  <span v-if="row.duration !== null" class="duration">{{ numberFormat.format(row.duration) }}秒</span>
+                </div>
+              </uiTableCell>
+              <uiTableCell :style="{ textAlign: 'left' }">
+                <div class="recordTimes">
+                  <time>{{ formatTime(row.createdAt) }}</time>
+                  <time v-if="row.completedAt !== null" class="completedTime">{{ formatTime(row.completedAt) }}</time>
+                </div>
+              </uiTableCell>
+              <uiTableCell :style="{ textAlign: 'right' }">
+                <uiButton :aria-label="`查看任务 ${row.taskId} 的详情`" @click="openDetails(row as TaskRecord)" variant="link" type="button">查看</uiButton>
+              </uiTableCell>
+            </uiTableRow>
+            <uiTableEmpty v-if="!(records)?.length" :colspan="5"></uiTableEmpty>
+          </uiTableBody>
+        </uiTable>
+      </div>
+      <div v-if="loading" class="portLoadingMask" aria-hidden="true">
+        <icon-loader-2 class="animate-spin" />
+      </div>
     </div>
     <el-pagination
       v-if="!errorMessage"
@@ -66,56 +95,143 @@
       size="small"
       @update:currentPage="changePage"
       @update:pageSize="changePageSize" />
-    <el-dialog v-model="detailsVisible" title="任务详情" width="min(640px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
-      <div v-if="selectedRecord" class="taskDetails">
-        <div class="detailHeading">
-          <div class="modelAvatar" aria-hidden="true"><modelIcon :model="selectedRecord.modelName" :size="28" /></div>
-          <h3>{{ selectedRecord.modelName }}</h3>
-          <el-tag :type="statusType(selectedRecord.status)">{{ statusLabel(selectedRecord.status) }}</el-tag>
+    <uiDialog :open="detailsVisible" @update:open="open => { if (!open) { detailsVisible = false; } }">
+      <uiDialogContent
+        :aria-describedby="undefined"
+        class="uiDialogPanel"
+        :style="{ width: 'min(640px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
+        <uiDialogHeader class="dialogHeader">
+          <uiDialogTitle>任务详情</uiDialogTitle>
+        </uiDialogHeader>
+        <div class="dialogBody">
+          <div v-if="selectedRecord" class="taskDetails">
+            <div class="detailHeading">
+              <div class="modelAvatar" aria-hidden="true">
+                <modelIcon :model="selectedRecord.modelName" :size="28" />
+              </div>
+              <h3>{{ selectedRecord.modelName }}</h3>
+              <uiBadge variant="secondary">{{ statusLabel(selectedRecord.status) }}</uiBadge>
+            </div>
+            <dl class="detailFields">
+              <div class="fullWidth">
+                <dt>任务 ID</dt>
+                <dd>{{ selectedRecord.taskId }}</dd>
+              </div>
+              <div v-if="selectedRecord.keyName">
+                <dt>凭证名称</dt>
+                <dd>{{ selectedRecord.keyName }}</dd>
+              </div>
+              <div>
+                <dt>消费金额</dt>
+                <dd>{{ formatAmount(selectedRecord.amount) }}</dd>
+              </div>
+              <div>
+                <dt>耗时</dt>
+                <dd>{{ selectedRecord.duration === null ? "" : `${numberFormat.format(selectedRecord.duration)} 秒` }}</dd>
+              </div>
+              <div>
+                <dt>创建时间</dt>
+                <dd>{{ formatTime(selectedRecord.createdAt) }}</dd>
+              </div>
+              <div>
+                <dt>完成时间</dt>
+                <dd>{{ formatTime(selectedRecord.completedAt) }}</dd>
+              </div>
+              <div v-if="selectedRecord.errorReason" class="fullWidth failureReason">
+                <dt>失败原因</dt>
+                <dd>{{ selectedRecord.errorReason }}</dd>
+              </div>
+            </dl>
+            <uiButton v-if="resultUrl" class="resultButton" variant="default" type="button" asChild>
+              <a :href="resultUrl" target="_blank" rel="noopener noreferrer"><component :is="IconExternalLink" aria-hidden="true" />查看结果</a>
+            </uiButton>
+            <section v-else-if="resultText" class="resultData">
+              <h4>结果数据</h4>
+              <pre>{{ resultText }}</pre>
+            </section>
+          </div>
         </div>
-        <dl class="detailFields">
-          <div class="fullWidth"><dt>任务 ID</dt><dd>{{ selectedRecord.taskId }}</dd></div>
-          <div v-if="selectedRecord.keyName"><dt>凭证名称</dt><dd>{{ selectedRecord.keyName }}</dd></div>
-          <div><dt>消费金额</dt><dd>{{ formatAmount(selectedRecord.amount) }}</dd></div>
-          <div><dt>耗时</dt><dd>{{ selectedRecord.duration === null ? "" : `${numberFormat.format(selectedRecord.duration)} 秒` }}</dd></div>
-          <div><dt>创建时间</dt><dd>{{ formatTime(selectedRecord.createdAt) }}</dd></div>
-          <div><dt>完成时间</dt><dd>{{ formatTime(selectedRecord.completedAt) }}</dd></div>
-          <div v-if="selectedRecord.errorReason" class="fullWidth failureReason"><dt>失败原因</dt><dd>{{ selectedRecord.errorReason }}</dd></div>
-        </dl>
-        <el-button v-if="resultUrl" class="resultButton" tag="a" :href="resultUrl" target="_blank" rel="noopener noreferrer" type="primary" :icon="IconExternalLink">查看结果</el-button>
-        <section v-else-if="resultText" class="resultData"><h4>结果数据</h4><pre>{{ resultText }}</pre></section>
-      </div>
-    </el-dialog>
-    <el-dialog v-model="consumptionVisible" title="消耗查询" width="min(560px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
-      <el-form :id="consumptionFormId" class="consumptionForm" labelPosition="top" :disabled="consumptionLoading" @submit.prevent="queryConsumption">
-        <el-form-item label="时间范围" :error="rangeError">
-          <el-date-picker
-            v-model="dateRange"
-            class="dateRange"
-            type="datetimerange"
-            format="YYYY-MM-DD HH:mm:ss"
-            :startPlaceholder="translate('开始时间')"
-            :endPlaceholder="translate('结束时间')"
-            :rangeSeparator="translate('至')" />
-        </el-form-item>
-        <el-form-item label="凭证（选填）">
-          <el-input v-model="accountCredential" type="password" showPassword autocomplete="off" placeholder="输入凭证，留空查询全部" />
-        </el-form-item>
-      </el-form>
-      <el-alert v-if="consumptionError" :title="consumptionError" type="error" :closable="false" showIcon />
-      <dl v-if="consumption" class="consumptionResult" aria-live="polite">
-        <div><dt>消费金额</dt><dd>{{ formatAmount(consumption.total) }}</dd></div>
-        <div><dt>请求次数</dt><dd>{{ numberFormat.format(consumption.count) }}</dd></div>
-      </dl>
-      <template #footer>
-        <el-button @click="consumptionVisible = false">关闭</el-button>
-        <el-button type="primary" nativeType="submit" :form="consumptionFormId" :loading="consumptionLoading" :disabled="!consumptionReady">查询</el-button>
-      </template>
-    </el-dialog>
+      </uiDialogContent>
+    </uiDialog>
+    <uiDialog :open="consumptionVisible" @update:open="open => { if (!open) { consumptionVisible = false; } }">
+      <uiDialogContent
+        :aria-describedby="undefined"
+        class="uiDialogPanel"
+        :style="{ width: 'min(560px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
+        <uiDialogHeader class="dialogHeader">
+          <uiDialogTitle>消耗查询</uiDialogTitle>
+        </uiDialogHeader>
+        <div class="dialogBody">
+          <form :id="consumptionFormId" class="consumptionForm uiForm" @submit.prevent="queryConsumption">
+            <fieldset class="formFields" :disabled="consumptionLoading">
+              <div class="formField">
+                <uiLabel>时间范围</uiLabel>
+                <el-date-picker
+                  v-model="dateRange"
+                  class="dateRange"
+                  type="datetimerange"
+                  format="YYYY-MM-DD HH:mm:ss"
+                  :startPlaceholder="translate('开始时间')"
+                  :endPlaceholder="translate('结束时间')"
+                  :rangeSeparator="translate('至')" />
+                <p v-if="rangeError" class="text-destructive text-sm" role="alert">{{ rangeError }}</p>
+              </div>
+              <div class="formField">
+                <uiLabel :for="portFieldId + '-1'">凭证（选填）</uiLabel>
+                <div class="inputGroup">
+                  <uiInput
+                    :id="portFieldId + '-1'"
+                    v-model="accountCredential"
+                    autocomplete="off"
+                    placeholder="输入凭证，留空查询全部"
+                    :disabled="(consumptionLoading) || (false)"
+                    :type="passwordVisible1 ? 'text' : 'password'"></uiInput>
+                  <uiButton
+                    @mousedown.prevent
+                    type="button"
+                    variant="ghost"
+                    size="icon-sm"
+                    :aria-label="passwordVisible1 ? '隐藏密码' : '显示密码'"
+                    :disabled="consumptionLoading"
+                    @click="passwordVisible1 = !passwordVisible1">
+                    <icon-eye-off v-if="passwordVisible1" />
+                    <icon-eye v-else />
+                  </uiButton>
+                </div>
+              </div>
+            </fieldset>
+          </form>
+          <uiAlert v-if="consumptionError" variant="destructive">
+            <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ consumptionError }}</uiAlertTitle>
+          </uiAlert>
+          <dl v-if="consumption" class="consumptionResult" aria-live="polite">
+            <div>
+              <dt>消费金额</dt>
+              <dd>{{ formatAmount(consumption.total) }}</dd>
+            </div>
+            <div>
+              <dt>请求次数</dt>
+              <dd>{{ numberFormat.format(consumption.count) }}</dd>
+            </div>
+          </dl>
+          <uiDialogFooter class="dialogFooter">
+            <uiButton @click="consumptionVisible = false" variant="outline" type="button">关闭</uiButton>
+            <uiButton :form="consumptionFormId" variant="default" type="submit" :disabled="(!consumptionReady) || (consumptionLoading)"><icon-loader-2 v-if="consumptionLoading" class="animate-spin" aria-hidden="true" />查询</uiButton>
+          </uiDialogFooter>
+        </div>
+      </uiDialogContent>
+    </uiDialog>
   </section>
 </template>
 
 <script setup lang="ts">
+import { uiLabel } from "@/components/ui/label";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
+import { uiBadge } from "@/components/ui/badge";
+import { uiTable, uiTableHeader, uiTableHead, uiTableBody, uiTableRow, uiTableCell, uiTableEmpty } from "@/components/ui/table";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiButton } from "@/components/ui/button";
+import { uiInput } from "@/components/ui/input";
 import { computed, onBeforeUnmount, ref, useId, watch } from "vue";
 import { t, translate } from "@toonflow/i18n/vue";
 import { IconChartBar, IconExternalLink, IconSearch } from "@tabler/icons-vue";
@@ -297,6 +413,9 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({ refresh });
+
+const passwordVisible1 = ref(false);
+const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -319,7 +438,7 @@ defineExpose({ refresh });
       min-width: 0;
 
       .taskSearch { min-width: 120px; max-width: 300px; }
-      .el-button { margin: 0; }
+      [data-slot="button"] { margin: 0; }
     }
   }
 

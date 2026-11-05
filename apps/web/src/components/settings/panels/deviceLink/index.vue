@@ -1,130 +1,183 @@
 <template>
-  <div v-loading="loading" class="deviceLink">
+  <div :aria-busy="loading" class="deviceLink portLoading">
     <section v-if="isRemoteConnection" class="remoteConnection" aria-label="当前连接设备">
-      <el-tag :type="mobileConnection.online === true ? mobileConnectionVersionWarning ? 'warning' : 'success' : mobileConnection.online === false ? 'danger' : 'info'">{{ mobileConnectionLabel }}</el-tag>
+      <uiBadge variant="secondary">{{ mobileConnectionLabel }}</uiBadge>
       <h3>{{ mobileConnection.name || 'SuperFlow' }}</h3>
       <code>{{ mobileConnection.url }}</code>
       <p class="description">当前使用这个设备的项目与配置。断开后恢复独立运行，才可以允许其他设备连接。</p>
-      <el-alert v-if="mobileConnectionVersionWarning" :title="mobileConnectionVersionWarning" type="warning" :closable="false" showIcon />
-      <el-button type="primary" :loading="saving" @click="disconnectRemote">断开并独立运行</el-button>
-      <el-alert v-if="error" :title="error" type="error" :closable="false" showIcon />
+      <uiAlert v-if="mobileConnectionVersionWarning">
+        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ mobileConnectionVersionWarning }}</uiAlertTitle>
+      </uiAlert>
+      <uiButton @click="disconnectRemote" variant="default" type="button" :disabled="(saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />断开并独立运行</uiButton>
+      <uiAlert v-if="error" variant="destructive">
+        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ error }}</uiAlertTitle>
+      </uiAlert>
     </section>
     <template v-else>
-    <section class="settingSection" aria-labelledby="deviceLinkTitle">
-      <div class="sectionHeader">
-        <div class="settingInfo">
-          <h3 id="deviceLinkTitle">允许其他设备连接</h3>
-          <p class="description">其他电脑、安卓设备可使用这里的项目与配置。连接时请保持 SuperFlow 运行。</p>
-        </div>
-        <el-switch :modelValue="form.enabled" :disabled="busy || !status" aria-label="允许其他设备连接" @change="value => saveConfig(value === true)" />
-      </div>
-    </section>
-
-    <template v-if="status?.enabled">
-      <section class="settingSection pairingSection" :class="{ pairingUnavailable: !pairing }" aria-labelledby="pairingTitle">
-        <div class="pairingIntro">
-          <div class="sectionHeader">
-            <h3 id="pairingTitle">连接新设备</h3>
-            <el-button :icon="IconQrcode" :loading="generating" :disabled="busy || !pairingUrl" text @click="generatePairing">{{ pairing ? '刷新二维码' : pairedSuccessfully ? '连接另一个设备' : '生成二维码' }}</el-button>
-          </div>
-          <p v-if="addressMode === 'lan'" class="description">在同一 Wi-Fi 下，打开另一台设备的“设备互联”，扫码或手动输入。</p>
-          <p v-else class="description">打开另一台设备的“设备互联”，扫码或手动输入，即可通过公网连接。</p>
-        </div>
-        <div class="pairingPanel">
-          <div v-if="pairing" class="pairingCode">
-            <q-r-code :value="pairing.qrCode" :size="176" type="svg" color="#18181b" bgColor="#ffffff" />
-          </div>
-          <p v-else-if="generating" class="description" role="status">正在准备二维码…</p>
-          <el-alert v-else-if="pairingNotice" :title="pairingNotice" :type="pairedSuccessfully && pairedDevice?.online ? 'success' : 'info'" :closable="false" showIcon />
-          <el-alert v-else-if="!pairingUrl" :title="addressMode === 'lan' ? '没有找到可用的 Wi-Fi 地址，请检查电脑网络，或在高级选项中选择其他连接方式。' : '请在高级选项中填写并保存公网连接地址。'" type="warning" :closable="false" showIcon />
-        </div>
-        <div v-if="pairing?.manualCode" class="manualConnection">
-          <div class="manualField">
-            <span>连接地址</span>
-            <div class="fieldValue">
-              <code dir="ltr">{{ pairing.url }}</code>
-              <el-button type="primary" link aria-label="复制地址" @click="copyConnectionInfo(pairing.url)">复制</el-button>
-            </div>
-          </div>
-          <div class="manualField">
-            <span>12 位配对码</span>
-            <div class="fieldValue">
-              <code class="manualCode" dir="ltr">{{ formattedManualCode }}</code>
-              <el-button type="primary" link aria-label="复制配对码" @click="copyConnectionInfo(formattedManualCode)">复制</el-button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section class="settingSection devicePanel" aria-labelledby="linkedDevicesTitle">
+      <section class="settingSection" aria-labelledby="deviceLinkTitle">
         <div class="sectionHeader">
-          <h3 id="linkedDevicesTitle">设备连接状态</h3>
-          <el-button :icon="IconRefresh" :disabled="busy" text aria-label="刷新设备连接状态" @click="loadStatus(false, true)">刷新</el-button>
+          <div class="settingInfo">
+            <h3 id="deviceLinkTitle">允许其他设备连接</h3>
+            <p class="description">其他电脑、安卓设备可使用这里的项目与配置。连接时请保持 SuperFlow 运行。</p>
+          </div>
+          <uiSwitch
+            :modelValue="form.enabled"
+            aria-label="允许其他设备连接"
+            :disabled="(busy || !status)"
+            @update:modelValue="value => saveConfig(value === true)"></uiSwitch>
         </div>
-        <div v-for="device in status.devices" :key="device.id" class="deviceItem">
-          <span class="deviceName">{{ device.name }}</span>
-          <el-tag :type="device.online ? 'success' : 'info'" size="small">{{ device.online ? '已连接' : '离线' }}</el-tag>
-          <el-button type="danger" link :disabled="busy" @click="revokeDevice(device.id)">撤销</el-button>
-          <el-alert v-if="device.online && getDeviceVersionWarning(status.appVersion, device.appVersion)" class="deviceVersionWarning" :title="getDeviceVersionWarning(status.appVersion, device.appVersion)" type="warning" :closable="false" showIcon />
-        </div>
-        <p v-if="!status.devices.length" class="description">等待设备连接</p>
       </section>
-    </template>
-
-    <el-alert v-if="error" :title="error" type="error" :closable="false" showIcon />
-    <el-button v-if="!status && !loading" :icon="IconRefresh" @click="loadStatus()">重新加载</el-button>
-
-    <el-collapse class="advancedSettings">
-      <el-collapse-item title="高级选项" name="advanced">
-        <section class="settingSection" aria-label="连接设置">
-          <el-form class="connectionForm" labelPosition="top" :disabled="busy || !status">
-            <el-form-item label="连接方式">
-              <el-radio-group v-model="addressMode" aria-label="连接方式">
-                <el-radio-button value="lan">同一 Wi-Fi</el-radio-button>
-                <el-radio-button value="public">公网连接</el-radio-button>
-              </el-radio-group>
-            </el-form-item>
-            <el-form-item v-if="addressMode === 'lan'" label="电脑地址">
-              <el-select v-if="(status?.addresses.length ?? 0) > 1" v-model="selectedAddress" aria-label="局域网地址">
-                <el-option v-for="address in status?.addresses ?? []" :key="address" :label="address" :value="address" />
-              </el-select>
-              <code v-else class="connectionAddress">{{ selectedAddress || '未找到可用地址' }}</code>
-              <p class="description">无法连接时可尝试其他地址，并检查电脑防火墙是否允许 SuperFlow 联网。</p>
-            </el-form-item>
-            <el-form-item v-if="addressMode === 'public'" label="公网 HTTPS 地址">
-              <el-input v-model="form.publicUrl" placeholder="https://toonflow.example.com" aria-label="公网 HTTPS 地址" />
-              <p class="description">请将这个 HTTPS 地址转发到下方互联端口，保留请求路径。保存后生效。</p>
-            </el-form-item>
-            <el-form-item label="互联端口">
-              <el-input-number v-model="form.port" :min="1" :max="65535" :precision="0" controlsPosition="right" aria-label="互联端口" />
-              <p class="description">通常无需修改。</p>
-            </el-form-item>
-          </el-form>
+      <template v-if="status?.enabled">
+        <section class="settingSection pairingSection" :class="{ pairingUnavailable: !pairing }" aria-labelledby="pairingTitle">
+          <div class="pairingIntro">
+            <div class="sectionHeader">
+              <h3 id="pairingTitle">连接新设备</h3>
+              <uiButton @click="generatePairing" variant="ghost" type="button" :disabled="(busy || !pairingUrl) || (generating)"><icon-loader-2 v-if="generating" class="animate-spin" aria-hidden="true" /><component :is="IconQrcode" aria-hidden="true" />{{ pairing ? '刷新二维码' : pairedSuccessfully ? '连接另一个设备' : '生成二维码' }}</uiButton>
+            </div>
+            <p v-if="addressMode === 'lan'" class="description">在同一 Wi-Fi 下，打开另一台设备的“设备互联”，扫码或手动输入。</p>
+            <p v-else class="description">打开另一台设备的“设备互联”，扫码或手动输入，即可通过公网连接。</p>
+          </div>
+          <div class="pairingPanel">
+            <div v-if="pairing" class="pairingCode">
+              <q-r-code :value="pairing.qrCode" :size="176" type="svg" color="#18181b" bgColor="#ffffff" />
+            </div>
+            <p v-else-if="generating" class="description" role="status">正在准备二维码…</p>
+            <uiAlert v-else-if="pairingNotice">
+              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ pairingNotice }}</uiAlertTitle>
+            </uiAlert>
+            <uiAlert v-else-if="!pairingUrl">
+              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ addressMode === 'lan' ? '没有找到可用的 Wi-Fi 地址，请检查电脑网络，或在高级选项中选择其他连接方式。' : '请在高级选项中填写并保存公网连接地址。' }}</uiAlertTitle>
+            </uiAlert>
+          </div>
+          <div v-if="pairing?.manualCode" class="manualConnection">
+            <div class="manualField">
+              <span>连接地址</span>
+              <div class="fieldValue">
+                <code dir="ltr">{{ pairing.url }}</code>
+                <uiButton aria-label="复制地址" @click="copyConnectionInfo(pairing.url)" variant="link" type="button">复制</uiButton>
+              </div>
+            </div>
+            <div class="manualField">
+              <span>12 位配对码</span>
+              <div class="fieldValue">
+                <code class="manualCode" dir="ltr">{{ formattedManualCode }}</code>
+                <uiButton aria-label="复制配对码" @click="copyConnectionInfo(formattedManualCode)" variant="link" type="button">复制</uiButton>
+              </div>
+            </div>
+          </div>
         </section>
-        <section class="settingSection" aria-labelledby="sharedDirectoriesTitle">
+        <section class="settingSection devicePanel" aria-labelledby="linkedDevicesTitle">
           <div class="sectionHeader">
-            <h3 id="sharedDirectoriesTitle">共享工作目录</h3>
-            <el-button :icon="IconFolderPlus" :disabled="busy || !status" @click="addDirectory">添加目录</el-button>
+            <h3 id="linkedDevicesTitle">设备连接状态</h3>
+            <uiButton aria-label="刷新设备连接状态" @click="loadStatus(false, true)" variant="ghost" type="button" :disabled="(busy)"><component :is="IconRefresh" aria-hidden="true" />刷新</uiButton>
           </div>
-          <p class="description">这些工作目录允许连接设备访问；服务器自带工作区也可使用。首次开启会使用已有项目的工作目录。</p>
-          <div class="directoryList">
-            <el-tag v-for="directory in form.directories" :key="directory" class="directoryTag" :closable="!busy" :title="directory" @close="removeDirectory(directory)">{{ directory }}</el-tag>
+          <div v-for="device in status.devices" :key="device.id" class="deviceItem">
+            <span class="deviceName">{{ device.name }}</span>
+            <uiBadge variant="secondary">{{ device.online ? '已连接' : '离线' }}</uiBadge>
+            <uiButton @click="revokeDevice(device.id)" variant="link" type="button" :disabled="(busy)">撤销</uiButton>
+            <uiAlert v-if="device.online && getDeviceVersionWarning(status.appVersion, device.appVersion)" class="deviceVersionWarning">
+              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ getDeviceVersionWarning(status.appVersion, device.appVersion) }}</uiAlertTitle>
+            </uiAlert>
           </div>
+          <p v-if="!status.devices.length" class="description">等待设备连接</p>
         </section>
-        <div class="advancedActions">
-          <el-button type="primary" :loading="saving" :disabled="busy || !status || !dirty" @click="saveConfig()">保存修改</el-button>
-        </div>
-      </el-collapse-item>
-    </el-collapse>
-    <workspacePicker ref="directoryPicker" hideTrigger />
+      </template>
+      <uiAlert v-if="error" variant="destructive">
+        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ error }}</uiAlertTitle>
+      </uiAlert>
+      <uiButton v-if="!status && !loading" @click="loadStatus()" variant="outline" type="button"><component :is="IconRefresh" aria-hidden="true" />重新加载</uiButton>
+      <div class="advancedSettings">
+        <uiCollapsible>
+          <uiCollapsibleTrigger class="collapseTrigger">高级选项<icon-chevron-down /></uiCollapsibleTrigger>
+          <uiCollapsibleContent>
+            <section class="settingSection" aria-label="连接设置">
+              <form class="connectionForm uiForm">
+                <fieldset class="formFields" :disabled="busy || !status">
+                  <div class="formField">
+                    <uiLabel>连接方式</uiLabel>
+                    <uiRadioGroup v-model="addressMode" aria-label="连接方式">
+                      <uiLabel class="radioField"><uiRadioGroupItem :value="'lan'" />同一 Wi-Fi</uiLabel>
+                      <uiLabel class="radioField"><uiRadioGroupItem :value="'public'" />公网连接</uiLabel>
+                    </uiRadioGroup>
+                  </div>
+                  <div v-if="addressMode === 'lan'" class="formField">
+                    <uiLabel :for="portFieldId + '-1'">电脑地址</uiLabel>
+                    <uiSelect
+                      v-if="(status?.addresses.length ?? 0) > 1"
+                      :modelValue="String(selectedAddress) === '' ? '__empty__' : (selectedAddress)"
+                      @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; selectedAddress = value as typeof selectedAddress; }">
+                      <uiSelectTrigger :id="portFieldId + '-1'" aria-label="局域网地址">
+                        <uiSelectValue />
+                      </uiSelectTrigger>
+                      <uiSelectContent>
+                        <uiSelectItem v-for="address in status?.addresses ?? []" :key="address" :value="address">{{ address }}</uiSelectItem>
+                      </uiSelectContent>
+                    </uiSelect>
+                    <code v-else class="connectionAddress">{{ selectedAddress || '未找到可用地址' }}</code>
+                    <p class="description">无法连接时可尝试其他地址，并检查电脑防火墙是否允许 SuperFlow 联网。</p>
+                  </div>
+                  <div v-if="addressMode === 'public'" class="formField">
+                    <uiLabel :for="portFieldId + '-2'">公网 HTTPS 地址</uiLabel>
+                    <uiInput
+                      :id="portFieldId + '-2'"
+                      v-model="form.publicUrl"
+                      placeholder="https://toonflow.example.com"
+                      aria-label="公网 HTTPS 地址"
+                      :disabled="(busy || !status) || (false)"></uiInput>
+                    <p class="description">请将这个 HTTPS 地址转发到下方互联端口，保留请求路径。保存后生效。</p>
+                  </div>
+                  <div class="formField">
+                    <uiLabel :for="portFieldId + '-3'">互联端口</uiLabel>
+                    <uiNumberField class="numberField" v-model="form.port" :min="1" :max="65535" :formatOptions="{ maximumFractionDigits: 0, minimumFractionDigits: 0 }">
+                      <uiNumberFieldContent>
+                        <uiNumberFieldDecrement />
+                        <uiNumberFieldInput :id="portFieldId + '-3'" :aria-label="'互联端口'" />
+                        <uiNumberFieldIncrement />
+                      </uiNumberFieldContent>
+                    </uiNumberField>
+                    <p class="description">通常无需修改。</p>
+                  </div>
+                </fieldset>
+              </form>
+            </section>
+            <section class="settingSection" aria-labelledby="sharedDirectoriesTitle">
+              <div class="sectionHeader">
+                <h3 id="sharedDirectoriesTitle">共享工作目录</h3>
+                <uiButton @click="addDirectory" variant="outline" type="button" :disabled="(busy || !status)"><component :is="IconFolderPlus" aria-hidden="true" />添加目录</uiButton>
+              </div>
+              <p class="description">这些工作目录允许连接设备访问；服务器自带工作区也可使用。首次开启会使用已有项目的工作目录。</p>
+              <div class="directoryList">
+                <uiBadge v-for="directory in form.directories" :key="directory" class="directoryTag" :title="directory" variant="secondary">{{ directory }}<uiButton type="button" variant="ghost" size="icon-xs" aria-label="移除" :disabled="!(!busy)" @click.stop="removeDirectory(directory)"><icon-x /></uiButton></uiBadge>
+              </div>
+            </section>
+            <div class="advancedActions">
+              <uiButton @click="saveConfig()" variant="default" type="button" :disabled="(busy || !status || !dirty) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存修改</uiButton>
+            </div>
+          </uiCollapsibleContent>
+        </uiCollapsible>
+      </div>
+      <workspacePicker ref="directoryPicker" hideTrigger />
     </template>
+    <div v-if="loading" class="portLoadingMask" aria-hidden="true">
+      <icon-loader-2 class="animate-spin" />
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { uiNumberField, uiNumberFieldContent, uiNumberFieldInput, uiNumberFieldDecrement, uiNumberFieldIncrement } from "@/components/ui/numberField";
+import { uiInput } from "@/components/ui/input";
+import { uiSelect, uiSelectTrigger, uiSelectValue, uiSelectContent, uiSelectItem } from "@/components/ui/select";
+import { uiRadioGroup, uiRadioGroupItem } from "@/components/ui/radioGroup";
+import { uiLabel } from "@/components/ui/label";
+import { uiCollapsible, uiCollapsibleTrigger, uiCollapsibleContent } from "@/components/ui/collapsible";
+import { uiSwitch } from "@/components/ui/switch";
+import { uiButton } from "@/components/ui/button";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiBadge } from "@/components/ui/badge";
 import axios from "axios";
 import { msg, translate, type MessageDescriptor } from "@toonflow/i18n/vue";
-import { computed, onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, reactive, ref, watch, useId } from "vue";
 import { toast } from "vue-sonner";
 import messageBox from "@/lib/messageBox";
 import { QRCode } from "tdesign-vue-next";
@@ -374,6 +427,7 @@ onBeforeUnmount(() => {
   clearInterval(timer);
   document.removeEventListener("visibilitychange", visibilityChanged);
 });
+const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -403,9 +457,9 @@ onBeforeUnmount(() => {
       gap: 20px;
 
       .settingInfo { min-width: 0; }
-      > .el-switch, > .el-button { flex-shrink: 0; }
+      > :is(.el-switch, [data-slot="switch"]), > [data-slot="button"] { flex-shrink: 0; }
     }
-    .connectionForm { .el-form-item { margin-bottom: 16px; } .description { flex-basis: 100%; } }
+    .connectionForm { :is(.el-form-item, .formField) { margin-bottom: 16px; } .description { flex-basis: 100%; } }
     .directoryList { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 0; }
     .directoryTag { max-width: 100%; height: auto; padding: 6px 10px; :deep(.el-tag__content) { overflow-wrap: anywhere; white-space: normal; } }
     .connectionAddress { overflow-wrap: anywhere; user-select: text; }
@@ -471,7 +525,7 @@ onBeforeUnmount(() => {
 
           code { min-width: 0; overflow-wrap: anywhere; user-select: text; font-size: 13px; line-height: 1.5; }
           .manualCode { font-size: 18px; letter-spacing: 1px; font-variant-numeric: tabular-nums; }
-          .el-button { flex-shrink: 0; }
+          [data-slot="button"] { flex-shrink: 0; }
         }
       }
     }

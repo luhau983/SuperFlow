@@ -1,7 +1,19 @@
 <template>
-  <span ref="element" class="mentionThumbnail" aria-hidden="true" :aria-busy="preparingPreview" :title="preparingPreview ? '正在生成兼容预览…' : previewError || undefined">
+  <span
+    ref="element"
+    class="mentionThumbnail"
+    aria-hidden="true"
+    :aria-busy="preparingPreview"
+    :title="preparingPreview ? '正在生成兼容预览…' : previewError || undefined">
     <template v-if="mediaSrc && !failed && !preparingPreview && !previewError">
-      <video v-if="thumbnail?.mimeType.startsWith('video/')" :src="mediaSrc" preload="auto" muted playsinline @loadeddata="handleLoaded" @error="handleError" />
+      <video
+        v-if="thumbnail?.mimeType.startsWith('video/')"
+        :src="mediaSrc"
+        preload="auto"
+        muted
+        playsinline
+        @loadeddata="handleLoaded"
+        @error="handleError" />
       <img v-else :src="mediaSrc" alt="" draggable="false" @load="handleLoaded" @error="handleError" />
     </template>
     <slot v-else />
@@ -59,8 +71,8 @@ watch([inView, () => props.thumbnail?.url, () => props.thumbnail?.mimeType, () =
   height: 36px;
   overflow: hidden;
   border-radius: 5px;
-  background: var(--el-fill-color-light);
-  color: var(--el-text-color-secondary);
+  background: var(--muted);
+  color: var(--muted-foreground);
 
   img, video { width: 100%; height: 100%; object-fit: cover; pointer-events: none; }
 }

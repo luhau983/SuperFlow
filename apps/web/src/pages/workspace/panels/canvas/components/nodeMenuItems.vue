@@ -13,25 +13,13 @@
           <component :is="nodeByType.get(item.type)?.icon ?? IconBox" class="menuIcon" :size="14" />
           <span class="menuLabel">{{ item.label }}</span>
         </button>
-        <el-popover
+        <hover-card-root
           v-else
-          :visible="openGroupId === item.id"
-          trigger="hover"
-          role="menu"
-          placement="right-start"
-          :fallbackPlacements="['left-start', 'right-end', 'left-end']"
-          :width="220"
-          :offset="8"
-          popperClass="nodeChildMenu"
-          :showArrow="false"
-          :showAfter="0"
-          :hideAfter="150"
-          :persistent="false"
-          :triggerKeys="[]"
-          :appendTo="menuHost ?? appendTo"
-          :popperStyle="{ padding: '5px 0', maxWidth: 'calc(100vw - 16px)' }"
-          @update:visible="visible => updateVisible(item.id, visible)">
-          <template #reference>
+          :open="openGroupId === item.id"
+          @update:open="visible => updateVisible(item.id, visible)"
+          :openDelay="0"
+          :closeDelay="150">
+          <hover-card-trigger asChild>
             <button
               type="button"
               class="menuButton"
@@ -46,20 +34,29 @@
               <span class="menuLabel">{{ item.label }}</span>
               <icon-chevron-right class="nextIcon" :size="14" />
             </button>
-          </template>
-          <ul class="childMenu" role="none">
-            <nodeMenuItems
-              v-if="openGroupId === item.id"
-              :ref="instance => setChildMenu(item.id, instance)"
-              :items="item.children ?? []"
-              :nodes="nodes"
-              @select="emit('select', $event)"
-              @close="closeGroup(item.id)" />
-          </ul>
-        </el-popover>
+          </hover-card-trigger>
+          <hover-card-portal :to="menuHost ?? appendTo">
+            <hover-card-content
+              class="hoverPanel nodeChildMenu"
+              side="right"
+              align="start"
+              :sideOffset="8"
+              :style="{ width: '220px', maxWidth: 'calc(100vw - 24px)', zIndex: hoverZIndex }">
+              <ul class="childMenu" role="none">
+                <nodeMenuItems
+                  v-if="openGroupId === item.id"
+                  :ref="instance => setChildMenu(item.id, instance)"
+                  :items="item.children ?? []"
+                  :nodes="nodes"
+                  @select="emit('select', $event)"
+                  @close="closeGroup(item.id)" />
+              </ul>
+            </hover-card-content>
+          </hover-card-portal>
+        </hover-card-root>
       </template>
       <template v-if="uploadDisabled !== undefined">
-        <el-divider />
+        <uiSeparator></uiSeparator>
         <button type="button" class="menuButton" role="menuitem" :disabled="uploadDisabled" @mouseenter="focusItem($event)" @click="emit('upload')">
           <icon-upload class="menuIcon" :size="14" />
           <span class="menuLabel">上传</span>
@@ -70,7 +67,10 @@
 </template>
 
 <script setup lang="ts">
-import { computed, nextTick, onMounted, ref, shallowRef, type Component, type ComponentPublicInstance } from "vue";
+import { useLayerZIndex } from "@/lib/layerZIndex";
+import { HoverCardRoot, HoverCardTrigger, HoverCardPortal, HoverCardContent } from "reka-ui";
+import { uiSeparator } from "@/components/ui/separator";
+import { computed, nextTick, onMounted, ref, shallowRef, type Component, type ComponentPublicInstance, watch } from "vue";
 import { IconBox, IconChevronRight, IconFolder, IconFolderOpen, IconUpload } from "@tabler/icons-vue";
 import type { NodeMenuItem } from "@toonflow/server/nodeMenu";
 
@@ -178,6 +178,9 @@ function handleKeydown(event: KeyboardEvent) {
 }
 
 defineExpose({ focusFirst, hasKeyboardFocus });
+
+const hoverZIndex = ref(useLayerZIndex());
+watch(openGroupId, open => { if (open) hoverZIndex.value = useLayerZIndex(); });
 </script>
 
 <style lang="scss" scoped>

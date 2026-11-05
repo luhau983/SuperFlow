@@ -3,17 +3,39 @@
     <div class="exploreToolbar">
       <h2 id="exploreTitle">探索</h2>
       <div class="toolbarActions">
-        <el-input v-model="search" class="searchInput" :prefixIcon="IconSearch" placeholder="搜索项目" aria-label="搜索云端项目" clearable />
-        <el-button :icon="IconPlus" aria-haspopup="dialog" :aria-expanded="publishVisible" @click="publishVisible = true">发布作品</el-button>
+        <div class="searchInput">
+          <icon-search class="searchIcon" :size="16" aria-hidden="true" />
+          <uiInput v-model="search" class="searchField" placeholder="搜索项目" aria-label="搜索云端项目" />
+          <button v-if="search" class="clearButton" type="button" aria-label="清空" @click="search = ''">
+            <icon-circle-x :size="16" aria-hidden="true" />
+          </button>
+        </div>
+        <uiButton variant="outline" aria-haspopup="dialog" :aria-expanded="publishVisible" @click="publishVisible = true"><icon-plus aria-hidden="true" />发布作品</uiButton>
       </div>
     </div>
     <div class="categoryFilters" role="group" aria-label="项目分类">
       <button type="button" :class="{ active: !selectedCategory }" :aria-pressed="!selectedCategory" @click="selectedCategory = ''">全部</button>
-      <button v-for="category in categories" :key="category.id" type="button" :class="{ active: selectedCategory === category.id }" :aria-pressed="selectedCategory === category.id" @click="selectedCategory = category.id">{{ category.name }}</button>
+      <button
+        v-for="category in categories"
+        :key="category.id"
+        type="button"
+        :class="{ active: selectedCategory === category.id }"
+        :aria-pressed="selectedCategory === category.id"
+        @click="selectedCategory = category.id">{{ category.name }}</button>
     </div>
     <div ref="gridElement" class="projectGrid" :style="{ height: `${rowVirtualizer.getTotalSize()}px` }" :aria-busy="loading" aria-label="云端项目">
-      <div v-for="{ row, items } in visibleRows" :key="String(row.key)" class="projectRow" :style="{ height: `${row.size}px`, gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`, transform: `translateY(${row.start - scrollMargin}px)` }">
-        <button v-for="item in items" :key="item.id" class="projectCard" type="button" :aria-label="`查看作品：${item.title}，作者 ${item.author.name}`" @click="selectedProjectId = item.id">
+      <div
+        v-for="{ row, items } in visibleRows"
+        :key="String(row.key)"
+        class="projectRow"
+        :style="{ height: `${row.size}px`, gridTemplateColumns: `repeat(${columnCount}, minmax(0, 1fr))`, transform: `translateY(${row.start - scrollMargin}px)` }">
+        <button
+          v-for="item in items"
+          :key="item.id"
+          class="projectCard"
+          type="button"
+          :aria-label="`查看作品：${item.title}，作者 ${item.author.name}`"
+          @click="selectedProjectId = item.id">
           <img v-if="item.coverUrl" class="cardCover" :src="item.coverUrl" alt="" loading="lazy" decoding="async" referrerpolicy="no-referrer" />
           <span class="cardShade" />
           <span class="cardFooter">
@@ -32,7 +54,7 @@
     <div v-else-if="loading || loadError" class="loadStatus" :role="loadError ? 'alert' : 'status'" aria-live="polite">
       <template v-if="loadError">
         <span>{{ loadError }}</span>
-        <el-button text @click="loadMore">重试</el-button>
+        <uiButton variant="ghost" size="sm" @click="loadMore">重试</uiButton>
       </template>
       <span v-else>正在加载作品…</span>
     </div>
@@ -44,11 +66,12 @@
 <script setup lang="ts">
 import { computed, nextTick, onMounted, onUnmounted, ref, watch } from "vue";
 import { useVirtualizer } from "@tanstack/vue-virtual";
-import { IconHeart, IconPlus, IconSearch } from "@tabler/icons-vue";
 import type { ExploreCategory, ExplorePage, ExploreProject } from "@toonflow/server/channel";
 import http from "@/lib/http";
 import exploreDetail from "./exploreDetail.vue";
 import publishWorkDialog from "./publishWorkDialog.vue";
+import { uiButton } from "@/components/ui/button";
+import { uiInput } from "@/components/ui/input";
 
 const props = defineProps<{ scrollElement?: HTMLElement }>();
 const exploreElement = ref<HTMLElement>();
@@ -202,13 +225,13 @@ onUnmounted(() => {
   max-width: 1280px;
   margin: 56px auto 0;
   padding-top: 32px;
-  border-top: 1px solid var(--el-border-color-lighter);
+  border-top: 1px solid var(--border);
 
   button {
     font: inherit;
 
     &:focus-visible {
-      outline: 2px solid var(--el-color-primary);
+      outline: 2px solid var(--ring);
       outline-offset: 3px;
     }
   }
@@ -233,7 +256,36 @@ onUnmounted(() => {
       gap: 8px;
       margin-left: auto;
 
-      .searchInput { width: 216px; }
+      .searchInput {
+        position: relative;
+        width: 216px;
+
+        .searchIcon {
+          position: absolute;
+          top: 50%;
+          left: 10px;
+          color: var(--muted-foreground);
+          transform: translateY(-50%);
+          pointer-events: none;
+        }
+
+        .searchField { padding-right: 32px; padding-left: 32px; }
+
+        .clearButton {
+          position: absolute;
+          top: 50%;
+          right: 8px;
+          display: flex;
+          padding: 0;
+          border: 0;
+          background: transparent;
+          color: var(--muted-foreground);
+          cursor: pointer;
+          transform: translateY(-50%);
+
+          &:hover { color: var(--foreground); }
+        }
+      }
     }
   }
 
@@ -248,15 +300,15 @@ onUnmounted(() => {
       border: 0;
       border-radius: var(--ui-radius-large);
       background: transparent;
-      color: var(--el-text-color-secondary);
+      color: var(--muted-foreground);
       font-size: 13px;
       cursor: pointer;
 
-      &:hover { color: var(--el-text-color-primary); }
+      &:hover { color: var(--foreground); }
 
       &.active {
-        background: var(--el-fill-color);
-        color: var(--el-text-color-primary);
+        background: var(--accent);
+        color: var(--foreground);
         font-weight: 600;
       }
     }
@@ -280,9 +332,9 @@ onUnmounted(() => {
         height: 100%;
         padding: 0;
         overflow: hidden;
-        border: 1px solid var(--el-border-color-extra-light);
+        border: 1px solid var(--border);
         border-radius: calc(var(--ui-radius) * 2);
-        background: var(--el-fill-color-light);
+        background: var(--muted);
         color: white;
         text-align: start;
         cursor: pointer;
@@ -347,7 +399,7 @@ onUnmounted(() => {
     flex-wrap: wrap;
     gap: 8px;
     padding: 20px 0;
-    color: var(--el-text-color-secondary);
+    color: var(--muted-foreground);
     font-size: 13px;
   }
 

@@ -1,10 +1,10 @@
 <template>
   <div v-if="viewportEmpty && !dismissed" class="canvasViewportHint" @pointerdown.stop @click.stop @dblclick.stop @wheel.stop>
     <span class="hintText" role="status">当前视窗没有节点</span>
-    <el-button class="returnButton" type="primary" text @click="fitView({ duration: 250 })">返回节点</el-button>
-    <el-button class="closeButton" text aria-label="关闭提示" @click="dismissed = true">
+    <uiButton class="returnButton" variant="ghost" size="xs" @click="fitView({ duration: 250 })">返回节点</uiButton>
+    <uiButton class="closeButton" variant="ghost" size="icon-xs" aria-label="关闭提示" @click="dismissed = true">
       <icon-x :size="14" aria-hidden="true" />
-    </el-button>
+    </uiButton>
   </div>
 </template>
 
@@ -12,6 +12,7 @@
 import { computed, ref, watch } from "vue";
 import { getNodesInside, useVueFlow } from "@vue-flow/core";
 import { IconX } from "@tabler/icons-vue";
+import { uiButton } from "@/components/ui/button";
 
 const { nodes, dimensions, viewport, fitView } = useVueFlow();
 const dismissed = ref(false);
@@ -62,13 +63,14 @@ watch(viewportEmpty, empty => {
     border-radius: var(--ui-radius);
 
     &:focus-visible {
-      outline: 2px solid var(--el-color-primary);
+      outline: 2px solid var(--ring);
       outline-offset: 2px;
     }
   }
 
   .returnButton {
     padding: 0 6px;
+    color: var(--primary);
     font-family: inherit;
     font-size: 12px;
     font-weight: 500;
@@ -78,7 +80,7 @@ watch(viewportEmpty, empty => {
   .closeButton {
     width: 24px;
     padding: 0;
-    color: var(--el-text-color-secondary);
+    color: var(--muted-foreground);
   }
 }
 

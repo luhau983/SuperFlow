@@ -1,66 +1,75 @@
 <template>
-  <el-dialog v-model="visible" :title="`编辑技能 · ${skill.displayName}`" width="min(1080px, calc(100vw - 32px))" alignCenter appendToBody :beforeClose="close" @closed="emit('closed')">
-    <div class="skillEditor" :aria-busy="filesLoading || fileLoading">
-      <el-alert v-if="filesError" :title="filesError" type="error" :closable="false" showIcon />
-      <template v-else>
-        <div class="fileTree">
-          <el-button
-            v-if="isDirectorySkill"
-            class="newFileButton"
-            size="small"
-            :icon="IconFilePlus"
-            :loading="creating"
-            :disabled="saving || moving"
-            @click="createFile">
-            新建文件
-          </el-button>
-          <el-tree
-            :key="treeVersion"
-            class="tree"
-            :data="[treeRoot]"
-            :icon="IconChevronRight"
-            nodeKey="key"
-            :props="{ label: 'label', children: 'children' }"
-            defaultExpandAll
-            highlightCurrent
-            :currentNodeKey="selectedPath"
-            :draggable="isDirectorySkill"
-            :allowDrag="allowDrag"
-            :allowDrop="allowDrop"
-            @nodeClick="handleNodeClick"
-            @nodeDrop="handleNodeDrop">
-            <template #default="{ data, node }">
-              <span class="treeItem">
-                <component v-if="data.type === 'directory'" :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder" :size="18" aria-hidden="true" />
-                <icon-file v-else :size="18" aria-hidden="true" />
-                <span class="treeLabel">{{ data.label }}</span>
-                <span v-if="dirtyPaths.has(data.key)" class="dirtyMark" aria-hidden="true">●</span>
-              </span>
+  <uiDialog :open="visible" @update:open="(open: boolean) => open || close()">
+    <uiDialogContent class="sm:max-w-[1080px]" :aria-describedby="undefined" @closeAutoFocus="emit('closed')">
+      <uiDialogHeader>
+        <uiDialogTitle>编辑技能 ·{{ skill.displayName }}</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="skillEditor" :aria-busy="filesLoading || fileLoading">
+        <uiAlert v-if="filesError" variant="destructive">
+          <icon-alert-circle aria-hidden="true" />
+          <uiAlertTitle class="line-clamp-none">{{ filesError }}</uiAlertTitle>
+        </uiAlert>
+        <template v-else>
+          <div class="fileTree">
+            <uiButton
+              v-if="isDirectorySkill"
+              class="newFileButton"
+              variant="outline"
+              size="sm"
+              :disabled="creating || saving || moving"
+              @click="createFile"><icon-loader-2 v-if="creating" class="animate-spin" aria-hidden="true" /><icon-file-plus v-else aria-hidden="true" />新建文件</uiButton>
+            <el-tree
+              :key="treeVersion"
+              class="tree"
+              :data="[treeRoot]"
+              :icon="IconChevronRight"
+              nodeKey="key"
+              :props="{ label: 'label', children: 'children' }"
+              defaultExpandAll
+              highlightCurrent
+              :currentNodeKey="selectedPath"
+              :draggable="isDirectorySkill"
+              :allowDrag="allowDrag"
+              :allowDrop="allowDrop"
+              @nodeClick="handleNodeClick"
+              @nodeDrop="handleNodeDrop">
+              <template #default="{ data, node }">
+                <span class="treeItem">
+                  <component
+                    v-if="data.type === 'directory'"
+                    :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder"
+                    :size="18"
+                    aria-hidden="true" />
+                  <icon-file v-else :size="18" aria-hidden="true" />
+                  <span class="treeLabel">{{ data.label }}</span>
+                  <span v-if="dirtyPaths.has(data.key)" class="dirtyMark" aria-hidden="true">●</span>
+                </span>
+              </template>
+            </el-tree>
+          </div>
+          <div class="fileEditor">
+            <uiAlert v-if="fileError" variant="destructive">
+              <icon-alert-circle aria-hidden="true" />
+              <uiAlertTitle class="line-clamp-none">{{ fileError }}</uiAlertTitle>
+            </uiAlert>
+            <template v-else>
+              <p v-if="selectedPath === mainPath" class="fileHint">name 为技能标识，不可修改</p>
+              <uiTextarea
+                v-model="draft"
+                class="sourceInput"
+                :disabled="fileLoading || saving"
+                :aria-label="`${selectedPath} 源码`"
+                :spellcheck="false" />
             </template>
-          </el-tree>
-        </div>
-        <div class="fileEditor">
-          <el-alert v-if="fileError" :title="fileError" type="error" :closable="false" showIcon />
-          <template v-else>
-            <el-text v-if="selectedPath === mainPath" size="small" type="info">name 为技能标识，不可修改</el-text>
-            <el-input
-              v-model="draft"
-              class="sourceInput"
-              type="textarea"
-              :rows="20"
-              resize="none"
-              :disabled="fileLoading || saving"
-              :aria-label="`${selectedPath} 源码`"
-              :spellcheck="false" />
-          </template>
-        </div>
-      </template>
-    </div>
-    <template #footer>
-      <el-button :disabled="saving || moving || confirming" @click="close()">关闭</el-button>
-      <el-button type="primary" :loading="saving" :disabled="fileLoading || !!fileError || draft === original || confirming" @click="save">保存</el-button>
-    </template>
-  </el-dialog>
+          </div>
+        </template>
+      </div>
+      <uiDialogFooter>
+        <uiButton variant="outline" :disabled="saving || moving || confirming" @click="close()">关闭</uiButton>
+        <uiButton :disabled="saving || fileLoading || !!fileError || draft === original || confirming" @click="save"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
+      </uiDialogFooter>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
@@ -68,7 +77,11 @@ import axios from "axios";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { toast } from "vue-sonner";
 import messageBox from "@/lib/messageBox";
-import { IconChevronRight, IconFile, IconFilePlus, IconFolder, IconFolderOpen } from "@tabler/icons-vue";
+import { IconChevronRight, IconFolder, IconFolderOpen } from "@tabler/icons-vue";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
+import { uiTextarea } from "@/components/ui/textarea";
 import type { Plugin } from "./types";
 
 interface TreeNode {
@@ -280,7 +293,8 @@ async function createFile() {
   }
 }
 
-async function close(done?: () => void) {
+// 关闭入口（关闭按钮、右上角、遮罩、Esc）都经过此守卫，有未保存修改时须确认后才关闭。
+async function close() {
   if (saving.value || confirming.value) return;
   if (draft.value !== original.value || dirtyPaths.value.size) {
     confirming.value = true;
@@ -289,8 +303,7 @@ async function close(done?: () => void) {
     } catch { return; }
     finally { confirming.value = false; }
   }
-  if (done) done();
-  else visible.value = false;
+  visible.value = false;
 }
 
 async function save() {
@@ -329,7 +342,6 @@ async function save() {
 
     .newFileButton {
       width: 100%;
-      margin-left: 0;
     }
 
     .tree {
@@ -346,7 +358,7 @@ async function save() {
 
       svg {
         flex-shrink: 0;
-        color: var(--el-text-color-secondary);
+        color: var(--muted-foreground);
       }
 
       .treeLabel {
@@ -368,14 +380,18 @@ async function save() {
     flex-direction: column;
     gap: 8px;
     min-width: 0;
-  }
 
-  .sourceInput {
-    flex: 1;
+    .fileHint {
+      margin: 0;
+      color: var(--muted-foreground);
+      font-size: 12px;
+    }
 
-    :deep(textarea) {
-      height: 100%;
+    .sourceInput {
+      flex: 1;
       min-height: min(56vh, 520px);
+      resize: none;
+      field-sizing: fixed;
       font-family: ui-monospace, Consolas, monospace;
       line-height: 1.6;
       tab-size: 2;

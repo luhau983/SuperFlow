@@ -1,36 +1,100 @@
 <template>
-  <el-button v-if="!hideTrigger" class="workspaceButton" text :icon="IconFolder" :loading="selecting" :disabled="loading || disabled" :title="selectedDirectory || '选择工作目录'" aria-label="选择工作目录" @click="chooseDirectory">
+  <uiButton
+    v-if="!hideTrigger"
+    class="workspaceButton"
+    variant="ghost"
+    :disabled="selecting || loading || disabled"
+    :aria-busy="selecting"
+    :title="selectedDirectory || '选择工作目录'"
+    aria-label="选择工作目录"
+    @click="chooseDirectory">
+    <icon-loader-2 v-if="selecting" class="animate-spin" aria-hidden="true" />
+    <icon-folder v-else aria-hidden="true" />
     <span class="directoryName">{{ selectedDirectory ? selectedDirectory.split(/[\\/]/).filter(Boolean).at(-1) || selectedDirectory : '工作目录' }}</span>
     <component :is="dialogVisible ? IconChevronUp : IconChevronDown" :size="14" aria-hidden="true" />
-  </el-button>
-  <el-dialog v-model="dialogVisible" :title="!publicWeb && isLocalMobile ? '选择手机工作目录' : '选择服务器工作目录'" width="min(680px, 92vw)" appendToBody :closeOnClickModal="!editing" :closeOnPressEscape="!editing" :showClose="!editing" @close="finishSelection?.(null)">
-    <div class="workspaceBrowser">
-      <div class="directoryHeader">
-        <el-button :icon="IconArrowLeft" circle :disabled="loading || editing || !listing?.path" aria-label="上一级目录" @click="loadDirectory(listing?.parent ?? '')" />
-        <el-text class="directoryPath" truncated :title="listing?.absolutePath">{{ !publicWeb && isLocalMobile ? '手机工作区' : '服务器工作区' }}{{ listing?.path ? ` / ${listing.path}` : '' }}</el-text>
-        <el-button :icon="IconFolderPlus" :disabled="loading || editing || !listing || !!browseError" @click="manageEntry('mkdir')">新建文件夹</el-button>
+  </uiButton>
+  <uiDialog :open="dialogVisible" @update:open="updateVisible">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="workspaceDialog sm:max-w-[680px]"
+      :showCloseButton="!editing"
+      @interactOutside="preventWhileEditing"
+      @escapeKeyDown="preventWhileEditing">
+      <uiDialogHeader>
+        <uiDialogTitle>{{ !publicWeb && isLocalMobile ? '选择手机工作目录' : '选择服务器工作目录' }}</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="workspaceBrowser">
+        <div class="directoryHeader">
+          <uiButton
+            class="rounded-full"
+            variant="outline"
+            size="icon"
+            :disabled="loading || editing || !listing?.path"
+            aria-label="上一级目录"
+            @click="loadDirectory(listing?.parent ?? '')">
+            <icon-arrow-left aria-hidden="true" />
+          </uiButton>
+          <span class="directoryPath" :title="listing?.absolutePath">{{ !publicWeb && isLocalMobile ? '手机工作区' : '服务器工作区' }}{{ listing?.path ? ` / ${listing.path}` : '' }}</span>
+          <uiButton variant="outline" :disabled="loading || editing || !listing || !!browseError" @click="manageEntry('mkdir')"><icon-folder-plus aria-hidden="true" />新建文件夹</uiButton>
+        </div>
+        <uiAlert v-if="browseError" variant="destructive">
+          <uiAlertTitle>{{ browseError }}</uiAlertTitle>
+        </uiAlert>
+        <div class="entryTable" :aria-busy="loading">
+          <uiTable>
+            <uiTableHeader>
+              <uiTableRow>
+                <uiTableHead>名称</uiTableHead>
+                <uiTableHead class="actionColumn">操作</uiTableHead>
+              </uiTableRow>
+            </uiTableHeader>
+            <uiTableBody>
+              <uiTableRow v-for="row in listing?.entries ?? []" :key="row.path">
+                <uiTableCell class="nameCell">
+                  <uiButton
+                    v-if="row.type === 'directory'"
+                    class="entryName"
+                    variant="link"
+                    :title="row.name"
+                    :disabled="loading || editing"
+                    @click="loadDirectory([listing?.path, row.path].filter(Boolean).join('/'))">
+                    <icon-folder :size="18" aria-hidden="true" />
+                    <span>{{ row.name }}</span>
+                  </uiButton>
+                  <span v-else class="fileName" :title="row.name">
+                    <icon-file :size="18" aria-hidden="true" />
+                    <span>{{ row.name }}</span>
+                  </span>
+                </uiTableCell>
+                <uiTableCell class="actionColumn">
+                  <uiButton
+                    class="actionButton"
+                    variant="link"
+                    :disabled="loading || editing"
+                    :aria-label="`重命名 ${row.name}`"
+                    @click="manageEntry('rename', row)">重命名</uiButton>
+                  <uiButton
+                    class="actionButton text-destructive"
+                    variant="link"
+                    :disabled="loading || editing"
+                    :aria-label="`删除 ${row.name}`"
+                    @click="manageEntry('remove', row)">删除</uiButton>
+                </uiTableCell>
+              </uiTableRow>
+              <uiTableEmpty v-if="!loading && !listing?.entries.length" :colspan="2" class="text-muted-foreground">当前目录为空</uiTableEmpty>
+            </uiTableBody>
+          </uiTable>
+          <div v-if="loading" class="loadingMask">
+            <icon-loader-2 class="animate-spin" aria-hidden="true" />
+          </div>
+        </div>
       </div>
-      <el-alert v-if="browseError" :title="browseError" type="error" :closable="false" />
-      <el-table v-loading="loading" :data="listing?.entries ?? []" height="300" emptyText="当前目录为空">
-        <el-table-column label="名称" minWidth="160">
-          <template #default="{ row }">
-            <el-button v-if="row.type === 'directory'" class="entryName" link :icon="IconFolder" :title="row.name" :disabled="loading || editing" @click="loadDirectory([listing?.path, row.path].filter(Boolean).join('/'))">{{ row.name }}</el-button>
-            <span v-else class="fileName" :title="row.name"><icon-file :size="18" aria-hidden="true" /><span>{{ row.name }}</span></span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="130" align="right">
-          <template #default="{ row }">
-            <el-button link :disabled="loading || editing" :aria-label="`重命名 ${row.name}`" @click="manageEntry('rename', row as WorkspaceEntry)">重命名</el-button>
-            <el-button link type="danger" :disabled="loading || editing" :aria-label="`删除 ${row.name}`" @click="manageEntry('remove', row as WorkspaceEntry)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
-    </div>
-    <template #footer>
-      <el-button :disabled="editing" @click="dialogVisible = false">取消</el-button>
-      <el-button type="primary" :disabled="loading || editing || !listing || !!browseError" @click="confirmDirectory">选择此目录</el-button>
-    </template>
-  </el-dialog>
+      <uiDialogFooter>
+        <uiButton variant="outline" :disabled="editing" @click="updateVisible(false)">取消</uiButton>
+        <uiButton :disabled="loading || editing || !listing || !!browseError" @click="confirmDirectory">选择此目录</uiButton>
+      </uiDialogFooter>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
@@ -39,10 +103,14 @@ import { translate } from "@toonflow/i18n/vue";
 import { onBeforeUnmount, ref } from "vue";
 import { toast } from "vue-sonner";
 import messageBox from "@/lib/messageBox";
-import { IconFolder, IconFolderPlus, IconFile, IconChevronDown, IconChevronUp, IconArrowLeft } from "@tabler/icons-vue";
+import { IconChevronDown, IconChevronUp } from "@tabler/icons-vue";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
 import { actualPlatform, isLocalMobile } from "@/lib/platform";
 import { publicWeb } from "@/stores/multiTenant";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
+import { uiTable, uiTableBody, uiTableCell, uiTableEmpty, uiTableHead, uiTableHeader, uiTableRow } from "@/components/ui/table";
 
 type WorkspaceEntry = { name: string; path: string; type: "file" | "directory" };
 type DirectoryListing = {
@@ -63,6 +131,16 @@ const browseError = ref("");
 let finishSelection: ((directory: string | null) => void) | undefined;
 onBeforeUnmount(() => finishSelection?.(null));
 defineExpose({ chooseDirectory, selecting });
+
+function updateVisible(open: boolean) {
+  if (open || editing.value) return;
+  dialogVisible.value = false;
+  finishSelection?.(null);
+}
+
+function preventWhileEditing(event: Event) {
+  if (editing.value) event.preventDefault();
+}
 
 async function chooseDirectory(): Promise<string | null> {
   if (selecting.value || loading.value || props.disabled) return null;
@@ -155,39 +233,76 @@ function confirmDirectory() {
 <style lang="scss" scoped>
 .workspaceButton {
   max-width: min(340px, 100%);
+  min-width: 0;
+  gap: 6px;
 
-  :deep(> span) { min-width: 0; gap: 6px; }
-  .directoryName { overflow: hidden; text-overflow: ellipsis; }
+  .directoryName { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
   svg { flex-shrink: 0; }
 }
 
-.workspaceBrowser {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-
-  .directoryHeader {
+.workspaceDialog {
+  .workspaceBrowser {
     display: flex;
-    align-items: center;
+    flex-direction: column;
     gap: 12px;
+    min-width: 0;
 
-    .directoryPath { flex: 1; min-width: 0; }
-    .el-button { flex-shrink: 0; }
-  }
+    .directoryHeader {
+      display: flex;
+      align-items: center;
+      gap: 12px;
 
-  .entryName {
-    max-width: 100%;
-    color: var(--el-text-color-regular);
-    :deep(.el-icon) { font-size: 18px; color: var(--el-text-color-secondary); }
-    :deep(> span) { overflow: hidden; text-overflow: ellipsis; }
-  }
+      .directoryPath { flex: 1; min-width: 0; overflow: hidden; color: var(--muted-foreground); font-size: 14px; text-overflow: ellipsis; white-space: nowrap; }
+      button { flex-shrink: 0; }
+    }
 
-  .fileName {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    svg { flex-shrink: 0; color: var(--el-text-color-secondary); }
-    span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .entryTable {
+      position: relative;
+      height: 300px;
+      overflow: auto;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+
+      .nameCell {
+        max-width: 0;
+        width: 100%;
+
+        .entryName {
+          max-width: 100%;
+          height: auto;
+          padding: 0;
+          color: var(--foreground);
+          svg { color: var(--muted-foreground); }
+          span { overflow: hidden; text-overflow: ellipsis; }
+        }
+
+        .fileName {
+          display: flex;
+          align-items: center;
+          gap: 6px;
+          svg { flex-shrink: 0; color: var(--muted-foreground); }
+          span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+        }
+      }
+
+      .actionColumn {
+        width: 130px;
+        text-align: right;
+
+        .actionButton { height: auto; padding: 0 4px; }
+      }
+
+      .loadingMask {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: color-mix(in oklch, var(--background) 60%, transparent);
+
+        svg { width: 24px; height: 24px; color: var(--primary); }
+      }
+    }
   }
 }
 </style>

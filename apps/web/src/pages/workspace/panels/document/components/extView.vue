@@ -3,15 +3,18 @@
     <div v-if="context.error || runtimeError" class="extError" role="alert">
       <span>{{ context.error || runtimeError }}</span>
       <span class="errorActions">
-        <el-button v-if="session.conflict" text size="small" @click="reloadDisk">载入磁盘版本</el-button>
-        <el-button v-if="context.dirty && session.extension.text" text size="small" @click="saveCopy">另存副本</el-button>
-        <el-button v-if="runtimeError || context.dirty || !session.component" text size="small" @click="retry">重试</el-button>
+        <uiButton v-if="session.conflict" variant="ghost" size="xs" @click="reloadDisk">载入磁盘版本</uiButton>
+        <uiButton v-if="context.dirty && session.extension.text" variant="ghost" size="xs" @click="saveCopy">另存副本</uiButton>
+        <uiButton v-if="runtimeError || context.dirty || !session.component" variant="ghost" size="xs" @click="retry">重试</uiButton>
       </span>
     </div>
     <div v-if="session.extensionChanged" class="extensionNotice" role="status">扩展已更新，关闭该扩展的所有标签后重新打开，以应用新版本。</div>
     <div v-if="session.extensionDisabled" class="extensionNotice" role="status">扩展已停用。未保存内容仍保留，请重试保存、另存副本或重新启用扩展。</div>
-    <div v-loading="context.loading && !session.extensionDisabled" class="extContent" :inert="session.extensionDisabled">
+    <div class="extContent" :inert="session.extensionDisabled" :aria-busy="context.loading && !session.extensionDisabled">
       <component v-if="session.component && !runtimeError" :is="session.component" :context="context" />
+      <div v-if="context.loading && !session.extensionDisabled" class="loadingMask">
+        <icon-loader-2 class="animate-spin" :size="28" aria-hidden="true" />
+      </div>
     </div>
   </section>
 </template>
@@ -23,6 +26,7 @@ import messageBox from "@/lib/messageBox";
 import type { IDockviewPanelProps } from "dockview-vue";
 import type { EditorParams } from "../documentSession";
 import { documentError } from "../documentSession";
+import { uiButton } from "@/components/ui/button";
 
 const props = defineProps<{ params: IDockviewPanelProps<EditorParams> }>();
 const session = computed(() => props.params.params.session);
@@ -72,19 +76,35 @@ async function saveCopy() {
   width: 100%;
   height: 100%;
   min-height: 0;
-  background: var(--el-bg-color);
+  background: var(--background);
   .extError {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 8px 12px;
-    color: var(--el-color-danger);
-    background: var(--el-color-danger-light-9);
+    color: var(--destructive);
+    background: color-mix(in oklch, var(--destructive) 10%, transparent);
     font-size: 12px;
     overflow-wrap: anywhere;
     .errorActions { display: flex; flex-shrink: 0; flex-wrap: wrap; }
   }
   .extensionNotice { padding: 6px 12px; color: var(--el-color-warning); font-size: 12px; }
-  .extContent { flex: 1; min-width: 0; min-height: 0; overflow: hidden; }
+  .extContent {
+    position: relative;
+    flex: 1;
+    min-width: 0;
+    min-height: 0;
+    overflow: hidden;
+    .loadingMask {
+      position: absolute;
+      inset: 0;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--primary);
+      background: color-mix(in oklch, var(--background) 90%, transparent);
+    }
+  }
 }
 </style>

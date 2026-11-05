@@ -4028,5 +4028,11 @@
   "Dịch vụ cloud Toonflow hiện đã tắt.": "Dịch vụ cloud Toonflow hiện đã tắt.",
   "提示": "Thông báo",
   "输入的内容无效": "Nội dung nhập không hợp lệ",
-  "切换侧栏": "Bật/tắt thanh bên"
+  "切换侧栏": "Bật/tắt thanh bên",
+  "导航": "Điều hướng",
+  "侧栏": "Thanh bên",
+  "侧栏导航": "Điều hướng thanh bên",
+  "显示密码": "Hiện mật khẩu",
+  "隐藏密码": "Ẩn mật khẩu",
+  "移除": "Xóa"
 }

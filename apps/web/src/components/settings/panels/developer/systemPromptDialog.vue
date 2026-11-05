@@ -1,28 +1,39 @@
 <template>
-  <el-dialog v-model="visible" title="Agent 系统提示词" width="min(960px, calc(100vw - 32px))" alignCenter appendToBody :closeOnClickModal="false" :closeOnPressEscape="!saving" :showClose="!saving">
-    <div v-if="loading" class="loadState" role="status">正在读取系统提示词…</div>
-    <div v-else-if="loadError" class="loadState">
-      <el-text type="danger" role="alert">{{ loadError }}</el-text>
-      <el-button @click="loadPrompt">重试</el-button>
-    </div>
-    <div v-else class="promptEditor">
-      <div class="promptDescription">
-        <p>保存后下一条消息生效，留空使用默认提示词。</p>
-        <p v-pre>保留 {{tools}}、{{guidelines}}、{{environment}} 及相关条件块，以自动填入工具规则和运行环境。</p>
+  <uiDialog v-model:open="visible">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="sm:max-w-[960px]"
+      :showCloseButton="!saving"
+      @interactOutside="event => event.preventDefault()"
+      @escapeKeyDown="event => saving && event.preventDefault()">
+      <uiDialogHeader>
+        <uiDialogTitle>Agent 系统提示词</uiDialogTitle>
+      </uiDialogHeader>
+      <div v-if="loading" class="loadState" role="status">正在读取系统提示词…</div>
+      <div v-else-if="loadError" class="loadState">
+        <p class="text-destructive text-sm" role="alert">{{ loadError }}</p>
+        <uiButton variant="outline" @click="loadPrompt">重试</uiButton>
       </div>
-      <el-input v-model="draft" class="promptInput" type="textarea" :maxlength="maxLength" showWordLimit resize="none" :disabled="saving" aria-label="Agent 系统提示词" />
-      <el-text v-if="saveError" type="danger" role="alert">{{ saveError }}</el-text>
-    </div>
-    <template #footer>
-      <div class="dialogFooter">
-        <el-button :disabled="loading || !!loadError || saving" @click="draft = defaultSystemPrompt">恢复默认</el-button>
-        <div>
-          <el-button :disabled="saving" @click="visible = false">取消</el-button>
-          <el-button type="primary" :loading="saving" :disabled="loading || !!loadError || !maxLength || draft.length > maxLength" @click="save">保存</el-button>
+      <div v-else class="promptEditor">
+        <div class="promptDescription">
+          <p>保存后下一条消息生效，留空使用默认提示词。</p>
+          <p v-pre>保留 {{tools}}、{{guidelines}}、{{environment}} 及相关条件块，以自动填入工具规则和运行环境。</p>
         </div>
+        <div class="promptInput">
+          <uiTextarea v-model="draft" class="promptTextarea" :maxlength="maxLength" :disabled="saving" aria-label="Agent 系统提示词" />
+          <span class="wordLimit">{{ draft.length }}/{{ maxLength }}</span>
+        </div>
+        <p v-if="saveError" class="text-destructive text-sm" role="alert">{{ saveError }}</p>
       </div>
-    </template>
-  </el-dialog>
+      <uiDialogFooter class="dialogFooter">
+        <uiButton variant="outline" :disabled="loading || !!loadError || saving" @click="draft = defaultSystemPrompt">恢复默认</uiButton>
+        <div class="footerActions">
+          <uiButton variant="outline" :disabled="saving" @click="visible = false">取消</uiButton>
+          <uiButton :disabled="saving || loading || !!loadError || !maxLength || draft.length > maxLength" @click="save"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
+        </div>
+      </uiDialogFooter>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
@@ -30,6 +41,9 @@ import axios from "axios";
 import { onBeforeUnmount, onMounted, ref } from "vue";
 import { toast } from "vue-sonner";
 import { saveSettings, settings } from "@/stores/settings";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
+import { uiTextarea } from "@/components/ui/textarea";
 
 const visible = defineModel<boolean>({ default: false });
 const draft = ref("");
@@ -94,24 +108,38 @@ async function save() {
   gap: 12px;
   height: min(640px, 65dvh);
   min-height: 0;
+  min-width: 0;
 
   .promptDescription {
-    color: var(--el-text-color-secondary);
+    color: var(--muted-foreground);
     font-size: 13px;
     line-height: 1.6;
     p { margin: 0; }
   }
 
   .promptInput {
+    position: relative;
+    display: flex;
     flex: 1;
     min-height: 0;
-    :deep(.el-textarea__inner) { height: 100%; }
+
+    .promptTextarea { height: 100%; padding-bottom: 24px; resize: none; field-sizing: fixed; }
+
+    .wordLimit {
+      position: absolute;
+      inset-inline-end: 12px;
+      bottom: 6px;
+      color: var(--muted-foreground);
+      font-size: 12px;
+      pointer-events: none;
+    }
   }
 }
 
 .dialogFooter {
-  display: flex;
   justify-content: space-between;
   gap: 12px;
+
+  .footerActions { display: flex; gap: 8px; }
 }
 </style>

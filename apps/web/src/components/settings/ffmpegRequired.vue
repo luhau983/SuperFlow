@@ -1,11 +1,25 @@
 <template>
-  <el-dialog v-model="visible" title="FFmpeg" width="min(680px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
-    <el-alert class="installationHint" title="安装完成后，请重新发起刚才的操作。" type="info" :closable="false" showIcon />
-    <ffmpeg v-if="visible" :downloadOnOpen="true" />
-  </el-dialog>
+  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="uiDialogPanel"
+      :style="{ width: 'min(680px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
+      <uiDialogHeader class="dialogHeader">
+        <uiDialogTitle>FFmpeg</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <uiAlert class="installationHint">
+          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">安装完成后，请重新发起刚才的操作。</uiAlertTitle>
+        </uiAlert>
+        <ffmpeg v-if="visible" :downloadOnOpen="true" />
+      </div>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 import { onBeforeUnmount, ref } from "vue";
 import { toast } from "vue-sonner";
 import messageBox from "@/lib/messageBox";

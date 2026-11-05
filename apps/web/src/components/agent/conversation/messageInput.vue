@@ -1,11 +1,20 @@
 <template>
-  <div class="messageInput" :class="{ draggingAttachments, voiceActive }" @dragenter.capture="dragEnterAttachments" @dragover.capture="dragOverAttachments" @dragleave.capture="dragLeaveAttachments" @drop.capture="dropAttachments">
+  <div
+    class="messageInput"
+    :class="{ draggingAttachments, voiceActive }"
+    @dragenter.capture="dragEnterAttachments"
+    @dragover.capture="dragOverAttachments"
+    @dragleave.capture="dragLeaveAttachments"
+    @drop.capture="dropAttachments">
     <div v-if="draggingAttachments" class="attachmentDropHint" role="status">
       <icon-paperclip :size="20" aria-hidden="true" />
       <span>松开添加附件</span>
       <small>图片、视频、文档或代码文件</small>
     </div>
-    <div v-if="editingId" class="editingBanner"><span>编辑消息</span><el-button text size="small" :disabled="running || submitting || voiceActive" @click="cancelEdit">取消</el-button></div>
+    <div v-if="editingId" class="editingBanner">
+      <span>编辑消息</span>
+      <uiButton @click="cancelEdit" variant="ghost" type="button" :disabled="(running || submitting || voiceActive)" size="sm">取消</uiButton>
+    </div>
     <div
       class="senderResizeHandle"
       role="separator"
@@ -24,34 +33,134 @@
       @lostpointercapture="stopSenderResize"
       @keydown.up.prevent="setSenderHeight((sender?.chatElement.rollBox.clientHeight ?? 44) + 16)"
       @keydown.down.prevent="setSenderHeight((sender?.chatElement.rollBox.clientHeight ?? 44) - 16)" />
-    <attachmentList v-if="draftAttachments.length" class="draftAttachments" :attachments="draftAttachments" :directory="directory" removable restorable :disabled="locked" @remove="draftAttachments.splice($event, 1)" @restore="restoreTextAttachment" />
-    <div class="senderInput" @pointerdown.capture="armVoiceInput" @contextmenu="voiceActive && $event.preventDefault()" @dragstart="voiceActive && $event.preventDefault()">
+    <attachmentList
+      v-if="draftAttachments.length"
+      class="draftAttachments"
+      :attachments="draftAttachments"
+      :directory="directory"
+      removable
+      restorable
+      :disabled="locked"
+      @remove="draftAttachments.splice($event, 1)"
+      @restore="restoreTextAttachment" />
+    <div
+      class="senderInput"
+      @pointerdown.capture="armVoiceInput"
+      @contextmenu="voiceActive && $event.preventDefault()"
+      @dragstart="voiceActive && $event.preventDefault()">
       <div ref="senderElement" class="senderEditor" @keydown.capture="handleSenderKeydown"></div>
       <div v-if="voiceActive" class="voiceOverlay" role="status" aria-live="polite">
         <div class="voiceFeedback">
-          <span class="voiceWave" aria-hidden="true"><span v-for="(level, index) in voiceBars" :key="index" :style="{ height: `${3 + level * 21}px` }" /></span>
+          <span class="voiceWave" aria-hidden="true">
+            <span v-for="(level, index) in voiceBars" :key="index" :style="{ height: `${3 + level * 21}px` }" />
+          </span>
           <span>{{ voiceState === 'starting' ? '正在启动语音识别…' : voiceState === 'listening' ? '开始说话，松开结束' : '正在识别…' }}</span>
         </div>
         <div v-if="voiceText" class="voiceTranscript">{{ voiceText }}</div>
       </div>
     </div>
-    <teleport v-for="target in draftMentionTargets" :key="target.key" :to="target.element"><mentionThumbnail v-bind="mentionThumbnailProps(target.mention)" :directory="directory"><icon-photo :size="14" /></mentionThumbnail></teleport>
+    <teleport v-for="target in draftMentionTargets" :key="target.key" :to="target.element">
+      <mentionThumbnail v-bind="mentionThumbnailProps(target.mention)" :directory="directory">
+        <icon-photo :size="14" />
+      </mentionThumbnail>
+    </teleport>
     <mentionContent ref="draftMentionPreview" :mentions="draftMentions" :directory="directory" removable @remove="removeDraftMention" />
     <div class="senderActions">
-      <modelPopover v-model="selectedModel" v-model:reasoningEffort="reasoningEffort" :active="active" :disabled="disabled || running || submitting || voiceActive" />
-      <input ref="attachmentInput" type="file" :accept="attachmentAccept" multiple hidden :disabled="locked || running" @change="selectAttachments" />
-      <el-button text circle :disabled="locked || running" aria-label="添加附件" :title="running ? '生成期间仅支持发送文字' : '添加附件'" @click="attachmentInput?.click()"><icon-paperclip :size="16" /></el-button>
-      <mentionMenu ref="mentionMenuRef" :directory="directory" :active="active" :disabled="locked || running || !directory" :query="mentionQuery" :editor="senderElement" :currentCanvasId="createCanvasContext?.()?.id" @open="captureMentionPosition" @select="insertMentions" @dismiss="mentionQuery = undefined" />
-      <skillMenu ref="skillMenuRef" :directory="directory" :active="active" :disabled="locked || running || !directory" :query="skillQuery" :editor="senderElement" @select="selectSkill" @dismiss="skillQuery = undefined" />
-      <el-button class="voiceButton" :class="{ voiceActive }" text circle :disabled="!voiceSupported || (!voiceActive && locked)" :aria-label="voiceButtonLabel" :aria-pressed="voiceActive" :title="voiceButtonLabel" @click="voiceActive ? cancelVoiceInput() : startVoiceInput()"><icon-microphone :size="18" /></el-button>
-      <contextUsagePopover v-model:visible="contextMenuVisible" :usage="contextUsage" :stats="stats" :contextWindow="contextWindow" :disabled="voiceActive" />
-      <el-button v-if="running" class="stopButton" text circle :disabled="stopping" aria-label="停止生成" title="停止生成" @click="emit('stop')"><icon-player-stop-filled :size="14" /></el-button>
-      <el-button class="sendButton" type="primary" circle :disabled="locked || (running && !!editingId)" :aria-label="sendLabel" :title="sendTitle" @click="submitDraft()"><icon-arrow-up :size="16" /></el-button>
+      <modelPopover
+        v-model="selectedModel"
+        v-model:reasoningEffort="reasoningEffort"
+        :active="active"
+        :disabled="disabled || running || submitting || voiceActive" />
+      <input
+        ref="attachmentInput"
+        type="file"
+        :accept="attachmentAccept"
+        multiple
+        hidden
+        :disabled="locked || running"
+        @change="selectAttachments" />
+      <uiButton
+        aria-label="添加附件"
+        :title="running ? '生成期间仅支持发送文字' : '添加附件'"
+        @click="attachmentInput?.click()"
+        variant="ghost"
+        type="button"
+        :disabled="(locked || running)"
+        size="icon"
+        style="border-radius: 9999px">
+        <icon-paperclip :size="16" />
+      </uiButton>
+      <mentionMenu
+        ref="mentionMenuRef"
+        :directory="directory"
+        :active="active"
+        :disabled="locked || running || !directory"
+        :query="mentionQuery"
+        :editor="senderElement"
+        :currentCanvasId="createCanvasContext?.()?.id"
+        @open="captureMentionPosition"
+        @select="insertMentions"
+        @dismiss="mentionQuery = undefined" />
+      <skillMenu
+        ref="skillMenuRef"
+        :directory="directory"
+        :active="active"
+        :disabled="locked || running || !directory"
+        :query="skillQuery"
+        :editor="senderElement"
+        @select="selectSkill"
+        @dismiss="skillQuery = undefined" />
+      <uiButton
+        class="voiceButton"
+        :class="{ voiceActive }"
+        :aria-label="voiceButtonLabel"
+        :aria-pressed="voiceActive"
+        :title="voiceButtonLabel"
+        @click="voiceActive ? cancelVoiceInput() : startVoiceInput()"
+        variant="ghost"
+        type="button"
+        :disabled="(!voiceSupported || (!voiceActive && locked))"
+        size="icon"
+        style="border-radius: 9999px">
+        <icon-microphone :size="18" />
+      </uiButton>
+      <contextUsagePopover
+        v-model:visible="contextMenuVisible"
+        :usage="contextUsage"
+        :stats="stats"
+        :contextWindow="contextWindow"
+        :disabled="voiceActive" />
+      <uiButton
+        v-if="running"
+        class="stopButton"
+        aria-label="停止生成"
+        title="停止生成"
+        @click="emit('stop')"
+        variant="ghost"
+        type="button"
+        :disabled="(stopping)"
+        size="icon"
+        style="border-radius: 9999px">
+        <icon-player-stop-filled :size="14" />
+      </uiButton>
+      <uiButton
+        class="sendButton"
+        :aria-label="sendLabel"
+        :title="sendTitle"
+        @click="submitDraft()"
+        variant="default"
+        type="button"
+        :disabled="(locked || (running && !!editingId))"
+        size="icon"
+        style="border-radius: 9999px">
+        <icon-arrow-up :size="16" />
+      </uiButton>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { uiButton } from "@/components/ui/button";
 import { locale, t, translate } from "@toonflow/i18n/vue";
 import { computed, inject, ref, shallowRef, watch } from "vue";
 import { IconArrowUp, IconMicrophone, IconPaperclip, IconPhoto, IconPlayerStopFilled } from "@tabler/icons-vue";
@@ -699,7 +808,7 @@ defineExpose({ getDraft, clearDraft, fillPrompt, fillQueuedMessage, editMessage,
       gap: 4px;
       padding: 2px 8px 6px;
 
-      > .el-button {
+      > [data-slot="button"] {
         margin-left: 0;
       }
 

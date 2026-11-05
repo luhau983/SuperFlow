@@ -3992,5 +3992,11 @@
   "Dịch vụ cloud Toonflow hiện đã tắt.": "Toonflow cloud services are currently disabled.",
   "提示": "Notice",
   "输入的内容无效": "Invalid input",
-  "切换侧栏": "Toggle sidebar"
+  "切换侧栏": "Toggle sidebar",
+  "导航": "Navigation",
+  "侧栏": "Sidebar",
+  "侧栏导航": "Sidebar navigation",
+  "显示密码": "Show password",
+  "隐藏密码": "Hide password",
+  "移除": "Remove"
 }

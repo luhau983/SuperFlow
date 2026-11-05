@@ -1,77 +1,164 @@
 <template>
-  <el-dialog v-model="visible" class="publishWorkDialog" :title="projectPickerVisible ? '选择项目' : '发布作品'" width="min(960px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose :closeOnClickModal="false" :closeOnPressEscape="!submitting" :showClose="!submitting" :beforeClose="close" @closed="emit('closed')">
-    <template #header="{ titleId, titleClass }">
-      <div class="publishHeader">
-        <el-button v-if="projectPickerVisible" ref="backButton" class="backButton" text circle :icon="IconArrowLeft" aria-label="返回发布作品" @click="projectPickerVisible = false" />
-        <h2 :id="titleId" :class="titleClass">{{ projectPickerVisible ? '选择项目' : '发布作品' }}</h2>
-      </div>
-    </template>
-    <publishProjectPicker v-if="projectPickerVisible" @select="selectProject" />
-    <el-form v-show="!projectPickerVisible" class="publishContent" labelPosition="top" :disabled="submitting" @submit.prevent="publishWork">
-      <div class="mediaPanel">
-        <el-form-item label="上传作品" required>
-          <input ref="workInput" type="file" accept=".mp4,.webm,video/mp4,video/webm" :disabled="submitting" hidden @change="selectMediaInput($event, 'work')" />
-          <div class="workUpload" @dragover.prevent @drop.prevent="selectMedia($event.dataTransfer?.files[0], 'work')">
-            <videoPlayer v-if="work" class="workPreview" :src="work.url" :label="work.file.name" :active="visible && !projectPickerVisible" />
-            <button v-else class="uploadPrompt" type="button" aria-label="上传作品" :disabled="submitting" @click="workInput?.click()">
-              <icon-cloud-upload :size="30" stroke="1.5" aria-hidden="true" />
-              <strong>点击选择或拖入作品</strong>
-              <span>支持 MP4、WebM 视频</span>
-            </button>
+  <uiDialog :open="visible" @update:open="open => { if (!open) { close(() => { visible = false; }); } }">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="publishWorkDialog uiDialogPanel"
+      :style="{ width: 'min(960px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
+      :showCloseButton="!submitting"
+      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
+      @escapeKeyDown="event => { if (!(!submitting)) event.preventDefault(); }"
+      @closeAutoFocus="() => { emit('closed'); }">
+      <uiDialogHeader class="dialogHeader">
+        <div class="publishHeader">
+          <uiButton
+            v-if="projectPickerVisible"
+            ref="backButton"
+            class="backButton"
+            aria-label="返回发布作品"
+            @click="projectPickerVisible = false"
+            variant="ghost"
+            type="button"
+            size="icon"
+            style="border-radius: 9999px">
+            <component :is="IconArrowLeft" aria-hidden="true" />
+          </uiButton>
+          <uiDialogTitle>{{ projectPickerVisible ? '选择项目' : '发布作品' }}</uiDialogTitle>
+        </div>
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <publishProjectPicker v-if="projectPickerVisible" @select="selectProject" />
+        <form v-show="!projectPickerVisible" class="publishContent uiForm" @submit.prevent="publishWork">
+          <fieldset class="formFields" :disabled="submitting">
+            <div class="mediaPanel">
+              <div class="formField">
+                <uiLabel>上传作品</uiLabel>
+                <input
+                  ref="workInput"
+                  type="file"
+                  accept=".mp4,.webm,video/mp4,video/webm"
+                  :disabled="submitting"
+                  hidden
+                  @change="selectMediaInput($event, 'work')" />
+                <div class="workUpload" @dragover.prevent @drop.prevent="selectMedia($event.dataTransfer?.files[0], 'work')">
+                  <videoPlayer v-if="work" class="workPreview" :src="work.url" :label="work.file.name" :active="visible && !projectPickerVisible" />
+                  <button v-else class="uploadPrompt" type="button" aria-label="上传作品" :disabled="submitting" @click="workInput?.click()">
+                    <icon-cloud-upload :size="30" stroke="1.5" aria-hidden="true" />
+                    <strong>点击选择或拖入作品</strong>
+                    <span>支持 MP4、WebM 视频</span>
+                  </button>
+                </div>
+                <div v-if="work" class="selectedFile">
+                  <span :title="work.file.name">{{ work.file.name }}</span>
+                  <uiButton @click="workInput?.click()" variant="ghost" type="button" :disabled="(submitting)" size="sm">更换作品</uiButton>
+                </div>
+              </div>
+              <div class="formField">
+                <uiLabel>上传封面</uiLabel>
+                <input
+                  ref="coverInput"
+                  type="file"
+                  accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp"
+                  :disabled="submitting"
+                  hidden
+                  @change="selectMediaInput($event, 'cover')" />
+                <button
+                  class="coverUpload"
+                  type="button"
+                  :disabled="submitting"
+                  :aria-label="cover ? '更换封面' : '上传封面'"
+                  @click="coverInput?.click()"
+                  @dragover.prevent
+                  @drop.prevent="selectMedia($event.dataTransfer?.files[0], 'cover')">
+                  <span class="coverPreview">
+                    <img v-if="cover" :src="cover.url" alt="封面预览" />
+                    <icon-photo-plus v-else :size="27" stroke="1.5" aria-hidden="true" />
+                  </span>
+                  <span class="coverText">
+                    <strong>{{ cover ? '更换封面' : '选择作品封面' }}</strong>
+                    <span v-if="cover" class="coverName" :title="cover.file.name">{{ cover.file.name }}</span>
+                    <span v-else>点击或拖入图片</span>
+                  </span>
+                  <icon-plus class="coverAction" :size="18" aria-hidden="true" />
+                </button>
+              </div>
+            </div>
+            <div class="detailsPanel">
+              <div class="formField">
+                <uiLabel :for="portFieldId + '-1'">作品名称</uiLabel>
+                <uiInput
+                  :id="portFieldId + '-1'"
+                  v-model="name"
+                  placeholder="请输入作品名称"
+                  :maxlength="80"
+                  aria-required="true"
+                  :disabled="(submitting) || (false)"></uiInput>
+                <span class="wordCount">{{ name.length }} / 80</span>
+              </div>
+              <div class="formField">
+                <uiLabel :for="portFieldId + '-2'">作品描述</uiLabel>
+                <uiTextarea
+                  :id="portFieldId + '-2'"
+                  v-model="description"
+                  placeholder="请输入作品描述"
+                  :maxlength="500"
+                  :disabled="(submitting) || (false)"
+                  :rows="5"
+                  style="field-sizing:fixed; resize:none"></uiTextarea>
+                <span class="wordCount">{{ description.length }} / 500</span>
+              </div>
+              <div class="formField">
+                <uiLabel>公开项目</uiLabel>
+                <button
+                  ref="projectSelectButton"
+                  class="projectSelect"
+                  type="button"
+                  :disabled="submitting"
+                  :aria-label="selectedProject ? '更换项目' : '选择项目'"
+                  @click="projectPickerVisible = true">
+                  <icon-folder :size="24" stroke="1.5" aria-hidden="true" />
+                  <span>{{ selectedProject?.name || '选择项目' }}</span>
+                  <icon-plus :size="18" aria-hidden="true" />
+                </button>
+                <uiButton
+                  v-if="selectedProject"
+                  class="removeProject"
+                  @click="selectedProject = undefined"
+                  variant="ghost"
+                  type="button"
+                  :disabled="(submitting)"
+                  size="sm">移除项目</uiButton>
+              </div>
+            </div>
+          </fieldset>
+        </form>
+        <div v-if="submitting" class="uploadStatus" role="status" aria-live="polite">
+          <span>{{ uploadStatus }}</span>
+          <div v-if="uploadProgress !== null" class="progressRow">
+            <uiProgress :modelValue="uploadProgress"></uiProgress>
+            <span class="progressValue">{{ uploadProgress }}%</span>
           </div>
-          <div v-if="work" class="selectedFile">
-            <span :title="work.file.name">{{ work.file.name }}</span>
-            <el-button text size="small" @click="workInput?.click()">更换作品</el-button>
-          </div>
-        </el-form-item>
-        <el-form-item label="上传封面" required>
-          <input ref="coverInput" type="file" accept=".jpg,.jpeg,.png,.webp,image/jpeg,image/png,image/webp" :disabled="submitting" hidden @change="selectMediaInput($event, 'cover')" />
-          <button class="coverUpload" type="button" :disabled="submitting" :aria-label="cover ? '更换封面' : '上传封面'" @click="coverInput?.click()" @dragover.prevent @drop.prevent="selectMedia($event.dataTransfer?.files[0], 'cover')">
-            <span class="coverPreview">
-              <img v-if="cover" :src="cover.url" alt="封面预览" />
-              <icon-photo-plus v-else :size="27" stroke="1.5" aria-hidden="true" />
-            </span>
-            <span class="coverText">
-              <strong>{{ cover ? '更换封面' : '选择作品封面' }}</strong>
-              <span v-if="cover" class="coverName" :title="cover.file.name">{{ cover.file.name }}</span>
-              <span v-else>点击或拖入图片</span>
-            </span>
-            <icon-plus class="coverAction" :size="18" aria-hidden="true" />
-          </button>
-        </el-form-item>
+        </div>
+        <uiAlert v-if="uploadError" variant="destructive">
+          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ uploadError }}</uiAlertTitle>
+        </uiAlert>
+        <uiDialogFooter class="dialogFooter">
+          <uiButton @click="close()" variant="outline" type="button" :disabled="(submitting)">{{ projectPickerVisible ? '返回' : '取消' }}</uiButton>
+          <uiButton v-if="!projectPickerVisible" @click="publishWork" variant="default" type="button" :disabled="(submitting)"><icon-loader-2 v-if="submitting" class="animate-spin" aria-hidden="true" />发布作品</uiButton>
+        </uiDialogFooter>
       </div>
-      <div class="detailsPanel">
-        <el-form-item label="作品名称" required>
-          <el-input v-model="name" placeholder="请输入作品名称" :maxlength="80" showWordLimit aria-required="true" />
-        </el-form-item>
-        <el-form-item label="作品描述">
-          <el-input v-model="description" type="textarea" placeholder="请输入作品描述" :rows="5" :maxlength="500" showWordLimit resize="none" />
-        </el-form-item>
-        <el-form-item label="公开项目">
-          <button ref="projectSelectButton" class="projectSelect" type="button" :disabled="submitting" :aria-label="selectedProject ? '更换项目' : '选择项目'" @click="projectPickerVisible = true">
-            <icon-folder :size="24" stroke="1.5" aria-hidden="true" />
-            <span>{{ selectedProject?.name || '选择项目' }}</span>
-            <icon-plus :size="18" aria-hidden="true" />
-          </button>
-          <el-button v-if="selectedProject" class="removeProject" text size="small" @click="selectedProject = undefined">移除项目</el-button>
-        </el-form-item>
-      </div>
-    </el-form>
-    <div v-if="submitting" class="uploadStatus" role="status" aria-live="polite">
-      <span>{{ uploadStatus }}</span>
-      <el-progress v-if="uploadProgress !== null" :percentage="uploadProgress" />
-    </div>
-    <el-alert v-if="uploadError" :title="uploadError" type="error" :closable="false" showIcon />
-    <template #footer>
-      <el-button :disabled="submitting" @click="close()">{{ projectPickerVisible ? '返回' : '取消' }}</el-button>
-      <el-button v-if="!projectPickerVisible" type="primary" :loading="submitting" @click="publishWork">发布作品</el-button>
-    </template>
-  </el-dialog>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
-import { nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
-import { type ButtonInstance } from "element-plus";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiProgress } from "@/components/ui/progress";
+import { uiTextarea } from "@/components/ui/textarea";
+import { uiInput } from "@/components/ui/input";
+import { uiLabel } from "@/components/ui/label";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
+import { nextTick, onBeforeUnmount, ref, shallowRef, watch, useId } from "vue";
 import { toast } from "vue-sonner";
 import { IconArrowLeft, IconCloudUpload, IconFolder, IconPhotoPlus, IconPlus } from "@tabler/icons-vue";
 import axios from "axios";
@@ -94,7 +181,7 @@ const cover = shallowRef<{ file: File; url: string }>();
 const selectedProject = shallowRef<{ name: string; directory?: string; files?: File[] }>();
 const projectPickerVisible = ref(false);
 const projectSelectButton = ref<HTMLButtonElement>();
-const backButton = ref<ButtonInstance>();
+const backButton = ref<{ $el: HTMLButtonElement }>();
 const submitting = ref(false);
 const uploadStatus = ref("");
 const uploadProgress = ref<number | null>(null);
@@ -117,7 +204,7 @@ function close(done?: () => void) {
 watch(projectPickerVisible, async value => {
   await nextTick();
   if (value) {
-    projectSelectButton.value?.closest(".el-dialog__body")?.scrollTo({ top: 0 });
+    projectSelectButton.value?.closest(".dialogBody")?.scrollTo({ top: 0 });
     backButton.value?.$el.focus();
   } else projectSelectButton.value?.focus();
 });
@@ -254,10 +341,11 @@ onBeforeUnmount(() => {
   if (work.value) URL.revokeObjectURL(work.value.url);
   if (cover.value) URL.revokeObjectURL(cover.value.url);
 });
+const portFieldId = useId();
 </script>
 
 <style lang="scss">
-.publishWorkDialog.el-dialog {
+.publishWorkDialog.uiDialogPanel {
   display: flex;
   flex-direction: column;
   max-height: calc(100dvh - 32px);
@@ -265,9 +353,9 @@ onBeforeUnmount(() => {
   overflow: hidden;
   border: 1px solid var(--el-border-color-lighter);
 
-  .el-dialog__header, .el-dialog__footer { flex-shrink: 0; }
+  .dialogHeader, .dialogFooter { flex-shrink: 0; }
 
-  .el-dialog__header {
+  .dialogHeader {
     padding-bottom: 24px;
 
     .publishHeader {
@@ -280,13 +368,13 @@ onBeforeUnmount(() => {
     }
   }
 
-  .el-dialog__headerbtn { top: 18px; right: 16px; }
-  .el-dialog__footer { padding-top: 24px; }
+  .dialogHeaderbtn { top: 18px; right: 16px; }
+  .dialogFooter { padding-top: 24px; }
 
   .uploadStatus { display: flex; flex-direction: column; gap: 8px; margin-top: 16px; }
   .el-alert { margin-top: 16px; }
 
-  .el-dialog__body {
+  .dialogBody {
     min-height: 0;
     overflow-y: auto;
 
@@ -295,7 +383,7 @@ onBeforeUnmount(() => {
       grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
       gap: 24px;
 
-      .el-form-item:last-child { margin-bottom: 0; }
+      :is(.el-form-item, .formField):last-child { margin-bottom: 0; }
 
       button {
         font: inherit;
@@ -399,8 +487,8 @@ onBeforeUnmount(() => {
       .detailsPanel {
         min-width: 0;
 
-        .el-form-item {
-          .el-textarea__inner { padding-bottom: 24px; }
+        :is(.el-form-item, .formField) {
+          textarea[data-slot="textarea"] { padding-bottom: 24px; }
 
           .projectSelect {
             display: flex;
@@ -430,8 +518,8 @@ onBeforeUnmount(() => {
   @media (max-width: 680px) {
     padding: 16px;
 
-    .el-dialog__headerbtn { top: 10px; right: 8px; }
-    .el-dialog__body {
+    .dialogHeaderbtn { top: 10px; right: 8px; }
+    .dialogBody {
       .publishContent { grid-template-columns: minmax(0, 1fr); gap: 24px; }
     }
   }

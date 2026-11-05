@@ -1,11 +1,34 @@
 <template>
   <div v-click-outside:[editor]="closeMenu" class="skillMenu" @keydown.capture="handleKeydown">
-    <el-button class="skillButton" text circle :disabled="disabled" :aria-expanded="visible" :aria-controls="listId" aria-label="选择技能" title="选择技能" @click="visible ? closeMenu() : buttonVisible = true"><icon-book :size="16" /></el-button>
-    <el-card v-if="visible" class="skillPopup" shadow="always" :bodyStyle="{ padding: '6px' }">
-      <el-scrollbar maxHeight="min(320px, 50dvh)">
+    <uiButton
+      class="skillButton"
+      variant="ghost"
+      size="icon-sm"
+      :disabled="disabled"
+      :aria-expanded="visible"
+      :aria-controls="listId"
+      aria-label="选择技能"
+      title="选择技能"
+      @click="visible ? closeMenu() : buttonVisible = true">
+      <icon-book :size="16" />
+    </uiButton>
+    <div v-if="visible" class="skillPopup">
+      <div class="skillScroll">
         <div :id="listId" class="skillList" role="listbox" aria-label="技能指令" :aria-busy="loading">
           <div v-if="loading || loadError || !filteredSkills.length" class="skillStatus" role="status">{{ loading ? "正在加载技能…" : loadError || (skills.length ? "没有匹配的技能" : "暂无可用技能") }}</div>
-          <button v-for="(skill, index) in filteredSkills" v-else :id="`${listId}-${index}`" :key="skill.name" class="skillItem" :class="{ active: index === activeIndex }" type="button" role="option" :aria-selected="index === activeIndex" @mouseenter="activeIndex = index" @mousedown.prevent @click="selectSkill(skill.name)">
+          <button
+            v-for="(skill, index) in filteredSkills"
+            v-else
+            :id="`${listId}-${index}`"
+            :key="skill.name"
+            class="skillItem"
+            :class="{ active: index === activeIndex }"
+            type="button"
+            role="option"
+            :aria-selected="index === activeIndex"
+            @mouseenter="activeIndex = index"
+            @mousedown.prevent
+            @click="selectSkill(skill.name)">
             <icon-book class="skillIcon" :size="18" aria-hidden="true" />
             <span class="skillContent">
               <span class="skillHeader">
@@ -16,16 +39,17 @@
             </span>
           </button>
         </div>
-      </el-scrollbar>
-    </el-card>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ClickOutside as vClickOutside } from "element-plus";
 import { computed, nextTick, ref, useId, watch } from "vue";
 import axios from "axios";
 import { IconBook } from "@tabler/icons-vue";
-import { ClickOutside as vClickOutside } from "element-plus";
+import { uiButton } from "@/components/ui/button";
 
 const props = defineProps<{ directory?: string; active: boolean; disabled: boolean; query?: string; editor?: HTMLElement }>();
 const emit = defineEmits<{ select: [name: string]; dismiss: [] }>();
@@ -118,6 +142,18 @@ defineExpose({ handleKeydown });
     right: 0;
     bottom: calc(100% + 8px);
     left: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 10%), 0 2px 4px -2px rgb(0 0 0 / 10%);
+
+    .skillScroll {
+      max-height: min(320px, 50dvh);
+      padding: 6px;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
 
     .skillList {
       display: grid;
@@ -125,7 +161,7 @@ defineExpose({ handleKeydown });
 
       .skillStatus {
         padding: 20px 12px;
-        color: var(--el-text-color-secondary);
+        color: var(--muted-foreground);
         font-size: 12px;
         line-height: 1.6;
         text-align: center;
@@ -139,32 +175,32 @@ defineExpose({ handleKeydown });
         width: 100%;
         padding: 12px;
         border: none;
-        border-radius: var(--el-border-radius-base);
+        border-radius: calc(var(--radius) - 2px);
         background: transparent;
-        color: var(--el-text-color-primary);
+        color: var(--foreground);
         font: inherit;
         text-align: left;
         overflow-wrap: anywhere;
         cursor: pointer;
 
         &:hover {
-          background: var(--el-fill-color-light);
+          background: var(--accent);
         }
 
         &.active {
-          background: var(--el-color-primary-light-9);
+          background: color-mix(in oklch, var(--primary) 10%, transparent);
 
-          .skillIcon { color: var(--el-color-primary); }
+          .skillIcon { color: var(--primary); }
         }
 
         &:focus-visible {
-          outline: 2px solid var(--el-color-primary);
+          outline: 2px solid var(--primary);
           outline-offset: -2px;
         }
 
         .skillIcon {
           margin-top: 2px;
-          color: var(--el-text-color-secondary);
+          color: var(--muted-foreground);
         }
 
         .skillContent {
@@ -189,7 +225,7 @@ defineExpose({ handleKeydown });
             .skillIdentifier {
               min-width: 0;
               margin-left: auto;
-              color: var(--el-text-color-secondary);
+              color: var(--muted-foreground);
               font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
               font-size: 11px;
             }
@@ -198,7 +234,7 @@ defineExpose({ handleKeydown });
           .skillDescription {
             display: -webkit-box;
             overflow: hidden;
-            color: var(--el-text-color-secondary);
+            color: var(--muted-foreground);
             font-size: 12px;
             line-height: 1.6;
             -webkit-box-orient: vertical;

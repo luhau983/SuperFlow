@@ -1,23 +1,69 @@
 <template>
-  <el-dialog v-model="visible" title="A2A 服务" width="min(560px, calc(100vw - 32px))" alignCenter appendToBody :closeOnClickModal="false" :closeOnPressEscape="!saving" :showClose="!saving" @closed="emit('closed')">
-    <el-form v-loading="loading" labelPosition="top" :disabled="loading || saving" @submit.prevent="save">
-      <el-form-item label="允许外部 Agent 调用本地团队"><el-switch v-model="enabled" aria-label="开启 A2A 服务" /></el-form-item>
-      <el-form-item label="授权工作区">
-        <div class="directoryField"><el-input v-model="directory" dir="ltr" placeholder="选择允许团队操作的工作区" /><workspacePicker v-model="directory" :disabled="loading || saving" /></div>
-      </el-form-item>
-      <el-form-item label="文本模型">
-        <modelPopover v-model="selectedModel" v-model:reasoningEffort="reasoningEffort" :active="visible" :disabled="loading || saving" />
-      </el-form-item>
-      <el-form-item v-if="url" label="服务地址"><el-input :modelValue="url" dir="ltr" readonly /></el-form-item>
-      <el-form-item v-if="token" label="访问令牌"><el-input :modelValue="token" type="password" dir="ltr" showPassword readonly autocomplete="off" /></el-form-item>
-      <el-text size="small" type="info">保存开启后，本地团队卡片可复制各自的 Agent Card 地址。外部调用使用访问令牌，仅操作这里授权的工作区。</el-text>
-      <el-alert v-if="error" class="settingsError" :title="error" type="error" :closable="false" showIcon />
-    </el-form>
-    <template #footer>
-      <el-button :disabled="saving" @click="visible = false">关闭</el-button>
-      <el-button type="primary" :loading="saving" :disabled="loading || !loaded || (enabled && (!directory.trim() || !selectedModel))" @click="save">保存</el-button>
-    </template>
-  </el-dialog>
+  <uiDialog v-model:open="visible">
+    <uiDialogContent
+      class="sm:max-w-[560px]"
+      :showCloseButton="!saving"
+      :aria-describedby="undefined"
+      @interactOutside="(event: Event) => event.preventDefault()"
+      @escapeKeyDown="(event: Event) => saving && event.preventDefault()"
+      @closeAutoFocus="emit('closed')">
+      <uiDialogHeader>
+        <uiDialogTitle>A2A 服务</uiDialogTitle>
+      </uiDialogHeader>
+      <form class="settingsForm" :aria-busy="loading" @submit.prevent="save">
+        <fieldset class="formFields" :disabled="loading || saving">
+          <div class="formItem">
+            <uiLabel for="a2aEnabled">允许外部 Agent 调用本地团队</uiLabel>
+            <uiSwitch id="a2aEnabled" v-model="enabled" aria-label="开启 A2A 服务" />
+          </div>
+          <div class="formItem">
+            <uiLabel for="a2aDirectory">授权工作区</uiLabel>
+            <div class="directoryField">
+              <uiInput id="a2aDirectory" v-model="directory" dir="ltr" placeholder="选择允许团队操作的工作区" />
+              <workspacePicker v-model="directory" :disabled="loading || saving" />
+            </div>
+          </div>
+          <div class="formItem">
+            <uiLabel>文本模型</uiLabel>
+            <modelPopover v-model="selectedModel" v-model:reasoningEffort="reasoningEffort" :active="visible" :disabled="loading || saving" />
+          </div>
+          <div v-if="url" class="formItem">
+            <uiLabel for="a2aUrl">服务地址</uiLabel>
+            <uiInput id="a2aUrl" :modelValue="url" dir="ltr" readonly />
+          </div>
+          <div v-if="token" class="formItem">
+            <uiLabel for="a2aToken">访问令牌</uiLabel>
+            <div class="passwordField">
+              <uiInput id="a2aToken" :modelValue="token" :type="tokenVisible ? 'text' : 'password'" dir="ltr" readonly autocomplete="off" />
+              <uiButton
+                class="passwordToggle"
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                :aria-label="tokenVisible ? '隐藏' : '显示'"
+                :aria-pressed="tokenVisible"
+                @click="tokenVisible = !tokenVisible">
+                <icon-eye-off v-if="tokenVisible" aria-hidden="true" />
+                <icon-eye v-else aria-hidden="true" />
+              </uiButton>
+            </div>
+          </div>
+        </fieldset>
+        <p class="formHint">保存开启后，本地团队卡片可复制各自的 Agent Card 地址。外部调用使用访问令牌，仅操作这里授权的工作区。</p>
+        <uiAlert v-if="error" class="settingsError" variant="destructive">
+          <icon-alert-circle aria-hidden="true" />
+          <uiAlertTitle class="line-clamp-none">{{ error }}</uiAlertTitle>
+        </uiAlert>
+        <div v-if="loading" class="loadingMask" aria-hidden="true">
+          <icon-loader-2 class="animate-spin" />
+        </div>
+      </form>
+      <uiDialogFooter>
+        <uiButton variant="outline" :disabled="saving" @click="visible = false">关闭</uiButton>
+        <uiButton :disabled="saving || loading || !loaded || (enabled && (!directory.trim() || !selectedModel))" @click="save"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
+      </uiDialogFooter>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
@@ -30,6 +76,12 @@ import { useNodeModelSelection } from "@toonflow/nodes-scaffold/nodeAi";
 import modelPopover from "@/components/modelPopover.vue";
 import workspacePicker from "@/pages/home/workspacePicker.vue";
 import { modelChoices } from "@/stores/settings";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
+import { uiInput } from "@/components/ui/input";
+import { uiLabel } from "@/components/ui/label";
+import { uiSwitch } from "@/components/ui/switch";
 
 type A2aSettings = { enabled: boolean; directory: string; token?: string; url: string; providerId?: string; modelId?: string; thinkingLevel?: ThinkingLevel };
 const emit = defineEmits<{ saved: []; closed: [] }>();
@@ -41,6 +93,7 @@ const selectedModelChoice = useNodeModelSelection(modelChoices, selectedModel);
 const thinkingLevel = ref<ThinkingLevel>();
 const reasoningEffort = computed({ get: () => thinkingLevel.value ?? "", set: (value: string) => { thinkingLevel.value = value ? value as ThinkingLevel : undefined; } });
 const token = ref("");
+const tokenVisible = ref(false);
 const url = ref("");
 const loading = ref(true);
 const loaded = ref(false);
@@ -97,11 +150,55 @@ async function save() {
 </script>
 
 <style scoped lang="scss">
-.directoryField {
-  display: flex;
-  gap: 8px;
-  width: 100%;
-  :deep(.workspaceButton) { flex-shrink: 0; max-width: 180px; }
+.settingsForm {
+  position: relative;
+  display: grid;
+  gap: 16px;
+  min-width: 0;
+
+  .formFields {
+    display: grid;
+    gap: 16px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    border: 0;
+
+    .formItem {
+      display: grid;
+      gap: 8px;
+      min-width: 0;
+    }
+  }
+
+  .directoryField {
+    display: flex;
+    gap: 8px;
+    width: 100%;
+    :deep(.workspaceButton) { flex-shrink: 0; max-width: 180px; }
+  }
+
+  .passwordField {
+    position: relative;
+    :deep(input) { padding-right: 40px; }
+    .passwordToggle { position: absolute; top: 50%; right: 2px; transform: translateY(-50%); }
+  }
+
+  .formHint {
+    margin: 0;
+    color: var(--muted-foreground);
+    font-size: 12px;
+    line-height: 1.6;
+  }
+
+  .loadingMask {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: color-mix(in oklab, var(--background) 60%, transparent);
+    color: var(--muted-foreground);
+  }
 }
-.settingsError { margin-top: 12px; }
 </style>

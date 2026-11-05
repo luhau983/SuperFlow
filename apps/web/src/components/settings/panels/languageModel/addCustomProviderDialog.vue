@@ -1,159 +1,203 @@
 <template>
-  <el-dialog
-    v-model="visible"
-    :title="provider ? '编辑供应商' : '添加自定义供应商'"
-    width="min(760px, 94vw)"
-    alignCenter
-    appendToBody
-    destroyOnClose
-    :closeOnClickModal="false"
-    :closeOnPressEscape="!saving"
-    :showClose="!saving"
-    @closed="resetForm">
-    <el-scrollbar maxHeight="65vh">
-      <el-form ref="providerForm" :model="form" :rules="rules" labelPosition="top" :disabled="saving" class="customProviderForm">
-        <div class="formGrid">
-          <el-form-item label="Provider ID" prop="id"><el-input v-model="form.id" placeholder="例如 myProvider" /></el-form-item>
-          <el-form-item label="显示名称" prop="label"><el-input v-model="form.label" placeholder="供应商的显示名称" /></el-form-item>
-          <el-form-item label="API 地址" prop="apiUrl"><el-input v-model="form.apiUrl" dir="ltr" placeholder="https://api.example.com/v1" /></el-form-item>
-          <el-form-item label="API 协议" prop="protocol">
-            <el-select v-model="form.protocol" aria-label="API 协议">
-              <el-option v-for="protocol in protocols" :key="protocol" :label="protocol" :value="protocol" />
-            </el-select>
-          </el-form-item>
-        </div>
-        <el-form-item label="API 密钥" prop="apiKey">
-          <el-input v-model="form.apiKey" type="password" dir="ltr" showPassword autocomplete="off" placeholder="本地无鉴权服务可留空" />
-        </el-form-item>
-        <el-form-item label="自定义请求头" prop="headers" class="requestHeaders">
-          <div class="headersEditor">
-            <div v-for="item in form.headers" :key="item.key" class="headerRow">
-              <el-input v-model="item.name" class="headerName" dir="ltr" autocomplete="off" placeholder="请求头名称" aria-label="请求头名称" />
-              <el-input v-model="item.value" type="password" dir="ltr" showPassword autocomplete="off" placeholder="请求头值（可留空）" aria-label="请求头值" />
-              <el-button text type="danger" :icon="IconTrash" aria-label="删除请求头" @click="form.headers = form.headers.filter(header => header.key !== item.key)" />
-            </div>
-            <el-button text :icon="IconPlus" @click="addRequestHeader">添加请求头</el-button>
-          </div>
-        </el-form-item>
-        <div class="modelHeader">
-          <el-text tag="strong">模型列表</el-text>
-          <el-button :icon="IconDownload" :loading="fetching" @click="fetchModels()">获取模型列表</el-button>
-        </div>
-        <div class="modelList">
-          <div v-for="item in models" :key="item.key" class="modelItem">
-            <div class="modelRow">
-              <el-input v-model="item.id" placeholder="模型 ID" aria-label="模型 ID" />
-              <el-input v-model="item.label" placeholder="显示名称" aria-label="模型显示名称" />
-              <el-button
-                text
-                :icon="expandedModels.has(item.key) ? IconChevronUp : IconChevronDown"
-                :aria-expanded="expandedModels.has(item.key)"
-                aria-label="展开模型设置"
-                @click="expandedModels.has(item.key) ? expandedModels.delete(item.key) : expandedModels.add(item.key)" />
-              <el-button
-                text
-                type="danger"
-                :icon="IconTrash"
-                aria-label="删除模型"
-                @click="models = models.filter((model) => model.key !== item.key)" />
-            </div>
-            <div v-if="expandedModels.has(item.key)" class="modelSettings">
-              <div class="formGrid tokenSettings">
-                <el-form-item label="上下文窗口">
-                  <el-input-number
-                    v-model="item.contextWindow"
-                    :min="1"
-                    :max="Number.MAX_SAFE_INTEGER"
-                    :precision="0"
-                    controlsPosition="right"
-                    placeholder="未设置"
-                    aria-label="上下文窗口" />
-                </el-form-item>
-                <el-form-item label="最大输出 token">
-                  <el-input-number
-                    v-model="item.maxOutputTokens"
-                    :min="1"
-                    :max="Number.MAX_SAFE_INTEGER"
-                    :precision="0"
-                    controlsPosition="right"
-                    placeholder="未设置"
-                    aria-label="最大输出 token" />
-                </el-form-item>
-              </div>
-              <el-form-item class="reasoningMode" label="思考强度档位">
-                <el-select :modelValue="getReasoningMode(item)" aria-label="思考强度配置方式" @update:modelValue="setReasoningMode(item, $event)">
-                  <el-option label="继承模型目录" value="inherit" />
-                  <el-option label="禁用思考强度" value="disabled" />
-                  <el-option label="自定义档位" value="custom" />
+  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="uiDialogPanel"
+      :style="{ width: 'min(760px, 94vw)', maxWidth: 'calc(100vw - 32px)' }"
+      :showCloseButton="!saving"
+      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
+      @escapeKeyDown="event => { if (!(!saving)) event.preventDefault(); }"
+      @closeAutoFocus="() => { resetForm(); }">
+      <uiDialogHeader class="dialogHeader">
+        <uiDialogTitle>{{ provider ? '编辑供应商' : '添加自定义供应商' }}</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <div style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: '65vh', height: undefined }">
+          <el-form ref="providerForm" :model="form" :rules="rules" labelPosition="top" :disabled="saving" class="customProviderForm">
+            <div class="formGrid">
+              <el-form-item label="Provider ID" prop="id">
+                <el-input v-model="form.id" placeholder="例如 myProvider" />
+              </el-form-item>
+              <el-form-item label="显示名称" prop="label">
+                <el-input v-model="form.label" placeholder="供应商的显示名称" />
+              </el-form-item>
+              <el-form-item label="API 地址" prop="apiUrl">
+                <el-input v-model="form.apiUrl" dir="ltr" placeholder="https://api.example.com/v1" />
+              </el-form-item>
+              <el-form-item label="API 协议" prop="protocol">
+                <el-select v-model="form.protocol" aria-label="API 协议">
+                  <el-option v-for="protocol in protocols" :key="protocol" :label="protocol" :value="protocol" />
                 </el-select>
               </el-form-item>
-              <div v-if="getReasoningMode(item) === 'custom'" class="reasoningSettings">
-                <div class="reasoningChoices" aria-label="支持的思考档位">
-                  <el-checkbox
-                    v-for="level in thinkingLevels"
-                    :key="level"
-                    class="reasoningChoice"
-                    border
-                    :modelValue="hasReasoningLevel(item, level)"
-                    @update:modelValue="setReasoningLevel(item, level, !!$event)">
-                    {{ thinkingLevelLabels[level] }}
-                  </el-checkbox>
+            </div>
+            <el-form-item label="API 密钥" prop="apiKey">
+              <el-input v-model="form.apiKey" type="password" dir="ltr" showPassword autocomplete="off" placeholder="本地无鉴权服务可留空" />
+            </el-form-item>
+            <el-form-item label="自定义请求头" prop="headers" class="requestHeaders">
+              <div class="headersEditor">
+                <div v-for="item in form.headers" :key="item.key" class="headerRow">
+                  <el-input v-model="item.name" class="headerName" dir="ltr" autocomplete="off" placeholder="请求头名称" aria-label="请求头名称" />
+                  <el-input
+                    v-model="item.value"
+                    type="password"
+                    dir="ltr"
+                    showPassword
+                    autocomplete="off"
+                    placeholder="请求头值（可留空）"
+                    aria-label="请求头值" />
+                  <uiButton
+                    aria-label="删除请求头"
+                    @click="form.headers = form.headers.filter(header => header.key !== item.key)"
+                    variant="ghost"
+                    type="button">
+                    <component :is="IconTrash" aria-hidden="true" />
+                  </uiButton>
                 </div>
-                <el-text type="info" size="small">勾选支持的档位并填写接口值；off 可留空，不指定强度值。</el-text>
-                <div class="reasoningMappings">
-                  <div v-for="level in thinkingLevels.filter(level => hasReasoningLevel(item, level))" :key="level" class="reasoningRow">
-                    <div class="reasoningLevel">
-                      <span>{{ thinkingLevelLabels[level] }}</span>
-                      <span class="reasoningKey">{{ level }}</span>
+                <uiButton @click="addRequestHeader" variant="ghost" type="button"><component :is="IconPlus" aria-hidden="true" />添加请求头</uiButton>
+              </div>
+            </el-form-item>
+            <div class="modelHeader">
+              <strong data-ui-text="default">模型列表</strong>
+              <uiButton @click="fetchModels()" variant="outline" type="button" :disabled="(fetching)"><icon-loader-2 v-if="fetching" class="animate-spin" aria-hidden="true" /><component :is="IconDownload" aria-hidden="true" />获取模型列表</uiButton>
+            </div>
+            <div class="modelList">
+              <div v-for="item in models" :key="item.key" class="modelItem">
+                <div class="modelRow">
+                  <el-input v-model="item.id" placeholder="模型 ID" aria-label="模型 ID" />
+                  <el-input v-model="item.label" placeholder="显示名称" aria-label="模型显示名称" />
+                  <uiButton
+                    :aria-expanded="expandedModels.has(item.key)"
+                    aria-label="展开模型设置"
+                    @click="expandedModels.has(item.key) ? expandedModels.delete(item.key) : expandedModels.add(item.key)"
+                    variant="ghost"
+                    type="button">
+                    <component :is="expandedModels.has(item.key) ? IconChevronUp : IconChevronDown" aria-hidden="true" />
+                  </uiButton>
+                  <uiButton aria-label="删除模型" @click="models = models.filter((model) => model.key !== item.key)" variant="ghost" type="button">
+                    <component :is="IconTrash" aria-hidden="true" />
+                  </uiButton>
+                </div>
+                <div v-if="expandedModels.has(item.key)" class="modelSettings">
+                  <div class="formGrid tokenSettings">
+                    <el-form-item label="上下文窗口">
+                      <el-input-number
+                        v-model="item.contextWindow"
+                        :min="1"
+                        :max="Number.MAX_SAFE_INTEGER"
+                        :precision="0"
+                        controlsPosition="right"
+                        placeholder="未设置"
+                        aria-label="上下文窗口" />
+                    </el-form-item>
+                    <el-form-item label="最大输出 token">
+                      <el-input-number
+                        v-model="item.maxOutputTokens"
+                        :min="1"
+                        :max="Number.MAX_SAFE_INTEGER"
+                        :precision="0"
+                        controlsPosition="right"
+                        placeholder="未设置"
+                        aria-label="最大输出 token" />
+                    </el-form-item>
+                  </div>
+                  <el-form-item class="reasoningMode" label="思考强度档位">
+                    <el-select :modelValue="getReasoningMode(item)" aria-label="思考强度配置方式" @update:modelValue="setReasoningMode(item, $event)">
+                      <el-option label="继承模型目录" value="inherit" />
+                      <el-option label="禁用思考强度" value="disabled" />
+                      <el-option label="自定义档位" value="custom" />
+                    </el-select>
+                  </el-form-item>
+                  <div v-if="getReasoningMode(item) === 'custom'" class="reasoningSettings">
+                    <div class="reasoningChoices" aria-label="支持的思考档位">
+                      <el-checkbox
+                        v-for="level in thinkingLevels"
+                        :key="level"
+                        class="reasoningChoice"
+                        border
+                        :modelValue="hasReasoningLevel(item, level)"
+                        @update:modelValue="setReasoningLevel(item, level, !!$event)">{{ thinkingLevelLabels[level] }}</el-checkbox>
                     </div>
-                    <el-input
-                      :modelValue="getReasoningValue(item, level)"
-                      :placeholder="level === 'off' ? '留空使用协议默认值' : '接口值，例如 ' + level"
-                      :aria-label="level + ' 接口值'"
-                      @update:modelValue="setReasoningValue(item, level, $event)" />
+                    <span data-ui-text="info">勾选支持的档位并填写接口值；off 可留空，不指定强度值。</span>
+                    <div class="reasoningMappings">
+                      <div v-for="level in thinkingLevels.filter(level => hasReasoningLevel(item, level))" :key="level" class="reasoningRow">
+                        <div class="reasoningLevel">
+                          <span>{{ thinkingLevelLabels[level] }}</span>
+                          <span class="reasoningKey">{{ level }}</span>
+                        </div>
+                        <el-input
+                          :modelValue="getReasoningValue(item, level)"
+                          :placeholder="level === 'off' ? '留空使用协议默认值' : '接口值，例如 ' + level"
+                          :aria-label="level + ' 接口值'"
+                          @update:modelValue="setReasoningValue(item, level, $event)" />
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
-          </div>
+            <uiButton class="manualAdd" @click="addManualModel" variant="outline" type="button"><component :is="IconPlus" aria-hidden="true" />手动添加模型</uiButton>
+            <uiAlert v-if="formError" variant="destructive">
+              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ formError }}</uiAlertTitle>
+            </uiAlert>
+          </el-form>
         </div>
-        <el-button class="manualAdd" :icon="IconPlus" @click="addManualModel">手动添加模型</el-button>
-        <el-alert v-if="formError" :title="formError" type="error" :closable="false" showIcon />
-      </el-form>
-    </el-scrollbar>
-    <template #footer>
-      <el-button :disabled="saving" @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="saving" :disabled="fetching" @click="addProvider">
-        {{ provider ? "保存修改" : "确定添加供应商" }}
-      </el-button>
-    </template>
-  </el-dialog>
-  <el-dialog v-model="resultsVisible" title="选择要添加的模型" width="min(680px, 92vw)" alignCenter appendToBody destroyOnClose>
-    <el-input v-model="modelSearch" clearable :prefixIcon="IconSearch" placeholder="搜索模型 ID 或显示名称" aria-label="搜索模型" />
-    <div class="modelResults">
-      <el-auto-resizer>
-        <template #default="{ height, width }">
-          <el-table-v2
-            :columns="resultColumns"
-            :data="filteredModels"
-            :width="width"
-            :height="height"
-            :rowHeight="38"
-            :headerHeight="36"
-            rowKey="id"
-            fixed />
-        </template>
-      </el-auto-resizer>
-    </div>
-    <el-text type="info">{{ filteredModels.length }} 个结果，已勾选 {{ selectedIds.size }} 个</el-text>
-    <template #footer>
-      <el-button @click="resultsVisible = false">取消</el-button>
-      <el-button type="primary" :disabled="!selectedIds.size" @click="addSelectedModels">添加勾选的模型（{{ selectedIds.size }}）</el-button>
-    </template>
-  </el-dialog>
+        <uiDialogFooter class="dialogFooter">
+          <uiButton @click="visible = false" variant="outline" type="button" :disabled="(saving)">取消</uiButton>
+          <uiButton @click="addProvider" variant="default" type="button" :disabled="(fetching) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />{{ provider ? "保存修改" : "确定添加供应商" }}</uiButton>
+        </uiDialogFooter>
+      </div>
+    </uiDialogContent>
+  </uiDialog>
+  <uiDialog :open="resultsVisible" @update:open="open => { if (!open) { resultsVisible = false; } }">
+    <uiDialogContent :aria-describedby="undefined" class="uiDialogPanel" :style="{ width: 'min(680px, 92vw)', maxWidth: 'calc(100vw - 32px)' }">
+      <uiDialogHeader class="dialogHeader">
+        <uiDialogTitle>选择要添加的模型</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <div class="inputGroup">
+          <component :is="IconSearch" aria-hidden="true" />
+          <uiInput v-model="modelSearch" placeholder="搜索模型 ID 或显示名称" aria-label="搜索模型"></uiInput>
+          <uiButton
+            @mousedown.prevent
+            v-if="modelSearch"
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            aria-label="清除"
+            @click="modelSearch = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
+            <icon-x />
+          </uiButton>
+        </div>
+        <div class="modelResults">
+          <el-auto-resizer>
+            <template #default="{ height, width }">
+              <el-table-v2
+                :columns="resultColumns"
+                :data="filteredModels"
+                :width="width"
+                :height="height"
+                :rowHeight="38"
+                :headerHeight="36"
+                rowKey="id"
+                fixed />
+            </template>
+          </el-auto-resizer>
+        </div>
+        <span data-ui-text="info">{{ filteredModels.length }}个结果，已勾选{{ selectedIds.size }}个</span>
+        <uiDialogFooter class="dialogFooter">
+          <uiButton @click="resultsVisible = false" variant="outline" type="button">取消</uiButton>
+          <uiButton @click="addSelectedModels" variant="default" type="button" :disabled="(!selectedIds.size)">添加勾选的模型（{{ selectedIds.size }}）</uiButton>
+        </uiDialogFooter>
+      </div>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
+import { uiInput } from "@/components/ui/input";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
 import { computed, h, onBeforeUnmount, reactive, ref, shallowRef, watch } from "vue";
 import axios from "axios";
 import { t } from "@toonflow/i18n/vue";
@@ -465,7 +509,7 @@ async function addProvider() {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 0 20px;
 
-    .el-input-number {
+    :is(.el-input-number, .numberField) {
       width: 100%;
     }
   }
@@ -488,7 +532,7 @@ async function addProvider() {
         align-items: center;
         gap: 8px;
 
-        .el-button {
+        [data-slot="button"] {
           margin: 0;
           padding: 4px;
         }
@@ -503,7 +547,7 @@ async function addProvider() {
         background: var(--el-fill-color-light);
 
         .tokenSettings {
-          .el-form-item {
+          :is(.el-form-item, .formField) {
             margin-bottom: 0;
           }
         }

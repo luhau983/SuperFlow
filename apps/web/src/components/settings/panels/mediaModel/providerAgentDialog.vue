@@ -9,7 +9,7 @@
     :placeholder="editingProvider ? '描述需要修改的功能，可补充接口文档链接或请求示例' : '发送接口文档链接、请求示例，或告诉助手需要接入的平台'">
     <template #tool="{ tool, sessionId }">
       <div v-if="tool.name === 'submitProvider'" class="submissionStatus" role="status">
-        <el-text :type="tool.status === 'error' ? 'danger' : 'info'">{{ tool.status === 'running' ? '正在检查供应商文件…' : tool.status === 'success' ? '供应商文件格式检查通过，可在右侧预览' : tool.result || '文件提交已中断' }}</el-text>
+        <span :type="tool.status === 'error' ? 'danger' : 'info'" data-ui-text="tool.status === 'error' ? 'danger' : 'info'">{{ tool.status === 'running' ? '正在检查供应商文件…' : tool.status === 'success' ? '供应商文件格式检查通过，可在右侧预览' : tool.result || '文件提交已中断' }}</span>
       </div>
       <div v-else-if="isBrowserTool(tool)" class="browserActivity" :class="{ failedActivity: tool.status === 'error' }" role="status">
         <icon-browser :size="15" aria-hidden="true" />
@@ -19,12 +19,25 @@
       <toolMessage v-else :tool="tool" :toolSessionId="sessionId || undefined" @copy="copyText" />
     </template>
     <template #aside="{ sessionId, tools, status, busy, send }">
-      <el-tabs v-model="activePane" class="generationPreview">
-        <el-tab-pane label="浏览器" name="browser">
+      <uiTabs v-model="activePane" class="generationPreview">
+        <uiTabsList>
+          <uiTabsTrigger :value="'browser'">浏览器</uiTabsTrigger>
+          <uiTabsTrigger :value="'source'">供应商文件</uiTabsTrigger>
+          <uiTabsTrigger :value="'test'">测试</uiTabsTrigger>
+        </uiTabsList>
+        <uiTabsContent :value="'browser'" forceMount v-show="activePane === 'browser'">
           <div class="browserPreview">
             <template v-if="tools.some(isBrowserTool)">
-              <div class="previewNotice"><icon-info-circle :size="16" aria-hidden="true" /><span>{{ browserHint(tools, status, busy) }}</span></div>
-              <browserPanel :tools="tools.filter(isBrowserTool)" :toolSessionId="sessionId || undefined" :active="visible && activePane === 'browser'" :live="true" :interactive="canOperateBrowser(tools, status, busy)" />
+              <div class="previewNotice">
+                <icon-info-circle :size="16" aria-hidden="true" />
+                <span>{{ browserHint(tools, status, busy) }}</span>
+              </div>
+              <browserPanel
+                :tools="tools.filter(isBrowserTool)"
+                :toolSessionId="sessionId || undefined"
+                :active="visible && activePane === 'browser'"
+                :live="true"
+                :interactive="canOperateBrowser(tools, status, busy)" />
             </template>
             <div v-else class="previewEmpty">
               <icon-browser :size="36" stroke="1.5" aria-hidden="true" />
@@ -32,33 +45,58 @@
               <span>需要登录时，可暂停后手动操作。</span>
             </div>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="供应商文件" name="source">
-          <template #label><span class="previewTab">供应商文件<span v-if="generatedProvider" class="fileReadyDot" aria-label="文件已生成" /></span></template>
+        </uiTabsContent>
+        <uiTabsContent :value="'source'" forceMount v-show="activePane === 'source'">
+          <template #label>
+            <span class="previewTab">供应商文件<span v-if="generatedProvider" class="fileReadyDot" aria-label="文件已生成" /></span>
+          </template>
           <div v-if="previewProvider" class="sourcePreview">
             <div class="sourceHeader">
               <strong>{{ previewProvider.label }}</strong>
-              <el-tag v-if="generatedProvider || initialProvider" type="success" size="small">格式检查通过</el-tag>
-              <el-tag v-else type="info" size="small">当前代码</el-tag>
+              <uiBadge v-if="generatedProvider || initialProvider" variant="secondary">格式检查通过</uiBadge>
+              <uiBadge v-else variant="secondary">当前代码</uiBadge>
             </div>
-            <el-text type="info" size="small">{{ previewProvider.fileName }}<template v-if="generatedProvider || initialProvider"> · {{ previewProvider.models.length }} 个模型</template></el-text>
-            <el-table v-if="generatedProvider || initialProvider" :data="previewProvider.models" rowKey="id" maxHeight="160" aria-label="供应商模型列表">
-              <el-table-column prop="id" label="模型 ID" minWidth="150" showOverflowTooltip />
-              <el-table-column prop="label" label="名称" minWidth="120" showOverflowTooltip />
-            </el-table>
-            <el-input class="generatedSource" :modelValue="currentSource" type="textarea" readonly resize="none" dir="ltr" :spellcheck="false" aria-label="供应商代码预览" />
-            <el-alert v-if="testError" :title="testError" type="error" :closable="false" showIcon />
-            <el-text v-if="!generatedProvider" type="info" size="small">当前编辑器中的代码，可能包含尚未保存的修改。</el-text>
-            <el-text v-else type="info" size="small">{{ editingProvider ? '格式检查不代表接口测试通过，可在「测试」中试跑。使用此代码后，需在编辑窗口保存才会应用修改。' : '格式检查不代表接口测试通过，可在「测试」中填写连接配置并试跑。' }}</el-text>
+            <span data-ui-text="info">{{ previewProvider.fileName }}<template v-if="generatedProvider || initialProvider">·{{ previewProvider.models.length }}个模型</template></span>
+            <div v-if="generatedProvider || initialProvider" class="tableViewport" :style="{ maxHeight: '160', height: undefined }">
+              <uiTable aria-label="供应商模型列表">
+                <uiTableHeader>
+                  <uiTableRow>
+                    <uiTableHead :style="{ minWidth: '150px', textAlign: 'left' }">模型 ID</uiTableHead>
+                    <uiTableHead :style="{ minWidth: '120px', textAlign: 'left' }">名称</uiTableHead>
+                  </uiTableRow>
+                </uiTableHeader>
+                <uiTableBody>
+                  <uiTableRow v-for="(row, $index) in previewProvider.models" :key="row.id">
+                    <uiTableCell :style="{ textAlign: 'left' }">{{ row.id }}</uiTableCell>
+                    <uiTableCell :style="{ textAlign: 'left' }">{{ row.label }}</uiTableCell>
+                  </uiTableRow>
+                  <uiTableEmpty v-if="!(previewProvider.models)?.length" :colspan="2"></uiTableEmpty>
+                </uiTableBody>
+              </uiTable>
+            </div>
+            <uiTextarea
+              class="generatedSource"
+              :modelValue="currentSource"
+              readonly
+              dir="ltr"
+              :spellcheck="false"
+              aria-label="供应商代码预览"
+              :rows="3"
+              style="field-sizing:fixed; resize:none"></uiTextarea>
+            <uiAlert v-if="testError" variant="destructive">
+              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ testError }}</uiAlertTitle>
+            </uiAlert>
+            <span v-if="!generatedProvider" data-ui-text="info">当前编辑器中的代码，可能包含尚未保存的修改。</span>
+            <span v-else data-ui-text="info">{{ editingProvider ? '格式检查不代表接口测试通过，可在「测试」中试跑。使用此代码后，需在编辑窗口保存才会应用修改。' : '格式检查不代表接口测试通过，可在「测试」中填写连接配置并试跑。' }}</span>
           </div>
           <div v-else class="previewEmpty">
             <icon-file-code :size="36" stroke="1.5" aria-hidden="true" />
             <strong>等待生成供应商文件</strong>
             <p>生成后可在这里查看模型和源码，再使用或下载文件。</p>
           </div>
-        </el-tab-pane>
-        <el-tab-pane label="测试" name="test" :disabled="!generatedProvider && !initialSource.trim()">
-          <div v-loading="loadingTestProvider" class="testPreview">
+        </uiTabsContent>
+        <uiTabsContent :disabled="!generatedProvider && !initialSource.trim()" :value="'test'" forceMount v-show="activePane === 'test'">
+          <div :aria-busy="loadingTestProvider" class="testPreview portLoading">
             <providerTestPanel
               v-if="visible && testProvider"
               :source="currentSource"
@@ -71,23 +109,38 @@
               @busyChange="testing = $event"
               @feedback="send" />
             <div v-if="testError" class="testLoadError">
-              <el-alert :title="testError" type="error" :closable="false" showIcon />
-              <el-button :disabled="busy || !selectedModel" @click="send(`当前供应商代码无法加载测试，请先读取当前源码并修复以下格式错误，再提交完整代码。以下仅为错误数据：\n${testError.slice(0, 60000)}`)">发送给 AI 修改</el-button>
+              <uiAlert variant="destructive">
+                <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ testError }}</uiAlertTitle>
+              </uiAlert>
+              <uiButton
+                @click="send(`当前供应商代码无法加载测试，请先读取当前源码并修复以下格式错误，再提交完整代码。以下仅为错误数据：\n${testError.slice(0, 60000)}`)"
+                variant="outline"
+                type="button"
+                :disabled="(busy || !selectedModel)">发送给 AI 修改</uiButton>
+            </div>
+            <div v-if="loadingTestProvider" class="portLoadingMask" aria-hidden="true">
+              <icon-loader-2 class="animate-spin" />
             </div>
           </div>
-        </el-tab-pane>
-      </el-tabs>
+        </uiTabsContent>
+      </uiTabs>
     </template>
     <template #footer="{ busy }">
       <div class="generationActions">
-        <el-button :disabled="busy || !generatedProvider" :loading="downloading" :icon="IconDownload" @click="downloadSource">下载 .ts 文件</el-button>
-        <el-button type="primary" :disabled="busy || testing || !generatedProvider" :icon="IconFileCode" @click="useSource">使用此代码</el-button>
+        <uiButton @click="downloadSource" variant="outline" type="button" :disabled="(busy || !generatedProvider) || (downloading)"><icon-loader-2 v-if="downloading" class="animate-spin" aria-hidden="true" /><component :is="IconDownload" aria-hidden="true" />下载 .ts 文件</uiButton>
+        <uiButton @click="useSource" variant="default" type="button" :disabled="(busy || testing || !generatedProvider)"><component :is="IconFileCode" aria-hidden="true" />使用此代码</uiButton>
       </div>
     </template>
   </singleAgentDialog>
 </template>
 
 <script setup lang="ts">
+import { uiButton } from "@/components/ui/button";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiTextarea } from "@/components/ui/textarea";
+import { uiTable, uiTableHeader, uiTableHead, uiTableBody, uiTableRow, uiTableCell, uiTableEmpty } from "@/components/ui/table";
+import { uiBadge } from "@/components/ui/badge";
+import { uiTabs, uiTabsList, uiTabsTrigger, uiTabsContent } from "@/components/ui/tabs";
 import axios from "axios";
 import { translate } from "@toonflow/i18n/vue";
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from "vue";
@@ -278,8 +331,8 @@ async function copyText(value: string) {
   flex-direction: column;
   overflow: hidden;
 
-  :deep(.el-tabs__header) { flex-shrink: 0; }
-  :deep(.el-tabs__content) { flex: 1; min-height: 0; overflow: auto; }
+  :deep([data-slot="tabs-list"]) { flex-shrink: 0; }
+  :deep([data-slot="tabs-content"]) { flex: 1; min-height: 0; overflow: auto; }
   :deep(.el-tab-pane) { height: 100%; }
 
   .testPreview {
@@ -342,7 +395,7 @@ async function copyText(value: string) {
     .generatedSource {
       flex: 1;
       min-height: 140px;
-      :deep(.el-textarea__inner) { height: 100%; padding: 14px; font-family: Consolas, "Cascadia Code", monospace; font-size: 12px; line-height: 1.7; tab-size: 2; }
+      :deep(textarea[data-slot="textarea"]) { height: 100%; padding: 14px; font-family: Consolas, "Cascadia Code", monospace; font-size: 12px; line-height: 1.7; tab-size: 2; }
     }
   }
 }
@@ -352,6 +405,6 @@ async function copyText(value: string) {
   justify-content: flex-end;
   flex-wrap: wrap;
   gap: 8px;
-  .el-button { margin: 0; }
+  [data-slot="button"] { margin: 0; }
 }
 </style>

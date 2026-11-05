@@ -1,22 +1,22 @@
 <template>
   <main class="hello" :class="{ configuring: !multiTenantEnabled && view !== 'welcome' }">
-    <div class="pageLanguage"><languageSelect popover /></div>
+    <div class="pageLanguage">
+      <languageSelect popover />
+    </div>
     <section class="welcomePanel" aria-labelledby="welcomeTitle">
       <div v-if="!multiTenantEnabled && view !== 'welcome'" class="providerContent">
         <header class="providerHeader">
-          <el-button text :icon="IconArrowLeft" :disabled="saving" @click="view = 'welcome'">返回</el-button>
+          <uiButton @click="view = 'welcome'" variant="ghost" type="button" :disabled="(saving)"><component :is="IconArrowLeft" aria-hidden="true" />返回</uiButton>
           <h1 id="welcomeTitle">配置第三方模型</h1>
         </header>
         <div class="providerBody">
           <languageModel />
         </div>
-        <el-button
-          type="primary"
-          :loading="saving"
-          :disabled="!customProviders.some((provider) => provider.models.length)"
-          @click="completeSetup">
-          开始使用
-        </el-button>
+        <uiButton
+          @click="completeSetup"
+          variant="default"
+          type="button"
+          :disabled="(!customProviders.some((provider) => provider.models.length)) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />开始使用</uiButton>
       </div>
       <div v-else class="welcomeContent">
         <h1 id="welcomeTitle">快速开始</h1>
@@ -27,19 +27,15 @@
         -->
         <div class="secondaryActions">
           <template v-if="!multiTenantEnabled">
-            <el-button class="secondaryButton" round :disabled="saving" @click="view = 'custom'">
-              <icon-key class="buttonIcon" />
-              配置第三方模型
-            </el-button>
+            <uiButton class="secondaryButton" @click="view = 'custom'" variant="outline" type="button" :disabled="(saving)"><icon-key class="buttonIcon" />配置第三方模型</uiButton>
             <span class="separator">或</span>
           </template>
-          <el-button class="secondaryButton" round :loading="saving" @click="completeSetup">稍后配置</el-button>
+          <uiButton class="secondaryButton" @click="completeSetup" variant="outline" type="button" :disabled="(saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />稍后配置</uiButton>
         </div>
       </div>
-
       <footer class="pageFooter">
-        <el-button class="deviceLink" size="small" :icon="IconDevices" @click="mobileConnectVisible = true">{{ mobileConnectionLabel }}</el-button>
-        <p>© {{ new Date().getFullYear() }} SuperFlow · 保留所有权利。</p>
+        <uiButton class="deviceLink" @click="mobileConnectVisible = true" variant="outline" type="button" size="sm"><component :is="IconDevices" aria-hidden="true" />{{ mobileConnectionLabel }}</uiButton>
+        <p>©{{ new Date().getFullYear() }}SuperFlow · 保留所有权利。</p>
       </footer>
     </section>
     <div class="artPanel" aria-hidden="true">
@@ -54,6 +50,7 @@
 </template>
 
 <script setup lang="ts">
+import { uiButton } from "@/components/ui/button";
 import { defineAsyncComponent, ref } from "vue";
 import { useRouter } from "vue-router";
 import { toast } from "vue-sonner";

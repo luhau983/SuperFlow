@@ -1,54 +1,138 @@
 <template>
   <div v-click-outside:[clickOutsideExclude]="closeMenu" class="mentionMenu" @keydown.capture="handleKeydown">
-    <el-button class="mentionButton" text circle :disabled="disabled" :aria-expanded="visible" :aria-controls="listId" aria-label="提及节点输出或素材" title="提及节点输出或素材" @mousedown.prevent @click="visible ? closeMenu() : openMenu()"><icon-at :size="16" /></el-button>
+    <uiButton
+      class="mentionButton"
+      variant="ghost"
+      size="icon-sm"
+      :disabled="disabled"
+      :aria-expanded="visible"
+      :aria-controls="listId"
+      aria-label="提及节点输出或素材"
+      title="提及节点输出或素材"
+      @mousedown.prevent
+      @click="visible ? closeMenu() : openMenu()">
+      <icon-at :size="16" />
+    </uiButton>
     <teleport to="body">
       <div v-if="visible" ref="popupElement" class="mentionMenu mentionOverlay" :style="popupStyle" @keydown.capture="handleKeydown">
-        <el-card class="mentionPopup" shadow="always" :bodyStyle="{ padding: '0' }" :style="{ maxHeight: `${popupHeight}px` }">
-          <div class="mentionHeader"><strong>提及输出与素材</strong><el-button text circle size="small" aria-label="关闭提及" @click="closeMenu"><icon-x :size="14" /></el-button></div>
+        <div class="mentionPopup" :style="{ maxHeight: `${popupHeight}px` }">
+          <div class="mentionHeader">
+            <strong>提及输出与素材</strong>
+            <uiButton variant="ghost" size="icon-xs" aria-label="关闭提及" @click="closeMenu">
+              <icon-x :size="14" />
+            </uiButton>
+          </div>
           <div class="mentionScopes" aria-label="提及来源">
-            <button v-for="item in scopes" :key="item.id" type="button" :class="{ selected: scope === item.id }" :aria-pressed="scope === item.id" @click="changeScope(item.id)">{{ item.name }}</button>
+            <button
+              v-for="item in scopes"
+              :key="item.id"
+              type="button"
+              :class="{ selected: scope === item.id }"
+              :aria-pressed="scope === item.id"
+              @click="changeScope(item.id)">{{ item.name }}</button>
           </div>
           <div v-if="selectedNode || selectedCanvas || assetPath" class="mentionBreadcrumb">
-            <el-button text circle size="small" aria-label="返回上一级" @click="goBack"><icon-chevron-left :size="15" /></el-button>
+            <uiButton variant="ghost" size="icon-xs" aria-label="返回上一级" @click="goBack">
+              <icon-chevron-left :size="15" />
+            </uiButton>
             <span :title="breadcrumb">{{ breadcrumb }}</span>
           </div>
-          <div class="mentionSearch"><el-input v-model="search" clearable :placeholder="searchPlaceholder" aria-label="搜索提及内容"><template #prefix><icon-search :size="15" /></template></el-input></div>
-          <el-scrollbar ref="listScrollbar" class="mentionScroll" :maxHeight="`${Math.max(90, popupHeight - (selectedNode || selectedCanvas || assetPath ? 218 : 188))}px`">
-            <div :id="listId" class="mentionList" role="listbox" aria-label="可提及内容" :aria-busy="loading || selecting" :aria-multiselectable="!!selectedNode">
+          <div class="mentionSearch">
+            <icon-search class="searchIcon" :size="15" aria-hidden="true" />
+            <uiInput v-model="search" class="searchInput" :placeholder="searchPlaceholder" aria-label="搜索提及内容" />
+            <button v-if="search" class="searchClear" type="button" aria-label="清除" title="清除" @click="search = ''">
+              <icon-x :size="13" />
+            </button>
+          </div>
+          <div
+            ref="listScrollbar"
+            class="mentionScroll"
+            :style="{ maxHeight: `${Math.max(90, popupHeight - (selectedNode || selectedCanvas || assetPath ? 218 : 188))}px` }">
+            <div
+              :id="listId"
+              class="mentionList"
+              role="listbox"
+              aria-label="可提及内容"
+              :aria-busy="loading || selecting"
+              :aria-multiselectable="!!selectedNode">
               <div v-if="loading && !rows.length" class="mentionStatus" role="status">正在加载…</div>
-              <div v-else-if="loadError" class="mentionStatus" role="alert"><span>{{ loadError }}</span><el-button text type="primary" size="small" @click="loadList()">重试</el-button></div>
+              <div v-else-if="loadError" class="mentionStatus" role="alert">
+                <span>{{ loadError }}</span>
+                <uiButton variant="link" size="xs" @click="loadList()">重试</uiButton>
+              </div>
               <div v-else-if="!rows.length" class="mentionStatus" role="status">{{ emptyText }}</div>
               <div class="mentionRows" :style="{ height: `${listVirtualizer.getTotalSize()}px` }">
-                <button v-for="{ row, index, start } in visibleRows" :id="`${listId}-${index}`" :key="`${row.kind}-${row.id}`" class="mentionItem" :style="{ transform: `translateY(${start}px)` }" :class="{ active: index === activeIndex, unavailable: !row.available, checked: row.kind === 'output' && selectedOutputs.includes(row.id) }" type="button" role="option" :aria-selected="row.kind === 'output' ? selectedOutputs.includes(row.id) : index === activeIndex" :aria-disabled="!row.available || selecting" :aria-posinset="index + 1" :aria-setsize="rows.length" :title="row.name" @mouseenter="activeIndex = index" @mousedown.prevent @click="chooseRow(row)">
-                  <mentionThumbnail :thumbnail="row.thumbnail" :directory="directory" :globalAsset="row.kind === 'file'"><component :is="row.kind === 'canvas' ? IconVector : row.kind === 'directory' ? IconFolder : row.dataType === 'image' || row.dataType === 'mask' ? IconPhoto : row.dataType === 'video' ? IconVideo : row.dataType === 'audio' ? IconMusic : row.dataType ? IconFileText : IconBox" :size="18" /></mentionThumbnail>
-                  <span class="mentionContent"><span class="mentionName">{{ row.name }}</span><span v-if="row.description" class="mentionDescription">{{ row.description }}</span></span>
+                <button
+                  v-for="{ row, index, start } in visibleRows"
+                  :id="`${listId}-${index}`"
+                  :key="`${row.kind}-${row.id}`"
+                  class="mentionItem"
+                  :style="{ transform: `translateY(${start}px)` }"
+                  :class="{ active: index === activeIndex, unavailable: !row.available, checked: row.kind === 'output' && selectedOutputs.includes(row.id) }"
+                  type="button"
+                  role="option"
+                  :aria-selected="row.kind === 'output' ? selectedOutputs.includes(row.id) : index === activeIndex"
+                  :aria-disabled="!row.available || selecting"
+                  :aria-posinset="index + 1"
+                  :aria-setsize="rows.length"
+                  :title="row.name"
+                  @mouseenter="activeIndex = index"
+                  @mousedown.prevent
+                  @click="chooseRow(row)">
+                  <mentionThumbnail :thumbnail="row.thumbnail" :directory="directory" :globalAsset="row.kind === 'file'">
+                    <component
+                      :is="row.kind === 'canvas' ? IconVector : row.kind === 'directory' ? IconFolder : row.dataType === 'image' || row.dataType === 'mask' ? IconPhoto : row.dataType === 'video' ? IconVideo : row.dataType === 'audio' ? IconMusic : row.dataType ? IconFileText : IconBox"
+                      :size="18" />
+                  </mentionThumbnail>
+                  <span class="mentionContent">
+                    <span class="mentionName">{{ row.name }}</span>
+                    <span v-if="row.description" class="mentionDescription">{{ row.description }}</span>
+                  </span>
                   <span v-if="!row.available || row.kind === 'node' && !row.outputCount" class="mentionState">{{ row.kind === 'file' ? '不支持' : '暂无输出' }}</span>
-                  <span v-else-if="row.kind === 'output'" class="mentionCheck" :class="{ selected: selectedOutputs.includes(row.id) }"><icon-check v-if="selectedOutputs.includes(row.id)" :size="12" /></span>
-                  <icon-chevron-right v-else-if="['canvas', 'directory'].includes(row.kind) || row.kind === 'node' && row.outputCount > 1" :size="14" class="mentionArrow" />
+                  <span v-else-if="row.kind === 'output'" class="mentionCheck" :class="{ selected: selectedOutputs.includes(row.id) }">
+                    <icon-check v-if="selectedOutputs.includes(row.id)" :size="12" />
+                  </span>
+                  <icon-chevron-right
+                    v-else-if="['canvas', 'directory'].includes(row.kind) || row.kind === 'node' && row.outputCount > 1"
+                    :size="14"
+                    class="mentionArrow" />
                 </button>
               </div>
-              <el-button v-if="hasMore && !loadError" class="mentionMore" text :loading="loading" :disabled="selecting" @click="loadMore">加载更多</el-button>
+              <uiButton
+                v-if="hasMore && !loadError"
+                class="mentionMore"
+                variant="ghost"
+                size="sm"
+                :disabled="loading || selecting"
+                :aria-busy="loading"
+                @click="loadMore"><icon-loader-2 v-if="loading" class="animate-spin" aria-hidden="true" />加载更多</uiButton>
             </div>
-          </el-scrollbar>
-          <div class="mentionFooter"><span>{{ selectedNode ? `已选 ${selectedOutputs.length} 项` : '↑ ↓ 选择 · Enter 确认 · Esc 关闭' }}</span><el-button v-if="selectedNode" type="primary" size="small" :loading="selecting" :disabled="!selectedOutputs.length" @click="confirmOutputs">插入引用</el-button><span v-else-if="selecting">正在插入…</span></div>
+          </div>
+          <div class="mentionFooter">
+            <span>{{ selectedNode ? `已选 ${selectedOutputs.length} 项` : '↑ ↓ 选择 · Enter 确认 · Esc 关闭' }}</span>
+            <uiButton v-if="selectedNode" size="xs" :disabled="selecting || !selectedOutputs.length" :aria-busy="selecting" @click="confirmOutputs"><icon-loader-2 v-if="selecting" class="animate-spin" aria-hidden="true" />插入引用</uiButton>
+            <span v-else-if="selecting">正在插入…</span>
+          </div>
           <div v-if="selectionError" class="mentionError" role="alert">{{ selectionError }}</div>
-        </el-card>
+        </div>
       </div>
     </teleport>
   </div>
 </template>
 
 <script setup lang="ts">
+import { ClickOutside as vClickOutside } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
 
 import { computed, nextTick, onBeforeUnmount, ref, useId, watch, type CSSProperties } from "vue";
-import { ClickOutside as vClickOutside, type ScrollbarInstance } from "element-plus";
 import { useVirtualizer } from "@tanstack/vue-virtual";
-import { IconAt, IconBox, IconCheck, IconChevronLeft, IconChevronRight, IconFileText, IconFolder, IconVector, IconVideo, IconMusic, IconPhoto, IconSearch, IconX } from "@tabler/icons-vue";
+import { IconAt, IconBox, IconCheck, IconChevronLeft, IconChevronRight, IconFileText, IconFolder, IconVector, IconVideo, IconMusic, IconPhoto, IconSearch, IconX, IconLoader2 } from "@tabler/icons-vue";
 import type { AgentMention } from "@toonflow/server/agent/types";
 import { mentionAssetType } from "@toonflow/server/agent/mentionSources";
 import { useMentionSources, type MentionAsset, type MentionNode, type MentionOutput } from "./mentionSources";
 import mentionThumbnail from "./mentionThumbnail.vue";
+import { uiButton } from "@/components/ui/button";
+import { uiInput } from "@/components/ui/input";
 
 const props = defineProps<{ directory?: string; active: boolean; disabled: boolean; query?: string; editor?: HTMLElement; currentCanvasId?: string }>();
 const emit = defineEmits<{ select: [mentions: AgentMention[]]; dismiss: []; open: [] }>();
@@ -71,7 +155,7 @@ const selectedNode = ref<MentionNode>();
 const selectedOutputs = ref<string[]>([]);
 const assetPath = ref("");
 const activeIndex = ref(0);
-const listScrollbar = ref<ScrollbarInstance>();
+const listScrollbar = ref<HTMLDivElement>();
 const nextCursor = ref<string>();
 const loading = ref(false);
 const loadError = ref("");
@@ -96,7 +180,7 @@ const rows = computed<MentionRow[]>(() => {
 });
 const listVirtualizer = useVirtualizer<HTMLDivElement, HTMLButtonElement>(computed(() => ({
   count: rows.value.length,
-  getScrollElement: () => listScrollbar.value?.wrapRef ?? null,
+  getScrollElement: () => listScrollbar.value ?? null,
   getItemKey: (index: number) => `${rows.value[index]!.kind}-${rows.value[index]!.id}`,
   estimateSize: () => 52,
   overscan: 3,
@@ -392,7 +476,11 @@ defineExpose({ handleKeydown, openMenu, closeMenu });
     box-sizing: border-box;
     overflow-y: auto;
     overscroll-behavior: contain;
-    color: var(--el-text-color-primary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--popover);
+    color: var(--popover-foreground);
+    box-shadow: 0 10px 15px -3px rgb(0 0 0 / 10%), 0 4px 6px -4px rgb(0 0 0 / 10%);
 
     .mentionHeader { display: flex; align-items: center; justify-content: space-between; padding: 7px 10px 0; font-size: 13px; }
     .mentionScopes {
@@ -407,14 +495,14 @@ defineExpose({ handleKeydown, openMenu, closeMenu });
         border: 0;
         border-radius: 5px;
         background: transparent;
-        color: var(--el-text-color-secondary);
+        color: var(--muted-foreground);
         font: inherit;
         font-size: 12px;
         white-space: nowrap;
         cursor: pointer;
 
-        &.selected { background: var(--el-color-primary-light-9); color: var(--el-color-primary); }
-        &:focus-visible { outline: 2px solid var(--el-color-primary); outline-offset: -2px; }
+        &.selected { background: color-mix(in oklch, var(--primary) 10%, transparent); color: var(--primary); }
+        &:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
       }
     }
     .mentionBreadcrumb {
@@ -426,11 +514,37 @@ defineExpose({ handleKeydown, openMenu, closeMenu });
 
       span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     }
-    .mentionSearch { padding: 0 9px 7px; }
+    .mentionSearch {
+      position: relative;
+      padding: 0 9px 7px;
+
+      .searchIcon { position: absolute; top: 9px; left: 18px; color: var(--muted-foreground); pointer-events: none; }
+      .searchInput { height: 32px; padding-inline: 30px; }
+      .searchClear {
+        position: absolute;
+        top: 6px;
+        right: 15px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 20px;
+        height: 20px;
+        padding: 0;
+        border: 0;
+        border-radius: 9999px;
+        background: transparent;
+        color: var(--muted-foreground);
+        cursor: pointer;
+
+        &:hover { color: var(--foreground); }
+        &:focus-visible { outline: 2px solid var(--ring); outline-offset: 0; }
+      }
+    }
+    .mentionScroll { overflow-y: auto; overscroll-behavior: contain; }
     .mentionList {
       padding: 0 5px 5px;
 
-      .mentionStatus { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; padding: 22px 10px; color: var(--el-text-color-secondary); font-size: 12px; overflow-wrap: anywhere; }
+      .mentionStatus { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; padding: 22px 10px; color: var(--muted-foreground); font-size: 12px; overflow-wrap: anywhere; }
       .mentionRows {
         position: relative;
 
@@ -448,13 +562,13 @@ defineExpose({ handleKeydown, openMenu, closeMenu });
           border: 0;
           border-radius: 5px;
           background: transparent;
-          color: var(--el-text-color-primary);
+          color: var(--foreground);
           text-align: left;
           font: inherit;
           cursor: pointer;
 
-          &.active, &:focus-visible { background: var(--el-fill-color-light); }
-          &.checked { background: var(--el-color-primary-light-9); }
+          &.active, &:focus-visible { background: var(--accent); }
+          &.checked { background: color-mix(in oklch, var(--primary) 10%, transparent); }
           &.unavailable { opacity: 0.5; cursor: not-allowed; }
           .mentionContent {
             display: flex;
@@ -465,10 +579,10 @@ defineExpose({ handleKeydown, openMenu, closeMenu });
 
             .mentionName, .mentionDescription { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
             .mentionName { font-size: 13px; }
-            .mentionDescription { color: var(--el-text-color-secondary); font-size: 11px; }
+            .mentionDescription { color: var(--muted-foreground); font-size: 11px; }
           }
-          .mentionState { flex-shrink: 0; font-size: 11px; color: var(--el-text-color-secondary); }
-          .mentionArrow { flex-shrink: 0; color: var(--el-text-color-secondary); }
+          .mentionState { flex-shrink: 0; font-size: 11px; color: var(--muted-foreground); }
+          .mentionArrow { flex-shrink: 0; color: var(--muted-foreground); }
           .mentionCheck {
             display: flex;
             align-items: center;
@@ -476,17 +590,17 @@ defineExpose({ handleKeydown, openMenu, closeMenu });
             flex-shrink: 0;
             width: 14px;
             height: 14px;
-            border: 1px solid var(--el-border-color);
+            border: 1px solid var(--border);
             border-radius: 3px;
 
-            &.selected { background: var(--el-color-primary); border-color: var(--el-color-primary); color: white; }
+            &.selected { background: var(--primary); border-color: var(--primary); color: var(--primary-foreground); }
           }
         }
       }
       .mentionMore { width: 100%; font-size: 12px; }
     }
-    .mentionFooter { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 34px; padding: 5px 10px; border-top: 1px solid var(--el-border-color-lighter); color: var(--el-text-color-secondary); font-size: 11px; }
-    .mentionError { padding: 0 10px 8px; color: var(--el-color-danger); font-size: 12px; overflow-wrap: anywhere; }
+    .mentionFooter { display: flex; align-items: center; justify-content: space-between; gap: 6px; min-height: 34px; padding: 5px 10px; border-top: 1px solid var(--border); color: var(--muted-foreground); font-size: 11px; }
+    .mentionError { padding: 0 10px 8px; color: var(--destructive); font-size: 12px; overflow-wrap: anywhere; }
   }
 }
 </style>

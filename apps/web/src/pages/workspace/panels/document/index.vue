@@ -3,7 +3,13 @@
     <dockview-vue class="documentLayout" :theme="theme" :disableAutoResizing="true" :disableFloatingGroups="true" @ready="onLayoutReady" />
     <openWithDialog ref="openWithRef" />
     <quickOpen v-if="directory" ref="quickOpenRef" :directory="directory" @open="selection => openSelection(selection).catch(reportError)" />
-    <workspaceSearch v-if="directory" ref="searchRef" :directory="directory" :active="active" :replaceFile="replaceSearchFile" @open="openSearchResult" />
+    <workspaceSearch
+      v-if="directory"
+      ref="searchRef"
+      :directory="directory"
+      :active="active"
+      :replaceFile="replaceSearchFile"
+      @open="openSearchResult" />
   </section>
 </template>
 
@@ -673,27 +679,27 @@ defineExpose({ ready, flushSave, cancelSave, getDocument, openDocument, writeDoc
   padding-top: 60px;
   padding-right: var(--agentWidth, 0px);
   overflow: hidden;
-  background: var(--el-bg-color);
-  .documentLayout { width: 100%; height: 100%; border-top: 1px solid var(--el-border-color); }
+  background: var(--background);
+  .documentLayout { width: 100%; height: 100%; border-top: 1px solid var(--border); }
   .dockviewToonflow {
-    --dv-background-color: var(--el-bg-color);
-    --dv-group-view-background-color: var(--el-bg-color);
-    --dv-tabs-and-actions-container-background-color: var(--el-fill-color-light);
-    --dv-activegroup-visiblepanel-tab-background-color: var(--el-bg-color);
-    --dv-activegroup-hiddenpanel-tab-background-color: var(--el-fill-color-light);
-    --dv-inactivegroup-visiblepanel-tab-background-color: var(--el-bg-color);
-    --dv-inactivegroup-hiddenpanel-tab-background-color: var(--el-fill-color-light);
-    --dv-activegroup-visiblepanel-tab-color: var(--el-text-color-primary);
-    --dv-activegroup-hiddenpanel-tab-color: var(--el-text-color-secondary);
-    --dv-inactivegroup-visiblepanel-tab-color: var(--el-text-color-regular);
-    --dv-inactivegroup-hiddenpanel-tab-color: var(--el-text-color-secondary);
-    --dv-tab-divider-color: var(--el-border-color);
-    --dv-separator-border: var(--el-border-color);
+    --dv-background-color: var(--background);
+    --dv-group-view-background-color: var(--background);
+    --dv-tabs-and-actions-container-background-color: var(--muted);
+    --dv-activegroup-visiblepanel-tab-background-color: var(--background);
+    --dv-activegroup-hiddenpanel-tab-background-color: var(--muted);
+    --dv-inactivegroup-visiblepanel-tab-background-color: var(--background);
+    --dv-inactivegroup-hiddenpanel-tab-background-color: var(--muted);
+    --dv-activegroup-visiblepanel-tab-color: var(--foreground);
+    --dv-activegroup-hiddenpanel-tab-color: var(--muted-foreground);
+    --dv-inactivegroup-visiblepanel-tab-color: var(--foreground);
+    --dv-inactivegroup-hiddenpanel-tab-color: var(--muted-foreground);
+    --dv-tab-divider-color: var(--border);
+    --dv-separator-border: var(--border);
     --dv-tabs-and-actions-container-height: 35px;
-    --dv-drag-over-background-color: var(--el-color-primary-light-8);
-    --dv-drag-over-border-color: var(--el-color-primary);
+    --dv-drag-over-background-color: color-mix(in oklch, var(--primary) 20%, transparent);
+    --dv-drag-over-border-color: var(--primary);
     .dv-tab { padding: 0; }
-    .dv-tab.dv-active-tab { border-top: 2px solid var(--el-color-primary); }
+    .dv-tab.dv-active-tab { border-top: 2px solid var(--primary); }
   }
 }
 </style>

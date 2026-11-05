@@ -1,27 +1,37 @@
 <template>
-  <el-dialog :modelValue="visible" title="选择打开方式" width="min(520px, calc(100vw - 32px))" alignCenter appendToBody :beforeClose="cancel">
-    <div class="openWithBody">
-      <p class="resourceName" :title="resourceName">{{ resourceName }}</p>
-      <el-radio-group v-model="selectedId" class="extensionOptions" aria-label="文件扩展">
-        <el-radio v-for="option in options" :key="option.id" :value="option.id" class="extensionOption" border>
-          <span class="optionInfo">
-            <span class="optionName">{{ option.displayName }}</span>
-            <span class="optionDetails">{{ option.id }}<span v-if="option.version"> · v{{ option.version }}</span></span>
-          </span>
-        </el-radio>
-      </el-radio-group>
-      <el-checkbox v-model="makeDefault">对此类文件设为默认</el-checkbox>
-    </div>
-    <template #footer>
-      <el-button @click="cancel">取消</el-button>
-      <el-button type="primary" :disabled="!selectedId" @click="confirm">打开</el-button>
-    </template>
-  </el-dialog>
+  <uiDialog :open="visible" @update:open="value => { if (!value) cancel(); }">
+    <uiDialogContent :aria-describedby="undefined" class="sm:max-w-[520px]">
+      <uiDialogHeader>
+        <uiDialogTitle>选择打开方式</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="openWithBody">
+        <p class="resourceName" :title="resourceName">{{ resourceName }}</p>
+        <uiRadioGroup :modelValue="selectedId" class="extensionOptions" aria-label="文件扩展" @update:modelValue="value => selectedId = String(value)">
+          <uiLabel v-for="option in options" :key="option.id" class="extensionOption" :class="{ checked: selectedId === option.id }">
+            <uiRadioGroupItem :value="option.id" />
+            <span class="optionInfo">
+              <span class="optionName">{{ option.displayName }}</span>
+              <span class="optionDetails">{{ option.id }}<span v-if="option.version">· v{{ option.version }}</span></span>
+            </span>
+          </uiLabel>
+        </uiRadioGroup>
+        <uiLabel class="makeDefault"><uiCheckbox :modelValue="makeDefault" @update:modelValue="value => makeDefault = value === true" />对此类文件设为默认</uiLabel>
+      </div>
+      <uiDialogFooter>
+        <uiButton variant="outline" @click="cancel">取消</uiButton>
+        <uiButton :disabled="!selectedId" @click="confirm">打开</uiButton>
+      </uiDialogFooter>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
 import { onBeforeUnmount, ref, shallowRef } from "vue";
-import { ElButton, ElCheckbox, ElDialog, ElRadio, ElRadioGroup } from "element-plus";
+import { uiButton } from "@/components/ui/button";
+import { uiCheckbox } from "@/components/ui/checkbox";
+import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
+import { uiLabel } from "@/components/ui/label";
+import { uiRadioGroup, uiRadioGroupItem } from "@/components/ui/radioGroup";
 
 type ExtensionOption = { id: string; displayName: string; version: string };
 type ExtensionChoice = { id: string; makeDefault: boolean };
@@ -65,7 +75,7 @@ defineExpose({ choose });
 
   .resourceName {
     margin: 0;
-    color: var(--el-text-color-primary);
+    color: var(--foreground);
     overflow-wrap: anywhere;
   }
 
@@ -78,14 +88,16 @@ defineExpose({ choose });
     overflow: auto;
 
     .extensionOption {
-      height: auto;
-      margin: 0;
+      align-items: flex-start;
+      gap: 10px;
       padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      font-weight: 400;
+      line-height: 1.4;
+      cursor: pointer;
 
-      :deep(.el-radio__label) {
-        min-width: 0;
-        white-space: normal;
-      }
+      &.checked { border-color: var(--primary); }
 
       .optionInfo {
         display: flex;
@@ -94,9 +106,11 @@ defineExpose({ choose });
         overflow-wrap: anywhere;
 
         .optionName { font-weight: 500; }
-        .optionDetails { color: var(--el-text-color-secondary); font-size: 12px; }
+        .optionDetails { color: var(--muted-foreground); font-size: 12px; }
       }
     }
   }
+
+  .makeDefault { font-weight: 400; cursor: pointer; }
 }
 </style>

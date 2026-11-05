@@ -1,70 +1,119 @@
 <template>
-  <el-dialog v-model="visible" title="工作区全文搜索" width="min(900px, calc(100vw - 32px))" alignCenter appendToBody
-    :closeOnClickModal="false" :closeOnPressEscape="!replacing" :showClose="!replacing" @closed="onClosed">
-    <div class="workspaceSearch">
-      <form class="searchControls" @submit.prevent="search">
-        <el-input ref="queryInput" v-model="query" placeholder="查找文本（字面匹配）" aria-label="查找文本" :disabled="replacing" clearable />
-        <el-checkbox v-model="caseSensitive" :disabled="replacing">区分大小写</el-checkbox>
-        <el-button type="primary" nativeType="submit" :disabled="!query || !active || searching || replacing">搜索</el-button>
-        <el-button v-if="searching" @click="cancelSearch">取消</el-button>
-      </form>
-      <div class="replaceControls">
-        <el-input v-model="replacement" placeholder="替换为（留空表示删除）" aria-label="替换文本" :disabled="replacing" />
-        <el-button :disabled="searching || replacing || !selectedFiles.length || !active" @click="previewing = true">预览替换</el-button>
-      </div>
-      <p class="searchScope">搜索磁盘内容；跳过回收目录、二进制和画布 JSON。单文件最多 2 MiB，本次最多检查 1000 个文件、1000 个目录、20 MiB 文本，展示 500 处匹配。</p>
-      <p class="searchStatus" role="status" aria-live="polite">{{ status ? translate(status) : '输入文本后搜索当前工作区及其子目录。' }}</p>
-      <p v-if="searched" class="searchCounts">
-        已读取 {{ scanned }} 个文本文件，{{ results.length }} 个文件命中 {{ matchCount }} 处。
-        跳过：二进制或不支持的编码 {{ skippedBinary }}，过大文件 {{ skippedLarge }}，画布 {{ skippedCanvas }}，读取失败 {{ readFailures }}。
-      </p>
-      <el-alert v-if="issues.length" type="warning" :closable="false" :title="issues.join('；')" />
-      <template v-if="previewing">
-        <div class="previewHeader">
-          <strong>替换预览：{{ selectedFiles.length }} 个文件，{{ selectedMatchCount }} 处</strong>
-          <el-button size="small" :disabled="replacing" @click="previewing = false">返回结果</el-button>
-        </div>
-        <p class="replaceNotice">仅替换勾选文件中已完整搜索的匹配。逐文件保存；冲突文件会保留原文，已完成的文件不会因其他文件失败而回滚。</p>
-      </template>
-      <div class="searchResults" :aria-busy="searching || replacing">
-        <section v-for="file in shownFiles" :key="file.path" class="fileResult">
-          <header class="fileHeader">
-            <el-checkbox v-if="!previewing" :modelValue="file.selected" :disabled="file.truncated || replacing || !!file.saved"
-              :aria-label="`选择替换 ${file.path}`" @change="value => selectFile(file.path, value === true)" />
-            <span class="filePath" :title="file.path">{{ file.path }}</span>
-            <span>{{ file.matches.length }} 处</span>
-            <span v-if="file.saved" class="savedStatus">已替换</span>
-          </header>
-          <p v-if="file.truncated" class="fileNotice">此文件的匹配超过本次展示限制，暂不参与替换。</p>
-          <p v-if="file.error" class="fileError" role="alert">{{ file.error }}</p>
-          <div v-for="match in file.matches" :key="match.start" class="matchResult">
-            <button v-if="!previewing" type="button" class="matchButton" :disabled="replacing || !!file.saved" @click="openMatch(file.path, match)">
-              <span class="matchPosition">{{ match.line }}:{{ match.column }}</span>
-              <span class="matchSnippet">{{ match.before }}<mark>{{ match.text }}</mark>{{ match.after }}</span>
-            </button>
-            <div v-else class="matchPreview">
-              <span class="matchPosition">{{ match.line }}:{{ match.column }}</span>
-              <div class="previewLines">
-                <div class="beforeLine"><span aria-label="原内容">− </span>{{ match.before }}<mark>{{ match.text }}</mark>{{ match.after }}</div>
-                <div class="afterLine"><span aria-label="替换后">+ </span>{{ match.before }}<mark>{{ replacement }}</mark>{{ match.after }}</div>
-              </div>
+  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }" :unmountOnHide="false">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      v-if="dialogRendered1"
+      class="uiDialogPanel"
+      :style="{ width: 'min(900px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
+      :showCloseButton="!replacing"
+      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
+      @escapeKeyDown="event => { if (!(!replacing)) event.preventDefault(); }"
+      @closeAutoFocus="() => { onClosed(); }">
+      <uiDialogHeader class="dialogHeader">
+        <uiDialogTitle>工作区全文搜索</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <div class="workspaceSearch">
+          <form class="searchControls" @submit.prevent="search">
+            <div class="inputGroup">
+              <uiInput ref="queryInput" v-model="query" placeholder="查找文本（字面匹配）" aria-label="查找文本" :disabled="replacing"></uiInput>
+              <uiButton
+                @mousedown.prevent
+                v-if="query"
+                type="button"
+                variant="ghost"
+                size="icon-sm"
+                aria-label="清除"
+                :disabled="replacing"
+                @click="query = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
+                <icon-x />
+              </uiButton>
             </div>
+            <uiLabel class="checkboxField"><uiCheckbox v-model="caseSensitive" :disabled="replacing"></uiCheckbox>区分大小写</uiLabel>
+            <uiButton variant="default" type="submit" :disabled="(!query || !active || searching || replacing)">搜索</uiButton>
+            <uiButton v-if="searching" @click="cancelSearch" variant="outline" type="button">取消</uiButton>
+          </form>
+          <div class="replaceControls">
+            <uiInput v-model="replacement" placeholder="替换为（留空表示删除）" aria-label="替换文本" :disabled="replacing"></uiInput>
+            <uiButton
+              @click="previewing = true"
+              variant="outline"
+              type="button"
+              :disabled="(searching || replacing || !selectedFiles.length || !active)">预览替换</uiButton>
           </div>
-        </section>
+          <p class="searchScope">搜索磁盘内容；跳过回收目录、二进制和画布 JSON。单文件最多 2 MiB，本次最多检查 1000 个文件、1000 个目录、20 MiB 文本，展示 500 处匹配。</p>
+          <p class="searchStatus" role="status" aria-live="polite">{{ status ? translate(status) : '输入文本后搜索当前工作区及其子目录。' }}</p>
+          <p v-if="searched" class="searchCounts">已读取{{ scanned }}个文本文件，{{ results.length }}个文件命中{{ matchCount }}处。 跳过：二进制或不支持的编码{{ skippedBinary }}，过大文件{{ skippedLarge }}，画布{{ skippedCanvas }}，读取失败{{ readFailures }}。</p>
+          <uiAlert v-if="issues.length">
+            <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ issues.join('；') }}</uiAlertTitle>
+          </uiAlert>
+          <template v-if="previewing">
+            <div class="previewHeader">
+              <strong>替换预览：{{ selectedFiles.length }}个文件，{{ selectedMatchCount }}处</strong>
+              <uiButton @click="previewing = false" variant="outline" type="button" :disabled="(replacing)" size="sm">返回结果</uiButton>
+            </div>
+            <p class="replaceNotice">仅替换勾选文件中已完整搜索的匹配。逐文件保存；冲突文件会保留原文，已完成的文件不会因其他文件失败而回滚。</p>
+          </template>
+          <div class="searchResults" :aria-busy="searching || replacing">
+            <section v-for="file in shownFiles" :key="file.path" class="fileResult">
+              <header class="fileHeader">
+                <uiCheckbox
+                  v-if="!previewing"
+                  :modelValue="file.selected"
+                  :disabled="file.truncated || replacing || !!file.saved"
+                  :aria-label="`选择替换 ${file.path}`"
+                  @update:modelValue="value => selectFile(file.path, value === true)"></uiCheckbox>
+                <span class="filePath" :title="file.path">{{ file.path }}</span>
+                <span>{{ file.matches.length }}处</span>
+                <span v-if="file.saved" class="savedStatus">已替换</span>
+              </header>
+              <p v-if="file.truncated" class="fileNotice">此文件的匹配超过本次展示限制，暂不参与替换。</p>
+              <p v-if="file.error" class="fileError" role="alert">{{ file.error }}</p>
+              <div v-for="match in file.matches" :key="match.start" class="matchResult">
+                <button
+                  v-if="!previewing"
+                  type="button"
+                  class="matchButton"
+                  :disabled="replacing || !!file.saved"
+                  @click="openMatch(file.path, match)">
+                  <span class="matchPosition">{{ match.line }}:{{ match.column }}</span>
+                  <span class="matchSnippet">{{ match.before }}<mark>{{ match.text }}</mark>{{ match.after }}</span>
+                </button>
+                <div v-else class="matchPreview">
+                  <span class="matchPosition">{{ match.line }}:{{ match.column }}</span>
+                  <div class="previewLines">
+                    <div class="beforeLine"><span aria-label="原内容">−</span>{{ match.before }}<mark>{{ match.text }}</mark>{{ match.after }}</div>
+                    <div class="afterLine"><span aria-label="替换后">+</span>{{ match.before }}<mark>{{ replacement }}</mark>{{ match.after }}</div>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+        <uiDialogFooter class="dialogFooter">
+          <uiButton v-if="replacing" @click="replaceCancelled = true" variant="outline" type="button" :disabled="(replaceCancelled)">停止后续替换</uiButton>
+          <uiButton v-else @click="visible = false" variant="outline" type="button">关闭</uiButton>
+          <uiButton
+            v-if="previewing"
+            @click="replaceSelected"
+            variant="default"
+            type="button"
+            :disabled="(!selectedFiles.length || !active || replacing) || (replacing)"><icon-loader-2 v-if="replacing" class="animate-spin" aria-hidden="true" />确认替换勾选文件</uiButton>
+        </uiDialogFooter>
       </div>
-    </div>
-    <template #footer>
-      <el-button v-if="replacing" :disabled="replaceCancelled" @click="replaceCancelled = true">停止后续替换</el-button>
-      <el-button v-else @click="visible = false">关闭</el-button>
-      <el-button v-if="previewing" type="primary" :loading="replacing" :disabled="!selectedFiles.length || !active || replacing" @click="replaceSelected">确认替换勾选文件</el-button>
-    </template>
-  </el-dialog>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
+import { uiLabel } from "@/components/ui/label";
+import { uiCheckbox } from "@/components/ui/checkbox";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiInput } from "@/components/ui/input";
+import { uiButton } from "@/components/ui/button";
 import axios from "axios";
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
-import { ElAlert, ElButton, ElCheckbox, ElDialog, ElInput, type InputInstance } from "element-plus";
 import { msg, t, translate, type MessageDescriptor } from "@toonflow/i18n/vue";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
 
@@ -75,7 +124,7 @@ const props = defineProps<{ directory: string; active: boolean; replaceFile: (pa
 const emit = defineEmits<{ open: [target: WorkspaceSearchTarget] }>();
 const visible = ref(false);
 let pendingTarget: WorkspaceSearchTarget | undefined;
-const queryInput = ref<InputInstance>();
+const queryInput = ref<{ $el: HTMLInputElement }>();
 const query = ref("");
 const replacement = ref("");
 const caseSensitive = ref(false);
@@ -105,7 +154,7 @@ async function open() {
   pendingTarget = undefined;
   visible.value = true;
   await nextTick();
-  queryInput.value?.focus();
+  queryInput.value?.$el.focus();
 }
 
 function cancelSearch() {
@@ -293,38 +342,40 @@ watch(() => [props.directory, props.active], () => {
 });
 onBeforeUnmount(() => { cancelSearch(); replaceCancelled.value = true; });
 defineExpose({ open });
+const dialogRendered1 = ref(visible.value);
+watch(visible, open => { if (open) dialogRendered1.value = true; });
 </script>
 
 <style scoped lang="scss">
 .workspaceSearch {
   .searchControls, .replaceControls { display: flex; align-items: center; gap: 10px; margin-bottom: 12px; }
-  .searchControls { .el-input { flex: 1; } }
-  .replaceControls { .el-input { flex: 1; } }
-  .searchScope, .searchCounts, .replaceNotice { color: var(--el-text-color-secondary); font-size: 12px; line-height: 1.6; margin: 8px 0; }
+  .searchControls { :is(.el-input, [data-slot="input"], .inputGroup) { flex: 1; } }
+  .replaceControls { :is(.el-input, [data-slot="input"], .inputGroup) { flex: 1; } }
+  .searchScope, .searchCounts, .replaceNotice { color: var(--muted-foreground); font-size: 12px; line-height: 1.6; margin: 8px 0; }
   .searchStatus { margin: 10px 0; font-size: 13px; }
   .previewHeader { display: flex; align-items: center; justify-content: space-between; margin-top: 14px; }
   .searchResults {
-    max-height: min(52vh, 560px); overflow: auto; margin-top: 12px; border-top: 1px solid var(--el-border-color-lighter);
+    max-height: min(52vh, 560px); overflow: auto; margin-top: 12px; border-top: 1px solid var(--border);
     .fileResult {
-      padding: 10px 0; border-bottom: 1px solid var(--el-border-color-lighter);
+      padding: 10px 0; border-bottom: 1px solid var(--border);
       .fileHeader { display: flex; align-items: center; gap: 10px; padding: 0 8px; font-size: 12px;
         .filePath { flex: 1; min-width: 0; overflow-wrap: anywhere; font-weight: 600; }
         .savedStatus { color: var(--el-color-success); }
       }
       .fileNotice, .fileError { margin: 6px 8px; font-size: 12px; color: var(--el-color-warning); overflow-wrap: anywhere; }
-      .fileError { color: var(--el-color-danger); }
+      .fileError { color: var(--destructive); }
       .matchResult {
         .matchButton, .matchPreview { display: flex; width: 100%; gap: 10px; padding: 5px 8px; box-sizing: border-box; text-align: left; font: 12px/1.7 Consolas, monospace; }
-        .matchButton { border: 0; background: transparent; color: var(--el-text-color-primary); cursor: pointer;
-          &:hover { background: var(--el-fill-color-light); }
-          &:focus-visible { outline: 1px solid var(--el-color-primary); }
+        .matchButton { border: 0; background: transparent; color: var(--foreground); cursor: pointer;
+          &:hover { background: var(--muted); }
+          &:focus-visible { outline: 1px solid var(--primary); }
           &:disabled { cursor: default; opacity: .6; }
         }
-        .matchPosition { flex-shrink: 0; min-width: 48px; color: var(--el-text-color-secondary); }
+        .matchPosition { flex-shrink: 0; min-width: 48px; color: var(--muted-foreground); }
         .matchSnippet, .previewLines { min-width: 0; overflow-wrap: anywhere; white-space: pre-wrap; }
         mark { background: var(--el-color-warning-light-5); color: inherit; }
         .previewLines { flex: 1;
-          .beforeLine { background: var(--el-color-danger-light-9); }
+          .beforeLine { background: color-mix(in oklch, var(--destructive) 10%, transparent); }
           .afterLine { background: var(--el-color-success-light-9); }
         }
       }

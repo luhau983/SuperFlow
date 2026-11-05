@@ -1,10 +1,12 @@
 <template>
-  <el-card v-if="tool.status === 'running' && tool.question" class="marketInstallApproval" shadow="never">
+  <uiCard v-if="tool.status === 'running' && tool.question" class="marketInstallApproval">
     <strong>{{ tool.question.title }}</strong>
     <p>{{ tool.question.question }}</p>
-    <el-button :disabled="!directory || submitted === tool.question.callId" @click="answer(false)">取消</el-button>
-    <el-button type="primary" :disabled="!directory || submitted === tool.question.callId" @click="answer(true)">确认安装</el-button>
-  </el-card>
+    <div class="approvalActions">
+      <uiButton variant="outline" size="sm" :disabled="!directory || submitted === tool.question.callId" @click="answer(false)">取消</uiButton>
+      <uiButton size="sm" :disabled="!directory || submitted === tool.question.callId" @click="answer(true)">确认安装</uiButton>
+    </div>
+  </uiCard>
 </template>
 
 <script setup lang="ts">
@@ -12,6 +14,8 @@ import { ref } from "vue";
 import { toast } from "vue-sonner";
 import type { AgentToolCall } from "@toonflow/server/agent/types";
 import http from "@/lib/http";
+import { uiButton } from "@/components/ui/button";
+import { uiCard } from "@/components/ui/card";
 
 const { tool, directory } = defineProps<{ tool: AgentToolCall; directory?: string }>();
 const submitted = ref("");
@@ -31,10 +35,16 @@ async function answer(approved: boolean) {
 
 <style scoped lang="scss">
 .marketInstallApproval {
+  gap: 0;
+  padding: 16px;
+  box-shadow: none;
+
   p {
     margin: 8px 0 12px;
     white-space: pre-line;
     overflow-wrap: anywhere;
   }
+
+  .approvalActions { display: flex; gap: 8px; }
 }
 </style>

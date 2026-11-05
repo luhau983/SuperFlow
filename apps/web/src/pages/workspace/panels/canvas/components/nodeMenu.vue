@@ -31,9 +31,7 @@
         @focus.self="menuLevel === 'nodes' && nodeMenuItemsRef?.focusFirst()"
         :aria-label="menuLevel === 'selection' ? '选区操作' : menuLevel === 'arrange' ? '整理选中节点' : menuLevel === 'actions' ? '操作菜单' : '添加节点'">
         <template v-if="menuLevel === 'selection'">
-          <el-dropdown-item command="duplicateSelection" :icon="IconCopyPlus" :disabled="selectionBusy || deleting || !selectedNodes.length">
-            创建副本
-          </el-dropdown-item>
+          <el-dropdown-item command="duplicateSelection" :icon="IconCopyPlus" :disabled="selectionBusy || deleting || !selectedNodes.length">创建副本</el-dropdown-item>
           <el-dropdown-item command="arrange" :icon="IconLayoutGrid" :disabled="!canArrangeSelection">
             <span>整理选中节点</span>
             <icon-chevron-right class="nextIcon" :size="14" />
@@ -41,13 +39,11 @@
           <el-dropdown-item
             command="deleteSelection"
             :icon="IconTrash"
-            :disabled="selectionBusy || deleting || !selectedNodes.some((node) => node.deletable !== false)">
-            {{ deleting ? "删除中…" : `删除选中节点（${selectedNodes.length}）` }}
-          </el-dropdown-item>
+            :disabled="selectionBusy || deleting || !selectedNodes.some((node) => node.deletable !== false)">{{ deleting ? "删除中…" : `删除选中节点（${selectedNodes.length}）` }}</el-dropdown-item>
         </template>
         <template v-else-if="menuLevel === 'arrange'">
           <el-dropdown-item command="selection" :icon="IconChevronLeft">返回选区操作</el-dropdown-item>
-          <el-divider />
+          <uiSeparator></uiSeparator>
           <el-dropdown-item command="horizontal" :icon="IconLayoutColumns" :disabled="!canArrangeSelection">水平排列</el-dropdown-item>
           <el-dropdown-item command="vertical" :icon="IconLayoutRows" :disabled="!canArrangeSelection">垂直排列</el-dropdown-item>
           <el-dropdown-item command="grid" :icon="IconLayoutGrid" :disabled="!canArrangeSelection">宫格排列</el-dropdown-item>
@@ -58,13 +54,11 @@
             <span>添加节点</span>
             <icon-chevron-right class="nextIcon" :size="14" />
           </el-dropdown-item>
-          <el-divider />
+          <uiSeparator></uiSeparator>
           <el-dropdown-item command="undo" :icon="IconArrowBackUp" :disabled="!canUndo">撤销</el-dropdown-item>
           <el-dropdown-item command="redo" :icon="IconArrowForwardUp" :disabled="!canRedo">重做</el-dropdown-item>
-          <el-divider />
-          <el-dropdown-item command="paste" :icon="IconClipboard" :disabled="!pasteNode || pasting">
-            {{ pasting ? "粘贴中…" : "粘贴" }}
-          </el-dropdown-item>
+          <uiSeparator></uiSeparator>
+          <el-dropdown-item command="paste" :icon="IconClipboard" :disabled="!pasteNode || pasting">{{ pasting ? "粘贴中…" : "粘贴" }}</el-dropdown-item>
         </template>
         <template v-else>
           <el-dropdown-item v-if="!directNodes" command="actions" :icon="IconChevronLeft">返回操作菜单</el-dropdown-item>
@@ -87,6 +81,7 @@
 </template>
 
 <script setup lang="ts">
+import { uiSeparator } from "@/components/ui/separator";
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch, type Component } from "vue";
 import { useVueFlow, type ConnectingHandle, type GraphNode, type HandleType } from "@vue-flow/core";
 import { isTypeCompatible, useNodeEvent, validateConnection, type NodeHandle } from "@toonflow/nodes-scaffold/runtime";

@@ -1,58 +1,67 @@
 <template>
-  <el-card class="officialProvider" shadow="never">
-    <div class="providerContent">
-      <div class="providerMark" aria-hidden="true">
-        <img class="providerLogo" :src="logoUrl" alt="" />
-      </div>
-      <div class="providerInfo">
-        <div class="providerHeading">
-          <el-text class="providerName" tag="strong">SuperFlow</el-text>
-          <div class="providerBadges">
-            <el-tag class="officialTag" size="small" effect="plain">官方</el-tag>
-            <el-tag size="small" type="info" effect="plain">内置</el-tag>
+  <uiCard class="officialProvider" style="gap:0; padding:0">
+    <div class="cardBody" :style="{ padding: '20px' }">
+      <div class="providerContent">
+        <div class="providerMark" aria-hidden="true">
+          <img class="providerLogo" :src="logoUrl" alt="" />
+        </div>
+        <div class="providerInfo">
+          <div class="providerHeading">
+            <strong class="providerName" data-ui-text="default">SuperFlow</strong>
+            <div class="providerBadges">
+              <uiBadge class="officialTag" variant="outline">官方</uiBadge>
+              <uiBadge variant="outline">内置</uiBadge>
+            </div>
+          </div>
+          <div v-if="provider" class="providerMeta">
+            <span v-if="providerLoaded" class="loadedStatus">
+              <icon-circle-check class="statusIcon" :size="14" aria-hidden="true" />
+              <span>已加载</span>
+            </span>
+            <span class="modelCount" data-ui-text="default">{{ provider.models.length }}个模型</span>
           </div>
         </div>
-        <div v-if="provider" class="providerMeta">
-          <span v-if="providerLoaded" class="loadedStatus">
-            <icon-circle-check class="statusIcon" :size="14" aria-hidden="true" />
-            <span>已加载</span>
-          </span>
-          <el-text class="modelCount" size="small">{{ provider.models.length }} 个模型</el-text>
-        </div>
+        <uiButton class="viewButton" @click="catalogVisible = true" variant="outline" type="button"><component :is="IconEye" aria-hidden="true" />查看</uiButton>
       </div>
-      <el-button class="viewButton" plain :icon="IconEye" @click="catalogVisible = true">查看</el-button>
     </div>
-  </el-card>
-  <el-dialog
-    v-model="catalogVisible"
-    class="toonflowCatalogDialog"
-    :class="{ catalogReady: !!toonflowAccountToken }"
-    title="SuperFlow"
-    :width="toonflowAccountToken ? 'min(1040px, calc(100vw - 32px))' : 'min(520px, calc(100vw - 32px))'"
-    alignCenter
-    appendToBody
-    destroyOnClose>
-    <template #header="{ titleId }">
-      <div class="catalogHeading">
-        <img class="catalogLogo" :src="logoUrl" alt="" />
-        <div class="catalogTitle">
-          <h2 :id="titleId">SuperFlow</h2>
-          <span>{{ scope === "text" ? "文本模型" : "媒体模型" }}</span>
+  </uiCard>
+  <uiDialog :open="catalogVisible" @update:open="open => { if (!open) { catalogVisible = false; } }">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="toonflowCatalogDialog uiDialogPanel"
+      :class="{ catalogReady: !!toonflowAccountToken }"
+      :style="{ width: toonflowAccountToken ? 'min(1040px, calc(100vw - 32px))' : 'min(520px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
+      <uiDialogHeader class="dialogHeader">
+        <div class="catalogHeading">
+          <img class="catalogLogo" :src="logoUrl" alt="" />
+          <div class="catalogTitle">
+            <uiDialogTitle>SuperFlow</uiDialogTitle>
+            <span>{{ scope === "text" ? "文本模型" : "媒体模型" }}</span>
+          </div>
         </div>
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <uiAlert v-if="!toonflowAccountToken">
+          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">请先在账号与余额中登录 SuperFlow 账号</uiAlertTitle>
+        </uiAlert>
+        <modelCatalog
+          v-else-if="catalogVisible"
+          class="dialogCatalog"
+          :class="{ textCatalog: scope === 'text' }"
+          :visible="catalogVisible"
+          :token="toonflowAccountToken"
+          :scope="scope" />
       </div>
-    </template>
-    <el-alert v-if="!toonflowAccountToken" title="请先在账号与余额中登录 SuperFlow 账号" type="info" :closable="false" showIcon />
-    <modelCatalog
-      v-else-if="catalogVisible"
-      class="dialogCatalog"
-      :class="{ textCatalog: scope === 'text' }"
-      :visible="catalogVisible"
-      :token="toonflowAccountToken"
-      :scope="scope" />
-  </el-dialog>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
+import { uiButton } from "@/components/ui/button";
+import { uiBadge } from "@/components/ui/badge";
+import { uiCard } from "@/components/ui/card";
 import { computed, defineAsyncComponent, ref } from "vue";
 import { IconCircleCheck, IconEye } from "@tabler/icons-vue";
 import logoUrl from "@toonflow/assets/logo.svg";
@@ -208,7 +217,7 @@ const providerLoaded = computed(() => !!toonflowAccountToken.value && !!props.pr
 
   &.catalogReady { height: min(760px, 82dvh); }
 
-  .el-dialog__header {
+  .dialogHeader {
     flex-shrink: 0;
     margin: 0;
     padding: 20px 56px 20px 24px;
@@ -243,7 +252,7 @@ const providerLoaded = computed(() => !!toonflowAccountToken.value && !!props.pr
     }
   }
 
-  .el-dialog__body {
+  .dialogBody {
     flex: 1;
     min-height: 0;
     padding: 20px 24px 24px;
@@ -288,9 +297,9 @@ const providerLoaded = computed(() => !!toonflowAccountToken.value && !!props.pr
   @media (max-width: 600px) {
     max-height: calc(100dvh - 32px);
 
-    .el-dialog__header { padding: 16px 48px 16px 16px; }
+    .dialogHeader { padding: 16px 48px 16px 16px; }
 
-    .el-dialog__body {
+    .dialogBody {
       padding: 16px;
 
       .dialogCatalog .catalogToolbar {

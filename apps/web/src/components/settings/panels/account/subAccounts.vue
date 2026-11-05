@@ -1,49 +1,111 @@
 <template>
   <section class="subAccountsPanel" aria-label="凭证" :aria-busy="loading">
     <div class="accountsToolbar">
-      <el-form class="searchForm" :disabled="mutationBusy" @submit.prevent="submitSearch">
-        <el-input v-model="search" class="credentialSearch" type="password" showPassword :prefixIcon="IconSearch" autocomplete="off" placeholder="搜索凭证" aria-label="搜索凭证" :maxlength="1000" clearable @clear="clearSearch" />
-        <el-button nativeType="submit" :disabled="listLoading">查询</el-button>
-        <el-button :disabled="listLoading || (!search && !activeSearch)" @click="clearSearch">清除</el-button>
-      </el-form>
-      <el-button type="primary" :icon="IconPlus" :disabled="mutationBusy" @click="createVisible = true">新增凭证</el-button>
+      <form class="searchForm uiForm" @submit.prevent="submitSearch">
+        <fieldset class="formFields" :disabled="mutationBusy">
+          <div class="inputGroup">
+            <component :is="IconSearch" aria-hidden="true" />
+            <uiInput
+              v-model="search"
+              class="credentialSearch"
+              autocomplete="off"
+              placeholder="搜索凭证"
+              aria-label="搜索凭证"
+              :maxlength="1000"
+              :disabled="(mutationBusy) || (false)"
+              :type="passwordVisible1 ? 'text' : 'password'"></uiInput>
+            <uiButton
+              @mousedown.prevent
+              v-if="search"
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              aria-label="清除"
+              :disabled="mutationBusy"
+              @click="search = ''; clearSearch(); ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
+              <icon-x />
+            </uiButton>
+            <uiButton
+              @mousedown.prevent
+              type="button"
+              variant="ghost"
+              size="icon-sm"
+              :aria-label="passwordVisible1 ? '隐藏密码' : '显示密码'"
+              :disabled="mutationBusy"
+              @click="passwordVisible1 = !passwordVisible1">
+              <icon-eye-off v-if="passwordVisible1" />
+              <icon-eye v-else />
+            </uiButton>
+          </div>
+          <uiButton variant="outline" type="submit" :disabled="(listLoading) || (mutationBusy)">查询</uiButton>
+          <uiButton @click="clearSearch" variant="outline" type="button" :disabled="(listLoading || (!search && !activeSearch)) || (mutationBusy)">清除</uiButton>
+        </fieldset>
+      </form>
+      <uiButton @click="createVisible = true" variant="default" type="button" :disabled="(mutationBusy)"><component :is="IconPlus" aria-hidden="true" />新增凭证</uiButton>
     </div>
-    <el-alert v-if="errorMessage" :title="errorMessage" type="error" :closable="false" showIcon>
-      <el-button size="small" @click="refresh">重试</el-button>
-    </el-alert>
-    <div v-loading="listLoading" class="accountsList">
-      <el-table :data="accounts" rowKey="id" emptyText="">
-        <el-table-column label="凭证名称" minWidth="155">
-          <template #default="{ row }">
-            <div class="accountIdentity"><strong>{{ row.name }}</strong><time>{{ formatTime(row.createdAt) }}</time></div>
-          </template>
-        </el-table-column>
-        <el-table-column label="凭证" minWidth="230">
-          <template #default="{ row }">
-            <div class="credentialCell">
-              <code>{{ shownCredentials.has(row.id) ? row.credential : '••••••••••••' }}</code>
-              <div class="credentialActions">
-                <el-button link :icon="shownCredentials.has(row.id) ? IconEyeOff : IconEye" :aria-label="`${shownCredentials.has(row.id) ? '隐藏' : '显示'} ${row.name} 的凭证`" @click="toggleCredential(row.id)" />
-                <el-button link :icon="IconCopy" :aria-label="`复制 ${row.name} 的凭证`" @click="copyCredential(row as SubAccount)" />
-              </div>
-            </div>
-          </template>
-        </el-table-column>
-        <el-table-column label="可用额度" minWidth="110">
-          <template #default="{ row }">{{ row.quotaType === 0 ? '不限额' : formatMoney(row.balance) }}</template>
-        </el-table-column>
-        <el-table-column label="有效期" minWidth="155">
-          <template #default="{ row }">{{ expirationLabel(row as SubAccount) }}</template>
-        </el-table-column>
-        <el-table-column label="状态" width="85">
-          <template #default="{ row }"><el-tag :type="row.state === 1 ? 'success' : 'info'" size="small">{{ stateLabel(row.state) }}</el-tag></template>
-        </el-table-column>
-        <el-table-column label="操作" width="70" align="right">
-          <template #default="{ row }">
-            <el-button link type="danger" :loading="deletingId === row.id" :disabled="mutationBusy" :aria-label="`删除凭证 ${row.name}`" @click="removeAccount(row as SubAccount)">删除</el-button>
-          </template>
-        </el-table-column>
-      </el-table>
+    <uiAlert v-if="errorMessage" variant="destructive">
+      <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ errorMessage }}</uiAlertTitle>
+      <uiButton @click="refresh" variant="outline" type="button" size="sm">重试</uiButton>
+    </uiAlert>
+    <div :aria-busy="listLoading" class="accountsList portLoading">
+      <div class="tableViewport" :style="{ maxHeight: undefined, height: undefined }">
+        <uiTable>
+          <uiTableHeader>
+            <uiTableRow>
+              <uiTableHead :style="{ minWidth: '155px', textAlign: 'left' }">凭证名称</uiTableHead>
+              <uiTableHead :style="{ minWidth: '230px', textAlign: 'left' }">凭证</uiTableHead>
+              <uiTableHead :style="{ minWidth: '110px', textAlign: 'left' }">可用额度</uiTableHead>
+              <uiTableHead :style="{ minWidth: '155px', textAlign: 'left' }">有效期</uiTableHead>
+              <uiTableHead :style="{ minWidth: '85px', textAlign: 'left' }">状态</uiTableHead>
+              <uiTableHead :style="{ minWidth: '70px', textAlign: 'right' }">操作</uiTableHead>
+            </uiTableRow>
+          </uiTableHeader>
+          <uiTableBody>
+            <uiTableRow v-for="(row, $index) in accounts" :key="row.id">
+              <uiTableCell :style="{ textAlign: 'left' }">
+                <div class="accountIdentity">
+                  <strong>{{ row.name }}</strong>
+                  <time>{{ formatTime(row.createdAt) }}</time>
+                </div>
+              </uiTableCell>
+              <uiTableCell :style="{ textAlign: 'left' }">
+                <div class="credentialCell">
+                  <code>{{ shownCredentials.has(row.id) ? row.credential : '••••••••••••' }}</code>
+                  <div class="credentialActions">
+                    <uiButton
+                      :aria-label="`${shownCredentials.has(row.id) ? '隐藏' : '显示'} ${row.name} 的凭证`"
+                      @click="toggleCredential(row.id)"
+                      variant="link"
+                      type="button">
+                      <component :is="shownCredentials.has(row.id) ? IconEyeOff : IconEye" aria-hidden="true" />
+                    </uiButton>
+                    <uiButton :aria-label="`复制 ${row.name} 的凭证`" @click="copyCredential(row as SubAccount)" variant="link" type="button">
+                      <component :is="IconCopy" aria-hidden="true" />
+                    </uiButton>
+                  </div>
+                </div>
+              </uiTableCell>
+              <uiTableCell :style="{ textAlign: 'left' }">{{ row.quotaType === 0 ? '不限额' : formatMoney(row.balance) }}</uiTableCell>
+              <uiTableCell :style="{ textAlign: 'left' }">{{ expirationLabel(row as SubAccount) }}</uiTableCell>
+              <uiTableCell :style="{ textAlign: 'left' }">
+                <uiBadge variant="secondary">{{ stateLabel(row.state) }}</uiBadge>
+              </uiTableCell>
+              <uiTableCell :style="{ textAlign: 'right' }">
+                <uiButton
+                  :aria-label="`删除凭证 ${row.name}`"
+                  @click="removeAccount(row as SubAccount)"
+                  variant="link"
+                  type="button"
+                  :disabled="(mutationBusy) || (deletingId === row.id)"><icon-loader-2 v-if="deletingId === row.id" class="animate-spin" aria-hidden="true" />删除</uiButton>
+              </uiTableCell>
+            </uiTableRow>
+            <uiTableEmpty v-if="!(accounts)?.length" :colspan="6"></uiTableEmpty>
+          </uiTableBody>
+        </uiTable>
+      </div>
+      <div v-if="listLoading" class="portLoadingMask" aria-hidden="true">
+        <icon-loader-2 class="animate-spin" />
+      </div>
     </div>
     <el-pagination
       v-if="!errorMessage"
@@ -58,37 +120,105 @@
       size="small"
       @update:currentPage="changePage"
       @update:pageSize="changePageSize" />
-
-    <el-dialog v-model="createVisible" title="新增凭证" width="min(480px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose :closeOnClickModal="!creating" :closeOnPressEscape="!creating" :showClose="!creating">
-      <div class="createContent">
-        <el-form :id="createFormId" class="createForm" labelPosition="top" :disabled="creating" @submit.prevent="createAccount">
-          <el-form-item label="凭证名称">
-            <el-input v-model="createForm.name" :maxlength="200" autocomplete="off" placeholder="请输入凭证名称" />
-          </el-form-item>
-          <el-form-item label="额度设置">
-            <el-segmented v-model="createForm.quotaType" class="formSwitch" :options="quotaOptions" block aria-label="额度设置" />
-          </el-form-item>
-          <el-form-item v-if="createForm.quotaType === 1" label="可用额度（元）">
-            <el-input-number v-model="createForm.balance" :min="0" :controls="false" placeholder="请输入可用额度" />
-          </el-form-item>
-          <el-form-item label="有效期">
-            <el-segmented v-model="createForm.expirationType" class="formSwitch" :options="expirationOptions" block aria-label="有效期设置" />
-          </el-form-item>
-          <el-form-item v-if="createForm.expirationType === 1" label="到期时间" :error="expirationError">
-            <el-date-picker v-model="createForm.expirationDate" type="datetime" format="YYYY-MM-DD HH:mm:ss" :disabledDate="disabledDate" placeholder="请选择到期时间" />
-          </el-form-item>
-        </el-form>
-        <el-alert v-if="createError" :title="createError" type="error" :closable="false" showIcon />
-      </div>
-      <template #footer>
-        <el-button :disabled="creating" @click="createVisible = false">取消</el-button>
-        <el-button type="primary" nativeType="submit" :form="createFormId" :loading="creating" :disabled="!createReady">创建</el-button>
-      </template>
-    </el-dialog>
+    <uiDialog :open="createVisible" @update:open="open => { if (!open) { createVisible = false; } }">
+      <uiDialogContent
+        :aria-describedby="undefined"
+        class="uiDialogPanel"
+        :style="{ width: 'min(480px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
+        :showCloseButton="!creating"
+        @interactOutside="event => { if (!(!creating)) event.preventDefault(); }"
+        @escapeKeyDown="event => { if (!(!creating)) event.preventDefault(); }">
+        <uiDialogHeader class="dialogHeader">
+          <uiDialogTitle>新增凭证</uiDialogTitle>
+        </uiDialogHeader>
+        <div class="dialogBody">
+          <div class="createContent">
+            <form :id="createFormId" class="createForm uiForm" @submit.prevent="createAccount">
+              <fieldset class="formFields" :disabled="creating">
+                <div class="formField">
+                  <uiLabel :for="portFieldId + '-1'">凭证名称</uiLabel>
+                  <uiInput
+                    :id="portFieldId + '-1'"
+                    v-model="createForm.name"
+                    :maxlength="200"
+                    autocomplete="off"
+                    placeholder="请输入凭证名称"
+                    :disabled="(creating) || (false)"></uiInput>
+                </div>
+                <div class="formField">
+                  <uiLabel>额度设置</uiLabel>
+                  <uiTabs
+                    class="formSwitch"
+                    :modelValue="createForm.quotaType"
+                    @update:modelValue="value => { createForm.quotaType = value as typeof createForm.quotaType; }">
+                    <uiTabsList :aria-label="'额度设置'">
+                      <uiTabsTrigger
+                        v-for="option in quotaOptions"
+                        :key="typeof option === 'object' ? option.value : option"
+                        :value="typeof option === 'object' ? option.value : option"
+                        :disabled="(creating) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)">{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
+                    </uiTabsList>
+                  </uiTabs>
+                </div>
+                <div v-if="createForm.quotaType === 1" class="formField">
+                  <uiLabel :for="portFieldId + '-2'">可用额度（元）</uiLabel>
+                  <uiNumberField class="numberField" v-model="createForm.balance" :min="0">
+                    <uiNumberFieldContent>
+                      <uiNumberFieldInput :id="portFieldId + '-2'" :placeholder="'请输入可用额度'" />
+                    </uiNumberFieldContent>
+                  </uiNumberField>
+                </div>
+                <div class="formField">
+                  <uiLabel>有效期</uiLabel>
+                  <uiTabs
+                    class="formSwitch"
+                    :modelValue="createForm.expirationType"
+                    @update:modelValue="value => { createForm.expirationType = value as typeof createForm.expirationType; }">
+                    <uiTabsList :aria-label="'有效期设置'">
+                      <uiTabsTrigger
+                        v-for="option in expirationOptions"
+                        :key="typeof option === 'object' ? option.value : option"
+                        :value="typeof option === 'object' ? option.value : option"
+                        :disabled="(creating) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)">{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
+                    </uiTabsList>
+                  </uiTabs>
+                </div>
+                <div v-if="createForm.expirationType === 1" class="formField">
+                  <uiLabel>到期时间</uiLabel>
+                  <el-date-picker
+                    v-model="createForm.expirationDate"
+                    type="datetime"
+                    format="YYYY-MM-DD HH:mm:ss"
+                    :disabledDate="disabledDate"
+                    placeholder="请选择到期时间" />
+                  <p v-if="expirationError" class="text-destructive text-sm" role="alert">{{ expirationError }}</p>
+                </div>
+              </fieldset>
+            </form>
+            <uiAlert v-if="createError" variant="destructive">
+              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ createError }}</uiAlertTitle>
+            </uiAlert>
+          </div>
+          <uiDialogFooter class="dialogFooter">
+            <uiButton @click="createVisible = false" variant="outline" type="button" :disabled="(creating)">取消</uiButton>
+            <uiButton :form="createFormId" variant="default" type="submit" :disabled="(!createReady) || (creating)"><icon-loader-2 v-if="creating" class="animate-spin" aria-hidden="true" />创建</uiButton>
+          </uiDialogFooter>
+        </div>
+      </uiDialogContent>
+    </uiDialog>
   </section>
 </template>
 
 <script setup lang="ts">
+import { uiNumberField, uiNumberFieldContent, uiNumberFieldInput } from "@/components/ui/numberField";
+import { uiTabs, uiTabsList, uiTabsTrigger } from "@/components/ui/tabs";
+import { uiLabel } from "@/components/ui/label";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
+import { uiBadge } from "@/components/ui/badge";
+import { uiTable, uiTableHeader, uiTableHead, uiTableBody, uiTableRow, uiTableCell, uiTableEmpty } from "@/components/ui/table";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiButton } from "@/components/ui/button";
+import { uiInput } from "@/components/ui/input";
 import { computed, onBeforeUnmount, reactive, ref, useId, watch } from "vue";
 import { toast } from "vue-sonner";
 import messageBox from "@/lib/messageBox";
@@ -330,6 +460,9 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({ refresh });
+
+const passwordVisible1 = ref(false);
+const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -353,7 +486,7 @@ defineExpose({ refresh });
       max-width: 100%;
 
       .credentialSearch { width: 240px; max-width: 100%; }
-      .el-button { margin: 0; }
+      [data-slot="button"] { margin: 0; }
     }
   }
   .accountsList {
@@ -375,7 +508,7 @@ defineExpose({ refresh });
       gap: 8px;
 
       code { flex: 1; min-width: 0; overflow-wrap: anywhere; font-size: 12px; }
-      .credentialActions { display: flex; align-items: center; flex-shrink: 0; gap: 8px; .el-button { margin: 0; } }
+      .credentialActions { display: flex; align-items: center; flex-shrink: 0; gap: 8px; [data-slot="button"] { margin: 0; } }
     }
   }
   .accountsPagination { justify-content: flex-end; flex-wrap: wrap; gap: 8px; }
@@ -391,8 +524,8 @@ defineExpose({ refresh });
     gap: 18px;
     padding: 2px;
 
-    :deep(.el-form-item) { margin: 0; min-width: 0; }
-    :deep(.el-input-number), :deep(.el-date-editor) { width: 100%; }
+    :deep(:is(.el-form-item, .formField)) { margin: 0; min-width: 0; }
+    :deep(:is(.el-input-number, .numberField)), :deep(.el-date-editor) { width: 100%; }
     .formSwitch { width: 100%; }
   }
 }

@@ -1,114 +1,160 @@
 <template>
-  <el-dialog
-    v-model="visible"
-    class="exploreProcessDialog"
-    :title="title || '制作过程'"
-    width="min(1440px, 96vw)"
-    alignCenter
-    appendToBody
-    destroyOnClose
-    :closeOnClickModal="!busy"
-    :closeOnPressEscape="!busy"
-    :showClose="false"
-    @opened="fitCanvas">
-    <template #header="{ titleId }">
-      <div class="processHeader">
-        <el-button class="headerButton" text :icon="IconArrowLeft" :disabled="busy" aria-label="返回作品详情" title="返回作品详情" @click="visible = false" />
-        <div class="processTitle">
-          <h2 :id="titleId" :title="title || '制作过程'">{{ title || "制作过程" }}</h2>
-          <span class="readOnlyLabel"><icon-lock :size="12" aria-hidden="true" />只读</span>
+  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="exploreProcessDialog uiDialogPanel"
+      :style="{ width: 'min(1440px, 96vw)', maxWidth: 'calc(100vw - 32px)' }"
+      :showCloseButton="false"
+      @interactOutside="event => { if (!(!busy)) event.preventDefault(); }"
+      @escapeKeyDown="event => { if (!(!busy)) event.preventDefault(); }"
+      @openAutoFocus="() => { fitCanvas(); }">
+      <uiDialogHeader class="dialogHeader">
+        <div class="processHeader">
+          <uiButton
+            class="headerButton"
+            aria-label="返回作品详情"
+            title="返回作品详情"
+            @click="visible = false"
+            variant="ghost"
+            type="button"
+            :disabled="(busy)">
+            <component :is="IconArrowLeft" aria-hidden="true" />
+          </uiButton>
+          <div class="processTitle">
+            <uiDialogTitle :title="title || '制作过程'">{{ title || "制作过程" }}</uiDialogTitle>
+            <span class="readOnlyLabel"><icon-lock :size="12" aria-hidden="true" />只读</span>
+          </div>
+          <div class="processHeaderActions">
+            <slot name="footer" />
+          </div>
+          <uiButton
+            class="headerButton"
+            aria-label="关闭制作过程"
+            title="关闭制作过程"
+            @click="visible = false"
+            variant="ghost"
+            type="button"
+            :disabled="(busy)">
+            <component :is="IconX" aria-hidden="true" />
+          </uiButton>
         </div>
-        <div class="processHeaderActions"><slot name="footer" /></div>
-        <el-button class="headerButton" text :icon="IconX" :disabled="busy" aria-label="关闭制作过程" title="关闭制作过程" @click="visible = false" />
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <div class="processPreview">
+          <div class="processCanvas">
+            <vue-flow
+              v-if="canvas"
+              :id="`${previewId}-${canvas.id}`"
+              :key="canvas.id"
+              :nodes="nodes"
+              :edges="edges"
+              :onlyRenderVisibleElements="true"
+              :nodesDraggable="false"
+              :nodesConnectable="false"
+              :nodesFocusable="true"
+              :edgesFocusable="false"
+              :edgesUpdatable="false"
+              :elementsSelectable="true"
+              :elevateNodesOnSelect="true"
+              :deleteKeyCode="null"
+              :selectionKeyCode="null"
+              :multiSelectionKeyCode="null"
+              :panOnDrag="true"
+              :zoomOnDoubleClick="false"
+              :minZoom="0.03"
+              :maxZoom="8"
+              :fitViewOnInit="true"
+              :defaultEdgeOptions="{ type: 'simplebezier', selectable: false, deletable: false, focusable: false }"
+              @init="flow = $event">
+              <template #node-processNode="{ data, selected }">
+                <div class="processNodeView">
+                  <nodeSkeleton
+                    class="processNode"
+                    :label="data.label"
+                    :handles="data.handles"
+                    :icon="data.media?.type === 'video' ? IconVideo : data.media?.type === 'image' ? IconPhoto : data.media?.type === 'audio' ? IconMusic : IconFileText"
+                    :style="{ width: `${data.width}px` }"
+                    readOnly>
+                    <img
+                      v-if="data.media?.type === 'image'"
+                      class="nodeImage"
+                      :src="data.media.url"
+                      :alt="data.label"
+                      draggable="false"
+                      referrerpolicy="no-referrer" />
+                    <videoPlayer v-else-if="data.media?.type === 'video'" :src="data.media.url" :label="data.label" readOnly />
+                    <audio v-else-if="data.media?.type === 'audio'" class="nodeAudio nopan nowheel" :src="data.media.url" controls preload="none" />
+                    <div v-else class="nodeText nopan nowheel">
+                      <markdownPreview :modelValue="data.text || ''" />
+                    </div>
+                  </nodeSkeleton>
+                  <uiCard
+                    v-if="selected && ((data.media && data.text) || data.prompt)"
+                    class="nodeDetails nodrag nopan nowheel"
+                    @pointerdown.stop
+                    @mousedown.stop
+                    @click.stop
+                    @dblclick.stop
+                    @keydown.stop
+                    style="gap:0; padding:0">
+                    <div class="cardBody" :style="{ padding: '14px 16px' }">
+                      <div v-if="data.media && data.text" class="nodeDetailSection">
+                        <h3>正文</h3>
+                        <markdownPreview :modelValue="data.text" />
+                      </div>
+                      <div v-if="data.prompt" class="nodeDetailSection">
+                        <h3>提示词</h3>
+                        <markdownPreview :modelValue="data.prompt" />
+                      </div>
+                    </div>
+                  </uiCard>
+                </div>
+              </template>
+              <template #node-processGroup="nodeProps">
+                <groupNode v-bind="nodeProps" readOnly />
+              </template>
+              <background :gap="16" patternColor="var(--el-border-color)" />
+              <panel v-if="process.canvases.length > 1" class="canvasSelectPanel" position="top-left">
+                <uiSelect
+                  :modelValue="String(canvasId) === '' ? '__empty__' : (canvasId)"
+                  @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; canvasId = value as typeof canvasId; }">
+                  <uiSelectTrigger class="canvasSelect" aria-label="选择制作画布">
+                    <uiSelectValue />
+                  </uiSelectTrigger>
+                  <uiSelectContent>
+                    <template #prefix>
+                      <icon-layers-intersect :size="15" aria-hidden="true" />
+                    </template>
+                    <uiSelectItem v-for="item in process.canvases" :key="item.id" :value="item.id">{{ item.name }}</uiSelectItem>
+                  </uiSelectContent>
+                </uiSelect>
+              </panel>
+              <panel class="viewportActions" position="bottom-left" role="group" aria-label="画布缩放">
+                <uiButton class="viewportButton" aria-label="适应画布" title="适应画布" @click="fitCanvas" variant="ghost" type="button">
+                  <component :is="IconFocusCentered" aria-hidden="true" />
+                </uiButton>
+                <span class="toolSeparator" />
+                <uiButton class="viewportButton" aria-label="缩小画布" title="缩小画布" @click="flow?.zoomOut()" variant="ghost" type="button">
+                  <component :is="IconMinus" aria-hidden="true" />
+                </uiButton>
+                <span class="zoomLabel">{{ zoomPercent }}%</span>
+                <uiButton class="viewportButton" aria-label="放大画布" title="放大画布" @click="flow?.zoomIn()" variant="ghost" type="button">
+                  <component :is="IconPlus" aria-hidden="true" />
+                </uiButton>
+              </panel>
+            </vue-flow>
+          </div>
+        </div>
       </div>
-    </template>
-    <div class="processPreview">
-      <div class="processCanvas">
-        <vue-flow
-          v-if="canvas"
-          :id="`${previewId}-${canvas.id}`"
-          :key="canvas.id"
-          :nodes="nodes"
-          :edges="edges"
-          :onlyRenderVisibleElements="true"
-          :nodesDraggable="false"
-          :nodesConnectable="false"
-          :nodesFocusable="true"
-          :edgesFocusable="false"
-          :edgesUpdatable="false"
-          :elementsSelectable="true"
-          :elevateNodesOnSelect="true"
-          :deleteKeyCode="null"
-          :selectionKeyCode="null"
-          :multiSelectionKeyCode="null"
-          :panOnDrag="true"
-          :zoomOnDoubleClick="false"
-          :minZoom="0.03"
-          :maxZoom="8"
-          :fitViewOnInit="true"
-          :defaultEdgeOptions="{ type: 'simplebezier', selectable: false, deletable: false, focusable: false }"
-          @init="flow = $event">
-          <template #node-processNode="{ data, selected }">
-            <div class="processNodeView">
-              <nodeSkeleton
-                class="processNode"
-                :label="data.label"
-                :handles="data.handles"
-                :icon="data.media?.type === 'video' ? IconVideo : data.media?.type === 'image' ? IconPhoto : data.media?.type === 'audio' ? IconMusic : IconFileText"
-                :style="{ width: `${data.width}px` }"
-                readOnly>
-                <img v-if="data.media?.type === 'image'" class="nodeImage" :src="data.media.url" :alt="data.label" draggable="false" referrerpolicy="no-referrer" />
-                <videoPlayer v-else-if="data.media?.type === 'video'" :src="data.media.url" :label="data.label" readOnly />
-                <audio v-else-if="data.media?.type === 'audio'" class="nodeAudio nopan nowheel" :src="data.media.url" controls preload="none" />
-                <div v-else class="nodeText nopan nowheel">
-                  <markdownPreview :modelValue="data.text || ''" />
-                </div>
-              </nodeSkeleton>
-              <el-card
-                v-if="selected && ((data.media && data.text) || data.prompt)"
-                class="nodeDetails nodrag nopan nowheel"
-                shadow="never"
-                :bodyStyle="{ padding: '14px 16px' }"
-                @pointerdown.stop
-                @mousedown.stop
-                @click.stop
-                @dblclick.stop
-                @keydown.stop>
-                <div v-if="data.media && data.text" class="nodeDetailSection">
-                  <h3>正文</h3>
-                  <markdownPreview :modelValue="data.text" />
-                </div>
-                <div v-if="data.prompt" class="nodeDetailSection">
-                  <h3>提示词</h3>
-                  <markdownPreview :modelValue="data.prompt" />
-                </div>
-              </el-card>
-            </div>
-          </template>
-          <template #node-processGroup="nodeProps">
-            <groupNode v-bind="nodeProps" readOnly />
-          </template>
-          <background :gap="16" patternColor="var(--el-border-color)" />
-          <panel v-if="process.canvases.length > 1" class="canvasSelectPanel" position="top-left">
-            <el-select v-model="canvasId" class="canvasSelect" aria-label="选择制作画布">
-              <template #prefix><icon-layers-intersect :size="15" aria-hidden="true" /></template>
-              <el-option v-for="item in process.canvases" :key="item.id" :label="item.name" :value="item.id" />
-            </el-select>
-          </panel>
-          <panel class="viewportActions" position="bottom-left" role="group" aria-label="画布缩放">
-            <el-button class="viewportButton" text :icon="IconFocusCentered" aria-label="适应画布" title="适应画布" @click="fitCanvas" />
-            <span class="toolSeparator" />
-            <el-button class="viewportButton" text :icon="IconMinus" aria-label="缩小画布" title="缩小画布" @click="flow?.zoomOut()" />
-            <span class="zoomLabel">{{ zoomPercent }}%</span>
-            <el-button class="viewportButton" text :icon="IconPlus" aria-label="放大画布" title="放大画布" @click="flow?.zoomIn()" />
-          </panel>
-        </vue-flow>
-      </div>
-    </div>
-  </el-dialog>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
+import { uiSelect, uiSelectTrigger, uiSelectValue, uiSelectContent, uiSelectItem } from "@/components/ui/select";
+import { uiCard } from "@/components/ui/card";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 import { computed, ref, shallowRef, watch } from "vue";
 import { VueFlow, Panel, type Node, type Edge, type VueFlowStore } from "@vue-flow/core";
 import { Background } from "@vue-flow/background";
@@ -196,7 +242,7 @@ function fitCanvas() {
 </script>
 
 <style lang="scss">
-.exploreProcessDialog.el-dialog {
+.exploreProcessDialog.uiDialogPanel {
   display: flex;
   flex-direction: column;
   height: 90dvh;
@@ -206,7 +252,7 @@ function fitCanvas() {
   border: 1px solid var(--el-border-color-lighter);
   border-radius: calc(var(--ui-radius) * 2.5);
 
-  .el-dialog__header {
+  .dialogHeader {
     flex-shrink: 0;
     margin: 0;
     padding: 0;
@@ -263,7 +309,7 @@ function fitCanvas() {
     }
   }
 
-  .el-dialog__body {
+  .dialogBody {
     display: flex;
     flex: 1;
     min-height: 0;
@@ -290,7 +336,7 @@ function fitCanvas() {
         margin: 16px;
         .canvasSelect {
           width: min(190px, 50vw);
-          .el-select__wrapper {
+          :is(.el-select__wrapper, [data-slot="select-trigger"]) {
             min-height: 36px;
             border-radius: 10px;
             background: var(--el-bg-color-overlay);
@@ -356,7 +402,7 @@ function fitCanvas() {
   }
 
   @media (max-width: 600px) {
-    .el-dialog__header .processHeader {
+    .dialogHeader .processHeader {
       gap: 6px;
       padding: 10px;
       .processTitle { gap: 6px; h2 { font-size: 14px; } }
@@ -368,7 +414,7 @@ function fitCanvas() {
   }
 
   @media (pointer: coarse) {
-    .el-dialog__header .processHeader .headerButton { width: 40px; height: 40px; }
+    .dialogHeader .processHeader .headerButton { width: 40px; height: 40px; }
     .processPreview .processCanvas .viewportActions .viewportButton { width: 40px; height: 40px; }
   }
 }

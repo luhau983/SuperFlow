@@ -1,22 +1,17 @@
 <template>
-  <el-popover
-    :visible="popupVisible"
-    trigger="click"
-    placement="top"
-    :width="300"
-    :popperStyle="{ padding: 0 }"
-    @update:visible="value => value ? openCaptcha() : closeCaptcha()">
-    <div ref="codeBoxRef" class="smsCaptcha" @keydown.esc="closeCaptcha" />
-    <template #reference>
-      <el-button
+  <uiPopover :open="popupVisible" @update:open="value => value ? openCaptcha() : closeCaptcha()">
+    <uiPopoverTrigger asChild>
+      <uiButton
         class="smsCodeButton"
-        :disabled="disabled || visible === false || !phone.trim() || countdown > 0 || sending"
-        :loading="loading || sending"
-        @keydown.esc="closeCaptcha">
-        {{ countdown > 0 ? `${countdown}s 后重试` : "获取验证码" }}
-      </el-button>
-    </template>
-  </el-popover>
+        @keydown.esc="closeCaptcha"
+        variant="outline"
+        type="button"
+        :disabled="(disabled || visible === false || !phone.trim() || countdown > 0 || sending) || (loading || sending)"><icon-loader-2 v-if="loading || sending" class="animate-spin" aria-hidden="true" />{{ countdown > 0 ? `${countdown}s 后重试` : "获取验证码" }}</uiButton>
+    </uiPopoverTrigger>
+    <uiPopoverContent class="hoverPanel " side="top" align="center" :sideOffset="8" :style="{ width: '300px', maxWidth: 'calc(100vw - 24px)' }">
+      <div ref="codeBoxRef" class="smsCaptcha" @keydown.esc="closeCaptcha" />
+    </uiPopoverContent>
+  </uiPopover>
 </template>
 
 <script lang="ts">
@@ -57,9 +52,12 @@ function loadCaptcha() {
   });
   return captchaLoading;
 }
+
 </script>
 
 <script setup lang="ts">
+import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
+import { uiButton } from "@/components/ui/button";
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import { toast } from "vue-sonner";
 import http from "@/lib/http";

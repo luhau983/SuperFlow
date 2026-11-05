@@ -1,58 +1,60 @@
 <template>
-  <el-dialog
-    v-model="visible"
-    class="updateBox"
-    width="min(620px, calc(100vw - 32px))"
-    alignCenter
-    appendToBody
-    destroyOnClose
-    :showClose="false"
-    :closeOnClickModal="false"
-    @opened="emit('opened')"
-    @close="emit('close')">
-    <template #header="{ titleId, close }">
-      <div class="updateHeader">
-        <div class="versionInfo">
-          <h2 :id="titleId" class="updateTitle">SuperFlow <span class="versionNumber">v{{ version }}</span></h2>
-          <div class="buildInfo"><span class="buildLabel">构建代码</span><code>{{ buildCode }}</code></div>
+  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="updateBox uiDialogPanel"
+      :style="{ width: 'min(620px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
+      :showCloseButton="false"
+      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
+      @openAutoFocus="() => { emit('opened'); }">
+      <uiDialogHeader class="dialogHeader">
+        <div class="updateHeader">
+          <div class="versionInfo">
+            <uiDialogTitle class="updateTitle">SuperFlow<span class="versionNumber">v{{ version }}</span></uiDialogTitle>
+            <div class="buildInfo">
+              <span class="buildLabel">构建代码</span>
+              <code>{{ buildCode }}</code>
+            </div>
+          </div>
+          <button class="closeButton" type="button" aria-label="关闭更新说明" @click="visible = false">
+            <icon-x :size="20" aria-hidden="true" />
+          </button>
         </div>
-        <button class="closeButton" type="button" aria-label="关闭更新说明" @click="close">
-          <icon-x :size="20" aria-hidden="true" />
-        </button>
-      </div>
-    </template>
-
-    <div class="updateBody">
-      <div class="artworkSection">
-        <svg class="buildArtwork" viewBox="0 0 600 200" role="img" :aria-label="`构建 ${buildCode} 的色块图`">
-          <g v-for="(tile, index) in buildTiles" :key="index" :transform="`translate(${index % 6 * 100} ${Math.floor(index / 6) * 100})`">
-            <rect width="100" height="100" :fill="tile.background" />
-            <g :transform="`rotate(${tile.rotation} 50 50)`" :fill="tile.foreground">
-              <path v-if="tile.shape === 0" d="M0 0H100A100 100 0 0 1 0 100Z" />
-              <circle v-else-if="tile.shape === 1" cx="50" cy="50" r="38" />
-              <path v-else-if="tile.shape === 2" d="M0 0H50V50H100V100H50V50H0Z" />
-              <path v-else d="M0 0H100V50H0Z" />
-            </g>
-          </g>
-        </svg>
-      </div>
-
-      <section class="releaseSection" aria-label="更新内容">
-        <h3 class="releaseTitle">更新内容</h3>
-        <div class="releaseContent" tabindex="0" role="region" aria-label="Markdown 更新说明">
-          <messageMarkdown v-if="markdown.trim()" :content="markdown" />
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <div class="updateBody">
+          <div class="artworkSection">
+            <svg class="buildArtwork" viewBox="0 0 600 200" role="img" :aria-label="`构建 ${buildCode} 的色块图`">
+              <g v-for="(tile, index) in buildTiles" :key="index" :transform="`translate(${index % 6 * 100} ${Math.floor(index / 6) * 100})`">
+                <rect width="100" height="100" :fill="tile.background" />
+                <g :transform="`rotate(${tile.rotation} 50 50)`" :fill="tile.foreground">
+                  <path v-if="tile.shape === 0" d="M0 0H100A100 100 0 0 1 0 100Z" />
+                  <circle v-else-if="tile.shape === 1" cx="50" cy="50" r="38" />
+                  <path v-else-if="tile.shape === 2" d="M0 0H50V50H100V100H50V50H0Z" />
+                  <path v-else d="M0 0H100V50H0Z" />
+                </g>
+              </g>
+            </svg>
+          </div>
+          <section class="releaseSection" aria-label="更新内容">
+            <h3 class="releaseTitle">更新内容</h3>
+            <div class="releaseContent" tabindex="0" role="region" aria-label="Markdown 更新说明">
+              <messageMarkdown v-if="markdown.trim()" :content="markdown" />
+            </div>
+          </section>
         </div>
-      </section>
-    </div>
-
-    <template #footer>
-      <el-button class="confirmButton" type="primary" @click="visible = false">开始使用<icon-arrow-right :size="16" aria-hidden="true" /></el-button>
-    </template>
-  </el-dialog>
+        <uiDialogFooter class="dialogFooter">
+          <uiButton class="confirmButton" @click="visible = false" variant="default" type="button">开始使用<icon-arrow-right :size="16" aria-hidden="true" /></uiButton>
+        </uiDialogFooter>
+      </div>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
-import { computed, defineAsyncComponent } from "vue";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
+import { computed, defineAsyncComponent, watch, ref } from "vue";
 import updateNotes from "./updateBox.md?raw";
 
 const visible = defineModel<boolean>({ default: false });
@@ -82,10 +84,12 @@ const buildTiles = computed(() => {
     };
   });
 });
+
+watch(() => visible.value, open => { if (!open) { emit('close'); } });
 </script>
 
 <style lang="scss">
-.el-dialog.updateBox {
+.uiDialogPanel.updateBox {
   --el-dialog-padding-primary: 0;
   padding: 0;
   overflow: hidden;
@@ -94,7 +98,7 @@ const buildTiles = computed(() => {
   background: var(--el-bg-color-overlay);
   box-shadow: 0 24px 80px #0003;
 
-  .el-dialog__header {
+  .dialogHeader {
     margin: 0;
     padding: 24px 26px 22px;
 
@@ -155,7 +159,7 @@ const buildTiles = computed(() => {
     }
   }
 
-  .el-dialog__body {
+  .dialogBody {
     padding: 0;
 
     .updateBody {
@@ -211,7 +215,7 @@ const buildTiles = computed(() => {
     }
   }
 
-  .el-dialog__footer {
+  .dialogFooter {
     padding: 18px 26px 24px;
 
     .confirmButton {
@@ -224,15 +228,15 @@ const buildTiles = computed(() => {
   }
 
   @media (max-width: 480px) {
-    .el-dialog__header { padding: 20px 20px 18px; }
-    .el-dialog__body .updateBody {
+    .dialogHeader { padding: 20px 20px 18px; }
+    .dialogBody .updateBody {
       .artworkSection { padding: 0 20px; }
       .releaseSection {
         .releaseTitle { padding: 20px 20px 10px; }
         .releaseContent { padding: 0 20px 12px; }
       }
     }
-    .el-dialog__footer { padding: 16px 20px 20px; }
+    .dialogFooter { padding: 16px 20px 20px; }
   }
 }
 </style>

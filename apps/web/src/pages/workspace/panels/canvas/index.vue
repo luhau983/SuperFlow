@@ -63,15 +63,19 @@
           :loading="nodeLoads.has(type) || (nodeListLoading && !nodeTypes[type] && !nodeErrors[type])" />
       </template>
       <background v-if="canvasId" :gap="16" patternColor="var(--el-border-color)" />
-      <div v-if="!canvasId" class="canvasOverlay" role="status" @contextmenu.prevent @dragover.prevent @drop.prevent>
-        从左上角打开一个画布，就可以开始创作啦
-      </div>
+      <div v-if="!canvasId" class="canvasOverlay" role="status" @contextmenu.prevent @dragover.prevent @drop.prevent>从左上角打开一个画布，就可以开始创作啦</div>
       <canvasEmpty
         v-if="active && !settingsVisible && project?.directory && canvasReady && !flow.getNodes.value.length"
         :availableNodes="availableNodes"
         @create="createEmptyNode" />
       <canvasViewportHint v-if="active && !settingsVisible && project?.directory && canvasReady" :key="canvasId" />
-      <canvasMenu ref="canvasMenuRef" v-model:canvasId="canvasId" :directory="project?.directory" :initialCanvasId="initialCanvasId" :activateCanvas="activateCanvas" :flushSave="flushCanvases ?? flushCanvasSave">
+      <canvasMenu
+        ref="canvasMenuRef"
+        v-model:canvasId="canvasId"
+        :directory="project?.directory"
+        :initialCanvasId="initialCanvasId"
+        :activateCanvas="activateCanvas"
+        :flushSave="flushCanvases ?? flushCanvasSave">
         <assetLibrary v-if="currentUser?.role !== 'user'" ref="assetLibraryRef" v-model="assetsVisible" :directory="project?.directory" />
       </canvasMenu>
       <canvasControls
@@ -107,15 +111,23 @@
         :disabled="!canvasId || !project?.directory" />
       <nodeSearch ref="nodeSearchRef" :disabled="!active || settingsVisible || !canvasId || !project?.directory" />
     </vue-flow>
-    <el-dialog v-if="currentUser?.role !== 'user'" :modelValue="!!assetSelection" class="referenceAssetDialog" title="全局素材库" width="min(1200px, 88vw)" alignCenter appendToBody destroyOnClose @update:modelValue="finishAssetSelection()">
-      <assetLibrary :modelValue="!!assetSelection" expanded :canSelect="canSelectAsset" :selecting="assetSelecting" @select="selectAsset" />
-    </el-dialog>
+    <uiDialog v-if="currentUser?.role !== 'user'" :open="!!assetSelection" @update:open="open => { if (!open) { finishAssetSelection(); } }">
+      <uiDialogContent
+        :aria-describedby="undefined"
+        class="referenceAssetDialog uiDialogPanel"
+        :style="{ width: 'min(1200px, 88vw)', maxWidth: 'calc(100vw - 32px)' }">
+        <uiDialogHeader class="dialogHeader">
+          <uiDialogTitle>全局素材库</uiDialogTitle>
+        </uiDialogHeader>
+        <div class="dialogBody">
+          <assetLibrary :modelValue="!!assetSelection" expanded :canSelect="canSelectAsset" :selecting="assetSelecting" @select="selectAsset" />
+        </div>
+      </uiDialogContent>
+    </uiDialog>
     <teleport to="body">
-      <el-button
+      <uiButton
         v-if="edgeDisconnect && findEdge(edgeDisconnect.id)"
         class="edgeDisconnect"
-        type="danger"
-        circle
         aria-label="断开连接"
         title="断开连接"
         :style="{ left: `${edgeDisconnect.x}px`, top: `${edgeDisconnect.y}px` }"
@@ -123,14 +135,20 @@
           removeEdges(edgeDisconnect.id);
           edgeDisconnect = undefined;
         "
-        @mouseleave="edgeDisconnect = undefined">
+        @mouseleave="edgeDisconnect = undefined"
+        variant="destructive"
+        type="button"
+        size="icon"
+        style="border-radius: 9999px">
         <icon-unlink :size="16" />
-      </el-button>
+      </uiButton>
     </teleport>
   </div>
 </template>
 
 <script setup lang="ts">
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 import { t, translate } from "@toonflow/i18n/vue";
 import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, onScopeDispose, provide, ref, shallowReactive, shallowRef, watch } from "vue";
 import axios from "axios";
@@ -1376,7 +1394,7 @@ const defaultEdgeOptions = markRaw({
   overflow: hidden;
 }
 
-:global(.referenceAssetDialog .el-dialog__body) {
+:global(.referenceAssetDialog .dialogBody) {
   display: flex;
   flex: 1;
   min-height: 0;

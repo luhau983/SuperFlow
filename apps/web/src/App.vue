@@ -1,13 +1,16 @@
 <template>
   <el-config-provider :locale="elementLocale">
     <config-provider :globalConfig="tdesignLocale">
-    <uiTooltipProvider :delayDuration="300">
+      <uiTooltipProvider :delayDuration="300">
         <router-view v-slot="{ Component: currentComponent }">
           <transition name="el-fade-in" mode="out-in">
             <component :is="currentComponent" />
           </transition>
         </router-view>
-        <loadingPage v-model:visible="workspaceStore.projectLoadingVisible" v-model:drawn="workspaceStore.projectLoadingDrawn" :active="workspaceStore.projectLoading" />
+        <loadingPage
+          v-model:visible="workspaceStore.projectLoadingVisible"
+          v-model:drawn="workspaceStore.projectLoadingDrawn"
+          :active="workspaceStore.projectLoading" />
         <ffmpegRequired v-if="currentUser?.role !== 'user'" />
         <desktopQuit v-if="actualPlatform.isDesktop" />
         <messageBoxHost />
@@ -19,32 +22,58 @@
           :buildCode="updateBoxBuild.hash"
           @opened="rememberUpdateBox"
           @close="rememberUpdateBox" />
-        <el-dialog v-if="installFailure" v-model="installFailureVisible" title="更新未成功" width="min(520px, 92vw)" alignCenter appendToBody :closeOnClickModal="false">
-          <div v-if="installFailure" class="installFailureContent">
-            <p class="failureMessage">{{ installFailure.message }}</p>
-            <dl class="failureVersions">
-              <div>
-                <dt>当前运行版本</dt>
-                <dd><strong>{{ installFailure.currentVersion ? `v${installFailure.currentVersion}` : "未知版本" }}</strong><code>{{ installFailure.currentHash || "构建标识未知" }}</code></dd>
+        <uiDialog
+          v-if="installFailure"
+          :open="installFailureVisible"
+          @update:open="open => { if (!open) { installFailureVisible = false; } }"
+          :unmountOnHide="false">
+          <uiDialogContent
+            :aria-describedby="undefined"
+            v-if="dialogRendered1"
+            class="uiDialogPanel"
+            :style="{ width: 'min(520px, 92vw)', maxWidth: 'calc(100vw - 32px)' }"
+            @interactOutside="event => { if (!(false)) event.preventDefault(); }">
+            <uiDialogHeader class="dialogHeader">
+              <uiDialogTitle>更新未成功</uiDialogTitle>
+            </uiDialogHeader>
+            <div class="dialogBody">
+              <div v-if="installFailure" class="installFailureContent">
+                <p class="failureMessage">{{ installFailure.message }}</p>
+                <dl class="failureVersions">
+                  <div>
+                    <dt>当前运行版本</dt>
+                    <dd>
+                      <strong>{{ installFailure.currentVersion ? `v${installFailure.currentVersion}` : "未知版本" }}</strong>
+                      <code>{{ installFailure.currentHash || "构建标识未知" }}</code>
+                    </dd>
+                  </div>
+                  <div>
+                    <dt>本次更新目标</dt>
+                    <dd>
+                      <strong>{{ installFailure.targetVersion ? `v${installFailure.targetVersion}` : "未知版本" }}</strong>
+                      <code>{{ installFailure.targetHash || "构建标识未知" }}</code>
+                    </dd>
+                  </div>
+                </dl>
+                <p class="failureHint">请前往 GitHub 最新发布页，选择适合当前系统的完整安装包，关闭客户端后重新安装。</p>
               </div>
-              <div>
-                <dt>本次更新目标</dt>
-                <dd><strong>{{ installFailure.targetVersion ? `v${installFailure.targetVersion}` : "未知版本" }}</strong><code>{{ installFailure.targetHash || "构建标识未知" }}</code></dd>
-              </div>
-            </dl>
-            <p class="failureHint">请前往 GitHub 最新发布页，选择适合当前系统的完整安装包，关闭客户端后重新安装。</p>
-          </div>
-          <template #footer>
-            <el-button @click="installFailureVisible = false">稍后</el-button>
-            <el-button tag="a" type="primary" :href="installFailure.downloadUrl" target="_blank" rel="noopener noreferrer">前往下载页</el-button>
-          </template>
-        </el-dialog>
-    </uiTooltipProvider>
+              <uiDialogFooter class="dialogFooter">
+                <uiButton @click="installFailureVisible = false" variant="outline" type="button">稍后</uiButton>
+                <uiButton variant="default" type="button" asChild>
+                  <a :href="installFailure.downloadUrl" target="_blank" rel="noopener noreferrer">前往下载页</a>
+                </uiButton>
+              </uiDialogFooter>
+            </div>
+          </uiDialogContent>
+        </uiDialog>
+      </uiTooltipProvider>
     </config-provider>
   </el-config-provider>
 </template>
 
 <script setup lang="ts">
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
 import { computed, onBeforeUnmount, ref, shallowRef, watch, watchEffect } from "vue";
 import { useZIndex } from "element-plus";
 import { toast } from "vue-sonner";
@@ -154,6 +183,8 @@ watchEffect(() => {
 });
 
 onBeforeUnmount(registerAppearance());
+const dialogRendered1 = ref(installFailureVisible.value);
+watch(installFailureVisible, open => { if (open) dialogRendered1.value = true; });
 </script>
 
 <style lang="scss">

@@ -1,83 +1,130 @@
 <template>
   <header class="agentMenu">
-    <el-button v-if="parentFile" class="backButton" text circle :icon="IconArrowLeft" aria-label="返回父 Agent" title="返回父 Agent" @click="emit('back')" />
-    <el-input
+    <uiButton v-if="parentFile" class="backButton" variant="ghost" size="icon-sm" aria-label="返回父 Agent" title="返回父 Agent" @click="emit('back')">
+      <icon-arrow-left :size="16" />
+    </uiButton>
+    <uiInput
       v-if="editingName && !parentFile"
       ref="nameInput"
       v-model="nameDraft"
-      class="conversationName"
-      size="small"
-      :maxlength="80"
+      class="conversationName nameInput"
+      maxlength="80"
       aria-label="对话名称"
       @keydown.enter="saveName"
       @keydown.esc.prevent="editingName = false"
       @blur="saveName" />
     <span v-else class="conversationName">
-      <span class="conversationTitle" :class="{ readOnly: parentFile }" :title="name" :tabindex="sessionFile && !parentFile ? 0 : -1" @dblclick="editName" @keydown.enter.prevent="editName">{{ name }}</span>
+      <span
+        class="conversationTitle"
+        :class="{ readOnly: parentFile }"
+        :title="name"
+        :tabindex="sessionFile && !parentFile ? 0 : -1"
+        @dblclick="editName"
+        @keydown.enter.prevent="editName">{{ name }}</span>
     </span>
     <div class="menuActions">
-      <el-popover v-if="subAgents?.length" v-model:visible="subAgentsVisible" trigger="click" placement="bottom-end" :width="340" :showArrow="false" :popperStyle="{ maxWidth: 'calc(100vw - 24px)' }">
-        <template #reference>
-          <el-button class="subAgentTrigger" text circle :aria-label="`子 Agent，共 ${subAgents.length} 个`" :aria-expanded="subAgentsVisible" title="子 Agent">
+      <uiPopover v-if="subAgents?.length" v-model:open="subAgentsVisible">
+        <uiPopoverTrigger asChild>
+          <uiButton
+            class="subAgentTrigger"
+            variant="ghost"
+            size="icon-sm"
+            :aria-label="`子 Agent，共 ${subAgents.length} 个`"
+            :aria-expanded="subAgentsVisible"
+            title="子 Agent">
             <icon-users-group :size="16" />
             <span class="subAgentCount" aria-hidden="true">{{ subAgents.length }}</span>
-          </el-button>
-        </template>
-        <div class="subAgentMenu">
-          <div class="subAgentHeader">子 Agent <span>{{ subAgents.length }}</span></div>
-          <ul class="subAgentList" aria-label="子 Agent 列表">
-            <li v-for="item in subAgents" :key="item.file" class="subAgentItem">
+          </uiButton>
+        </uiPopoverTrigger>
+        <uiPopoverContent class="w-[340px] max-w-[calc(100vw-24px)] p-3" align="end">
+          <div class="subAgentMenu">
+            <div class="subAgentHeader">子 Agent<span>{{ subAgents.length }}</span></div>
+            <ul class="subAgentList" aria-label="子 Agent 列表">
+              <li v-for="item in subAgents" :key="item.file" class="subAgentItem">
+                <button
+                  class="subAgentSelect"
+                  :class="{ selected: item.file === sessionFile }"
+                  type="button"
+                  :aria-current="item.file === sessionFile ? 'true' : undefined"
+                  @click="selectSubAgent(item.file)">
+                  <span
+                    class="statusDot"
+                    :data-status="item.status"
+                    role="img"
+                    :aria-label="subAgentStatusLabels[item.status] ?? '状态待确认'"
+                    :title="subAgentStatusLabels[item.status] ?? '状态待确认'" />
+                  <span class="subAgentInfo">
+                    <span class="subAgentName" :title="item.name">{{ item.name }}</span>
+                    <span v-if="item.result || item.task" class="subAgentSummary">{{ item.result || item.task }}</span>
+                  </span>
+                  <icon-check v-if="item.file === sessionFile" class="selectedIcon" :size="15" aria-hidden="true" />
+                </button>
+              </li>
+            </ul>
+          </div>
+        </uiPopoverContent>
+      </uiPopover>
+      <uiButton v-if="!parentFile" variant="ghost" size="icon-sm" aria-label="新建对话" title="新建对话" @click="emit('newChat')">
+        <icon-message-plus :size="16" />
+      </uiButton>
+      <uiPopover v-if="!parentFile" v-model:open="historyVisible">
+        <uiPopoverTrigger asChild>
+          <uiButton
+            variant="ghost"
+            size="icon-sm"
+            :disabled="loading"
+            :aria-busy="loading"
+            :aria-expanded="historyVisible"
+            aria-label="历史对话"
+            title="历史对话">
+            <icon-loader-2 v-if="loading" class="animate-spin" :size="16" aria-hidden="true" />
+            <icon-history v-else :size="16" />
+          </uiButton>
+        </uiPopoverTrigger>
+        <uiPopoverContent class="w-[280px] max-w-[calc(100vw-24px)] p-3" align="end">
+          <div class="historyList" role="group" aria-label="历史对话">
+            <p v-if="!history.length" class="historyTips" role="status">{{ loading ? "正在加载对话…" : "暂无历史对话，点击“新建对话”开始。" }}</p>
+            <div v-for="item in history" :key="item.file" class="historyItem" :class="{ selected: item.file === sessionFile }">
               <button
-                class="subAgentSelect"
-                :class="{ selected: item.file === sessionFile }"
+                class="historySelect"
                 type="button"
                 :aria-current="item.file === sessionFile ? 'true' : undefined"
-                @click="selectSubAgent(item.file)">
-                <span class="statusDot" :data-status="item.status" role="img" :aria-label="subAgentStatusLabels[item.status] ?? '状态待确认'" :title="subAgentStatusLabels[item.status] ?? '状态待确认'" />
-                <span class="subAgentInfo">
-                  <span class="subAgentName" :title="item.name">{{ item.name }}</span>
-                  <span v-if="item.result || item.task" class="subAgentSummary">{{ item.result || item.task }}</span>
-                </span>
-                <icon-check v-if="item.file === sessionFile" class="selectedIcon" :size="15" aria-hidden="true" />
+                :title="item.name"
+                @click="selectConversation(item.file)">
+                <icon-message-circle :size="16" />
+                <span class="historyName">{{ item.name }}</span>
+                <icon-check v-if="item.file === sessionFile" :size="15" />
               </button>
-            </li>
-          </ul>
-        </div>
-      </el-popover>
-      <el-button v-if="!parentFile" text circle aria-label="新建对话" title="新建对话" @click="emit('newChat')"><icon-message-plus :size="16" /></el-button>
-      <el-popover v-if="!parentFile" v-model:visible="historyVisible" trigger="click" placement="bottom-end" :width="280" :showArrow="false" @show="emit('history')">
-        <template #reference>
-          <el-button text circle :loading="loading" :icon="IconHistory" :aria-expanded="historyVisible" aria-label="历史对话" title="历史对话" />
-        </template>
-        <div class="historyList" role="group" aria-label="历史对话">
-          <p v-if="!history.length" class="historyTips" role="status">{{ loading ? "正在加载对话…" : "暂无历史对话，点击“新建对话”开始。" }}</p>
-          <div
-            v-for="item in history"
-            :key="item.file"
-            class="historyItem"
-            :class="{ selected: item.file === sessionFile }">
-            <button
-              class="historySelect"
-              type="button"
-              :aria-current="item.file === sessionFile ? 'true' : undefined"
-              :title="item.name"
-              @click="selectConversation(item.file)">
-              <icon-message-circle :size="16" />
-              <span class="historyName">{{ item.name }}</span>
-              <icon-check v-if="item.file === sessionFile" :size="15" />
-            </button>
-            <el-button class="historyAction" text circle :aria-label="`重命名对话 ${item.name}`" title="重命名对话" @click.stop="renameHistory(item)">
-              <icon-pencil :size="14" />
-            </el-button>
-            <el-button v-if="history.length > 1" class="historyAction" text circle :aria-label="`移除历史对话 ${item.name}`" title="移除历史对话" @click.stop="emit('remove', item.file)">
-              <icon-trash :size="14" />
-            </el-button>
+              <uiButton
+                class="historyAction"
+                variant="ghost"
+                size="icon-xs"
+                :aria-label="`重命名对话 ${item.name}`"
+                title="重命名对话"
+                @click.stop="renameHistory(item)">
+                <icon-pencil :size="14" />
+              </uiButton>
+              <uiButton
+                v-if="history.length > 1"
+                class="historyAction"
+                variant="ghost"
+                size="icon-xs"
+                :aria-label="`移除历史对话 ${item.name}`"
+                title="移除历史对话"
+                @click.stop="emit('remove', item.file)">
+                <icon-trash :size="14" />
+              </uiButton>
+            </div>
           </div>
-        </div>
-      </el-popover>
-      <el-button text circle :icon="IconAdjustmentsHorizontal" aria-label="节点工具控制" title="节点工具控制" @click="configVisible = true" />
+        </uiPopoverContent>
+      </uiPopover>
+      <uiButton variant="ghost" size="icon-sm" aria-label="节点工具控制" title="节点工具控制" @click="configVisible = true">
+        <icon-adjustments-horizontal :size="16" />
+      </uiButton>
       <slot name="actions" />
-      <el-button text circle aria-label="关闭对话" title="关闭" @click="emit('close')"><icon-x :size="16" /></el-button>
+      <uiButton variant="ghost" size="icon-sm" aria-label="关闭对话" title="关闭" @click="emit('close')">
+        <icon-x :size="16" />
+      </uiButton>
     </div>
   </header>
   <nodeToolsDialog v-model="configVisible" />
@@ -85,16 +132,18 @@
 
 <script setup lang="ts">
 import { nextTick, ref, watch } from "vue";
-import { type InputInstance } from "element-plus";
 import messageBox from "@/lib/messageBox";
 import type { AgentHistory } from "./types";
 import type { AgentSubAgent } from "@toonflow/server/agent/types";
 import nodeToolsDialog from "./nodeToolsDialog.vue";
+import { uiButton } from "@/components/ui/button";
+import { uiInput } from "@/components/ui/input";
+import { uiPopover, uiPopoverContent, uiPopoverTrigger } from "@/components/ui/popover";
 import {
   IconMessagePlus, IconHistory,
   IconX, IconPencil, IconTrash,
   IconMessageCircle, IconCheck, IconAdjustmentsHorizontal,
-  IconArrowLeft, IconUsersGroup,
+  IconArrowLeft, IconUsersGroup, IconLoader2,
 } from "@tabler/icons-vue";
 
 const props = defineProps<{
@@ -110,12 +159,14 @@ const historyVisible = ref(false);
 const subAgentsVisible = ref(false);
 const editingName = ref(false);
 const nameDraft = ref("");
-const nameInput = ref<InputInstance>();
+const nameInput = ref<{ $el: HTMLInputElement }>();
 const configVisible = ref(false);
 const subAgentStatusLabels: Record<string, string> = {
   pending: "准备中", running: "执行中", completed: "已完成", error: "失败",
   limited: "达到限制", cancelled: "已取消", inputRequired: "等待补充", unknown: "状态待确认",
 };
+
+watch(historyVisible, visible => { if (visible) emit("history"); });
 
 watch(() => [props.sessionFile, props.parentFile], () => {
   editingName.value = false;
@@ -138,7 +189,7 @@ async function editName() {
   nameDraft.value = props.name;
   editingName.value = true;
   await nextTick();
-  nameInput.value?.select();
+  nameInput.value?.$el.select();
 }
 
 function saveName(event: Event) {
@@ -174,9 +225,10 @@ async function renameHistory(item: AgentHistory) {
     height: 28px;
     margin: 0;
     padding: 0;
-    color: var(--el-text-color-secondary);
-    :deep(.el-icon) { font-size: 16px; }
+    color: var(--muted-foreground);
   }
+
+  .nameInput { height: 28px; padding: 0 8px; }
 
   .conversationName {
     flex: 1;
@@ -211,23 +263,20 @@ async function renameHistory(item: AgentHistory) {
         min-width: 14px;
         height: 14px;
         padding: 0 3px;
-        border: 1px solid var(--el-bg-color);
+        border: 1px solid var(--background);
         border-radius: 7px;
-        background: var(--el-color-primary);
-        color: var(--el-color-white);
+        background: var(--primary);
+        color: var(--primary-foreground);
         font-size: 10px;
         line-height: 12px;
         font-variant-numeric: tabular-nums;
       }
     }
 
-    :deep(.el-button) {
+    > [data-slot="button"] {
       width: 28px;
       height: 28px;
-      margin: 0;
-      padding: 0;
-      color: var(--el-text-color-secondary);
-      .el-icon { font-size: 16px; }
+      color: var(--muted-foreground);
     }
   }
 }
@@ -238,11 +287,11 @@ async function renameHistory(item: AgentHistory) {
     align-items: center;
     gap: 8px;
     padding: 2px 8px 10px;
-    color: var(--el-text-color-primary);
+    color: var(--foreground);
     font-size: 13px;
     font-weight: 500;
 
-    span { color: var(--el-text-color-secondary); font-weight: 400; }
+    span { color: var(--muted-foreground); font-weight: 400; }
   }
 
   .subAgentList {
@@ -266,15 +315,15 @@ async function renameHistory(item: AgentHistory) {
         width: 100%;
         padding: 10px 8px;
         border: 0;
-        border-radius: var(--el-border-radius-base);
+        border-radius: calc(var(--radius) - 2px);
         background: transparent;
-        color: var(--el-text-color-primary);
+        color: var(--foreground);
         font: inherit;
         text-align: left;
         cursor: pointer;
 
-        &:hover, &.selected { background: var(--el-fill-color-light); }
-        &:focus-visible { outline: 2px solid var(--el-color-primary); outline-offset: -2px; }
+        &:hover, &.selected { background: var(--accent); }
+        &:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
 
         .statusDot {
           flex-shrink: 0;
@@ -282,12 +331,12 @@ async function renameHistory(item: AgentHistory) {
           height: 7px;
           margin-top: 6px;
           border-radius: 50%;
-          background: var(--el-text-color-placeholder);
+          background: var(--muted-foreground);
 
-          &[data-status="running"] { background: var(--el-color-primary); }
-          &[data-status="completed"] { background: var(--el-color-success); }
-          &[data-status="error"] { background: var(--el-color-danger); }
-          &[data-status="limited"], &[data-status="inputRequired"], &[data-status="unknown"] { background: var(--el-color-warning); }
+          &[data-status="running"] { background: var(--primary); }
+          &[data-status="completed"] { background: #16a34a; }
+          &[data-status="error"] { background: var(--destructive); }
+          &[data-status="limited"], &[data-status="inputRequired"], &[data-status="unknown"] { background: #f59e0b; }
         }
 
         .subAgentInfo {
@@ -311,13 +360,13 @@ async function renameHistory(item: AgentHistory) {
             -webkit-line-clamp: 2;
             overflow: hidden;
             overflow-wrap: anywhere;
-            color: var(--el-text-color-secondary);
+            color: var(--muted-foreground);
             font-size: 12px;
             line-height: 18px;
           }
         }
 
-        .selectedIcon { flex-shrink: 0; margin-top: 2px; color: var(--el-color-primary); }
+        .selectedIcon { flex-shrink: 0; margin-top: 2px; color: var(--primary); }
       }
     }
   }
@@ -332,7 +381,7 @@ async function renameHistory(item: AgentHistory) {
 
   .historyTips {
     margin: 12px 8px;
-    color: var(--el-text-color-secondary);
+    color: var(--muted-foreground);
     font-size: 12px;
     line-height: 1.7;
     text-align: center;
@@ -342,12 +391,12 @@ async function renameHistory(item: AgentHistory) {
     display: flex;
     align-items: center;
     width: 100%;
-    border-radius: var(--el-border-radius-base);
-    color: var(--el-text-color-regular);
+    border-radius: calc(var(--radius) - 2px);
+    color: var(--foreground);
 
     &:hover, &.selected {
-      color: var(--el-color-primary);
-      background: var(--el-fill-color-light);
+      color: var(--primary);
+      background: var(--accent);
     }
 
     .historySelect {

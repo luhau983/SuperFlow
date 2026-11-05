@@ -1,55 +1,86 @@
 <template>
-  <el-dialog v-model="visible" title="添加供应商" width="min(860px, 94vw)" alignCenter appendToBody destroyOnClose :closeOnClickModal="false" :closeOnPressEscape="!saving" :showClose="!saving" @closed="resetForm">
-    <div class="providerPicker">
-      <aside class="providerSidebar" aria-label="选择厂商">
-        <button
-          v-for="item in languageProviders"
-          :key="item.id"
-          class="providerItem"
-          type="button"
-          :disabled="saving"
-          :aria-pressed="selectedProvider === item.id"
-          @click="selectedProvider = item.id">
-          <img v-if="item.icon" class="providerLogo" :src="item.icon" alt="" />
-          <modelIcon v-else :model="item.id" :size="18" />
-          <span>{{ item.label }}</span>
-        </button>
-      </aside>
-      <el-scrollbar class="providerDetails">
-        <section v-if="activeProvider" :key="selectedProvider" class="providerContent" :aria-label="activeProvider.label">
-          <div class="providerHeader">
-            <h3>{{ activeProvider.label }}</h3>
-            <el-tag v-if="activeProvider.version" size="small" type="info" effect="plain">v{{ activeProvider.version }}</el-tag>
+  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="uiDialogPanel"
+      :style="{ width: 'min(860px, 94vw)', maxWidth: 'calc(100vw - 32px)' }"
+      :showCloseButton="!saving"
+      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
+      @escapeKeyDown="event => { if (!(!saving)) event.preventDefault(); }"
+      @closeAutoFocus="() => { resetForm(); }">
+      <uiDialogHeader class="dialogHeader">
+        <uiDialogTitle>添加供应商</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <div class="providerPicker">
+          <aside class="providerSidebar" aria-label="选择厂商">
+            <button
+              v-for="item in languageProviders"
+              :key="item.id"
+              class="providerItem"
+              type="button"
+              :disabled="saving"
+              :aria-pressed="selectedProvider === item.id"
+              @click="selectedProvider = item.id">
+              <img v-if="item.icon" class="providerLogo" :src="item.icon" alt="" />
+              <modelIcon v-else :model="item.id" :size="18" />
+              <span>{{ item.label }}</span>
+            </button>
+          </aside>
+          <div class="providerDetails" style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: undefined, height: undefined }">
+            <section v-if="activeProvider" :key="selectedProvider" class="providerContent" :aria-label="activeProvider.label">
+              <div class="providerHeader">
+                <h3>{{ activeProvider.label }}</h3>
+                <uiBadge v-if="activeProvider.version" variant="outline">v{{ activeProvider.version }}</uiBadge>
+              </div>
+              <messageMarkdown v-if="providerReadme" class="providerReadme" :content="providerReadme" />
+              <div class="dividerLabel"><span>连接配置</span><uiSeparator /></div>
+              <form-create v-model="formValues" v-model:api="formApi" :rule="providerRules" :option="formOptions" />
+              <div class="modelHeader">
+                <strong data-ui-text="default">模型列表<span data-ui-text="info">{{ models.length }}</span></strong>
+                <span v-if="fetching" data-ui-text="info">正在获取…</span>
+                <uiButton v-else-if="modelError" @click="modelRefresh++" variant="ghost" type="button" size="sm"><component :is="IconRefresh" aria-hidden="true" />重试</uiButton>
+              </div>
+              <uiAlert v-if="modelError" variant="destructive">
+                <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ modelError }}</uiAlertTitle>
+              </uiAlert>
+              <div v-else-if="models.length" class="modelList" :style="{ height: `${Math.min(280, models.length * 38 + 36)}px` }" aria-label="模型列表">
+                <el-auto-resizer>
+                  <template #default="{ height, width }">
+                    <el-table-v2
+                      :columns="modelColumns"
+                      :data="models"
+                      :width="width"
+                      :height="height"
+                      :rowHeight="38"
+                      :headerHeight="36"
+                      rowKey="id"
+                      fixed />
+                  </template>
+                </el-auto-resizer>
+              </div>
+              <span v-else-if="!fetching" data-ui-text="info">{{ formValues.apiKey ? '未获取到模型' : '填写 API Key 后自动获取模型列表' }}</span>
+              <uiAlert v-if="formError" variant="destructive">
+                <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ formError }}</uiAlertTitle>
+              </uiAlert>
+            </section>
           </div>
-          <messageMarkdown v-if="providerReadme" class="providerReadme" :content="providerReadme" />
-          <el-divider v-if="providerReadme" contentPosition="left">连接配置</el-divider>
-          <form-create v-model="formValues" v-model:api="formApi" :rule="providerRules" :option="formOptions" />
-          <div class="modelHeader">
-            <el-text tag="strong">模型列表 <el-text type="info">{{ models.length }}</el-text></el-text>
-            <el-text v-if="fetching" type="info" size="small">正在获取…</el-text>
-            <el-button v-else-if="modelError" size="small" text :icon="IconRefresh" @click="modelRefresh++">重试</el-button>
-          </div>
-          <el-alert v-if="modelError" :title="modelError" type="error" :closable="false" showIcon />
-          <div v-else-if="models.length" class="modelList" :style="{ height: `${Math.min(280, models.length * 38 + 36)}px` }" aria-label="模型列表">
-            <el-auto-resizer>
-              <template #default="{ height, width }">
-                <el-table-v2 :columns="modelColumns" :data="models" :width="width" :height="height" :rowHeight="38" :headerHeight="36" rowKey="id" fixed />
-              </template>
-            </el-auto-resizer>
-          </div>
-          <el-text v-else-if="!fetching" type="info" size="small">{{ formValues.apiKey ? '未获取到模型' : '填写 API Key 后自动获取模型列表' }}</el-text>
-          <el-alert v-if="formError" :title="formError" type="error" :closable="false" showIcon />
-        </section>
-      </el-scrollbar>
-    </div>
-    <template #footer>
-      <el-button :disabled="saving" @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="saving" :disabled="!activeProvider || fetching || !!modelError" @click="addProvider">确定添加供应商</el-button>
-    </template>
-  </el-dialog>
+        </div>
+        <uiDialogFooter class="dialogFooter">
+          <uiButton @click="visible = false" variant="outline" type="button" :disabled="(saving)">取消</uiButton>
+          <uiButton @click="addProvider" variant="default" type="button" :disabled="(!activeProvider || fetching || !!modelError) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />确定添加供应商</uiButton>
+        </uiDialogFooter>
+      </div>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiButton } from "@/components/ui/button";
+import { uiSeparator } from "@/components/ui/separator";
+import { uiBadge } from "@/components/ui/badge";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
 import { computed, ref, shallowRef, watch } from "vue";
 import axios from "axios";
 import { IconRefresh } from "@tabler/icons-vue";

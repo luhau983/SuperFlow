@@ -1,20 +1,63 @@
 <template>
-  <span class="mentionContent"><template v-for="(part, index) in parts" :key="index"><el-tooltip v-if="part.mention" :content="sourceLabel(part.mention)" :showArrow="false"><button class="mentionTag" type="button" :aria-label="`预览 ${mentionName(part.mention)}`" @click="preview(part.mention.id)"><mentionThumbnail v-if="mentionThumbnailProps(part.mention).thumbnail" class="inlineMentionThumbnail" v-bind="mentionThumbnailProps(part.mention)" :directory="directory"><icon-at :size="13" /></mentionThumbnail><icon-at v-else :size="13" /><span class="mentionLabel">{{ mentionName(part.mention) }}</span></button></el-tooltip><template v-else>{{ part.text }}</template></template></span>
-  <el-dialog v-model="previewVisible" :title="selected?.label || '提及内容'" width="min(720px, 90vw)" alignCenter appendToBody destroyOnClose>
-    <div v-if="selected" class="mentionPreview">
-      <p class="mentionSource">{{ sourceLabel(selected) }}</p>
-      <p v-if="loading || preparingPreview || error || previewError" :role="error || previewError ? 'alert' : 'status'">{{ loading ? '正在读取…' : preparingPreview ? '正在生成兼容预览…' : error || previewError }}</p>
-      <img v-else-if="mediaSrc && ['IMAGE', 'MASK'].includes(selected.dataType)" :src="mediaSrc" :alt="selected.label" @load="handleLoaded" @error="handleError" />
-      <video v-else-if="mediaSrc && selected.dataType === 'VIDEO'" :src="mediaSrc" controls playsinline preload="auto" @loadeddata="handleLoaded" @error="handleError" />
-      <audio v-else-if="mediaSrc && selected.dataType === 'AUDIO'" :src="mediaSrc" controls preload="auto" @loadeddata="handleLoaded" @error="handleError" />
-      <p v-else-if="selected.dataType === 'FILE'" class="fileName"><icon-file :size="20" />{{ selected.label }}</p>
-      <template v-else-if="selected.dataType !== 'NODE'">
-        <pre>{{ textValue.slice(0, 12000) }}</pre>
-        <p v-if="textValue.length > 12000">…（预览已截取，发送保留完整内容）</p>
-      </template>
-      <el-button v-if="removable" text type="danger" @click="removeSelected">移除此引用</el-button>
-    </div>
-  </el-dialog>
+  <span class="mentionContent">
+    <template v-for="(part, index) in parts" :key="index">
+      <uiTooltip v-if="part.mention">
+        <uiTooltipTrigger asChild>
+          <button class="mentionTag" type="button" :aria-label="`预览 ${mentionName(part.mention)}`" @click="preview(part.mention.id)">
+            <mentionThumbnail
+              v-if="mentionThumbnailProps(part.mention).thumbnail"
+              class="inlineMentionThumbnail"
+              v-bind="mentionThumbnailProps(part.mention)"
+              :directory="directory">
+              <icon-at :size="13" />
+            </mentionThumbnail>
+            <icon-at v-else :size="13" />
+            <span class="mentionLabel">{{ mentionName(part.mention) }}</span>
+          </button>
+        </uiTooltipTrigger>
+        <uiTooltipContent>{{ sourceLabel(part.mention) }}</uiTooltipContent>
+      </uiTooltip>
+      <template v-else>{{ part.text }}</template>
+    </template>
+  </span>
+  <uiDialog v-model:open="previewVisible">
+    <uiDialogContent :aria-describedby="undefined" class="sm:max-w-[720px]">
+      <uiDialogHeader>
+        <uiDialogTitle class="mentionPreviewTitle">{{ selected?.label || '提及内容' }}</uiDialogTitle>
+      </uiDialogHeader>
+      <div v-if="selected" class="mentionPreview">
+        <p class="mentionSource">{{ sourceLabel(selected) }}</p>
+        <p v-if="loading || preparingPreview || error || previewError" :role="error || previewError ? 'alert' : 'status'">{{ loading ? '正在读取…' : preparingPreview ? '正在生成兼容预览…' : error || previewError }}</p>
+        <img
+          v-else-if="mediaSrc && ['IMAGE', 'MASK'].includes(selected.dataType)"
+          :src="mediaSrc"
+          :alt="selected.label"
+          @load="handleLoaded"
+          @error="handleError" />
+        <video
+          v-else-if="mediaSrc && selected.dataType === 'VIDEO'"
+          :src="mediaSrc"
+          controls
+          playsinline
+          preload="auto"
+          @loadeddata="handleLoaded"
+          @error="handleError" />
+        <audio
+          v-else-if="mediaSrc && selected.dataType === 'AUDIO'"
+          :src="mediaSrc"
+          controls
+          preload="auto"
+          @loadeddata="handleLoaded"
+          @error="handleError" />
+        <p v-else-if="selected.dataType === 'FILE'" class="fileName"><icon-file :size="20" />{{ selected.label }}</p>
+        <template v-else-if="selected.dataType !== 'NODE'">
+          <pre>{{ textValue.slice(0, 12000) }}</pre>
+          <p v-if="textValue.length > 12000">…（预览已截取，发送保留完整内容）</p>
+        </template>
+        <uiButton v-if="removable" class="text-destructive hover:text-destructive" variant="ghost" @click="removeSelected">移除此引用</uiButton>
+      </div>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
@@ -27,6 +70,9 @@ import useWorkspaceFiles from "@/lib/workspaceFiles";
 import { useMediaPreview } from "@toonflow/node-shared/mediaPreview";
 import { mentionName, mentionParts, mentionThumbnailProps } from "./mentionText";
 import mentionThumbnail from "./mentionThumbnail.vue";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
+import { uiTooltip, uiTooltipContent, uiTooltipTrigger } from "@/components/ui/tooltip";
 
 const props = defineProps<{ content?: string; mentions?: AgentMention[]; directory?: string; removable?: boolean }>();
 const emit = defineEmits<{ remove: [id: string] }>();
@@ -104,9 +150,9 @@ defineExpose({ preview });
     margin: 1px 2px;
     padding: 1px 5px;
     border: none;
-    border-radius: var(--el-border-radius-small);
-    background: var(--el-color-primary-light-9);
-    color: var(--el-color-primary);
+    border-radius: calc(var(--radius) - 4px);
+    background: color-mix(in oklch, var(--primary) 10%, transparent);
+    color: var(--primary);
     font: inherit;
     text-align: left;
     vertical-align: middle;
@@ -119,8 +165,12 @@ defineExpose({ preview });
   }
 }
 
+.mentionPreviewTitle { padding-inline-end: 24px; overflow-wrap: anywhere; }
+
 .mentionPreview {
-  .mentionSource { color: var(--el-text-color-secondary); overflow-wrap: anywhere; }
+  min-width: 0;
+
+  .mentionSource { color: var(--muted-foreground); overflow-wrap: anywhere; }
   img, video { display: block; max-width: 100%; max-height: 60vh; margin: auto; }
   audio { width: 100%; }
   pre { max-height: 55vh; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }

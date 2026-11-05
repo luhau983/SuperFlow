@@ -1,49 +1,77 @@
 <template>
-  <el-dialog v-model="visible" title="节点工具控制" width="min(520px, 94vw)" alignCenter appendToBody destroyOnClose :closeOnClickModal="false" :closeOnPressEscape="!saving" :showClose="!saving">
-    <div class="nodeToolsConfig">
-      <p class="description">选择 Agent 可以通过画布节点生成的媒体，保存后应用于所有对话。</p>
-      <el-form labelPosition="top" :disabled="saving">
-        <div class="permissionList">
-          <div v-for="group in groups" :key="group.enabledKey" class="permissionRow">
-            <label class="permissionCopy" :for="`${controlId}-${group.enabledKey}`">
-              <span class="permissionLabel">{{ group.label }}</span>
-              <span class="permissionDescription">{{ group.description }}</span>
-            </label>
-            <el-switch :id="`${controlId}-${group.enabledKey}`" v-model="draft[group.enabledKey]" :aria-label="group.description" />
-          </div>
-        </div>
-        <p class="scopeHint">你仍可手动生成，已开始的任务不会中断。</p>
-        <details class="advancedSettings" :open="expanded" @toggle="expanded = ($event.target as HTMLDetailsElement).open">
-          <summary>高级设置</summary>
-          <div class="advancedContent">
-            <p class="description">使用自定义节点时，把它的工具名称加入对应类别，随上方开关一起控制。</p>
-            <p :id="`${controlId}-nameHint`" class="inputHint">填写 nodeTools.register 中的 name，区分大小写。按回车添加，也可直接粘贴带 node: 前缀的名称。</p>
-            <el-form-item v-for="group in groups" :key="group.namesKey" :label="group.additionalLabel" :error="fieldErrors[group.namesKey]">
-              <div class="toolNamesField">
-                <p class="defaultTool">默认包含 <code>{{ group.name }}</code>，无需重复添加。</p>
-                <el-input-tag
-                  :modelValue="draft[group.namesKey]"
-                  :max="100"
-                  :aria-label="group.additionalLabel"
-                  :aria-describedby="`${controlId}-nameHint`"
-                  :aria-invalid="!!fieldErrors[group.namesKey]"
-                  @update:modelValue="updateToolNames(group, $event)" />
+  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
+    <uiDialogContent
+      :aria-describedby="undefined"
+      class="uiDialogPanel"
+      :style="{ width: 'min(520px, 94vw)', maxWidth: 'calc(100vw - 32px)' }"
+      :showCloseButton="!saving"
+      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
+      @escapeKeyDown="event => { if (!(!saving)) event.preventDefault(); }">
+      <uiDialogHeader class="dialogHeader">
+        <uiDialogTitle>节点工具控制</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="dialogBody">
+        <div class="nodeToolsConfig">
+          <p class="description">选择 Agent 可以通过画布节点生成的媒体，保存后应用于所有对话。</p>
+          <form class="uiForm">
+            <fieldset class="formFields" :disabled="saving">
+              <div class="permissionList">
+                <div v-for="group in groups" :key="group.enabledKey" class="permissionRow">
+                  <label class="permissionCopy" :for="`${controlId}-${group.enabledKey}`">
+                    <span class="permissionLabel">{{ group.label }}</span>
+                    <span class="permissionDescription">{{ group.description }}</span>
+                  </label>
+                  <uiSwitch
+                    :id="`${controlId}-${group.enabledKey}`"
+                    v-model="draft[group.enabledKey]"
+                    :aria-label="group.description"
+                    :disabled="(saving)"></uiSwitch>
+                </div>
               </div>
-            </el-form-item>
-            <p class="inputHint">同一工具加入多个类别时，需要这些类别全部允许才能调用。每类最多追加 100 个名称。</p>
-          </div>
-        </details>
-      </el-form>
-    </div>
-    <template #footer>
-      <el-alert v-if="saveError" class="saveError" :title="saveError" type="error" :closable="false" showIcon />
-      <el-button :disabled="saving" @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="saving" @click="saveConfig">保存</el-button>
-    </template>
-  </el-dialog>
+              <p class="scopeHint">你仍可手动生成，已开始的任务不会中断。</p>
+              <details class="advancedSettings" :open="expanded" @toggle="expanded = ($event.target as HTMLDetailsElement).open">
+                <summary>高级设置</summary>
+                <div class="advancedContent">
+                  <p class="description">使用自定义节点时，把它的工具名称加入对应类别，随上方开关一起控制。</p>
+                  <p :id="`${controlId}-nameHint`" class="inputHint">填写 nodeTools.register 中的 name，区分大小写。按回车添加，也可直接粘贴带 node: 前缀的名称。</p>
+                  <div v-for="group in groups" :key="group.namesKey" class="formField">
+                    <uiLabel>{{ group.additionalLabel }}</uiLabel>
+                    <div class="toolNamesField">
+                      <p class="defaultTool">默认包含<code>{{ group.name }}</code>，无需重复添加。</p>
+                      <el-input-tag
+                        :modelValue="draft[group.namesKey]"
+                        :max="100"
+                        :aria-label="group.additionalLabel"
+                        :aria-describedby="`${controlId}-nameHint`"
+                        :aria-invalid="!!fieldErrors[group.namesKey]"
+                        @update:modelValue="updateToolNames(group, $event)" />
+                    </div>
+                    <p v-if="fieldErrors[group.namesKey]" class="text-destructive text-sm" role="alert">{{ fieldErrors[group.namesKey] }}</p>
+                  </div>
+                  <p class="inputHint">同一工具加入多个类别时，需要这些类别全部允许才能调用。每类最多追加 100 个名称。</p>
+                </div>
+              </details>
+            </fieldset>
+          </form>
+        </div>
+        <uiDialogFooter class="dialogFooter">
+          <uiAlert v-if="saveError" class="saveError" variant="destructive">
+            <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ saveError }}</uiAlertTitle>
+          </uiAlert>
+          <uiButton @click="visible = false" variant="outline" type="button" :disabled="(saving)">取消</uiButton>
+          <uiButton @click="saveConfig" variant="default" type="button" :disabled="(saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
+        </uiDialogFooter>
+      </div>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
+import { uiButton } from "@/components/ui/button";
+import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
+import { uiLabel } from "@/components/ui/label";
+import { uiSwitch } from "@/components/ui/switch";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
 import axios from "axios";
 import { ref, useId, watch } from "vue";
 import { toast } from "vue-sonner";
@@ -150,7 +178,7 @@ async function saveConfig() {
         .permissionDescription { color: var(--el-text-color-secondary); font-size: 12px; line-height: 1.6; }
       }
 
-      :deep(.el-switch) { flex-shrink: 0; }
+      :deep(:is(.el-switch, [data-slot="switch"])) { flex-shrink: 0; }
     }
   }
 
@@ -177,7 +205,7 @@ async function saveConfig() {
     .advancedContent {
       padding-top: 12px;
 
-      :deep(.el-form-item__error) { position: static; padding-top: 6px; }
+      :deep(:is(.el-form-item__error, .fieldError)) { position: static; padding-top: 6px; }
 
       .inputHint {
         margin: 0 0 16px;

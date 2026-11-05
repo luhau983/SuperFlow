@@ -3,14 +3,13 @@
     <section class="settingSection" aria-labelledby="collectionTitle">
       <div class="settingHeader">
         <h3 id="collectionTitle">匿名使用统计</h3>
-        <el-switch
+        <uiSwitch
           :modelValue="privacySettings.dataCollectionEnabled"
           aria-label="匿名使用统计"
-          @change="(value) => settings.privacy = { ...privacySettings, dataCollectionEnabled: value === true }" />
+          @update:modelValue="(value) => settings.privacy = { ...privacySettings, dataCollectionEnabled: value === true }" />
       </div>
       <p class="description">帮助我们了解常用功能，改进使用体验。默认开启，可随时关闭。</p>
     </section>
-
     <section class="settingSection" aria-labelledby="metricsTitle">
       <h3 id="metricsTitle">统计内容</h3>
       <dl class="metricList">
@@ -21,7 +20,6 @@
       </dl>
       <p class="description">统计不包含提示词、对话、文件内容、项目名称、路径、账号或密钥。</p>
     </section>
-
     <section class="settingSection" aria-labelledby="anonymousIdTitle">
       <h3 id="anonymousIdTitle">匿名 ID</h3>
       <code class="anonymousId">{{ privacySettings.anonymousId || "开启后自动生成" }}</code>
@@ -33,6 +31,7 @@
 import { translate } from "@toonflow/i18n/vue";
 
 import { privacySettings, settings } from "@/stores/settings";
+import { uiSwitch } from "@/components/ui/switch";
 
 const metrics = [
   { get label() { return translate("使用与回访"); }, get description() { return translate("随机匿名标识、访问次数与时间"); } },

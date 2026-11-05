@@ -1,50 +1,62 @@
 <template>
-  <el-dialog v-model="visible" title="画布节点搜索" width="min(480px, calc(100vw - 32px))" alignCenter appendToBody @opened="searchInput?.focus()">
-    <div class="nodeSearch">
-      <el-input
-        ref="searchInput"
-        v-model="query"
-        :prefixIcon="IconSearch"
-        placeholder="搜索节点名称或类型"
-        aria-label="搜索画布节点"
-        aria-controls="canvasSearchResults"
-        :aria-activedescendant="results[activeIndex] ? `canvasSearchResult-${activeIndex}` : undefined"
-        clearable
-        @keydown="navigateResults" />
-      <div id="canvasSearchResults" ref="resultList" class="resultList" role="listbox" aria-label="画布节点">
-        <button
-          v-for="(item, index) in results"
-          :id="`canvasSearchResult-${index}`"
-          :key="item.node.id"
-          class="nodeResult"
-          type="button"
-          role="option"
-          tabindex="-1"
-          :aria-selected="activeIndex === index"
-          @mouseenter="activeIndex = index"
-          @click="selectNode(index)">
-          <span class="nodeLabel">{{ item.label }}</span>
-          <span class="nodeType">{{ item.node.type === 'canvasGroup' ? '分组' : item.node.type?.replace(/^remote-/, '') }}</span>
-        </button>
-        <p v-if="!results.length" class="empty">没有匹配的节点</p>
+  <uiDialog v-model:open="visible">
+    <uiDialogContent :aria-describedby="undefined" class="sm:max-w-[480px]" @openAutoFocus="focusSearch">
+      <uiDialogHeader>
+        <uiDialogTitle>画布节点搜索</uiDialogTitle>
+      </uiDialogHeader>
+      <div class="nodeSearch">
+        <div class="searchField">
+          <icon-search class="searchIcon" :size="16" aria-hidden="true" />
+          <uiInput
+            ref="searchInput"
+            v-model="query"
+            class="searchInput"
+            placeholder="搜索节点名称或类型"
+            aria-label="搜索画布节点"
+            aria-controls="canvasSearchResults"
+            :aria-activedescendant="results[activeIndex] ? `canvasSearchResult-${activeIndex}` : undefined"
+            @keydown="navigateResults" />
+          <uiButton v-if="query" class="clearButton" variant="ghost" size="icon-xs" aria-label="清除" @click="query = ''; searchInput?.$el.focus()">
+            <icon-x aria-hidden="true" />
+          </uiButton>
+        </div>
+        <div id="canvasSearchResults" ref="resultList" class="resultList" role="listbox" aria-label="画布节点">
+          <button
+            v-for="(item, index) in results"
+            :id="`canvasSearchResult-${index}`"
+            :key="item.node.id"
+            class="nodeResult"
+            type="button"
+            role="option"
+            tabindex="-1"
+            :aria-selected="activeIndex === index"
+            @mouseenter="activeIndex = index"
+            @click="selectNode(index)">
+            <span class="nodeLabel">{{ item.label }}</span>
+            <span class="nodeType">{{ item.node.type === 'canvasGroup' ? '分组' : item.node.type?.replace(/^remote-/, '') }}</span>
+          </button>
+          <p v-if="!results.length" class="empty">没有匹配的节点</p>
+        </div>
       </div>
-    </div>
-  </el-dialog>
+    </uiDialogContent>
+  </uiDialog>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
 import { translate } from "@toonflow/i18n/vue";
 import { useVueFlow } from "@vue-flow/core";
-import { IconSearch } from "@tabler/icons-vue";
-import type { InputInstance } from "element-plus";
+import { IconSearch, IconX } from "@tabler/icons-vue";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
+import { uiInput } from "@/components/ui/input";
 
 const props = defineProps<{ disabled?: boolean }>();
 const flow = useVueFlow();
 const visible = ref(false);
 const query = ref("");
 const activeIndex = ref(0);
-const searchInput = ref<InputInstance>();
+const searchInput = ref<{ $el: HTMLInputElement }>();
 const resultList = ref<HTMLElement>();
 const results = computed(() => {
   const keyword = query.value.trim().toLocaleLowerCase();
@@ -64,6 +76,11 @@ function open() {
   query.value = "";
   activeIndex.value = 0;
   visible.value = true;
+}
+
+function focusSearch(event: Event) {
+  event.preventDefault();
+  void nextTick(() => searchInput.value?.$el.focus());
 }
 
 function navigateResults(event: Event | KeyboardEvent) {
@@ -93,6 +110,15 @@ defineExpose({ open });
   display: flex;
   flex-direction: column;
   gap: 12px;
+  min-width: 0;
+
+  .searchField {
+    position: relative;
+
+    .searchIcon { position: absolute; top: 50%; left: 10px; color: var(--muted-foreground); transform: translateY(-50%); pointer-events: none; }
+    .searchInput { padding-right: 32px; padding-left: 32px; }
+    .clearButton { position: absolute; top: 50%; right: 6px; color: var(--muted-foreground); transform: translateY(-50%); }
+  }
 
   .resultList {
     max-height: min(360px, 50vh);
@@ -106,18 +132,18 @@ defineExpose({ open });
       width: 100%;
       padding: 10px 12px;
       border: 0;
-      border-radius: var(--el-border-radius-base);
+      border-radius: var(--ui-radius);
       background: transparent;
-      color: var(--el-text-color-primary);
+      color: var(--foreground);
       font: inherit;
       text-align: left;
       cursor: pointer;
 
-      &[aria-selected="true"] { background: var(--el-color-primary-light-9); }
+      &[aria-selected="true"] { background: var(--accent); }
       .nodeLabel { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      .nodeType { flex-shrink: 0; color: var(--el-text-color-secondary); font-size: 12px; }
+      .nodeType { flex-shrink: 0; color: var(--muted-foreground); font-size: 12px; }
     }
-    .empty { margin: 24px 0; color: var(--el-text-color-secondary); text-align: center; }
+    .empty { margin: 24px 0; color: var(--muted-foreground); text-align: center; }
   }
 }
 </style>

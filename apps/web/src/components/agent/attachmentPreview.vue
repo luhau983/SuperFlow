@@ -1,11 +1,16 @@
 <template>
   <div class="thumbnailItem" :class="{ fileAttachment: !isMedia }">
     <template v-if="isText">
-      <button class="textAttachmentButton" type="button" :title="attachment.name" :aria-label="`预览 ${attachment.name}`" @click="textPreviewVisible = true">
+      <button
+        class="textAttachmentButton"
+        type="button"
+        :title="attachment.name"
+        :aria-label="`预览 ${attachment.name}`"
+        @click="textPreviewVisible = true">
         <icon-file-text :size="18" />
         <span>{{ attachment.name }}</span>
       </button>
-      <el-button v-if="restorable" class="restoreAttachment" text size="small" :disabled="disabled" @click="emit('restore')">还原到输入框</el-button>
+      <uiButton v-if="restorable" class="restoreAttachment" variant="link" size="xs" :disabled="disabled" @click="emit('restore')">还原到输入框</uiButton>
     </template>
     <el-image
       v-else-if="attachment.mimeType.startsWith('image/')"
@@ -25,22 +30,71 @@
       @keydown.space.prevent="imageRef?.showPreview()"
       @load="handleLoaded"
       @error="handleError">
-      <template #error><icon-photo :size="20" /></template>
+      <template #error>
+        <icon-photo :size="20" />
+      </template>
     </el-image>
-    <button v-else-if="attachment.mimeType.startsWith('video/')" class="thumbnailButton" type="button" :title="previewError || (preparingPreview ? '正在生成兼容预览…' : attachment.name)" :aria-label="`预览 ${attachment.name}`" :aria-busy="preparingPreview" :disabled="!thumbnailUrl" @click="videoPreviewVisible = true">
-      <video v-if="mediaSrc && !preparingPreview && !previewError" :src="mediaSrc" preload="auto" muted playsinline aria-hidden="true" @loadeddata="handleLoaded" @error="handleError" />
+    <button
+      v-else-if="attachment.mimeType.startsWith('video/')"
+      class="thumbnailButton"
+      type="button"
+      :title="previewError || (preparingPreview ? '正在生成兼容预览…' : attachment.name)"
+      :aria-label="`预览 ${attachment.name}`"
+      :aria-busy="preparingPreview"
+      :disabled="!thumbnailUrl"
+      @click="videoPreviewVisible = true">
+      <video
+        v-if="mediaSrc && !preparingPreview && !previewError"
+        :src="mediaSrc"
+        preload="auto"
+        muted
+        playsinline
+        aria-hidden="true"
+        @loadeddata="handleLoaded"
+        @error="handleError" />
       <icon-video class="videoIcon" :size="16" />
     </button>
-    <div v-else class="fileAttachmentCard" :title="attachment.name"><icon-file-text :size="18" /><span>{{ attachment.name }}</span></div>
-    <el-button v-if="removable" class="removeAttachment" circle :disabled="disabled" :aria-label="`移除 ${attachment.name}`" title="移除附件" @click="emit('remove')"><icon-x :size="10" /></el-button>
-    <el-dialog v-model="videoPreviewVisible" :title="attachment.name" width="min(800px, 90vw)" alignCenter appendToBody destroyOnClose>
-      <p v-if="preparingPreview || previewError" :role="previewError ? 'alert' : 'status'">{{ preparingPreview ? '正在生成兼容预览…' : previewError }}</p>
-      <video v-else-if="videoPreviewVisible && mediaSrc" class="videoPreview" :src="mediaSrc" controls playsinline preload="auto" @loadeddata="handleLoaded" @error="handleError" />
-    </el-dialog>
-    <el-dialog v-model="textPreviewVisible" :title="attachment.name" width="min(720px, 90vw)" alignCenter appendToBody destroyOnClose>
-      <p v-if="textLoading || textError" :role="textError ? 'alert' : 'status'">{{ textLoading ? '正在读取…' : textError }}</p>
-      <pre v-else class="textPreview">{{ textContent }}</pre>
-    </el-dialog>
+    <div v-else class="fileAttachmentCard" :title="attachment.name">
+      <icon-file-text :size="18" />
+      <span>{{ attachment.name }}</span>
+    </div>
+    <uiButton
+      v-if="removable"
+      class="removeAttachment"
+      variant="outline"
+      size="icon-xs"
+      :disabled="disabled"
+      :aria-label="`移除 ${attachment.name}`"
+      title="移除附件"
+      @click="emit('remove')">
+      <icon-x class="size-2.5" />
+    </uiButton>
+    <uiDialog v-model:open="videoPreviewVisible">
+      <uiDialogContent :aria-describedby="undefined" class="sm:max-w-[800px]">
+        <uiDialogHeader>
+          <uiDialogTitle class="dialogTitle">{{ attachment.name }}</uiDialogTitle>
+        </uiDialogHeader>
+        <p v-if="preparingPreview || previewError" :role="previewError ? 'alert' : 'status'">{{ preparingPreview ? '正在生成兼容预览…' : previewError }}</p>
+        <video
+          v-else-if="videoPreviewVisible && mediaSrc"
+          class="videoPreview"
+          :src="mediaSrc"
+          controls
+          playsinline
+          preload="auto"
+          @loadeddata="handleLoaded"
+          @error="handleError" />
+      </uiDialogContent>
+    </uiDialog>
+    <uiDialog v-model:open="textPreviewVisible">
+      <uiDialogContent :aria-describedby="undefined" class="sm:max-w-[720px]">
+        <uiDialogHeader>
+          <uiDialogTitle class="dialogTitle">{{ attachment.name }}</uiDialogTitle>
+        </uiDialogHeader>
+        <p v-if="textLoading || textError" :role="textError ? 'alert' : 'status'">{{ textLoading ? '正在读取…' : textError }}</p>
+        <pre v-else class="textPreview">{{ textContent }}</pre>
+      </uiDialogContent>
+    </uiDialog>
   </div>
 </template>
 
@@ -52,6 +106,8 @@ import useWorkspaceFiles from "@/lib/workspaceFiles";
 import { useMediaPreview } from "@toonflow/node-shared/mediaPreview";
 import type { AgentAttachment } from "./types";
 import { readTextAttachment } from "./textAttachments";
+import { uiButton } from "@/components/ui/button";
+import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 
 const props = defineProps<{ attachment: AgentAttachment; directory?: string; removable?: boolean; restorable?: boolean; disabled?: boolean }>();
 const emit = defineEmits<{ remove: []; restore: [] }>();
@@ -123,9 +179,9 @@ watch([textPreviewVisible, () => props.attachment, () => props.directory], async
     height: auto;
     padding: 6px 8px;
     box-sizing: border-box;
-    border: 1px solid var(--el-border-color);
+    border: 1px solid var(--border);
     border-radius: 8px;
-    background: var(--el-fill-color-extra-light);
+    background: color-mix(in oklch, var(--muted) 50%, transparent);
 
     .textAttachmentButton,
     .fileAttachmentCard {
@@ -136,12 +192,12 @@ watch([textPreviewVisible, () => props.attachment, () => props.directory], async
       padding: 0;
       border: none;
       background: transparent;
-      color: var(--el-text-color-primary);
+      color: var(--foreground);
       font: inherit;
       font-size: 12px;
       &.textAttachmentButton { cursor: pointer; }
 
-      svg { flex-shrink: 0; color: var(--el-color-primary); }
+      svg { flex-shrink: 0; color: var(--primary); }
       span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     }
 
@@ -157,10 +213,10 @@ watch([textPreviewVisible, () => props.attachment, () => props.directory], async
     height: 100%;
     padding: 0;
     overflow: hidden;
-    border: 1px solid var(--el-border-color);
+    border: 1px solid var(--border);
     border-radius: 10px;
     background: transparent;
-    color: var(--el-text-color-secondary);
+    color: var(--muted-foreground);
     cursor: pointer;
 
     .el-image,
@@ -191,6 +247,7 @@ watch([textPreviewVisible, () => props.attachment, () => props.directory], async
     height: 16px;
     margin: 0;
     padding: 0;
+    border-radius: 9999px;
     opacity: 0;
     pointer-events: none;
   }
@@ -202,6 +259,8 @@ watch([textPreviewVisible, () => props.attachment, () => props.directory], async
   }
 
 }
+
+.dialogTitle { padding-inline-end: 24px; overflow-wrap: anywhere; }
 
 .videoPreview {
   display: block;

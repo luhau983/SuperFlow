@@ -6,6 +6,75 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* 宿主迁移后共用的表单、弹层布局。插件仍保留自己的样式与 --vf-* 契约。 */
+.uiForm .formFields {
+  display: contents;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.formField {
+  display: grid;
+  gap: 8px;
+  min-width: 0;
+  margin-bottom: 18px;
+}
+
+.inputGroup {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  width: 100%;
+}
+
+.inputGroup > [data-slot="input"] { flex: 1; min-width: 0; }
+.inputGroup > svg { flex-shrink: 0; width: 16px; height: 16px; color: var(--muted-foreground); }
+.inputGroup > [data-slot="button"] { flex-shrink: 0; }
+.checkboxField, .radioField { display: inline-flex; align-items: center; gap: 8px; }
+.tableViewport { min-width: 0; overflow: auto; border: 1px solid var(--border); border-radius: var(--radius); }
+
+.uiDialogPanel {
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100dvh - 32px);
+}
+
+.uiDialogPanel > .dialogHeader { flex-shrink: 0; padding-inline-end: 24px; }
+.uiDialogPanel > .dialogBody { min-width: 0; min-height: 0; overflow: auto; }
+.uiDialogPanel .dialogFooter { margin-top: 16px; }
+
+.hoverPanel {
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--popover);
+  color: var(--popover-foreground);
+  box-shadow: 0 4px 16px rgb(0 0 0 / 12%);
+}
+
+.confirmActions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 12px; }
+.collapseTrigger { display: flex; align-items: center; justify-content: space-between; gap: 8px; width: 100%; padding: 12px 0; border: 0; background: transparent; color: var(--foreground); text-align: start; cursor: pointer; }
+.collapseTrigger > svg { width: 16px; height: 16px; flex-shrink: 0; }
+.uiLink { color: var(--primary); text-decoration: none; }
+.uiLink:hover { text-decoration: underline; }
+[data-ui-text="info"] { color: var(--muted-foreground); }
+[data-ui-text="danger"] { color: var(--destructive); }
+.portLoading { position: relative; }
+.portLoadingMask { position: absolute; inset: 0; z-index: 10; display: grid; place-items: center; background: color-mix(in oklch, var(--background) 70%, transparent); }
+.portLoadingMask > svg { width: 24px; height: 24px; color: var(--primary); }
+.wordCount { justify-self: end; color: var(--muted-foreground); font-size: 12px; }
+.progressRow { display: flex; align-items: center; gap: 8px; }
+.progressRow > [data-slot="progress"] { flex: 1; }
+.progressValue { flex-shrink: 0; color: var(--muted-foreground); font-size: 12px; font-variant-numeric: tabular-nums; }
+.dividerLabel { display: flex; align-items: center; gap: 12px; margin-block: 16px; color: var(--muted-foreground); font-size: 14px; }
+.dividerLabel > span { flex-shrink: 0; }
+.dividerLabel > [data-slot="separator"] { flex: 1; }
+.formField [data-slot="select-trigger"] { width: 100%; }
+.numberField { min-width: 0; }
+
 /* 中性色沿用 shadcn neutral；主色与圆角继续由界面设置写入的 --el-color-primary、--ui-radius 决定。 */
 :root {
   --radius: var(--ui-radius, 8px);

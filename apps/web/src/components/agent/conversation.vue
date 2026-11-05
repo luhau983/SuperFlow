@@ -20,7 +20,9 @@
       @delete="deleteMessage"
       @cancelEdit="input?.cancelEdit()" />
     <div v-if="compacting" class="compactionStatus" role="status">
-      <el-icon class="is-loading" aria-hidden="true"><icon-loader-2 :size="14" /></el-icon>
+      <span class="inline-flex items-center animate-spin" aria-hidden="true">
+        <icon-loader-2 :size="14" />
+      </span>
       <span>正在压缩上下文…</span>
     </div>
     <section v-if="queuedMessages.length" class="messageQueue" aria-label="排队消息">
@@ -28,12 +30,44 @@
         <icon-list-details class="queueIcon" :size="14" aria-hidden="true" />
         <p class="queueContent" :title="message.content">{{ message.content }}</p>
         <div class="queueActions">
-          <el-button class="queueSteer" text size="small" :disabled="queueLocked" :loading="queueAction?.id === message.id && queueAction.type === 'steer'" title="发送引导，按这条消息继续当前任务，已完成的操作不会撤销" @click="updateQueuedMessage(message, 'steer')">
+          <uiButton
+            class="queueSteer"
+            title="发送引导，按这条消息继续当前任务，已完成的操作不会撤销"
+            @click="updateQueuedMessage(message, 'steer')"
+            variant="ghost"
+            type="button"
+            :disabled="(queueLocked) || (queueAction?.id === message.id && queueAction.type === 'steer')"
+            size="sm">
+            <icon-loader-2 v-if="queueAction?.id === message.id && queueAction.type === 'steer'" class="animate-spin" aria-hidden="true" />
             <icon-corner-down-right v-if="!(queueAction?.id === message.id && queueAction.type === 'steer')" :size="14" aria-hidden="true" />
             <span>引导</span>
-          </el-button>
-          <el-button class="queueIconButton" text circle :disabled="queueLocked" :loading="queueAction?.id === message.id && queueAction.type === 'delete'" aria-label="删除排队消息" title="删除" @click="updateQueuedMessage(message, 'delete')"><icon-trash v-if="!(queueAction?.id === message.id && queueAction.type === 'delete')" :size="14" /></el-button>
-          <el-button class="queueIconButton" text circle :disabled="queueLocked" :loading="queueAction?.id === message.id && queueAction.type === 'edit'" aria-label="编辑排队消息" title="编辑，暂时移出队列" @click="updateQueuedMessage(message, 'edit')"><icon-pencil v-if="!(queueAction?.id === message.id && queueAction.type === 'edit')" :size="14" /></el-button>
+          </uiButton>
+          <uiButton
+            class="queueIconButton"
+            aria-label="删除排队消息"
+            title="删除"
+            @click="updateQueuedMessage(message, 'delete')"
+            variant="ghost"
+            type="button"
+            :disabled="(queueLocked) || (queueAction?.id === message.id && queueAction.type === 'delete')"
+            size="icon"
+            style="border-radius: 9999px">
+            <icon-loader-2 v-if="queueAction?.id === message.id && queueAction.type === 'delete'" class="animate-spin" aria-hidden="true" />
+            <icon-trash v-if="!(queueAction?.id === message.id && queueAction.type === 'delete')" :size="14" />
+          </uiButton>
+          <uiButton
+            class="queueIconButton"
+            aria-label="编辑排队消息"
+            title="编辑，暂时移出队列"
+            @click="updateQueuedMessage(message, 'edit')"
+            variant="ghost"
+            type="button"
+            :disabled="(queueLocked) || (queueAction?.id === message.id && queueAction.type === 'edit')"
+            size="icon"
+            style="border-radius: 9999px">
+            <icon-loader-2 v-if="queueAction?.id === message.id && queueAction.type === 'edit'" class="animate-spin" aria-hidden="true" />
+            <icon-pencil v-if="!(queueAction?.id === message.id && queueAction.type === 'edit')" :size="14" />
+          </uiButton>
         </div>
       </div>
     </section>
@@ -61,6 +95,7 @@
 </template>
 
 <script setup lang="ts">
+import { uiButton } from "@/components/ui/button";
 import { locale, translate } from "@toonflow/i18n/vue";
 import { computed, inject, onBeforeUnmount, reactive, ref, watch } from "vue";
 import axios from "axios";
@@ -771,7 +806,7 @@ onBeforeUnmount(abortRequest);
         align-items: center;
         gap: 2px;
 
-        .el-button {
+        [data-slot="button"] {
           height: 24px;
           margin: 0;
           color: var(--el-text-color-secondary);
