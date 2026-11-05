@@ -112,7 +112,21 @@
     background-color: transparent;
   }
 
-  [data-slot] :where(h1, h2, h3, h4, p, ul, ol) {
+  [data-slot] :where(h1, h2, h3, h4, p),
+  :is(ul, ol)[data-slot],
+  [data-slot] :where(ul, ol) {
     margin: 0;
+  }
+
+  :is(ul, ol)[data-slot],
+  [data-slot] :where(ul, ol) {
+    padding: 0;
+    list-style: none;
+  }
+
+  a[data-slot],
+  [data-slot] :where(a) {
+    color: inherit;
+    text-decoration: inherit;
   }
 }

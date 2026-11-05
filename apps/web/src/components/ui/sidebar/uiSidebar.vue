@@ -20,8 +20,8 @@
       }"
     >
       <uiSheetHeader class="sr-only">
-        <uiSheetTitle>Sidebar</uiSheetTitle>
-        <uiSheetDescription>Displays the mobile sidebar.</uiSheetDescription>
+        <uiSheetTitle>侧栏</uiSheetTitle>
+        <uiSheetDescription>侧栏导航</uiSheetDescription>
       </uiSheetHeader>
       <div class="flex h-full w-full flex-col">
         <slot />

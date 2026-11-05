@@ -1,13 +1,13 @@
 <template>
-  <sidebar-menu-button-child v-if="!tooltip" v-bind="{ ...delegatedProps, ...$attrs }">
+  <uiSidebarMenuButtonChild v-if="!tooltip" v-bind="{ ...delegatedProps, ...$attrs }">
     <slot />
-  </sidebar-menu-button-child>
+  </uiSidebarMenuButtonChild>
 
   <uiTooltip v-else>
     <uiTooltipTrigger asChild>
-      <sidebar-menu-button-child v-bind="{ ...delegatedProps, ...$attrs }">
+      <uiSidebarMenuButtonChild v-bind="{ ...delegatedProps, ...$attrs }">
         <slot />
-      </sidebar-menu-button-child>
+      </uiSidebarMenuButtonChild>
     </uiTooltipTrigger>
     <uiTooltipContent
       side="right"
@@ -27,7 +27,7 @@ import type { Component } from "vue"
 import type { SidebarMenuButtonProps } from "./uiSidebarMenuButtonChild.vue"
 import { reactiveOmit } from "@vueuse/core"
 import { uiTooltip, uiTooltipContent, uiTooltipTrigger } from '@/components/ui/tooltip'
-import SidebarMenuButtonChild from "./uiSidebarMenuButtonChild.vue"
+import uiSidebarMenuButtonChild from "./uiSidebarMenuButtonChild.vue"
 import { useSidebar } from "./utils"
 
 defineOptions({

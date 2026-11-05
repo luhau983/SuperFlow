@@ -2,6 +2,7 @@
   <popover-portal>
     <popover-content
       data-slot="popover-content"
+      :style="{ zIndex }"
       v-bind="{ ...$attrs, ...forwarded }"
       :class="
         cn(
@@ -20,6 +21,7 @@ import type { PopoverContentEmits, PopoverContentProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
 import { reactiveOmit } from "@vueuse/core"
 import { cn } from "@/lib/utils"
+import { useLayerZIndex } from "@/lib/layerZIndex"
 import {
   PopoverContent,
   PopoverPortal,
@@ -42,4 +44,6 @@ const emits = defineEmits<PopoverContentEmits>()
 const delegatedProps = reactiveOmit(props, "class")
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
+
+const zIndex = useLayerZIndex()
 </script>

@@ -1,8 +1,9 @@
 <template>
   <dialog-portal>
-    <sheet-overlay />
+    <uiSheetOverlay :style="{ zIndex }" />
     <dialog-content
       data-slot="sheet-content"
+      :style="{ zIndex }"
       :class="cn(
         'bg-background data-[state=open]:animate-in data-[state=closed]:animate-out fixed z-50 flex flex-col gap-4 shadow-lg transition ease-in-out data-[state=closed]:duration-300 data-[state=open]:duration-500',
         side === 'right'
@@ -34,13 +35,14 @@ import type { HTMLAttributes } from "vue"
 import { IconX } from "@tabler/icons-vue"
 import { reactiveOmit } from "@vueuse/core"
 import { cn } from "@/lib/utils"
+import { useLayerZIndex } from "@/lib/layerZIndex"
 import {
   DialogClose,
   DialogContent,
   DialogPortal,
   useForwardPropsEmits,
 } from "reka-ui"
-import SheetOverlay from "./uiSheetOverlay.vue"
+import uiSheetOverlay from "./uiSheetOverlay.vue"
 
 interface SheetContentProps extends DialogContentProps {
   class?: HTMLAttributes["class"]
@@ -59,4 +61,6 @@ const emits = defineEmits<DialogContentEmits>()
 const delegatedProps = reactiveOmit(props, "class", "side")
 
 const forwarded = useForwardPropsEmits(delegatedProps, emits)
+
+const zIndex = useLayerZIndex()
 </script>

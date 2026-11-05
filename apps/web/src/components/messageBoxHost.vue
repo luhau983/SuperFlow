@@ -1,6 +1,6 @@
 <template>
   <uiAlertDialog :open="!!current" @update:open="closeCurrent">
-    <uiAlertDialogContent v-if="current" :key="current.id" class="messageBox" :zIndex="zIndex" @openAutoFocus="focusInitial">
+    <uiAlertDialogContent v-if="current" :key="current.id" class="messageBox" @openAutoFocus="focusInitial">
       <uiAlertDialogHeader>
         <uiAlertDialogTitle class="flex items-center gap-2">
           <component :is="typeIcons[current.options.type]" v-if="current.options.type" class="size-5 shrink-0" :class="typeColors[current.options.type]" aria-hidden="true" />
@@ -24,7 +24,6 @@
 
 <script setup lang="ts">
 import { computed, nextTick, ref, watch } from "vue";
-import { useZIndex } from "element-plus";
 import { IconAlertTriangle, IconCircleCheck, IconCircleX, IconInfoCircle } from "@tabler/icons-vue";
 import { translate } from "@toonflow/i18n/vue";
 import { messageBoxQueue, validatePrompt } from "@/lib/messageBox";
@@ -38,10 +37,8 @@ const typeColors = { success: "text-green-600", info: "text-muted-foreground", w
 const current = computed(() => messageBoxQueue[0]);
 const inputValue = ref("");
 const inputError = ref("");
-const zIndex = ref<number>();
 const promptInput = ref<{ $el: HTMLInputElement }>();
 const confirmButton = ref<{ $el: HTMLButtonElement }>();
-const { nextZIndex } = useZIndex();
 
 const contentNode = () => {
   const request = current.value;
@@ -53,8 +50,6 @@ watch(current, request => {
   if (!request) return;
   inputValue.value = request.options.inputValue ?? "";
   inputError.value = "";
-  // 与 Element Plus 弹层共用层级计数，从其对话框内打开时仍位于上方。
-  zIndex.value = nextZIndex();
 }, { immediate: true });
 
 function focusInitial(event: Event) {
