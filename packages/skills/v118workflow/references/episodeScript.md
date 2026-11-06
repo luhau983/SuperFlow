@@ -1,67 +1,67 @@
-# 逐集剧本
+# Kịch bản từng tập
 
-本阶段逐集编写可制作的剧本；所有集的正式剧本统一保存在剧本总画布。
+Giai đoạn này viết từng tập kịch bản có thể sản xuất; kịch bản chính thức của tất cả các tập đều lưu thống nhất trên canvas tổng kịch bản.
 
-## 输入
+## Đầu vào
 
-- 已确认的项目配置、故事骨架、分集大纲和改编策略。
-- 当前集对应原文与事件，以及上一集已确认剧本和结尾角色状态。
-- 本次明确要处理的集号；已有本集剧本、用户修改意见和确认记录。
+- Cấu hình dự án, khung xương câu chuyện, đại cương theo tập và chiến lược chuyển thể đã xác nhận.
+- Nguyên văn và sự kiện tương ứng với tập hiện tại, cùng kịch bản đã xác nhận của tập trước và trạng thái nhân vật ở cuối tập đó.
+- Số tập được yêu cầu xử lý rõ ràng lần này; kịch bản tập này đã có, ý kiến sửa của người dùng và bản ghi xác nhận.
 
-## 执行前必读
+## Bắt buộc đọc trước khi thực hiện
 
-- 必须读取 [编剧方法](knowledge/scriptCraft.md) 的“单集情绪、动作与台词”“可直接填写的成果模板”“审核方法与问题分级”，并回读本集已经采用的信息差/反转决定。
-- 必须读取 [叙事类型](knowledge/narrativeGenres.md) 的通用规则和本集使用的主/辅助类型。将其节拍、表演、信息释放、声音与禁忌转为实际场景，不能只写“采用某类型风格”。
+- Phải đọc các phần "Cảm xúc, động tác và lời thoại trong một tập", "Mẫu thành phẩm có thể điền trực tiếp", "Phương pháp thẩm định và phân cấp vấn đề" của [Phương pháp biên kịch](knowledge/scriptCraft.md), và đọc lại các quyết định chênh lệch thông tin/cú lật mà tập này đã chọn dùng.
+- Phải đọc quy tắc chung và thể loại chính/phụ trợ dùng cho tập này trong [Thể loại tự sự](knowledge/narrativeGenres.md). Chuyển nhịp, diễn xuất, tiết lộ thông tin, âm thanh và điều cấm kỵ của chúng thành cảnh thực tế, không được chỉ ghi "chọn dùng phong cách thể loại nào đó".
 
-## 执行方法
+## Phương pháp thực hiện
 
-1. 按 [画布操作](canvasOperations.md) 回读输入和当前进度，定位尚需编写或修改的指定集。
-2. 每次聚焦一集，提取其来源、戏剧功能、场景核心、删减决定及结束点；终集按已确认结局收束，不硬造下一集钩子。
-3. 衔接上一集的时间、地点、角色关系、外观和关键道具状态；不把所有已完成剧本重新生成。
-4. 组织具体场景，让动作、对白和场景变化推动剧情；心理描写转成可表现的行为或必要 OS/VO。
-5. 写明场号、地点、时间/内外景、本场人物、动作与表情、台词、必要声音和转场。
-6. 按配置估算时长；约 150 字/分钟仅用作对白参考，动作和停顿另行计入，不能把字数换算当实测。
-7. 检查本集新信息、冲突变化及结尾期待；镜头技术设计留给后续导演与分镜阶段。
-8. 修改本集时只更新指定内容，并复核与上一集、下一集大纲的衔接。
-9. 行动场明确目标/阻碍/选择/结果；日常、过渡和留白场记录关系、时间、信息或情绪的实际作用，不强造阻碍与选择。选择情绪表达通道并写出可演动作，检查台词表面话与真实意图、谁知道什么、何时释放信息，保留有类型功能的沉默和日常。
+1. Theo [Thao tác canvas](canvasOperations.md) đọc lại đầu vào và tiến độ hiện tại, định vị tập được chỉ định còn cần viết hoặc sửa.
+2. Mỗi lần tập trung một tập, trích xuất nguồn, chức năng kịch tính, lõi cảnh, quyết định cắt giảm và điểm kết thúc của nó; tập cuối khép lại theo kết cục đã xác nhận, không gượng tạo móc câu cho tập sau.
+3. Nối tiếp thời gian, địa điểm, quan hệ nhân vật, ngoại hình và trạng thái đạo cụ then chốt của tập trước; không tạo lại toàn bộ các kịch bản đã hoàn thành.
+4. Tổ chức các cảnh cụ thể, để động tác, lời thoại và thay đổi cảnh thúc đẩy cốt truyện; miêu tả tâm lý chuyển thành hành vi thể hiện được hoặc OS/VO cần thiết.
+5. Ghi rõ số cảnh, địa điểm, thời gian/nội ngoại cảnh, nhân vật trong cảnh, động tác và biểu cảm, lời thoại, âm thanh cần thiết và chuyển cảnh.
+6. Ước tính thời lượng theo cấu hình; khoảng 150 chữ/phút chỉ dùng làm tham chiếu cho lời thoại, động tác và khoảng dừng tính riêng, không được coi quy đổi số chữ là đo thực tế.
+7. Kiểm tra thông tin mới, thay đổi xung đột và kỳ vọng ở cuối của tập này; thiết kế kỹ thuật shot để lại cho giai đoạn đạo diễn và phân cảnh phía sau.
+8. Khi sửa tập này chỉ cập nhật nội dung được chỉ định, và rà lại sự nối tiếp với tập trước và đại cương tập sau.
+9. Cảnh hành động nêu rõ mục tiêu/trở ngại/lựa chọn/kết quả; cảnh đời thường, chuyển tiếp và khoảng trống ghi lại tác dụng thực tế về quan hệ, thời gian, thông tin hoặc cảm xúc, không gượng tạo trở ngại và lựa chọn. Chọn kênh biểu đạt cảm xúc và viết ra động tác diễn được, kiểm tra lời nói bề mặt và ý định thật của lời thoại, ai biết gì, khi nào tiết lộ thông tin, giữ lại im lặng và đời thường có chức năng thể loại.
 
-## 写入剧本画布
+## Ghi vào canvas kịch bản
 
-默认位置为工作区 `画布/剧本.json`；每集一个清晰可定位的正式剧本节点。
+Vị trí mặc định là `Canvas/Kịch bản.json` trong workspace; mỗi tập một node kịch bản chính thức rõ ràng, định vị được.
 
-- 节点标题建议为“第001集剧本｜集标题”，正文标题保留作品名、集号和集标题。
-- 同一集已有节点时原位修改；不得把“修订版”“定稿”当作新的一集重复创建。
-- 已确认的剧本节点作为该集制作来源；后续 `画布/分集/第001集.json` 记录其真实来源定位。
-- 本阶段不把正式剧本搬到单集画布，也不为每集创建新的资产库。
-- 在同画布“第001集创作决策”文本节点保存本集类型节拍、逐场情绪/信息变化、伏笔兑现、关系距离/权力变化、关键声音及估时依据；引用既有决策，不把分析和模型参数夹进剧本正文。
-- 正式剧本把上述决定兑现为动作、对白、沉默、必要声音和转场；后续单集导演方案读取创作决策再设计镜头，不能只凭类型标签重编剧情。
+- Tiêu đề node gợi ý là "Kịch bản Tập 001 | Tiêu đề tập", tiêu đề chính văn giữ tên tác phẩm, số tập và tiêu đề tập.
+- Khi cùng một tập đã có node thì sửa tại chỗ; không được coi "bản sửa", "bản chốt" là một tập mới để tạo lặp.
+- Node kịch bản đã xác nhận là nguồn sản xuất của tập đó; về sau `Canvas/Tập/Tập 001.json` ghi lại định vị nguồn thật của nó.
+- Giai đoạn này không chuyển kịch bản chính thức sang canvas tập riêng, cũng không tạo kho tài sản mới cho mỗi tập.
+- Trên cùng canvas, node văn bản "Quyết định sáng tác Tập 001" lưu nhịp thể loại của tập, thay đổi cảm xúc/thông tin từng cảnh, việc thực hiện phục bút, thay đổi khoảng cách quan hệ/quyền lực, âm thanh then chốt và căn cứ ước tính thời gian; trích dẫn các quyết định đã có, không kẹp phân tích và tham số mô hình vào chính văn kịch bản.
+- Kịch bản chính thức thực hiện các quyết định trên thành động tác, lời thoại, im lặng, âm thanh cần thiết và chuyển cảnh; phương án đạo diễn từng tập phía sau đọc quyết định sáng tác rồi mới thiết kế shot, không được chỉ dựa vào nhãn thể loại mà biên kịch lại cốt truyện.
 
-剧本正文最少包含：
+Chính văn kịch bản tối thiểu gồm:
 
 ```text
-作品名 EP001：集标题
-目标时长 / 画幅 / 风格
-剧情梗概：本集主要冲突、关键转折和情感变化
-1-1 场景名 日/内
-人物：本场实际出场人物
-△具体环境、动作、表情及必要道具
-人物名：台词
-OS/VO：必要的内心独白或画外音
-转场与下一场；本集结束点
+Tên tác phẩm EP001: Tiêu đề tập
+Thời lượng mục tiêu / Tỉ lệ khung / Phong cách
+Tóm tắt cốt truyện: xung đột chính, bước ngoặt then chốt và thay đổi cảm xúc của tập này
+1-1 Tên bối cảnh Ngày/Nội
+Nhân vật: các nhân vật thực tế xuất hiện trong cảnh này
+△Môi trường, động tác, biểu cảm cụ thể và đạo cụ cần thiết
+Tên nhân vật: lời thoại
+OS/VO: độc thoại nội tâm hoặc lời ngoài khung hình cần thiết
+Chuyển cảnh và cảnh tiếp theo; điểm kết thúc của tập này
 ```
 
-## 质量门与确认
+## Cổng chất lượng và xác nhận
 
-- 当前集与已确认大纲和策略一致；无擅自增加、漏掉或重写其他集。
-- 场号、人物、时间地点明确；动作可表现；台词保持角色口吻；无无依据的剧情跳转。
-- 预计时长符合目标；人物、道具和上下集状态连续；必要转场和声音没有遗漏。
-- 用已读类型的具体检查点核对正文：例如喜剧是否有铺垫/包袱/反应，悬疑线索是否可回溯，温情是否用行动兑现关心；不能只做通用格式检查。
-- 写入后回读完整正文，检查内容未截断、节点归属正确，再展示本集摘要和问题。
-- 每集成果完成后等待用户明确确认，再推进下一集或下游阶段；已有明确批次授权按其范围执行。
-- 不把完成通知、用户沉默或内部自检通过当作确认。
+- Tập hiện tại nhất quán với đại cương và chiến lược đã xác nhận; không tự ý thêm, bỏ sót hoặc viết lại các tập khác.
+- Số cảnh, nhân vật, thời gian địa điểm rõ ràng; động tác thể hiện được; lời thoại giữ giọng nhân vật; không có bước nhảy cốt truyện vô căn cứ.
+- Thời lượng dự kiến phù hợp mục tiêu; trạng thái nhân vật, đạo cụ và tập trước sau liên tục; không bỏ sót chuyển cảnh và âm thanh cần thiết.
+- Dùng các điểm kiểm tra cụ thể của thể loại đã đọc để đối chiếu chính văn: ví dụ hài có trải đường/cú chốt/phản ứng không, manh mối trinh thám có truy ngược được không, tình cảm ấm áp có dùng hành động thể hiện sự quan tâm không; không được chỉ kiểm tra định dạng chung.
+- Sau khi ghi, đọc lại toàn bộ chính văn, kiểm tra nội dung không bị cắt cụt, node đúng chỗ, rồi trình bày tóm tắt và vấn đề của tập này.
+- Sau khi mỗi tập hoàn thành, chờ người dùng xác nhận rõ ràng rồi mới đẩy tiếp tập sau hoặc giai đoạn hạ nguồn; nếu đã có ủy quyền theo lô rõ ràng thì thực hiện theo phạm vi đó.
+- Không coi thông báo hoàn thành, sự im lặng của người dùng hay tự kiểm nội bộ đạt là xác nhận.
 
-已确认的剧本可进入 [基础资产清单](baseAssets.md)；其余集按已获授权的范围继续本流程。
+Kịch bản đã xác nhận có thể vào [Danh sách tài sản cơ bản](baseAssets.md); các tập còn lại tiếp tục quy trình này theo phạm vi đã được ủy quyền.
 
-## 旧版依据
+## Căn cứ bản cũ
 
-`data/skills/script_execution_script.md`、`data/skills/script_agent_decision.md`、`src/agents/scriptAgent/index.ts`。
+`data/skills/script_execution_script.md`, `data/skills/script_agent_decision.md`, `src/agents/scriptAgent/index.ts`.

@@ -1,195 +1,195 @@
-# 编剧与改编方法
+# Phương pháp biên kịch và chuyển thể
 
-本文件把故事骨架、改编策略、单集编剧及监督方法合并为可直接执行的知识。使用时先读本节，再读当前阶段对应章节；类型专属方法见 [叙事类型](narrativeGenres.md)。无需访问旧版目录或调用旧版技能。
+File này gộp khung sườn câu chuyện, chiến lược chuyển thể, biên kịch từng tập và phương pháp giám sát thành kiến thức có thể thực thi trực tiếp. Khi sử dụng, đọc phần này trước, rồi đọc chương tương ứng với giai đoạn hiện tại; phương pháp riêng của từng thể loại xem [Thể loại tự sự](narrativeGenres.md). Không cần truy cập thư mục bản cũ hay gọi skill bản cũ.
 
-## 适用顺序
+## Thứ tự áp dụng
 
-1. 用户已确认的故事事实、改编边界、类型、结局、画幅、时长和发行要求优先。
-2. 按叙事类型选择方法：家庭的日常、青春的碎片、史诗的群像、仙侠的留白都有叙事价值，不能被商业短剧的快节奏模板统一删除。
-3. 本文件的短剧节奏、字数、卡点比例是制定方案的参考；采用哪些、为何采用，写入项目决策，不能冒充平台规则或效果保证。
-4. 文本创作不改变已确认剧情来迁就假定模型弱点。进入生成前读取真实模型能力，再决定是否拆镜、替代呈现或请用户调整。
-5. 方法必须变成具体人物、集数、场景和动作的决定；只写“加强冲突、提升密度”不算执行。
+1. Sự thật câu chuyện, ranh giới chuyển thể, thể loại, kết cục, tỉ lệ khung, thời lượng và yêu cầu phát hành mà người dùng đã xác nhận được ưu tiên.
+2. Chọn phương pháp theo thể loại tự sự: cái thường nhật của gia đình, những mảnh vụn của tuổi trẻ, chân dung tập thể của sử thi, khoảng lặng của tiên hiệp đều có giá trị tự sự, không được bị mẫu nhịp nhanh của phim ngắn thương mại xóa đồng loạt.
+3. Nhịp điệu phim ngắn, số chữ, tỉ lệ điểm treo (cliffhanger) trong file này là tham khảo để xây dựng phương án; chọn dùng những gì, vì sao chọn dùng thì ghi vào quyết định dự án, không được giả làm quy tắc nền tảng hay đảm bảo hiệu quả.
+4. Sáng tác văn bản không thay đổi cốt truyện đã xác nhận để chiều theo điểm yếu giả định của mô hình. Trước khi vào bước tạo, đọc năng lực mô hình thật, rồi mới quyết định có tách shot, thay đổi cách trình bày hay nhờ người dùng điều chỉnh.
+5. Phương pháp phải trở thành quyết định về nhân vật, số tập, cảnh và động tác cụ thể; chỉ viết "tăng cường xung đột, nâng cao mật độ" không tính là thực thi.
 
-## 事件判断与三种密度
+## Phán đoán sự kiện và ba loại mật độ
 
-先区分事件与情节：事件是发生了什么，情节还要说明为什么发生、怎样改变冲突、给人物造成什么不可逆的变化。
+Trước tiên phân biệt sự kiện với tình tiết: sự kiện là điều gì đã xảy ra, tình tiết còn phải nói rõ vì sao xảy ra, thay đổi xung đột thế nào, gây ra biến đổi không thể đảo ngược gì cho nhân vật.
 
-| 判断维度 | 执行问题 | 应写入的证据 |
+| Chiều phán đoán | Câu hỏi thực thi | Bằng chứng cần ghi |
 |---|---|---|
-| 情绪密度 | 观众此刻感受什么？由什么可见行为触发？是否一直同一种强度？ | 情绪目标、触发动作、前后强度变化 |
-| 信息密度 | 新知道什么？为何现在必须知道？一句话能否同时塑造人物、传递冲突？ | 新信息、知情者、释放位置 |
-| 情节密度 | 上一事件的结果怎样成为本事件原因？冲突升级/反转了吗？处境改变了吗？ | 因果承接、行动、结果、下一步压力 |
+| Mật độ cảm xúc | Khán giả lúc này cảm thấy gì? Do hành vi nhìn thấy được nào kích hoạt? Có luôn cùng một cường độ không? | Mục tiêu cảm xúc, động tác kích hoạt, thay đổi cường độ trước sau |
+| Mật độ thông tin | Biết thêm điều gì mới? Vì sao bây giờ phải biết? Một câu có thể đồng thời khắc họa nhân vật, truyền tải xung đột không? | Thông tin mới, người biết chuyện, vị trí giải phóng |
+| Mật độ tình tiết | Kết quả của sự kiện trước trở thành nguyên nhân của sự kiện này thế nào? Xung đột có leo thang/lật ngược không? Hoàn cảnh có thay đổi không? | Tiếp nối nhân quả, hành động, kết quả, áp lực bước tiếp theo |
 
-- 事件表只记录来源实际有的内容，不为了满足密度而编造；需要强化的地方另列改编提案。
-- 主线关系：强＝直接推动主角目标或人物弧；中＝补充关系、规则或必要伏笔；弱＝过渡、气氛。弱不等于自动删除，须结合类型功能判断。
-- 信息取舍用“快、准、新、无”：及时给必要信息、表达准确、每段有增量、删去无叙事作用的重复。悬疑的延迟揭示和温情的沉默也可以承载增量。
-- 单集因果骨架：承接上集结果 → 新阻碍/冲突变化 → 做出选择并付出代价或得到收获 → 引出下一步或兑现终局。日常、过渡和留白段落可由关系/信息/情绪增量承接，不强造选择与冲突。终集按已确认结局闭合，只有用户要求开放结局或续季时才留后续悬念；不要以堆事件、堆反转替代推进。
+- Bảng sự kiện chỉ ghi nội dung nguồn thực sự có, không bịa ra để thỏa mãn mật độ; chỗ cần tăng cường thì liệt kê riêng thành đề xuất chuyển thể.
+- Quan hệ với tuyến chính: mạnh = trực tiếp thúc đẩy mục tiêu nhân vật chính hoặc cung nhân vật; trung = bổ sung quan hệ, quy tắc hoặc cài cắm cần thiết; yếu = chuyển tiếp, bầu không khí. Yếu không có nghĩa là tự động xóa, phải kết hợp phán đoán theo chức năng thể loại.
+- Chọn lọc thông tin dùng "nhanh, chuẩn, mới, không": kịp thời đưa thông tin cần thiết, diễn đạt chính xác, mỗi đoạn có phần tăng thêm, xóa lặp lại không có tác dụng tự sự. Việc hé lộ chậm của trinh thám và sự im lặng của dòng ấm áp cũng có thể mang phần tăng thêm.
+- Khung nhân quả từng tập: tiếp nối kết quả tập trước → trở ngại mới/thay đổi xung đột → đưa ra lựa chọn và trả giá hoặc nhận được thu hoạch → dẫn ra bước tiếp theo hoặc thực hiện kết cục. Các đoạn thường nhật, chuyển tiếp và khoảng lặng có thể được tiếp nối bằng phần tăng thêm về quan hệ/thông tin/cảm xúc, không ép tạo lựa chọn và xung đột. Tập cuối khép lại theo kết cục đã xác nhận, chỉ khi người dùng yêu cầu kết mở hoặc phần tiếp theo mới để lại treo lửng; đừng dùng chồng chất sự kiện, chồng chất cú lật thay cho thúc đẩy.
 
-## 故事核、矛盾与结构
+## Cốt lõi câu chuyện, mâu thuẫn và cấu trúc
 
-故事核先写成一句话：`谁为了什么，在什么阻碍下必须如何选择，观众为何在意`。再写人物内在问题，如复仇与原谅、自由与责任；外部冲突应不断迫使他面对这个问题。
+Cốt lõi câu chuyện trước tiên viết thành một câu: `Ai vì điều gì, dưới trở ngại nào buộc phải lựa chọn ra sao, vì sao khán giả quan tâm`. Rồi viết vấn đề nội tâm của nhân vật, như báo thù và tha thứ, tự do và trách nhiệm; xung đột bên ngoài nên liên tục buộc nhân vật đối mặt với vấn đề này.
 
-矛盾是持续存在的欲望与阻碍，冲突是人物为解决矛盾采取的行动。用四级阶梯检查升级，而非只加吵架和打斗：
+Mâu thuẫn là khát vọng và trở ngại tồn tại liên tục, xung đột là hành động nhân vật thực hiện để giải quyết mâu thuẫn. Dùng thang bốn cấp để kiểm tra sự leo thang, chứ không chỉ thêm cãi vã và đánh nhau:
 
-1. 欲望与阻碍成立：想得到某物，但另一方控制它。
-2. 强化：欲望紧迫、阻碍有力，形成不能两全的选择。
-3. 深化：双方欲望都有可理解的理由，选择变难，而非把对手写成纯工具。
-4. 升级：主角行动引出更严重且不能轻易撤回的后果，新冲突来自前因。
+1. Khát vọng và trở ngại được xác lập: muốn có được một thứ, nhưng bên kia kiểm soát nó.
+2. Tăng cường: khát vọng cấp bách, trở ngại mạnh mẽ, tạo thành lựa chọn không thể vẹn cả đôi đường.
+3. Đào sâu: khát vọng của cả hai bên đều có lý do có thể hiểu được, lựa chọn trở nên khó khăn, chứ không viết đối thủ thành công cụ thuần túy.
+4. Leo thang: hành động của nhân vật chính dẫn đến hậu quả nghiêm trọng hơn và không dễ rút lại, xung đột mới đến từ nguyên nhân trước đó.
 
-- 集中的商业短剧可用“大三角”：主角、主要对手、关键关系/势力构成主矛盾；次矛盾逐个解决，再进入下一个。约 3–4 位核心角色便于聚焦，但群像项目按已确认人物线组织。
-- 三幕按功能编排：建立规则、欲望与危机；发展计划、对抗与代价；兑现选择、高潮和结局/新问题。每幕记录核心问题、来源范围、集数、幕末转折。
-- 情绪曲线避免无变化地拉满：积累 → 小释放 → 更强压力 → 关键兑现 → 消化余韵。核心情绪贯穿，辅助情绪服务它，不能因一个刺激桥段突然换成另一种剧。
-- 人物弧模板：`初始信念/状态 → 触发事件 → 以旧方式行动 → 代价迫使反思 → 新选择 → 最终状态`。各阶段需有行动证据，不能只在结尾宣称长大。
+- Phim ngắn thương mại tập trung có thể dùng "tam giác lớn": nhân vật chính, đối thủ chính, quan hệ/thế lực then chốt tạo thành mâu thuẫn chính; mâu thuẫn phụ giải quyết từng cái một, rồi mới sang cái tiếp theo. Khoảng 3-4 nhân vật cốt lõi dễ tập trung, nhưng dự án chân dung tập thể tổ chức theo tuyến nhân vật đã xác nhận.
+- Ba hồi sắp xếp theo chức năng: xác lập quy tắc, khát vọng và nguy cơ; phát triển kế hoạch, đối kháng và cái giá; thực hiện lựa chọn, cao trào và kết cục/vấn đề mới. Mỗi hồi ghi lại vấn đề cốt lõi, phạm vi nguồn, số tập, bước ngoặt cuối hồi.
+- Đường cong cảm xúc tránh kéo căng tối đa mà không thay đổi: tích lũy → giải phóng nhỏ → áp lực mạnh hơn → thực hiện then chốt → dư âm lắng đọng. Cảm xúc cốt lõi xuyên suốt, cảm xúc phụ trợ phục vụ nó, không được vì một tình tiết kích thích mà đột ngột đổi sang một loại phim khác.
+- Mẫu cung nhân vật: `Niềm tin/trạng thái ban đầu → sự kiện kích hoạt → hành động theo cách cũ → cái giá buộc phải suy ngẫm → lựa chọn mới → trạng thái cuối cùng`. Mỗi giai đoạn cần có bằng chứng hành động, không được chỉ tuyên bố trưởng thành ở cuối.
 
-## 人物小传、代入与关系
+## Tiểu sử nhân vật, nhập vai và quan hệ
 
-每个核心人物先写五要素：身份（姓名、职业、关系、故事作用）；特征（能力、习惯、记忆点）；境遇（处境、目标、动机）；行动（动机驱动的做法）；结局方向（该行动通向哪里）。只写主线会用到的信息。
+Mỗi nhân vật cốt lõi trước tiên viết năm yếu tố: thân phận (họ tên, nghề nghiệp, quan hệ, vai trò trong câu chuyện); đặc điểm (năng lực, thói quen, điểm dễ nhớ); hoàn cảnh (tình cảnh, mục tiêu, động cơ); hành động (cách làm do động cơ thúc đẩy); hướng kết cục (hành động đó dẫn đến đâu). Chỉ viết thông tin mà tuyến chính sẽ dùng đến.
 
-主角补充：
+Bổ sung cho nhân vật chính:
 
-- 代入入口：普通处境、外部压力、尊严、值得保护的情感及反差。人物有责任或灰度时保留真实复杂性，不套用“必须完全无责”的模板。
-- 反差两面：表面与内里是什么，各由何种事件触发；不能没有过渡地换性格。
-- 能力边界：能做什么、不能做什么、启动条件、次数/资源限制、使用代价；不存在特殊能力的故事不硬加“金手指”。
-- 说话方式：句长、用词、句式、回避方式、常用语，以及压力下口吻怎样变化。遮掉名字仍应能分辨主要人物。
-- 出场七种入口：局部细节、关键动作、配角反应、先闻声音、环境反差、标志道具、氛围铺垫。选最能暴露人物欲望和性格的一种，写出具体登场动作。
+- Lối vào nhập vai: hoàn cảnh bình thường, áp lực bên ngoài, tôn nghiêm, tình cảm đáng bảo vệ và sự tương phản. Khi nhân vật có trách nhiệm hoặc vùng xám thì giữ sự phức tạp chân thực, không áp mẫu "phải hoàn toàn vô tội".
+- Hai mặt tương phản: bề ngoài và bên trong là gì, mỗi mặt do sự kiện nào kích hoạt; không được đổi tính cách mà không có chuyển tiếp.
+- Ranh giới năng lực: làm được gì, không làm được gì, điều kiện khởi động, giới hạn số lần/tài nguyên, cái giá khi sử dụng; câu chuyện không có năng lực đặc biệt thì không ép thêm "bàn tay vàng".
+- Cách nói chuyện: độ dài câu, cách dùng từ, kiểu câu, cách né tránh, câu cửa miệng, và giọng điệu thay đổi thế nào dưới áp lực. Che tên đi vẫn phải phân biệt được các nhân vật chính.
+- Bảy lối xuất hiện: chi tiết cục bộ, động tác then chốt, phản ứng của nhân vật phụ, nghe tiếng trước, tương phản môi trường, đạo cụ đặc trưng, dẫn dắt bầu không khí. Chọn lối bộc lộ rõ nhất khát vọng và tính cách nhân vật, viết ra động tác xuất hiện cụ thể.
 
-对手需有合理动机、资源、底线和自己的损失；配角需说明其选择怎样推动主线。关系张力来自相互需要又互相阻碍，不能靠随意误会反复拖延。
+Đối thủ cần có động cơ hợp lý, tài nguyên, giới hạn chót và tổn thất của riêng mình; nhân vật phụ cần nói rõ lựa chọn của họ thúc đẩy tuyến chính thế nào. Sức căng quan hệ đến từ việc vừa cần nhau vừa cản trở nhau, không được dựa vào hiểu lầm tùy tiện để kéo dài lặp đi lặp lại.
 
-情感搭档先选互补或冲突维度，再写互动：一人谨慎、一人冲动会怎样共同做决定；同一人物在公开场合和亲密关系里如何表现不同侧面。不要只贴流行人设标签。
+Cặp đôi tình cảm trước tiên chọn chiều bổ sung hoặc xung đột, rồi viết tương tác: một người thận trọng, một người bốc đồng sẽ cùng đưa ra quyết định thế nào; cùng một nhân vật thể hiện các mặt khác nhau thế nào ở nơi công cộng và trong quan hệ thân mật. Đừng chỉ dán nhãn hình mẫu nhân vật thịnh hành.
 
-旧版市场人物模型可作为角色选项：主动蛰伏、能力、义气、专属软肋；主动觉醒、自爱、敢争取、对外坚定对内柔软。按角色实际需求取用，不由性别强制分配。
+Mô hình nhân vật thị trường của bản cũ có thể dùng làm lựa chọn vai: chủ động ẩn mình, năng lực, nghĩa khí, điểm yếu riêng; chủ động thức tỉnh, tự trọng, dám giành lấy, cứng rắn với bên ngoài mềm mỏng với bên trong. Lấy dùng theo nhu cầu thực tế của vai, không phân bổ cưỡng ép theo giới tính.
 
-## 信息差、钩子与反转
+## Chênh lệch thông tin, móc câu và cú lật
 
-每个关键段落填写：`真实事实｜主角知道什么｜对手知道什么｜观众知道/误以为什么｜本段揭示什么｜下段还欠什么`。
+Mỗi đoạn then chốt điền: `Sự thật thực tế | Nhân vật chính biết gì | Đối thủ biết gì | Khán giả biết/lầm tưởng gì | Đoạn này hé lộ gì | Đoạn sau còn nợ gì`.
 
-| 知情关系 | 主要作用 | 落地方式 |
+| Quan hệ biết chuyện | Tác dụng chính | Cách triển khai |
 |---|---|---|
-| 主角与观众知道，对手不知道 | 等待行动兑现、身份或能力被承认 | 先给真实底牌，再看对手误判及后果 |
-| 对手与观众知道，主角不知道 | 担忧角色接近危险 | 让观众看到主角视线之外的陷阱 |
-| 观众知道，双方角色不知道 | 等待相认、解开关系 | 同一事实分散在双方行动中，观众先连起来 |
-| 观众跟随一方，只知局部 | 共同调查、共同受骗 | 每次增加可核对线索，不凭空补答案 |
+| Nhân vật chính và khán giả biết, đối thủ không biết | Chờ hành động được thực hiện, thân phận hoặc năng lực được công nhận | Trước tiên đưa ra con bài tẩy thật, rồi xem đối thủ phán đoán sai và hậu quả |
+| Đối thủ và khán giả biết, nhân vật chính không biết | Lo lắng nhân vật tiến gần nguy hiểm | Để khán giả thấy cái bẫy ngoài tầm nhìn của nhân vật chính |
+| Khán giả biết, nhân vật hai bên không biết | Chờ nhận ra nhau, tháo gỡ quan hệ | Cùng một sự thật phân tán trong hành động của hai bên, khán giả nối lại trước |
+| Khán giả theo một bên, chỉ biết một phần | Cùng điều tra, cùng bị lừa | Mỗi lần thêm manh mối có thể đối chiếu, không bổ sung đáp án vô căn cứ |
 
-钩子可来自下一步行动、对手反击、第三方态度；功能上选择智识疑问、悬念、关系情感、世界观新规则。商业短剧也可用身份颠覆、胜负逆转、关系裂变或真相揭示。解决一个阶段问题后再提出主线新问题，不以永不兑现吊胃口。
+Móc câu có thể đến từ hành động bước tiếp theo, đối thủ phản công, thái độ của bên thứ ba; về chức năng chọn nghi vấn trí tuệ, hồi hộp, tình cảm quan hệ, quy tắc thế giới quan mới. Phim ngắn thương mại cũng có thể dùng đảo lộn thân phận, nghịch chuyển thắng thua, rạn nứt quan hệ hoặc hé lộ sự thật. Giải quyết một vấn đề giai đoạn rồi mới đặt ra vấn đề mới của tuyến chính, không treo khẩu vị bằng việc không bao giờ thực hiện.
 
-全局反转的三种方法：
+Ba phương pháp cú lật toàn cục:
 
-1. 预期误导：展示真实线索 → 利用常见理解建立错误结论 → 由另一真实细节推翻结论；回看时仍成立。
-2. 人设重释：建立角色标签 → 埋入不完全符合标签的行为 → 揭示另一面。改变主角已确认的核心价值必须获用户同意。
-3. 动机置换：行为同时符合表层和深层动机 → 提供双轨证据 → 揭示深层动机，使旧行动获得新解释。
+1. Dẫn dắt sai kỳ vọng: trình bày manh mối thật → lợi dụng cách hiểu thông thường để xây dựng kết luận sai → dùng một chi tiết thật khác để lật đổ kết luận; khi xem lại vẫn hợp lý.
+2. Diễn giải lại hình tượng nhân vật: xây dựng nhãn nhân vật → cài vào hành vi không hoàn toàn khớp với nhãn → hé lộ mặt còn lại. Thay đổi giá trị cốt lõi đã xác nhận của nhân vật chính phải được người dùng đồng ý.
+3. Hoán đổi động cơ: hành vi đồng thời khớp với động cơ bề mặt và động cơ sâu xa → cung cấp bằng chứng hai tuyến → hé lộ động cơ sâu xa, khiến hành động cũ có cách giải thích mới.
 
-单集反转的三种方法：常用道具的真实功能被重新理解；情绪预期落空后由人物行动完成回弹；真实局部画面产生误判、再以全貌揭示。别连续重复同一招，也别为反转改变已展示的客观事实。
+Ba phương pháp cú lật trong một tập: chức năng thật của đạo cụ quen dùng được hiểu lại; kỳ vọng cảm xúc thất bại rồi được hành động nhân vật làm bật trở lại; hình ảnh cục bộ thật gây phán đoán sai, rồi được hé lộ bằng toàn cảnh. Đừng lặp lại liên tục cùng một chiêu, cũng đừng vì cú lật mà thay đổi sự thật khách quan đã trình bày.
 
-伏笔登记模板：
+Mẫu đăng ký cài cắm:
 
-| 反转/兑现 | 来源事实 | 观众初始理解 | 预埋集/场及细节 | 揭晓集/场 | 揭晓后如何解释旧细节 |
+| Cú lật/thực hiện | Sự thật nguồn | Cách hiểu ban đầu của khán giả | Tập/cảnh cài sẵn và chi tiết | Tập/cảnh hé lộ | Sau khi hé lộ giải thích chi tiết cũ thế nào |
 |---|---|---|---|---|---|
-| 具体转变 | 可读来源 | 合理但不完整的判断 | 先于揭晓 | 实际位置 | 因果、道具及行为均相容 |
+| Chuyển biến cụ thể | Nguồn đọc được | Phán đoán hợp lý nhưng chưa đầy đủ | Trước khi hé lộ | Vị trí thực tế | Nhân quả, đạo cụ và hành vi đều tương thích |
 
-重大反转先登记再写剧本；数量按篇幅与类型取舍。旧版约三个大反转、单集聚焦一个反转可用作减法参考，不强制无反转的温情戏制造骗局。
+Cú lật lớn đăng ký trước rồi mới viết kịch bản; số lượng chọn lọc theo độ dài và thể loại. Khoảng ba cú lật lớn, mỗi tập tập trung một cú lật của bản cũ có thể dùng làm tham khảo để giảm bớt, không ép phim ấm áp không có cú lật phải tạo ra cú lừa.
 
-## 改编取舍与世界观
+## Chọn lọc chuyển thể và thế giới quan
 
-把旧版八项原则落实为可审查的决定：可视化表达、精简台词、有变化的节奏、主线贡献、可理解的信息、明确情绪、开篇期待、动作优先。情绪和节奏不能成为破坏已确认因果的借口。
+Biến tám nguyên tắc của bản cũ thành các quyết định có thể duyệt xét: biểu đạt bằng hình ảnh, tinh giản lời thoại, nhịp điệu có biến đổi, đóng góp cho tuyến chính, thông tin dễ hiểu, cảm xúc rõ ràng, kỳ vọng mở đầu, ưu tiên động tác. Cảm xúc và nhịp điệu không được trở thành cái cớ phá vỡ nhân quả đã xác nhận.
 
-- 优先压缩：重复交代、相同手段重复冲突、无人物或关系增量的闲聊、无法直接呈现的大段说明。
-- 优先保留：人物关键选择、关系变化、高潮的因果铺垫、信息差线索、角色记忆点、兑现前的情绪积累，以及类型不可替代的日常/静默。
-- 替代方法：连续过程缩成蒙太奇；一次已知背景用一句自然对白补足；心理活动换成行为、视线、环境反馈；完全无功能的内容删除。
-- 原创改编可从元素、视角、有关联的类型融合、具体冲突机制寻找变化。忠实原著项目不为了“创新”私改设定。不能声称未核查的桥段在市场出现过多少次。
-- 世界观分段回答：本段需要哪个规则？怎样从行动后果看出？由谁引出？解释到暗示还是明确？观众跟随谁？下一次补充在哪一集？
-- 对话使用符合人物时代、职业和项目风格的语言。旧版泛化替换现实官职、夸张货币与禁用诗化语言的偏好，不当作事实或合规要求。
-- AI 制作约束记录具体困难和候选表达，如多人接触、频繁换装、复杂空间连续性；先保留剧情目标，再按当前模型选择制作方法。
+- Ưu tiên nén: giới thiệu lặp lại, xung đột lặp lại cùng thủ đoạn, tán gẫu không có phần tăng thêm về nhân vật hay quan hệ, đoạn giải thích dài không thể trình bày trực tiếp.
+- Ưu tiên giữ: lựa chọn then chốt của nhân vật, thay đổi quan hệ, phần dẫn dắt nhân quả của cao trào, manh mối chênh lệch thông tin, điểm dễ nhớ của nhân vật, tích lũy cảm xúc trước khi thực hiện, cùng cái thường nhật/sự im lặng không thể thay thế của thể loại.
+- Phương pháp thay thế: quá trình liên tục rút gọn thành montage; bối cảnh đã biết một lần thì bổ sung bằng một câu thoại tự nhiên; hoạt động tâm lý đổi thành hành vi, ánh nhìn, phản hồi môi trường; nội dung hoàn toàn không có chức năng thì xóa.
+- Chuyển thể sáng tạo có thể tìm biến đổi từ yếu tố, góc nhìn, dung hợp thể loại có liên quan, cơ chế xung đột cụ thể. Dự án trung thành với nguyên tác không tự ý sửa thiết lập vì "đổi mới". Không được tuyên bố một tình tiết chưa kiểm chứng đã xuất hiện trên thị trường bao nhiêu lần.
+- Thế giới quan trả lời theo từng đoạn: đoạn này cần quy tắc nào? Nhìn ra từ hậu quả hành động thế nào? Do ai dẫn ra? Giải thích đến mức gợi ý hay rõ ràng? Khán giả theo ai? Lần bổ sung tiếp theo ở tập nào?
+- Đối thoại dùng ngôn ngữ phù hợp với thời đại, nghề nghiệp của nhân vật và phong cách dự án. Sở thích của bản cũ về việc thay thế chung chung chức quan hiện thực, tiền tệ phóng đại và cấm ngôn ngữ thi vị hóa không được coi là sự thật hay yêu cầu tuân thủ.
+- Ràng buộc sản xuất AI ghi lại khó khăn cụ thể và cách biểu đạt ứng viên, như tiếp xúc nhiều người, thay trang phục thường xuyên, tính liên tục không gian phức tạp; trước tiên giữ mục tiêu cốt truyện, rồi chọn phương pháp sản xuất theo mô hình hiện tại.
 
-策略模板：
+Mẫu chiến lược:
 
 ```text
-原则：名称 / 优先级 / 正面做法 / 负面边界 / 对应集场
-取舍：来源章场 / 保留或压缩或合并或删除 / 理由 / 替代方式 / 对人物弧与伏笔的影响
-世界观：设定 / 首次出现 / 行动证据 / 解释程度 / 锚点角色 / 观众视点 / 后续补充
-连续性：人物口吻与行为 / 外观与道具状态 / 情绪基调 / 需要保留的类型方法
+Nguyên tắc: tên / mức ưu tiên / cách làm tích cực / ranh giới tiêu cực / tập-cảnh tương ứng
+Chọn lọc: chương-cảnh nguồn / giữ hoặc nén hoặc gộp hoặc xóa / lý do / cách thay thế / ảnh hưởng đến cung nhân vật và cài cắm
+Thế giới quan: thiết lập / lần xuất hiện đầu / bằng chứng hành động / mức độ giải thích / nhân vật neo / điểm nhìn khán giả / bổ sung về sau
+Tính liên tục: giọng điệu và hành vi nhân vật / ngoại hình và trạng thái đạo cụ / tông cảm xúc / phương pháp thể loại cần giữ
 ```
 
-## 单集情绪、动作与台词
+## Cảm xúc, động tác và lời thoại từng tập
 
-- 情绪先定一个核心和一个辅助，再定结尾感受。爆点是意外改变认知，虐点是重要关系或目标遭受损失，爽点是积累后的能力/秩序/归属兑现；类型需要甜、温暖、惆怅时照样成立。
-- 情绪有四条表现通道：行动（握紧又松开的手）、语言（改口、停顿、节奏变化）、环境（声音或空间改变）、必要独白。优先写可见动作，不每句加情绪括号。
-- 商业爽感可用“受压/误判 → 主动反击 → 他人态度变化 → 实际收获”；感情戏可用“误会 → 关系疏离 → 真相与行动 → 修复”；家庭可用“困境 → 求助受阻 → 主动援手 → 关系靠近”。这些是因果模板，不是替代人物选择的套路。
-- 拉扯要有新依据：建立期待 → 暂时接近 → 新代价或误判打断 → 人物调整行动 → 更深兑现。反复原地误会不增加张力。
-- 开篇尽快让观众理解主角处境、目标、动机与类型承诺。商业快节奏项目可直接进入极端困境、身份反差或关系冲击；其他类型用一个有意义的异常、动作或日常变化建立期待。
+- Cảm xúc trước tiên định một cốt lõi và một phụ trợ, rồi định cảm nhận khi kết thúc. Điểm bùng nổ là bất ngờ thay đổi nhận thức, điểm ngược tâm là quan hệ hoặc mục tiêu quan trọng chịu tổn thất, điểm sảng khoái là sự thực hiện năng lực/trật tự/sự thuộc về sau khi tích lũy; khi thể loại cần ngọt ngào, ấm áp, bâng khuâng thì vẫn áp dụng như thường.
+- Cảm xúc có bốn kênh thể hiện: hành động (bàn tay nắm chặt rồi buông ra), ngôn ngữ (đổi lời, ngừng nghỉ, thay đổi nhịp), môi trường (âm thanh hoặc không gian thay đổi), độc thoại cần thiết. Ưu tiên viết động tác nhìn thấy được, không thêm ngoặc cảm xúc vào mỗi câu.
+- Cảm giác sảng khoái thương mại có thể dùng "bị áp chế/bị phán đoán sai → chủ động phản công → thái độ người khác thay đổi → thu hoạch thực tế"; phim tình cảm có thể dùng "hiểu lầm → quan hệ xa cách → sự thật và hành động → hàn gắn"; gia đình có thể dùng "khốn cảnh → cầu cứu bị cản trở → chủ động giúp đỡ → quan hệ gần lại". Đây là mẫu nhân quả, không phải bài bản thay thế lựa chọn của nhân vật.
+- Giằng co phải có căn cứ mới: xây dựng kỳ vọng → tạm thời gần lại → bị cái giá mới hoặc phán đoán sai cắt ngang → nhân vật điều chỉnh hành động → thực hiện sâu hơn. Hiểu lầm lặp lại tại chỗ không tăng sức căng.
+- Mở đầu càng sớm càng tốt để khán giả hiểu hoàn cảnh, mục tiêu, động cơ của nhân vật chính và cam kết thể loại. Dự án nhịp nhanh thương mại có thể đi thẳng vào khốn cảnh cực đoan, tương phản thân phận hoặc cú sốc quan hệ; các thể loại khác dùng một điều bất thường có ý nghĩa, động tác hoặc thay đổi thường nhật để xây dựng kỳ vọng.
 
-画面化五法：
+Năm phép hình ảnh hóa:
 
-1. 写场景：时间、内外景、与人物剧情有关的光线和空间，而非家具清单。
-2. 写细节：不用“坚强”，写“听见孩子哭，抹掉泪挤出笑”。
-3. 写动作：动作触发台词，台词改变下一步行动，避免站桩交代设定。
-4. 写关键视觉：开场、兑现、情绪转折、真相揭示处说明观众必须看见什么；技术景别和运镜留给导演。
-5. 写必要视听：逆光轮廓、声音先到、画面叠化等用可实现的画面语言表达，不把制作参数夹进剧本文字。
+1. Viết bối cảnh: thời gian, nội ngoại cảnh, ánh sáng và không gian liên quan đến cốt truyện nhân vật, chứ không phải danh sách đồ đạc.
+2. Viết chi tiết: không dùng "kiên cường", mà viết "nghe thấy con khóc, lau nước mắt gượng cười".
+3. Viết động tác: động tác kích hoạt lời thoại, lời thoại thay đổi hành động tiếp theo, tránh đứng yên giải thích thiết lập.
+4. Viết hình ảnh then chốt: ở mở màn, thực hiện, bước ngoặt cảm xúc, hé lộ sự thật thì nói rõ khán giả phải thấy gì; cỡ cảnh kỹ thuật và chuyển động máy để lại cho đạo diễn.
+5. Viết nghe nhìn cần thiết: viền ngược sáng, âm thanh đến trước, hòa tan hình ảnh... biểu đạt bằng ngôn ngữ hình ảnh có thể thực hiện, không kẹp tham số sản xuất vào văn bản kịch bản.
 
-台词检查：
+Kiểm tra lời thoại:
 
-- 每句至少推动行动、塑造人物、形成信息差或改变情绪；删掉重复问答和自报身份式说明。
-- 表面话与真实意图可以不同，但观众需能从语境或反应读懂；心理博弈的多义性按类型方法控制。
-- 针对角色真正的软肋与欲望说话，不靠所有角色大喊同一种台词。
-- 重要沉默写清是谁不说、为什么不说、可见反应是什么；独白只补画面不能合理传达的信息。
-- 少写无法表演的小说修辞、长篇心理解释、每句括注和无后果的琐碎动作。
+- Mỗi câu ít nhất thúc đẩy hành động, khắc họa nhân vật, tạo chênh lệch thông tin hoặc thay đổi cảm xúc; xóa hỏi đáp lặp lại và kiểu tự giới thiệu thân phận để giải thích.
+- Lời bề mặt và ý định thật có thể khác nhau, nhưng khán giả cần đọc hiểu được từ ngữ cảnh hoặc phản ứng; tính đa nghĩa của đấu trí tâm lý được kiểm soát theo phương pháp thể loại.
+- Nói vào đúng điểm yếu và khát vọng thật của nhân vật, không dựa vào việc mọi nhân vật đều gào cùng một kiểu thoại.
+- Sự im lặng quan trọng phải viết rõ ai không nói, vì sao không nói, phản ứng nhìn thấy được là gì; độc thoại chỉ bổ sung thông tin mà hình ảnh không thể truyền đạt hợp lý.
+- Viết ít tu từ tiểu thuyết không thể diễn, giải thích tâm lý dài dòng, chú thích ngoặc mỗi câu và động tác vụn vặt không có hậu quả.
 
-## 可直接填写的成果模板
+## Mẫu kết quả có thể điền trực tiếp
 
-骨架节点：`故事核 → 内在人物弧 → 核心人物小传 → 三幕结构 → 分集大纲 → 取舍记录 → 信息差与反转登记 → 适用的发行卡点`。
+Node khung sườn: `Cốt lõi câu chuyện → cung nhân vật nội tâm → tiểu sử nhân vật cốt lõi → cấu trúc ba hồi → đề cương các tập → ghi chép chọn lọc → đăng ký chênh lệch thông tin và cú lật → điểm treo phát hành áp dụng`.
 
-分集大纲每集一行：`集号｜标题｜来源章段及片段｜戏剧功能｜目标/阻碍/选择/结果｜核心与辅助情绪｜新信息/知情差｜章节处理｜结尾期待`。一章可分多集，但片段不得混淆；长项目总览仍须恰好 N 行，另展开首集、幕末、高潮和用户指定集。
+Đề cương các tập mỗi tập một dòng: `Số tập | Tiêu đề | Chương-đoạn nguồn và đoạn | Chức năng kịch tính | Mục tiêu/trở ngại/lựa chọn/kết quả | Cảm xúc cốt lõi và phụ trợ | Thông tin mới/chênh lệch biết chuyện | Cách xử lý chương | Kỳ vọng cuối tập`. Một chương có thể chia thành nhiều tập, nhưng các đoạn không được lẫn lộn; tổng quan dự án dài vẫn phải đúng N dòng, đồng thời triển khai riêng tập đầu, cuối hồi, cao trào và các tập người dùng chỉ định.
 
 ```text
-作品名 EP001：集标题
-目标时长 / 画幅 / 风格
-剧情梗概：主要冲突、关键转折、情感变化（通常约 200–300 字，随本集复杂度调整）
+Tên tác phẩm EP001: tiêu đề tập
+Thời lượng mục tiêu / tỉ lệ khung / phong cách
+Tóm tắt cốt truyện: xung đột chính, bước ngoặt then chốt, thay đổi tình cảm (thường khoảng 200-300 chữ, điều chỉnh theo độ phức tạp của tập)
 
-1-1 场景名 日/内
-人物：只列本场实际出现的人物
-△与剧情有关的环境和动作，写清行为方式、表情、必要道具状态。
-人物名：台词。
-△对方的反应与随后行动。
-OS（角色）：确有必要的内心独白。
-VO：确有必要的画外说明。
-[硬切/淡入/闪白/闪黑/叠化：仅在叙事需要时注明]
+1-1 Tên bối cảnh NGÀY/NỘI
+Nhân vật: chỉ liệt kê nhân vật thực sự xuất hiện trong cảnh này
+△Môi trường và động tác liên quan đến cốt truyện, viết rõ cách hành xử, biểu cảm, trạng thái đạo cụ cần thiết.
+Tên nhân vật: lời thoại.
+△Phản ứng của đối phương và hành động tiếp theo.
+OS (nhân vật): độc thoại nội tâm thực sự cần thiết.
+VO: lời giải thích ngoài hình thực sự cần thiết.
+[Cắt cứng/fade in/chớp trắng/chớp đen/hòa tan: chỉ ghi chú khi tự sự cần]
 ---
-1-2 下一场景名 夜/外
-……
-本集结束点
+1-2 Tên bối cảnh tiếp theo ĐÊM/NGOẠI
+...
+Điểm kết thúc tập này
 ```
 
-正式剧本只放正文与必要头部，不夹密度评分、节拍分析、模型参数、字数统计或审核报告。这些存入独立创作决策/审核文本节点；标题不因修改附加“v2/定稿”而变成新集。
+Kịch bản chính thức chỉ chứa phần chính văn và phần đầu cần thiết, không kẹp điểm mật độ, phân tích nhịp, tham số mô hình, thống kê số chữ hay báo cáo kiểm duyệt. Những thứ này lưu vào node văn bản quyết định sáng tác/kiểm duyệt độc lập; tiêu đề không vì chỉnh sửa mà thêm "v2/bản chốt" rồi trở thành tập mới.
 
-## 商业短剧的可选量化参考
+## Tham khảo định lượng tùy chọn cho phim ngắn thương mại
 
-以下保留旧版经验供已确认采用商业短剧节奏的项目选择，不覆盖 [类型方法](narrativeGenres.md) 或用户配置：
+Dưới đây giữ lại kinh nghiệm bản cũ để các dự án đã xác nhận chọn dùng nhịp phim ngắn thương mại lựa chọn, không ghi đè [phương pháp thể loại](narrativeGenres.md) hay cấu hình của người dùng:
 
-| 参考 | 原方法与执行方式 |
+| Tham khảo | Phương pháp gốc và cách thực thi |
 |---|---|
-| 台词和篇幅 | 约 150 字/分钟估算台词；短句约 20 字、单次发言约 50 字、紧凑正文约 1000 字以内可作删繁目标。动作与停顿独立估时，不为限字破坏目标时长或必要剧情。 |
-| 秒级节拍 | 3 秒情绪入口、15 秒出现变化、45 秒形成强期待；可以用“前置入口—中段变化—尾部选择”比例迁移。不是所有类型必须每隔固定秒数出冲突。 |
-| 早期结构 | 开篇段先有冲突与人物目标，再加多方压力，最后兑现一轮并提出更大主线问题；旧“前十集”对应长项目约前 10%–15%，短项目不得机械塞十集。 |
-| 付费卡点 | 旧版在约 10%/30%/50%/70%/90%给候选位置；具体位置按已确认发行策略。先给真实兑现，再拉高主线预期，最后留下关键未决选择。 |
-| 卡点手段 | 身份差、感情错位、命运巨变、环境剧变；检查关键瞬间、人物改变、好奇心、高潮强度，爱情项目再看关系阶段。宏大场面不是必需。 |
-| 投放片段 | 确有投放需求时标记可独立理解的约 30 秒片段及其冲突与兑现，不要求每集机械产出一个“爆点”。 |
-| 情绪占比 | 甜宠可参考甜60/微虐30/惊喜10，复仇压抑40/爽50/解气10，重生爽50/期待30/温暖20，家庭共情40/委屈30/和解30；只辅助判断基调，不能拿百分比替代实际剧情。 |
-| 压缩 | 旧版有“压缩比≤40%”但未定义口径；先确认按字数、时长还是事件计量，再登记取舍，不能据未定义比例宣布通过。 |
+| Lời thoại và độ dài | Ước tính lời thoại khoảng 150 chữ/phút; câu ngắn khoảng 20 chữ, mỗi lần phát ngôn khoảng 50 chữ, chính văn gọn khoảng trong 1000 chữ có thể làm mục tiêu cắt giảm. Động tác và ngừng nghỉ ước tính thời gian riêng, không vì giới hạn chữ mà phá vỡ thời lượng mục tiêu hay cốt truyện cần thiết. |
+| Nhịp cấp giây | 3 giây lối vào cảm xúc, 15 giây xuất hiện biến đổi, 45 giây hình thành kỳ vọng mạnh; có thể chuyển đổi theo tỉ lệ "lối vào phía trước - biến đổi đoạn giữa - lựa chọn phần cuối". Không phải mọi thể loại đều phải có xung đột sau mỗi số giây cố định. |
+| Cấu trúc giai đoạn đầu | Đoạn mở đầu trước tiên có xung đột và mục tiêu nhân vật, rồi thêm áp lực nhiều phía, cuối cùng thực hiện một lượt và đặt ra vấn đề tuyến chính lớn hơn; "mười tập đầu" cũ tương ứng khoảng 10%-15% đầu của dự án dài, dự án ngắn không được máy móc nhồi mười tập. |
+| Điểm treo trả phí | Bản cũ đưa ra vị trí ứng viên ở khoảng 10%/30%/50%/70%/90%; vị trí cụ thể theo chiến lược phát hành đã xác nhận. Trước tiên đưa ra sự thực hiện thật, rồi nâng cao kỳ vọng tuyến chính, cuối cùng để lại lựa chọn then chốt chưa quyết. |
+| Thủ pháp điểm treo | Chênh lệch thân phận, lệch pha tình cảm, biến cố số phận, môi trường biến đổi lớn; kiểm tra khoảnh khắc then chốt, thay đổi nhân vật, sự tò mò, cường độ cao trào, dự án tình yêu xem thêm giai đoạn quan hệ. Cảnh hoành tráng không phải bắt buộc. |
+| Đoạn quảng bá | Khi thực sự có nhu cầu quảng bá thì đánh dấu đoạn khoảng 30 giây có thể hiểu độc lập cùng xung đột và sự thực hiện của nó, không yêu cầu mỗi tập máy móc sản xuất một "điểm bùng nổ". |
+| Tỉ trọng cảm xúc | Ngọt sủng có thể tham khảo ngọt 60/ngược nhẹ 30/bất ngờ 10, báo thù đè nén 40/sảng khoái 50/hả giận 10, trọng sinh sảng khoái 50/kỳ vọng 30/ấm áp 20, gia đình đồng cảm 40/uất ức 30/hòa giải 30; chỉ hỗ trợ phán đoán tông, không được dùng tỉ lệ phần trăm thay cho cốt truyện thực tế. |
+| Nén | Bản cũ có "tỉ lệ nén ≤40%" nhưng không định nghĩa cách tính; trước tiên xác nhận tính theo số chữ, thời lượng hay sự kiện, rồi đăng ký chọn lọc, không được dựa vào tỉ lệ chưa định nghĩa để tuyên bố đạt. |
 
-旧版题材节拍选项：甜宠“绑定—拉扯—秘密—破冰—危机—关系确认”；虐恋“伤害—悔悟—修复受阻—有行动的和解”；萌宝“回归—发现关系—解开心结—联手应对—家庭重建”；战神“隐藏/受压—能力或身份兑现—解决核心危机”；重生“前次失败—带着信息重选—承担新后果—完成目标”。原故事不属于这些结构时不套用。
+Các lựa chọn nhịp theo đề tài của bản cũ: ngọt sủng "ràng buộc - giằng co - bí mật - phá băng - nguy cơ - xác nhận quan hệ"; ngược luyến "tổn thương - hối ngộ - hàn gắn bị cản trở - hòa giải có hành động"; manh bảo (em bé đáng yêu) "trở về - phát hiện quan hệ - gỡ nút thắt lòng - chung tay ứng phó - tái thiết gia đình"; chiến thần "ẩn mình/bị áp chế - thực hiện năng lực hoặc thân phận - giải quyết nguy cơ cốt lõi"; trọng sinh "thất bại lần trước - mang thông tin chọn lại - gánh hậu quả mới - hoàn thành mục tiêu". Khi câu chuyện gốc không thuộc các cấu trúc này thì không áp dụng.
 
-## 审核方法与问题分级
+## Phương pháp kiểm duyệt và phân cấp vấn đề
 
-审核前回读本次真实成果及其前置节点，不能仅凭创作摘要自评。审核提出问题与方案，不替用户决定剧情方向；明确的漏字、错号等可按当前授权修正，故事变更遵守确认记录。
+Trước khi kiểm duyệt, đọc lại kết quả thật của lần này và các node tiền đề của nó, không được chỉ dựa vào tóm tắt sáng tác để tự đánh giá. Kiểm duyệt đưa ra vấn đề và phương án, không quyết định hướng cốt truyện thay người dùng; lỗi sót chữ, sai số rõ ràng có thể sửa theo phạm vi ủy quyền hiện tại, thay đổi câu chuyện tuân theo bản ghi xác nhận.
 
-- 骨架：故事核与人物弧贯穿；实际集数等于配置；来源完整有去向；人物动机、幕末转折、信息差与结尾期待成立；反转能对照原文和预埋记录。
-- 策略：每条原则有正向做法与边界；删减与骨架一致；保留人物弧与关键记忆点；世界观渐进；没有暗改用户不许改的设定。
-- 单集：当前集范围准确；上一集状态衔接；动作、台词、时间地点、道具状态可执行；时长合理；类型方法实际落入场景；知识分析未混进正文。
-- 跨阶段：事件事实 → 骨架分配 → 策略取舍 → 剧本实现逐项相容；冲突定位到具体章、集、场、节点，不能用“整体不够好”代替证据。
+- Khung sườn: cốt lõi câu chuyện và cung nhân vật xuyên suốt; số tập thực tế bằng cấu hình; nguồn đầy đủ và có nơi đến; động cơ nhân vật, bước ngoặt cuối hồi, chênh lệch thông tin và kỳ vọng cuối tập đều hợp lý; cú lật có thể đối chiếu với nguyên văn và bản ghi cài sẵn.
+- Chiến lược: mỗi nguyên tắc có cách làm tích cực và ranh giới; cắt giảm nhất quán với khung sườn; giữ cung nhân vật và điểm dễ nhớ then chốt; thế giới quan tiến dần; không âm thầm sửa thiết lập mà người dùng không cho phép sửa.
+- Từng tập: phạm vi tập hiện tại chính xác; nối tiếp trạng thái tập trước; động tác, lời thoại, thời gian địa điểm, trạng thái đạo cụ có thể thực thi; thời lượng hợp lý; phương pháp thể loại thực sự được đưa vào cảnh; phân tích kiến thức không lẫn vào chính văn.
+- Xuyên giai đoạn: sự thật sự kiện → phân bổ khung sườn → chọn lọc chiến lược → hiện thực hóa kịch bản tương thích từng mục; xung đột định vị đến chương, tập, cảnh, node cụ thể, không được dùng "tổng thể chưa đủ tốt" thay cho bằng chứng.
 
-| 等级 | 问题性质 | 处理 |
+| Cấp | Tính chất vấn đề | Xử lý |
 |---|---|---|
-| 严重 | 违背已确认意图、缺失来源范围、因果断裂、无依据改设定、反转推翻已展示事实 | 列出位置、影响与可选修法，等待用户决定 |
-| 中等 | 人物变化铺垫不足、信息释放不清、类型节奏失衡、时长不合配置 | 给可执行的局部调整方案 |
-| 轻微 | 冗余、口吻不一致、少量格式和表达问题 | 同类合并，按授权范围处理 |
+| Nghiêm trọng | Trái với ý định đã xác nhận, thiếu phạm vi nguồn, đứt gãy nhân quả, sửa thiết lập vô căn cứ, cú lật lật đổ sự thật đã trình bày | Liệt kê vị trí, ảnh hưởng và cách sửa có thể chọn, chờ người dùng quyết định |
+| Trung bình | Dẫn dắt thay đổi nhân vật chưa đủ, giải phóng thông tin không rõ, nhịp thể loại mất cân bằng, thời lượng không khớp cấu hình | Đưa ra phương án điều chỉnh cục bộ có thể thực thi |
+| Nhẹ | Thừa thãi, giọng điệu không nhất quán, một số vấn đề định dạng và diễn đạt | Gộp cùng loại, xử lý theo phạm vi ủy quyền |
 
-报告模板：`对象与节点｜一句话总评｜严重度｜具体位置与证据｜问题｜方案｜需用户决定`。只列实际问题，已通过项不用逐条复述。可沿用 A/B/C/D：无严重且中等≤2为A、无严重且中等≤5为B、1–2严重为C、≥3严重为D；零严重但中等更多时按影响说明是否需较大修改，不机械遗漏。评级不是用户确认。
+Mẫu báo cáo: `Đối tượng và node | Đánh giá tổng thể một câu | Mức nghiêm trọng | Vị trí cụ thể và bằng chứng | Vấn đề | Phương án | Cần người dùng quyết định`. Chỉ liệt kê vấn đề thực tế, các mục đã đạt không cần thuật lại từng mục. Có thể tiếp tục dùng A/B/C/D: không có nghiêm trọng và trung bình ≤2 là A, không có nghiêm trọng và trung bình ≤5 là B, 1-2 nghiêm trọng là C, ≥3 nghiêm trọng là D; không có nghiêm trọng nhưng nhiều trung bình hơn thì theo ảnh hưởng nói rõ có cần sửa lớn không, không máy móc bỏ sót. Xếp hạng không phải là xác nhận của người dùng.

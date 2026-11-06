@@ -1,144 +1,144 @@
-# 用色彩与光线组织观看
+# Dùng màu sắc và ánh sáng để tổ chức việc xem
 
-当用户要求风格探索、资产受光不协调、片段观感漂移，或重要动作与信息难以看清时使用。
-已有已确认风格能完成当前任务时直接继承，不为每场补一套调色表，不因情绪变化自动更换色盘。
-基础形制与身份依据见[视觉设计](visualDesign.md)；结论用于非 Seedance 阶段的资产/视觉设计。若主 `SKILL.md` PART A 的 A4 明确调用本方法，只返回必要的色彩与用光设计提案，不建立独立分镜或提示词规则。
-本方法提供设计和提示词控制，文字数值不等于已经制作、加载或验证了可执行 LUT 文件。
+Dùng khi người dùng yêu cầu khám phá phong cách, tài sản nhận sáng không hài hòa, cảm quan các đoạn bị trôi, hoặc hành động và thông tin quan trọng khó nhìn rõ.
+Khi phong cách đã xác nhận đủ để hoàn thành nhiệm vụ hiện tại thì kế thừa trực tiếp, không bổ sung một bảng chỉnh màu cho từng cảnh, không tự động thay bảng màu vì cảm xúc thay đổi.
+Căn cứ về hình thể cơ bản và danh tính xem [Thiết kế thị giác](visualDesign.md); kết luận dùng cho thiết kế tài sản/thị giác ở các giai đoạn không phải Seedance. Nếu A4 trong PART A của `SKILL.md` chính gọi rõ phương pháp này, chỉ trả về đề xuất thiết kế màu sắc và dùng sáng cần thiết, không thiết lập quy tắc phân cảnh hay prompt riêng.
+Phương pháp này cung cấp thiết kế và kiểm soát bằng prompt; giá trị số bằng chữ không có nghĩa là đã làm, đã nạp hoặc đã kiểm chứng một tệp LUT thực thi được.
 
-## 1. 先写观众此刻需要看见什么
+## 1. Trước tiên viết điều người xem cần thấy lúc này
 
-适用：只得到“电影感”“压抑”“温暖”等方向，尚未知道应如何落到画面。
-把抽象情绪改写为观看任务，例如“先看见她攥紧信封，再意识到门后还有人”。
-用剧情事实限定可变化的范围：时间、天气、开灯事件、人物识别色和空间结构不能被风格词改写。
-随后只挑最有作用的手段：主体与背景的明度分离、局部色彩差异、暗部信息量或光线覆盖范围。
-判断是强化剧情、用平静画面反衬冲突、暂不评价，还是表现角色主观感受；不能只按类型查配色。
-输出去向：场景或片段的一句视觉目标，以及为完成该目标选择的光色控制。
-误用：一看见争吵就改成红光，一看见悲伤就染蓝；同场每句台词随情绪换一次滤镜。
+Áp dụng: chỉ nhận được các hướng như "chất điện ảnh", "ngột ngạt", "ấm áp", chưa biết nên đưa vào hình ảnh thế nào.
+Viết lại cảm xúc trừu tượng thành nhiệm vụ xem, ví dụ "trước tiên thấy cô ấy nắm chặt phong bì, rồi mới nhận ra sau cửa còn có người".
+Dùng sự thật cốt truyện để giới hạn phạm vi có thể thay đổi: thời gian, thời tiết, sự kiện bật đèn, màu nhận diện nhân vật và cấu trúc không gian không được bị từ khóa phong cách viết lại.
+Sau đó chỉ chọn phương tiện có tác dụng nhất: tách độ sáng giữa chủ thể và nền, khác biệt màu cục bộ, lượng thông tin vùng tối hoặc phạm vi phủ sáng.
+Phán đoán là để tăng cường cốt truyện, dùng hình ảnh bình lặng để làm nổi bật xung đột qua tương phản, tạm không đánh giá, hay thể hiện cảm nhận chủ quan của nhân vật; không chỉ tra bảng màu theo thể loại.
+Đầu ra: một câu mục tiêu thị giác cho bối cảnh hoặc đoạn, cùng cách kiểm soát ánh sáng-màu được chọn để đạt mục tiêu đó.
+Dùng sai: hễ thấy cãi nhau là đổi sang ánh đỏ, hễ thấy buồn là nhuộm xanh; trong cùng một cảnh mỗi câu thoại lại đổi một bộ lọc theo cảm xúc.
 
-**教学例**：一家人仍在明亮厨房吃饭，但桌下有人把退学通知藏进包里。
-可以维持原有暖色日常基底，让纸张与包口在关键镜头中可辨；不必突然改成阴冷悬疑空间。
-冲突来自观众知道而其他人不知道，稳定光色本身即可形成反衬。
+**Ví dụ minh họa**: Cả nhà vẫn ăn cơm trong căn bếp sáng sủa, nhưng dưới gầm bàn có người giấu giấy báo thôi học vào túi.
+Có thể giữ nền thường nhật tông ấm vốn có, để tờ giấy và miệng túi nhận ra được trong shot then chốt; không cần đột ngột đổi thành không gian hồi hộp lạnh lẽo.
+Xung đột đến từ việc người xem biết còn những người khác không biết; bản thân ánh sáng-màu ổn định đã tạo được sự tương phản.
 
-## 2. 把物体本色、环境受光和后期观感分开
+## 2. Tách màu bản thể của vật, ánh sáng môi trường và cảm quan hậu kỳ
 
-适用：参考图的颜色被误当成材质本色，或调色要求开始改变服装、肤色、墙体与物件材质。
+Áp dụng: màu của ảnh tham chiếu bị nhầm thành màu bản thể của chất liệu, hoặc yêu cầu chỉnh màu bắt đầu thay đổi trang phục, màu da, tường và chất liệu đồ vật.
 
-| 层次 | 决定什么 | 应写在哪里 |
+| Tầng | Quyết định điều gì | Nên viết ở đâu |
 | --- | --- | --- |
-| 资产本色与表面 | 衣服、毛发、墙体和道具的固有配色、纹理、粗糙或透光特征 | 资产锚点及必要保持项 |
-| 环境光与材质响应 | 光从哪里来、照到哪里、明暗关系，以及同一表面如何反射或透光 | 场景状态和片段空间与光线 |
-| 最终色彩处理 | 白平衡目标、综合色偏、暗部与亮部关系、饱和度、对比度及质感 | 片段风格段，必要时附共享基底 |
+| Màu bản thể và bề mặt của tài sản | Phối màu cố hữu, kết cấu, đặc tính thô ráp hoặc xuyên sáng của quần áo, lông tóc, tường và đạo cụ | Điểm neo tài sản và các mục cần giữ thiết yếu |
+| Ánh sáng môi trường và phản ứng chất liệu | Ánh sáng từ đâu tới, chiếu vào đâu, quan hệ sáng tối, và cùng một bề mặt phản xạ hay xuyên sáng thế nào | Trạng thái bối cảnh và không gian-ánh sáng của đoạn |
+| Xử lý màu cuối cùng | Mục tiêu cân bằng trắng, ám màu tổng thể, quan hệ vùng tối và vùng sáng, độ bão hòa, độ tương phản và chất cảm | Đoạn phong cách của clip, khi cần kèm nền chung |
 
-先确定资产层，再读取当前时段和真实光源关系，最后决定综合色彩处理。
-例如白衬衣在暖灯下可以显暖，但资产仍是白色；不能把每个夜景参考中的蓝色都写成衣物本色。
-后期冷暖处理不能凭空创造新窗口、移动灯具或改变开关事件；需要这些变化时回到剧情和空间设计。
-反过来，实际灯光变化也不必把所有衣物、肤色和道具都染成同一种颜色。
-输出时保留这三层的职责，正式片段中合成一套相容描述，不交两份互相竞争的灯光与调色指令。
+Xác định tầng tài sản trước, rồi đọc khung thời gian hiện tại và quan hệ nguồn sáng thực, cuối cùng mới quyết định xử lý màu tổng thể.
+Ví dụ áo sơ mi trắng dưới đèn ấm có thể trông ấm, nhưng tài sản vẫn là màu trắng; không thể viết màu xanh trong mọi tham chiếu cảnh đêm thành màu bản thể của quần áo.
+Xử lý nóng lạnh hậu kỳ không thể tự nhiên tạo ra cửa sổ mới, di chuyển đèn hay thay đổi sự kiện bật tắt; khi cần những thay đổi đó thì quay lại thiết kế cốt truyện và không gian.
+Ngược lại, thay đổi đèn thực tế cũng không cần nhuộm toàn bộ quần áo, màu da và đạo cụ thành cùng một màu.
+Khi xuất, giữ trách nhiệm của ba tầng này; trong đoạn chính thức hợp thành một bộ mô tả tương thích, không đưa hai chỉ lệnh ánh sáng và chỉnh màu cạnh tranh nhau.
 
-## 3. 从画面问题选调色手段
+## 3. Chọn phương tiện chỉnh màu từ vấn đề của hình ảnh
 
-适用：风格词无法指导制作，或几段结果放在一起出现明显差异。先指出问题发生在哪个对象、区域和镜头，再选择改动；没有问题的部分继承已有设计。
+Áp dụng: từ khóa phong cách không chỉ đạo được sản xuất, hoặc đặt vài đoạn kết quả cạnh nhau thấy khác biệt rõ. Trước tiên chỉ ra vấn đề xảy ra ở đối tượng, vùng và shot nào, rồi mới chọn thay đổi; phần không có vấn đề thì kế thừa thiết kế đã có.
 
-**必要信息看不清时，先处理明暗。** 暂时忽略色相，判断手、脸和物件是否与背景混在同一明度。可调整局部对比、暗部密度或高光过渡；不是一律提高全画面对比。阴影除了明暗还可能带色，须分别说明：例如保留柜底暗度，但减弱其中影响黄铜辨认的色偏。黑位抬起过多会冲淡轮廓，亮部压缩过度也可能削弱灯的发光感。
+**Khi thông tin cần thiết không nhìn rõ, xử lý sáng tối trước.** Tạm bỏ qua sắc độ, phán đoán tay, mặt và đồ vật có bị lẫn cùng độ sáng với nền không. Có thể điều chỉnh tương phản cục bộ, mật độ vùng tối hoặc chuyển tiếp vùng sáng; không phải lúc nào cũng tăng tương phản toàn khung. Bóng tối ngoài sáng tối còn có thể mang màu, phải nói riêng: ví dụ giữ độ tối của gầm tủ, nhưng giảm ám màu trong đó làm ảnh hưởng việc nhận ra đồng thau. Nâng điểm đen quá nhiều sẽ làm nhạt đường viền, nén vùng sáng quá mức cũng có thể làm yếu cảm giác phát sáng của đèn.
 
-**能看清却看错重点时，处理颜色的竞争。** 找出先吸引注意的色块是否符合本镜目标。可以收敛背景饱和度，或让少量已有颜色与主色形成区别；也可以通过构图解决，而不改色。主色与辅色描述的是画面占比、位置和对照关系，不是为角色重新指定衣服颜色。只调整一个区域时要写出范围，避免把肤色和关键识别色一起抽走。
+**Khi nhìn rõ nhưng nhìn sai trọng điểm, xử lý sự cạnh tranh của màu.** Tìm xem mảng màu thu hút chú ý đầu tiên có đúng mục tiêu của shot này không. Có thể thu hẹp độ bão hòa nền, hoặc để một ít màu sẵn có tạo khác biệt với màu chủ; cũng có thể giải quyết bằng bố cục mà không đổi màu. Màu chủ và màu phụ mô tả tỉ lệ chiếm khung, vị trí và quan hệ đối chiếu trong hình, không phải chỉ định lại màu quần áo cho nhân vật. Khi chỉ chỉnh một vùng phải viết rõ phạm vi, tránh rút luôn màu da và màu nhận diện then chốt.
 
-**单镜正常、跨镜变色时，检查共同参照。** 找同一材质在相近光照条件下的表现，区分实际光源变化与整体白平衡漂移。冷暖调整先决定中性物体应如何呈现，再判断是否保留某种综合色偏；不要把灯具色温直接写成后期白平衡。若场景事实没有变化，不能靠每镜另换主色来掩盖不一致。
+**Khi từng shot bình thường nhưng đổi màu giữa các shot, kiểm tra tham chiếu chung.** Tìm biểu hiện của cùng một chất liệu dưới điều kiện chiếu sáng gần nhau, phân biệt thay đổi nguồn sáng thực với trôi cân bằng trắng tổng thể. Chỉnh nóng lạnh thì trước tiên quyết định vật trung tính nên trông thế nào, rồi mới phán đoán có giữ một ám màu tổng thể nào đó không; không viết thẳng nhiệt độ màu của đèn thành cân bằng trắng hậu kỳ. Nếu sự thật của bối cảnh không đổi, không được dùng việc đổi màu chủ cho từng shot để che sự không nhất quán.
 
-完成一次选择后，用一句能核验的目标收束，例如“暗处工具边界可辨，柜面暖亮区保留，背景红色包装降低存在感”。对比度、饱和度、阴影颜色、主辅色和冷暖仍可组合使用，但每项都应对应这个目标，而不是凑齐固定参数表。
+Sau khi hoàn tất một lựa chọn, khép lại bằng một câu mục tiêu kiểm chứng được, ví dụ "mép dụng cụ ở chỗ tối nhận ra được, vùng sáng ấm của mặt tủ được giữ, bao bì đỏ ở nền giảm sự hiện diện". Độ tương phản, độ bão hòa, màu bóng, màu chủ-phụ và nóng lạnh vẫn có thể kết hợp, nhưng mỗi mục phải tương ứng với mục tiêu này, chứ không phải gom đủ một bảng tham số cố định.
 
-质感需要时再加中间调厚度、颗粒或柔化；先确认它们不会盖住动作、文字与材质差异。结论进入共享风格基底或本段风格约束，具体数值按下一节说明口径。
+Khi cần chất cảm mới thêm độ dày tông trung, hạt hoặc làm mềm; trước tiên xác nhận chúng không che mất hành động, chữ và khác biệt chất liệu. Kết luận đi vào nền phong cách chung hoặc ràng buộc phong cách của đoạn này; giá trị cụ thể theo cách nói ở mục tiếp theo.
 
-## 4. 数值只在含义明确时使用
+## 4. Chỉ dùng giá trị số khi ý nghĩa rõ ràng
 
-适用：用户提供了参数，或后期沟通确实需要量化。未指定软件时，优先描述相对关系和可见效果。
-写数值须带上作用对象、单位或标度、参照基准；“对比度 70”缺少定义，无法跨软件复用。
-色相或色值可作颜色参考，但需说明是阴影色偏、资产色还是光色，不能要求全画面填满该色。
-光源色温、相机或调色白平衡、最终视觉冷暖是不同概念，不能仅凭数值大小互相推断。
-二维平涂若没有真实灯光或相机模型，直接写视觉偏冷暖，不强行为每个色块编 Kelvin。
-相对调整也要说相对哪一版；没有共同基准时，“背景比主体更克制”常比任意百分比更可检查。
-模型提示词中的参数是目标描述，不能据此宣称实际输出已精确达标或已经形成技术 LUT。
-误用：从风格库复制一整行数值，换个风格名后当作当前模型的可靠参数配置。
+Áp dụng: người dùng cung cấp tham số, hoặc trao đổi hậu kỳ thực sự cần định lượng. Khi chưa chỉ định phần mềm, ưu tiên mô tả quan hệ tương đối và hiệu quả nhìn thấy được.
+Viết giá trị số phải kèm đối tượng tác động, đơn vị hoặc thang đo, mốc tham chiếu; "độ tương phản 70" thiếu định nghĩa, không thể dùng lại giữa các phần mềm.
+Sắc độ hoặc mã màu có thể làm tham chiếu màu, nhưng cần nói rõ là ám màu vùng tối, màu tài sản hay màu ánh sáng, không thể yêu cầu cả khung phủ đầy màu đó.
+Nhiệt độ màu nguồn sáng, cân bằng trắng của máy quay hoặc chỉnh màu, và cảm giác nóng lạnh thị giác cuối cùng là các khái niệm khác nhau, không thể chỉ dựa vào độ lớn giá trị mà suy ra lẫn nhau.
+Đồ họa 2D phẳng nếu không có mô hình đèn hay máy quay thực thì viết thẳng cảm giác thị giác hơi lạnh hay ấm, không cố gán Kelvin cho từng mảng màu.
+Điều chỉnh tương đối cũng phải nói tương đối so với phiên bản nào; khi không có mốc chung, "nền tiết chế hơn chủ thể" thường dễ kiểm tra hơn một tỉ lệ phần trăm tùy ý.
+Tham số trong prompt mô hình là mô tả mục tiêu, không thể dựa vào đó tuyên bố đầu ra thực tế đã đạt chính xác hoặc đã thành LUT kỹ thuật.
+Dùng sai: sao chép nguyên một dòng giá trị từ thư viện phong cách, đổi tên phong cách rồi coi là cấu hình tham số đáng tin cho mô hình hiện tại.
 
-## 5. 用光先有动机，再有关注层次
+## 5. Dùng sáng phải có động cơ trước, rồi mới đến tầng bậc chú ý
 
-适用：剧情发生光源事件、空间光向需要连续，或明暗安排影响表演和线索阅读。
-普通风格讨论只需说明明暗观感；不为显得专业强行填写灯位、照射角度或灯具清单。
+Áp dụng: cốt truyện có sự kiện nguồn sáng, hướng sáng trong không gian cần liên tục, hoặc sắp xếp sáng tối ảnh hưởng đến diễn xuất và việc đọc manh mối.
+Thảo luận phong cách thông thường chỉ cần nói rõ cảm quan sáng tối; không cố điền vị trí đèn, góc chiếu hay danh sách đèn chỉ để tỏ ra chuyên nghiệp.
 
-1. **找依据**：读取已有窗、门、灯、火或发光物及开关状态；画外光源可合理推断时标为设计提案。
-2. **定观看重点**：当前需要辨识的是脸、手、动作轮廓、出口还是物件；并非永远让脸最亮。
-3. **组织明暗**：决定主要亮区、必要暗部与背景层次，让关注点有区别，允许无关细节退后。
-4. **选软硬**：需要明确投影或强形体分割时用较硬边缘；需要柔和过渡时用较软边缘。
-5. **查空间一致**：方向用窗侧、门外、桌灯附近等实际锚点说明，换机位不把光源移到另一面。
-6. **查行动范围**：人物从明处走入暗处时受光应随位置变化；开门、遮挡、关灯有发生顺序与终态。
+1. **Tìm căn cứ**: đọc cửa sổ, cửa ra vào, đèn, lửa hoặc vật phát sáng đã có và trạng thái bật tắt; khi có thể suy luận hợp lý nguồn sáng ngoài khung thì đánh dấu là đề xuất thiết kế.
+2. **Định trọng điểm xem**: thứ cần nhận ra lúc này là mặt, tay, đường viền hành động, lối ra hay đồ vật; không phải lúc nào mặt cũng sáng nhất.
+3. **Tổ chức sáng tối**: quyết định vùng sáng chính, vùng tối cần thiết và tầng bậc nền, để điểm chú ý có khác biệt, cho phép chi tiết không liên quan lùi lại.
+4. **Chọn cứng mềm**: khi cần bóng đổ rõ ràng hoặc phân chia hình khối mạnh thì dùng biên cứng hơn; khi cần chuyển tiếp mềm mại thì dùng biên mềm hơn.
+5. **Kiểm tra nhất quán không gian**: nói hướng bằng điểm neo thực như phía cửa sổ, ngoài cửa, gần đèn bàn; khi đổi vị trí máy không dời nguồn sáng sang phía khác.
+6. **Kiểm tra phạm vi hành động**: khi nhân vật đi từ chỗ sáng vào chỗ tối, nhận sáng phải thay đổi theo vị trí; mở cửa, che chắn, tắt đèn có thứ tự xảy ra và trạng thái cuối.
 
-主光负责主要塑形，环境或反弹光可保留暗部信息；是否增加分离手段由可读性决定，不默认三点布光。
-深色人物未必需要一圈发光边缘，也可通过背景明度、姿态和轮廓留白区分。
-低照度不等于后期一律压黑；低对比也不等于所有区域一样亮，仍要有观看重点。
-光线软硬看阴影过渡，不能只用冷暖或亮度代替；不把“柔光”当作快乐的必然配方。
-输出去向：必要光源关系与变化写入片段起态、动作和终态；综合色彩写入同份提示词的风格段。
+Đèn chính chịu trách nhiệm tạo khối chính, ánh sáng môi trường hoặc phản xạ có thể giữ thông tin vùng tối; có thêm phương tiện tách lớp hay không do khả năng đọc quyết định, không mặc định chiếu sáng ba điểm.
+Nhân vật màu tối chưa chắc cần một vòng viền phát sáng, cũng có thể phân biệt qua độ sáng nền, tư thế và khoảng trống quanh đường viền.
+Độ rọi thấp không có nghĩa hậu kỳ cứ đè tối hết; tương phản thấp cũng không có nghĩa mọi vùng sáng như nhau, vẫn phải có trọng điểm xem.
+Cứng mềm của ánh sáng xem ở chuyển tiếp của bóng, không thể chỉ dùng nóng lạnh hay độ sáng thay thế; không coi "ánh sáng mềm" là công thức tất yếu cho niềm vui.
+Đầu ra: quan hệ và thay đổi nguồn sáng cần thiết viết vào trạng thái đầu, hành động và trạng thái cuối của đoạn; màu sắc tổng thể viết vào đoạn phong cách của cùng prompt.
 
-**教学例**：角色关掉床头灯后，剧本仍要求看见他把钥匙放入抽屉。
-先检查已确认空间是否有门缝光等依据，再决定动作发生在关灯前还是现有微光中；不能新增月亮或窗户救场。
-若剧情与可见性确实冲突，提出受影响的具体调整，不能在生成提示词里悄悄改事件顺序。
+**Ví dụ minh họa**: Nhân vật tắt đèn đầu giường xong, kịch bản vẫn yêu cầu thấy anh ta bỏ chìa khóa vào ngăn kéo.
+Trước tiên kiểm tra không gian đã xác nhận có căn cứ như ánh sáng khe cửa không, rồi mới quyết định hành động xảy ra trước khi tắt đèn hay trong ánh sáng yếu sẵn có; không được thêm mặt trăng hay cửa sổ để cứu vãn.
+Nếu cốt truyện và khả năng nhìn thấy thật sự xung đột, đề xuất điều chỉnh cụ thể bị ảnh hưởng, không được lặng lẽ đổi thứ tự sự kiện trong prompt tạo.
 
-## 6. 按媒介换控制对象
+## 6. Đổi đối tượng kiểm soát theo chất liệu thể hiện
 
-相同的“主体清晰、暗部稳定”在不同媒介里需要不同写法；先沿用用户确定的媒介与现有资产。
+Cùng một yêu cầu "chủ thể rõ ràng, vùng tối ổn định" cần cách viết khác nhau ở các chất liệu thể hiện khác nhau; trước tiên tiếp tục dùng chất liệu thể hiện và tài sản hiện có mà người dùng đã xác định.
 
-| 媒介 | 优先控制 | 需要避免的误用 |
+| Chất liệu thể hiện | Ưu tiên kiểm soát | Dùng sai cần tránh |
 | --- | --- | --- |
-| 二维平涂或赛璐璐 | 角色主色、线稿、阴影色块形状与边界、主体和背景的明度层级 | 默认加真实皮肤散射、复杂反射和随机渐变，把既定画风做成立体塑料 |
-| 二维水彩或绘画 | 色块融合、边缘软硬、纸面或笔触的一致性、关键轮廓清晰程度 | 把统一的硬黑线和硬边阴影当作所有二维的必要项 |
-| 风格化或写实三维 | 体积、光源关系、反弹色、表面粗糙度与高光，必要的透光响应 | 给所有材质相同光泽，或无依据加入雾、景深、轮廓光 |
-| 真人或写实影像 | 曝光关系、可信光源、肤色差异、服装识别、材质层次与亮部过渡 | 全面磨平皮肤、统一肤色、用重滤镜掩盖照明或曝光矛盾 |
+| 2D tô phẳng hoặc cel | Màu chủ nhân vật, nét line, hình dạng và biên của mảng bóng, tầng bậc độ sáng giữa chủ thể và nền | Mặc định thêm tán xạ da thật, phản xạ phức tạp và chuyển sắc ngẫu nhiên, biến nét vẽ đã định thành nhựa khối nổi |
+| 2D màu nước hoặc hội họa | Sự hòa trộn mảng màu, cứng mềm của biên, tính nhất quán của mặt giấy hoặc nét cọ, độ rõ của đường viền then chốt | Coi nét đen cứng đồng nhất và bóng biên cứng là thứ bắt buộc cho mọi 2D |
+| 3D cách điệu hoặc tả thực | Khối, quan hệ nguồn sáng, màu phản xạ, độ nhám bề mặt và điểm sáng, phản ứng xuyên sáng cần thiết | Cho mọi chất liệu cùng một độ bóng, hoặc thêm sương, độ sâu trường ảnh, đèn viền không có căn cứ |
+| Người thật hoặc hình ảnh tả thực | Quan hệ phơi sáng, nguồn sáng đáng tin, khác biệt màu da, nhận diện trang phục, tầng bậc chất liệu và chuyển tiếp vùng sáng | Làm mịn toàn bộ da, đồng nhất màu da, dùng bộ lọc nặng che mâu thuẫn chiếu sáng hoặc phơi sáng |
 
-二维先检查缩小画面后色块还能否区分；线稿可黑、彩色或弱化，依据既定风格选择。
-阴影色块的面积与边缘应跨镜稳定，不能每次随机加渐变；气氛色影响程度仍要保护识别。
-背景可以降低饱和度或细节，也可以保留明亮背景而用轮廓和明度分离，不把背景降低固定百分比当公式。
-三维先看材质差异：哑光布与金属不应出现相同高光，透明物件也不是只把不透明物件变浅。
-皮肤、蜡、薄叶等需要时才描述透光或内部散射，金属不用这一套；不以强透光表现一切“高级材质”。
-体积雾、景深与辉光只在有依据且不遮住信息时采用，不能用它们替代空间结构和表演。
-真人方向保护的是既定人物及其肤色差异，不把所有人物推成同一种粉橙色。
-输出去向：将媒介控制写入共享风格基底；当前段只补本次必要变化，避免各段混用互相排斥的材质语言。
+Với 2D, trước tiên kiểm tra khi thu nhỏ khung hình các mảng màu còn phân biệt được không; nét line có thể đen, có màu hoặc làm nhạt, chọn theo phong cách đã định.
+Diện tích và biên của mảng bóng phải ổn định giữa các shot, không được mỗi lần thêm chuyển sắc ngẫu nhiên; mức ảnh hưởng của màu bầu không khí vẫn phải bảo vệ nhận diện.
+Nền có thể giảm độ bão hòa hoặc chi tiết, cũng có thể giữ nền sáng và tách bằng đường viền và độ sáng, không coi việc giảm nền một tỉ lệ phần trăm cố định là công thức.
+Với 3D, trước tiên xem khác biệt chất liệu: vải mờ và kim loại không nên có điểm sáng giống nhau, vật trong suốt cũng không chỉ là làm nhạt vật không trong suốt.
+Da, sáp, lá mỏng v.v. chỉ khi cần mới mô tả xuyên sáng hoặc tán xạ bên trong, kim loại không dùng bộ này; không dùng xuyên sáng mạnh để thể hiện mọi "chất liệu cao cấp".
+Sương khối, độ sâu trường ảnh và glow chỉ dùng khi có căn cứ và không che thông tin, không thể dùng chúng thay thế cấu trúc không gian và diễn xuất.
+Hướng người thật bảo vệ nhân vật đã định và khác biệt màu da của họ, không đẩy mọi nhân vật về cùng một sắc hồng cam.
+Đầu ra: viết kiểm soát chất liệu thể hiện vào nền phong cách chung; đoạn hiện tại chỉ bổ sung thay đổi cần thiết lần này, tránh các đoạn trộn lẫn ngôn ngữ chất liệu bài trừ nhau.
 
-## 7. 用少数风格关系选择方案
+## 7. Chọn phương án bằng ít quan hệ phong cách
 
-适用：用户尚未定调，需要给出有差异、可比较的候选。优先提出两三个方向，不搬整套风格库。
-每个候选都说明它让观众怎样观看、改变哪些控制、保护什么，而不是只报电影、品牌或滤镜名称。
+Áp dụng: người dùng chưa định tông, cần đưa ra các ứng viên có khác biệt, so sánh được. Ưu tiên đề xuất hai ba hướng, không bê nguyên thư viện phong cách.
+Mỗi ứng viên đều nói rõ nó khiến người xem xem thế nào, thay đổi những kiểm soát nào, bảo vệ điều gì, chứ không chỉ báo tên phim, thương hiệu hay bộ lọc.
 
-| 候选关系 | 适用判断 | 落地与代价 |
+| Quan hệ ứng viên | Phán đoán áp dụng | Cách thực hiện và cái giá |
 | --- | --- | --- |
-| 克制的自然层次 | 重点是行为可信和环境信息，画面不应抢戏 | 收敛综合色偏，保留材质和局部差异；需要靠构图与动作组织重点 |
-| 柔和的亮部与中间调 | 希望观看轻盈或平静，同时允许叙事反衬 | 减弱刺眼高光和过硬反差；仍需保留关键轮廓，不能整体泛白 |
-| 有限的冷暖分离 | 需要把主体或特定区域从环境中辨认出来 | 在已有光色或综合色相上形成差异；不能把每个夜景都做成青橙 |
-| 少量亮区与浓密暗部 | 信息隐藏、揭示顺序或强轮廓承担叙事 | 明确哪些信息允许被遮蔽、何时显露；不能误吞必须看见的动作 |
+| Tầng bậc tự nhiên tiết chế | Trọng điểm là hành vi đáng tin và thông tin môi trường, hình ảnh không nên lấn diễn | Thu hẹp ám màu tổng thể, giữ chất liệu và khác biệt cục bộ; cần dựa vào bố cục và hành động để tổ chức trọng điểm |
+| Vùng sáng và tông trung mềm mại | Muốn việc xem nhẹ nhàng hoặc bình lặng, đồng thời cho phép tương phản tự sự | Giảm điểm sáng chói mắt và chênh lệch quá cứng; vẫn phải giữ đường viền then chốt, không được trắng bệch toàn bộ |
+| Tách nóng lạnh có giới hạn | Cần nhận ra chủ thể hoặc vùng cụ thể khỏi môi trường | Tạo khác biệt trên màu ánh sáng sẵn có hoặc sắc độ tổng thể; không được làm mọi cảnh đêm thành teal-orange |
+| Ít vùng sáng và vùng tối đậm | Che giấu thông tin, thứ tự hé lộ hoặc đường viền mạnh gánh vác tự sự | Nói rõ thông tin nào được phép bị che, khi nào lộ ra; không được nuốt nhầm hành động bắt buộc phải thấy |
 
-选定一种主要关系后再加少量质感，不同时叠上褪色、重颗粒、强辉光、高锐化等所有效果。
-风格名只能帮助沟通方向，真正用于执行的是明暗、色彩分离、材质和可见结果。
-同一种关系可用于相反情绪；暖亮画面可以承载不安，冷色空间也可以容纳亲近。
-输出去向：用户采用的简洁风格基底及允许适配范围；未采用候选不混入正式提示词。
+Chọn một quan hệ chính rồi mới thêm ít chất cảm, không đồng thời chồng mọi hiệu ứng như phai màu, hạt nặng, glow mạnh, làm sắc cao.
+Tên phong cách chỉ giúp trao đổi hướng đi, thứ thực sự dùng để thực thi là sáng tối, tách màu, chất liệu và kết quả nhìn thấy được.
+Cùng một quan hệ có thể dùng cho cảm xúc ngược nhau; hình ảnh sáng ấm có thể chở sự bất an, không gian tông lạnh cũng có thể chứa sự thân mật.
+Đầu ra: nền phong cách ngắn gọn mà người dùng chọn dùng và phạm vi thích ứng cho phép; ứng viên không được chọn dùng không trộn vào prompt chính thức.
 
-## 8. 让场内稳定、场间有依据地变化
+## 8. Ổn định trong cảnh, thay đổi có căn cứ giữa các cảnh
 
-适用：多段生成、同场换机位、日夜转换或剧情存在主观化视觉变化。
-先固定共同基底：媒介质感、综合色彩关系、明暗范围、资产保护；再按实际日夜和内外景建立必要适配。
-同地点、同时间状态继承同一基底，子区域和反打镜头不另起风格。
-跨场统一的是关系与处理方式，不是所有场同一白平衡、亮度或阴影颜色。
-确需变化时写“触发 → 起态 → 可见过程 → 终态 → 影响范围”，区分现实光源事件与主观化表达。
-重大主观变色作为具体设计提案确认，不借“有意断裂”跳过叙事依据；不凭风格需要新增剪辑转场。
-相邻生成片段从真实已采用结果核对亮度、冷暖、阴影与光源状态，不能只比较计划中的参数。
-输出去向：片段起止状态与必要共享约束；只有当前受影响的段需要调整。
+Áp dụng: tạo nhiều đoạn, đổi vị trí máy trong cùng cảnh, chuyển ngày đêm hoặc cốt truyện có thay đổi thị giác mang tính chủ quan.
+Trước tiên cố định nền chung: chất cảm của chất liệu thể hiện, quan hệ màu tổng thể, dải sáng tối, bảo vệ tài sản; rồi theo ngày đêm và nội/ngoại cảnh thực tế thiết lập các thích ứng cần thiết.
+Cùng địa điểm, cùng trạng thái thời gian kế thừa cùng một nền, vùng con và shot đối đáp không mở phong cách mới.
+Thống nhất giữa các cảnh là quan hệ và cách xử lý, không phải mọi cảnh cùng cân bằng trắng, độ sáng hay màu bóng.
+Khi thật sự cần thay đổi thì viết "kích hoạt → trạng thái đầu → quá trình nhìn thấy được → trạng thái cuối → phạm vi ảnh hưởng", phân biệt sự kiện nguồn sáng thực với biểu đạt chủ quan.
+Đổi màu chủ quan lớn được xác nhận như một đề xuất thiết kế cụ thể, không mượn "cố ý đứt gãy" để bỏ qua căn cứ tự sự; không vì nhu cầu phong cách mà thêm chuyển cảnh dựng phim.
+Các đoạn tạo liền kề đối chiếu độ sáng, nóng lạnh, bóng và trạng thái nguồn sáng từ kết quả thực sự đã chọn dùng, không thể chỉ so tham số trong kế hoạch.
+Đầu ra: trạng thái đầu cuối của đoạn và ràng buộc chung cần thiết; chỉ đoạn hiện đang bị ảnh hưởng mới cần điều chỉnh.
 
-**教学例**：同一走廊被拆成两段，第一段角色走到红色应急灯下，第二段继续开门。
-第二段起态保留此处已有红光影响和身体位置；不能重新套走廊入口的中性照明，也不让门本色变红。
-若随后应急灯熄灭，注明熄灭事件及剩余光源；光源变化与后期基底如何保留分别说明。
+**Ví dụ minh họa**: Cùng một hành lang được tách thành hai đoạn, đoạn một nhân vật đi đến dưới đèn khẩn cấp màu đỏ, đoạn hai tiếp tục mở cửa.
+Trạng thái đầu của đoạn hai giữ ảnh hưởng ánh đỏ sẵn có tại đây và vị trí cơ thể; không được áp lại chiếu sáng trung tính của lối vào hành lang, cũng không để màu bản thể của cửa thành đỏ.
+Nếu sau đó đèn khẩn cấp tắt, ghi rõ sự kiện tắt và nguồn sáng còn lại; thay đổi nguồn sáng và cách giữ nền hậu kỳ được nói riêng.
 
-## 9. 合入提示词并检查实际结果
+## 9. Hợp vào prompt và kiểm tra kết quả thực tế
 
-正式片段先定义资产与当前空间，再写必要光源事件，最后合入简短的色彩和材质观感。
-只写当前需要的控制，例如“中性略冷、低饱和背景、手中凭证保持可辨、阴影保留袖口边界”。
-负面限制只阻止已识别的跑偏，不能一边要求剪影，一边写“所有人物脸部始终清楚”。
-验收依实际可查看的媒体核对观看重点、资产识别、材质、光源关系与相邻段连续性。
-设计记录完整不等于输出通过；不可查看或不可听见的部分沿用主流程的核验边界。
-发现问题先定位层次：本色错改资产，方向错查空间受光，综合色偏错调风格；不要一并重做所有设计。
+Đoạn chính thức trước tiên định nghĩa tài sản và không gian hiện tại, rồi viết sự kiện nguồn sáng cần thiết, cuối cùng hợp vào cảm quan màu sắc và chất liệu ngắn gọn.
+Chỉ viết kiểm soát hiện cần, ví dụ "trung tính hơi lạnh, nền độ bão hòa thấp, giấy tờ trong tay vẫn nhận ra được, bóng giữ biên cổ tay áo".
+Giới hạn phủ định chỉ ngăn những lệch hướng đã nhận diện, không thể vừa yêu cầu bóng đen (silhouette), vừa viết "mặt mọi nhân vật luôn rõ ràng".
+Nghiệm thu dựa trên media thực tế xem được để đối chiếu trọng điểm xem, nhận diện tài sản, chất liệu, quan hệ nguồn sáng và tính liên tục với đoạn liền kề.
+Ghi chép thiết kế đầy đủ không có nghĩa đầu ra đạt; phần không xem được hoặc không nghe được tiếp tục dùng ranh giới kiểm chứng của quy trình chính.
+Phát hiện vấn đề thì trước tiên định vị tầng: sai màu bản thể thì sửa tài sản, sai hướng thì kiểm tra nhận sáng không gian, sai ám màu tổng thể thì chỉnh phong cách; không làm lại toàn bộ thiết kế cùng lúc.

@@ -1,72 +1,72 @@
-# 画布执行
+# Thực thi canvas
 
-所有操作以本轮实际暴露的工具与节点 schema 为准。以下是当前宿主的已核对用法；工具缺失时说明缺项，不把旧版 XML、旧数据库或手写画布 JSON 当替代执行路径。
+Mọi thao tác lấy công cụ và schema node thực sự được cung cấp trong lượt này làm chuẩn. Dưới đây là cách dùng đã được kiểm tra của host hiện tại; khi thiếu công cụ thì nói rõ mục thiếu, không coi XML bản cũ, cơ sở dữ liệu cũ hay JSON canvas viết tay là đường thực thi thay thế.
 
-## 读取与定位
+## Đọc và định vị
 
-1. `getCanvas({ include: ["canvases"] })` 列举画布，按分页结果匹配项目索引中的真实 ID。ID 与文件路径有关，不按标题猜 ID；用文件读取/列目录能力核对真实相对路径。
-2. 仅当前激活/本轮绑定画布可操作。到其他画布先 `switchCanvas({ canvasId })`，等待保存并使用返回的新 ID；五个读取工具的 `canvasId` 是校验目标，不能用它直接读取未激活画布。
-3. 用 `findCanvasNodes` 查已有节点；已知 ID 时直接 `getCanvasNodes({ nodeIds, fields: ["label", "data", "outputs", "ports"] })`。节点详情一次最多 20 个，避免拉整图。
-4. `hasMore/nextCursor` 表示继续同一查询。节点值的 `truncated` 需按返回 `path/nextOffset` 分段读取，不能把截断剧本或提示词当全文。长文本可用 `path: ["outputs", "text", "value"]` 和返回偏移续读，以实际节点输出为准。
+1. `getCanvas({ include: ["canvases"] })` liệt kê canvas, theo kết quả phân trang khớp ID thật trong chỉ mục dự án. ID liên quan tới đường dẫn tệp, không đoán ID theo tiêu đề; dùng năng lực đọc tệp/liệt kê thư mục để kiểm tra đường dẫn tương đối thật.
+2. Chỉ thao tác được trên canvas đang kích hoạt/được gắn trong lượt này. Sang canvas khác thì trước tiên `switchCanvas({ canvasId })`, chờ lưu và dùng ID mới trả về; `canvasId` của năm công cụ đọc là mục tiêu kiểm định, không được dùng nó để đọc trực tiếp canvas chưa kích hoạt.
+3. Dùng `findCanvasNodes` tra node đã có; khi đã biết ID thì trực tiếp `getCanvasNodes({ nodeIds, fields: ["label", "data", "outputs", "ports"] })`. Chi tiết node mỗi lần tối đa 20 cái, tránh kéo cả đồ thị.
+4. `hasMore/nextCursor` nghĩa là tiếp tục cùng truy vấn. `truncated` của giá trị node cần đọc từng đoạn theo `path/nextOffset` trả về, không được coi kịch bản hay prompt bị cắt cụt là toàn văn. Văn bản dài có thể dùng `path: ["outputs", "text", "value"]` và offset trả về để đọc tiếp, lấy đầu ra node thực tế làm chuẩn.
 
-工具成功创建/切换后，本轮后续调用重定向到返回画布。用户手动改项目、移文件或重载导致上下文失效时，停止沿用旧 ID，请其在目标画布重新发送消息。正常切换显示不等于生成取消，仍需查询真实状态。
+Sau khi công cụ tạo/chuyển thành công, các lệnh gọi tiếp theo trong lượt này được chuyển hướng sang canvas trả về. Khi người dùng tự sửa dự án, di chuyển tệp hoặc tải lại khiến ngữ cảnh mất hiệu lực, ngừng dùng tiếp ID cũ, nhờ họ gửi lại tin nhắn ở canvas đích. Hiển thị chuyển đổi bình thường không đồng nghĩa với hủy tạo, vẫn cần truy vấn trạng thái thật.
 
-## 画布创建与归档
+## Tạo và lưu trữ canvas
 
-`addCanvas({ name: "剧本" })` 创建空白画布并切换到它，当前实现写在**工作区根目录**。名称不带 `.json`，不能包含路径分隔符；没有 `path/directory` 参数。`renameCanvas` 只改名，不能搬到子目录，且改名后 ID 变化。
+`addCanvas({ name: "Kịch bản" })` tạo canvas trống và chuyển sang nó, cách cài đặt hiện tại ghi ở **thư mục gốc workspace**. Tên không kèm `.json`, không được chứa ký tự phân cách đường dẫn; không có tham số `path/directory`. `renameCanvas` chỉ đổi tên, không chuyển được vào thư mục con, và sau khi đổi tên ID thay đổi.
 
-当前内置工作区工具有读取、列目录、写文本等能力，未提供受画布宿主协调的目录移动工具。MCP 的原始 `workspaceFiles.rename` 也不等于文件树移动：切走的画布可能仍在内存中，直接改文件名不会同步其 ID/保存实例。**禁止用原始文件移动、shell 或直接写 JSON 绕过画布宿主。**
+Các công cụ workspace tích hợp hiện tại có năng lực đọc, liệt kê thư mục, ghi văn bản, v.v., nhưng không cung cấp công cụ di chuyển thư mục được host canvas phối hợp. `workspaceFiles.rename` gốc của MCP cũng không đồng nghĩa với di chuyển trong cây tệp: canvas đã chuyển đi có thể vẫn còn trong bộ nhớ, đổi tên tệp trực tiếp sẽ không đồng bộ ID/thực thể lưu của nó. **Cấm dùng di chuyển tệp gốc, shell hoặc ghi JSON trực tiếp để vượt qua host canvas.**
 
-可靠流程：
+Quy trình đáng tin cậy:
 
-1. 查重后创建本阶段需要的空画布，记录工具返回的根目录文件及 ID。
-2. 展示具体归档清单，例如 `剧本.json → 画布/剧本.json`、`资产.json → 画布/资产.json`、`第001集.json → 画布/分集/第001集.json`。
-3. 如果本轮确有公开且明确协调画布实例/保存状态的归档能力，按其 schema 操作并验证；当前内置工具没有此能力时，请用户从左上角画布下拉新建目录，在画布的“更多”或右键菜单选择“移动到”，再打开本阶段目标画布回复完成。文件树操作会等待保存并同步画布路径。
-4. 重新列目录、查询画布列表，登记移动后的真实路径和 ID，再写入节点。未核验归位时保持初始化未完成，不创建临时正式内容或偷偷退回根目录布局。
+1. Tra trùng rồi tạo các canvas trống giai đoạn này cần, ghi lại tệp thư mục gốc và ID mà công cụ trả về.
+2. Trình bày danh sách lưu trữ cụ thể, ví dụ `Kịch bản.json → Canvas/Kịch bản.json`, `Tài sản.json → Canvas/Tài sản.json`, `Tập 001.json → Canvas/Tập/Tập 001.json`.
+3. Nếu lượt này thực sự có năng lực lưu trữ công khai và phối hợp rõ ràng thực thể/trạng thái lưu của canvas, thao tác theo schema của nó và kiểm chứng; khi công cụ tích hợp hiện tại không có năng lực này, nhờ người dùng tạo thư mục mới từ menu thả xuống canvas ở góc trên bên trái, chọn "Di chuyển tới" trong menu "Thêm" hoặc menu chuột phải của canvas, rồi mở canvas đích của giai đoạn này và trả lời đã xong. Thao tác cây tệp sẽ chờ lưu và đồng bộ đường dẫn canvas.
+4. Liệt kê lại thư mục, truy vấn danh sách canvas, đăng ký đường dẫn và ID thật sau khi di chuyển, rồi mới ghi node. Chưa kiểm chứng đã về đúng chỗ thì giữ trạng thái khởi tạo chưa hoàn thành, không tạo nội dung chính thức tạm thời hay lén quay về bố cục thư mục gốc.
 
-已有正确归位画布直接复用，不为本流程再建一套。用户明确指定其他目录时记录实际结构；不要将技能文档的 `references/` 当作项目文件夹。
+Canvas đã về đúng chỗ thì dùng lại trực tiếp, không lập thêm một bộ cho quy trình này. Khi người dùng chỉ định rõ thư mục khác thì ghi lại cấu trúc thực tế; không coi `references/` của tài liệu skill là thư mục dự án.
 
-## 新增和填写节点
+## Thêm và điền node
 
-需要新节点时才调用 `getCanvas({ include: ["nodeTypes"] })`，从 `availableNodeTypes` 取真实类型；用 `addNode({ type, position: { x, y }, label })` 创建并保存返回的节点 ID。
+Chỉ khi cần node mới mới gọi `getCanvas({ include: ["nodeTypes"] })`, lấy loại thật từ `availableNodeTypes`; dùng `addNode({ type, position: { x, y }, label })` để tạo và lưu ID node trả về.
 
-先 `getNodeTools({ nodeIds: [nodeId] })` 读取完整函数定义，再 `nodeTools({ nodeId, name, args })`。保留返回的 `node:` 前缀，参数按该函数 schema 填写。当前常见能力如下，不能假设第三方节点也有这些函数：
+Trước tiên `getNodeTools({ nodeIds: [nodeId] })` đọc định nghĩa hàm đầy đủ, rồi `nodeTools({ nodeId, name, args })`. Giữ tiền tố `node:` trả về, tham số điền theo schema của hàm đó. Các năng lực thường gặp hiện tại như sau, không được giả định node bên thứ ba cũng có các hàm này:
 
-| 目的 | 发现后使用的函数 |
+| Mục đích | Hàm dùng sau khi khám phá |
 | --- | --- |
-| 剧本、方案、阶段记录 | 文本节点 `node:setText`；通过文本输出回读，不能仅改标签 |
-| 同工作区图片引用 | 图片素材节点 `node:setImage`，传真实工作区 `path` 与匹配的 `mimeType` |
-| 图像/视频提示词 | 对应生成节点 `node:setPrompt` |
-| 配置与模型能力 | `node:getConfig`、`node:setConfig`；变更后再次核对配置 |
-| 发起并追踪生成 | 图片 `node:generateImage`、视频 `node:generateVideo`，状态 `node:getGenerationStatus`；只在该节点实际提供时调用 |
+| Kịch bản, phương án, nhật ký giai đoạn | Node văn bản `node:setText`; đọc lại qua đầu ra văn bản, không được chỉ sửa nhãn |
+| Tham chiếu ảnh cùng workspace | Node tư liệu ảnh `node:setImage`, truyền `path` workspace thật và `mimeType` khớp |
+| Prompt ảnh/video | Node tạo tương ứng `node:setPrompt` |
+| Cấu hình và năng lực mô hình | `node:getConfig`, `node:setConfig`; sau khi thay đổi kiểm tra lại cấu hình |
+| Khởi tạo và theo dõi việc tạo | Ảnh `node:generateImage`, video `node:generateVideo`, trạng thái `node:getGenerationStatus`; chỉ gọi khi node đó thực sự cung cấp |
 
-原生文本函数参数为 `{ text: "完整正文" }`，提示词函数为 `{ prompt: "专用提示词" }`。`node:setText` 回执不含文件路径；需定位正文文件时再读实际 `data.textPath`。通过已有生成节点的 `node:getConfig` 查询模型能力；生成时仍须核对目标节点的实际配置。配置中的 `providerId/modelId` 成对设置，`mode`、时长和分辨率使用实时回执支持的值，不自己拼模式名称。
+Tham số của hàm văn bản gốc là `{ text: "Toàn bộ chính văn" }`, hàm prompt là `{ prompt: "Prompt chuyên dụng" }`. Phản hồi của `node:setText` không chứa đường dẫn tệp; khi cần định vị tệp chính văn thì đọc `data.textPath` thực tế. Truy vấn năng lực mô hình qua `node:getConfig` của node tạo đã có; khi tạo vẫn phải kiểm tra cấu hình thực tế của node đích. `providerId/modelId` trong cấu hình đặt theo cặp, `mode`, thời lượng và độ phân giải dùng giá trị mà phản hồi thời gian thực hỗ trợ, không tự ghép tên chế độ.
 
-确认写入结果后按需 `fitCanvas({ nodeIds })`。局部流程仅摆放本批节点，不自动整理用户整个画布；`arrangeCanvas` 是整图整理，不接受局部节点范围。
+Sau khi xác nhận kết quả ghi, khi cần thì `fitCanvas({ nodeIds })`. Quy trình cục bộ chỉ sắp xếp các node của lô này, không tự động chỉnh lý toàn bộ canvas của người dùng; `arrangeCanvas` là chỉnh lý toàn đồ thị, không nhận phạm vi node cục bộ.
 
-## 跨画布资产复用
+## Dùng lại tài sản xuyên canvas
 
-资产总画布是正式设定及采用版本的唯一来源。分集内只建立供连线使用的素材引用：
+Canvas tổng tài sản là nguồn duy nhất của thiết lập chính thức và phiên bản được chọn dùng. Trong từng tập chỉ lập tham chiếu tư liệu dùng cho việc nối dây:
 
-1. 切到资产画布，读取已确认资产节点的实际 `outputs`，取得采用图片的工作区路径（通常在 `outputs.image.value.url`）及 MIME。记录来源画布路径/ID、资产节点 ID、版本、使用集数；工作流资产编号只是文字索引，不能冒充真实节点 ID。
-2. 切回目标集，查找已有相同来源/版本引用。需要新建时增加图片素材节点，再按实际 schema 调用 `node:setImage({ path, mimeType })`，引用同一文件，不重新生成或复制正式设定。
-3. 回读本集引用节点的图片输出，确认路径对应所选版本。在本集的文本索引记录「规范资产名 → 资产画布/源节点 → 本集引用节点 → 文件路径」。
-4. 外部素材先使用宿主公开导入能力。若通过 `assetOperator` 从全局库 `import`，使用返回的 **`workspacePath`** 作为节点输入；返回的 `path` 是全局库来源，不能混用。用户没要求全局共享时不额外创建全局库副本。
+1. Chuyển sang canvas tài sản, đọc `outputs` thực tế của node tài sản đã xác nhận, lấy đường dẫn workspace của ảnh được chọn dùng (thường ở `outputs.image.value.url`) và MIME. Ghi lại đường dẫn/ID canvas nguồn, ID node tài sản, phiên bản, số tập sử dụng; mã tài sản của workflow chỉ là chỉ mục văn bản, không được giả làm ID node thật.
+2. Chuyển về tập đích, tìm tham chiếu đã có cùng nguồn/phiên bản. Khi cần tạo mới thì thêm node tư liệu ảnh, rồi theo schema thực tế gọi `node:setImage({ path, mimeType })`, tham chiếu cùng một tệp, không tạo lại hay sao chép thiết lập chính thức.
+3. Đọc lại đầu ra ảnh của node tham chiếu trong tập này, xác nhận đường dẫn tương ứng với phiên bản đã chọn. Ghi trong chỉ mục văn bản của tập này "Tên tài sản chuẩn → Canvas tài sản/node nguồn → Node tham chiếu tập này → Đường dẫn tệp".
+4. Tư liệu bên ngoài trước tiên dùng năng lực nhập công khai của host. Nếu `import` từ thư viện toàn cục qua `assetOperator`, dùng **`workspacePath`** trả về làm đầu vào node; `path` trả về là nguồn thư viện toàn cục, không được dùng lẫn. Khi người dùng không yêu cầu chia sẻ toàn cục thì không tạo thêm bản sao thư viện toàn cục.
 
-剧本同理：正式文本只在剧本总画布维护；单集工作快照须标来源节点、版本和范围。局部改剧情应回正式剧本确认，再更新受影响的工作快照。
+Kịch bản cũng vậy: văn bản chính thức chỉ duy trì trên canvas tổng kịch bản; ảnh chụp làm việc của từng tập phải ghi node nguồn, phiên bản và phạm vi. Sửa cốt truyện cục bộ phải quay về kịch bản chính thức xác nhận, rồi cập nhật các ảnh chụp làm việc bị ảnh hưởng.
 
-## 连线与参考顺序
+## Nối dây và thứ tự tham chiếu
 
-用 `getCanvasNodes` 的 `ports` 取得真实端口，`connectNodes({ connections: [{ source, sourceHandle, target, targetHandle }] })` 只连接本画布的输出端口到输入端口。用 `getCanvasEdges` 回读连接，不能跨画布引用源节点来造边。
+Dùng `ports` của `getCanvasNodes` để lấy cổng thật, `connectNodes({ connections: [{ source, sourceHandle, target, targetHandle }] })` chỉ kết nối cổng đầu ra với cổng đầu vào trong canvas này. Dùng `getCanvasEdges` đọc lại kết nối, không được tham chiếu node nguồn xuyên canvas để tạo cạnh.
 
-连接本次真正使用的媒体，再核对目标真实输入序列，按实际 `{{ref N}}` 映射写提示词。当前原生生成节点的顺序可按以下方式核验：读取目标全部入边，按实际目标端口筛选；对每条边读取源节点的 `outputs[sourceHandle]`，用 `encodeURIComponent(JSON.stringify([sourceId, sourceHandle]))` 得到引用键，按目标 `data.referenceOrder[targetHandle]` 排序，未登记项保持入边顺序追加。不同媒体类型共用该输入序列的编号，未就绪项仍占位并阻止生成。
+Kết nối media thực sự dùng lần này, rồi kiểm tra chuỗi đầu vào thật của đích, theo ánh xạ `{{ref N}}` thực tế để viết prompt. Thứ tự của node tạo gốc hiện tại có thể kiểm chứng như sau: đọc toàn bộ cạnh vào của đích, lọc theo cổng đích thực tế; với mỗi cạnh đọc `outputs[sourceHandle]` của node nguồn, dùng `encodeURIComponent(JSON.stringify([sourceId, sourceHandle]))` để có khóa tham chiếu, sắp xếp theo `data.referenceOrder[targetHandle]` của đích, các mục chưa đăng ký giữ thứ tự cạnh vào và nối thêm vào sau. Các loại media khác nhau dùng chung số thứ tự của chuỗi đầu vào đó, mục chưa sẵn sàng vẫn chiếm chỗ và chặn việc tạo.
 
-仅在实际工具提供顺序调整能力时使用其 schema；不能只改提示词编号却不改实际参考。缺失参考不可悄悄过滤后继续使用旧编号。故事/完整剧本节点用于审阅，不将长剧本连到图像/视频输入代替专门提示词；当前生成节点会将连接的 STRING 文本全文追加到提示词中。
+Chỉ dùng schema của năng lực điều chỉnh thứ tự khi công cụ thực tế cung cấp; không được chỉ sửa số thứ tự trong prompt mà không sửa tham chiếu thực tế. Tham chiếu bị thiếu không được lặng lẽ lọc bỏ rồi tiếp tục dùng số thứ tự cũ. Node câu chuyện/kịch bản đầy đủ dùng để duyệt, không nối kịch bản dài vào đầu vào ảnh/video thay cho prompt chuyên dụng; node tạo hiện tại sẽ nối toàn văn văn bản STRING được kết nối vào prompt.
 
-## 生成与验收
+## Tạo và nghiệm thu
 
-生成前回读实际配置、提示词、参考路径与顺序，核对当前批次已获确认。`node:generateImage` / `node:generateVideo` 返回 `{ status: "generating" }` 仅表示启动；通过该节点的 `node:getGenerationStatus` 查询，其状态为 `idle/running/succeeded/failed`，同时返回 `outputs` 和可能的 `error`。完成后再读真实输出并查看媒体。没有状态函数时按真实可用输出或界面核验，不能猜接口。
+Trước khi tạo, đọc lại cấu hình thực tế, prompt, đường dẫn và thứ tự tham chiếu, kiểm tra lô hiện tại đã được xác nhận. `node:generateImage` / `node:generateVideo` trả về `{ status: "generating" }` chỉ có nghĩa là đã khởi động; truy vấn qua `node:getGenerationStatus` của node đó, trạng thái là `idle/running/succeeded/failed`, đồng thời trả về `outputs` và `error` nếu có. Sau khi hoàn thành mới đọc đầu ra thật và xem media. Khi không có hàm trạng thái thì kiểm chứng theo đầu ra thật khả dụng hoặc giao diện, không được đoán giao diện API.
 
-状态可能只属于本次打开节点后的会话。重载后 `idle` 不证明从未生成，历史输出存在也不证明本次任务成功；联合任务状态、开始/结束时间、输出路径、当前请求和选用记录判断。超时后先查状态，避免重复发起；失败保留先前采用版本，报告具体失败，不把旧图旧视频当新结果。
+Trạng thái có thể chỉ thuộc về phiên kể từ khi mở node lần này. Sau khi tải lại, `idle` không chứng minh chưa từng tạo, đầu ra lịch sử tồn tại cũng không chứng minh tác vụ lần này thành công; phán đoán bằng cách kết hợp trạng thái tác vụ, thời gian bắt đầu/kết thúc, đường dẫn đầu ra, yêu cầu hiện tại và bản ghi chọn dùng. Sau khi quá thời gian, trước tiên truy vấn trạng thái, tránh khởi tạo lặp; thất bại thì giữ phiên bản đã chọn dùng trước đó, báo cáo thất bại cụ thể, không coi ảnh cũ video cũ là kết quả mới.
 
-只报告已核实层级：提示词就绪、生成中、生成成功待审、已采用、片段交付或成片交付。没有实际合成和成片文件时，不能声称已完成全片。
+Chỉ báo cáo các cấp đã được xác minh: prompt sẵn sàng, đang tạo, tạo thành công chờ duyệt, đã chọn dùng, bàn giao đoạn hoặc bàn giao thành phẩm. Khi không có việc ghép thực tế và tệp thành phẩm, không được tuyên bố đã hoàn thành toàn phim.

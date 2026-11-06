@@ -1,73 +1,73 @@
-# 分镜图提示词与首帧知识
+# Kiến thức về prompt ảnh phân cảnh và khung đầu
 
-用于首帧路线或用户确认需要分镜图的制作单元。输入是确认分镜及已采用资产图；这是把同一画面转成模型可执行描述，不是第二次创作剧情。先读本文件，涉及风格时只读 [视觉风格](visualStyles.md) 中已确认条目；角色/场景资产设计缺项回 [资产设计](assetDesign.md) 及资产阶段。
+Dùng cho lộ trình khung đầu hoặc cho các đơn vị sản xuất mà người dùng đã xác nhận cần ảnh phân cảnh. Đầu vào là phân cảnh đã xác nhận và các ảnh tài sản đã chọn dùng; đây là việc chuyển cùng một khung hình thành mô tả mà mô hình có thể thực thi, không phải sáng tác lại cốt truyện lần thứ hai. Đọc file này trước; khi liên quan đến phong cách thì chỉ đọc các mục đã xác nhận trong [Phong cách thị giác](visualStyles.md); thiết kế tài sản nhân vật/bối cảnh còn thiếu thì quay lại [Thiết kế tài sản](assetDesign.md) và giai đoạn tài sản.
 
-## 输入与模型边界
+## Đầu vào và ranh giới mô hình
 
-v1.1.8 通用提示词技巧提供 Seedream 中文段落与 Nanobanana/Gemini 英文 JSON 两套参考图模板，前提是已经有真实参考图。它们是旧版写作模板，不保证今天同名模型支持同样的输入、负向提示词字段或参数。
+Kỹ thuật prompt chung của v1.1.8 cung cấp hai bộ mẫu ảnh tham chiếu: đoạn văn tiếng Trung cho Seedream và JSON tiếng Anh cho Nanobanana/Gemini, với tiền đề là đã có ảnh tham chiếu thật. Chúng là mẫu viết của phiên bản cũ, không đảm bảo mô hình cùng tên hiện nay hỗ trợ cùng kiểu đầu vào, trường negative prompt hay tham số.
 
-按当前节点模型和完整 schema 选择：Seedream 可采用下面的中文模板；Nanobanana/Gemini 可采用结构化模板；其他已确认图像模型保留相同画面与一致性约束，调整为其支持的提示词表达。未指定模型时先核对可用选择，不沿用旧文“默认 Seedream”；不能因为缺图把参考一致性制作悄悄改成文生图。
+Chọn theo mô hình và schema đầy đủ của node hiện tại: Seedream có thể chọn dùng mẫu đoạn văn bên dưới; Nanobanana/Gemini có thể chọn dùng mẫu có cấu trúc; các mô hình ảnh đã xác nhận khác giữ nguyên cùng khung hình và ràng buộc nhất quán, điều chỉnh thành cách diễn đạt prompt mà mô hình đó hỗ trợ. Khi chưa chỉ định mô hình thì trước tiên kiểm tra các lựa chọn khả dụng, không kế thừa "mặc định Seedream" của tài liệu cũ; không được vì thiếu ảnh mà âm thầm đổi việc tạo nhất quán theo tham chiếu thành text-to-image.
 
-参考图须通过 [画布执行](../canvasOperations.md) 的素材节点与连线实际传入。旧 @图N、reference_images、ControlNet 只是旧文适配说明，不在当前画布请求中手工添加这些参数。下面示例采用宿主常见的 {{ref N}}；正式编号必须来自当前真实连接与排序，实际适配采用其他语法时先核实映射。
+Ảnh tham chiếu phải được truyền vào thật sự qua node tư liệu và kết nối trong [Thực thi canvas](../canvasOperations.md). Cú pháp cũ @ảnhN (chữ "ảnh" viết bằng chữ Hán), reference_images, ControlNet cũ chỉ là ghi chú thích ứng của tài liệu cũ, không tự thêm các tham số này vào yêu cầu canvas hiện tại. Ví dụ bên dưới chọn dùng {{ref N}} thường gặp của host; số thứ tự chính thức phải lấy từ kết nối thật hiện tại và thứ tự sắp xếp, khi bộ thích ứng thực tế dùng cú pháp khác thì xác minh ánh xạ trước.
 
-## 从分镜到单帧
+## Từ phân cảnh đến một khung hình
 
-完整保留画面中的主体、关键物件、空间层次、关系与情绪；时序只取这一帧能表达的状态，后续动作仍留在视频说明中。词数紧张时先减修饰词，不能删掉信件、指示物、接触关系等叙事信息。
+Giữ đầy đủ chủ thể, vật thể then chốt, các lớp không gian, quan hệ và cảm xúc trong khung hình; về thời gian chỉ lấy trạng thái mà khung hình này có thể biểu đạt, các động tác tiếp theo vẫn để lại trong mô tả video. Khi số từ eo hẹp thì cắt từ bổ nghĩa trước, không được xóa thông tin tự sự như lá thư, biển chỉ dẫn, quan hệ tiếp xúc.
 
-| 输入性质 | 单帧处理 | 视频说明保留什么 |
+| Tính chất đầu vào | Xử lý khung đơn | Mô tả video giữ lại gì |
 |---|---|---|
-| 静态瞬间：停步仰望、站立凝视、冷笑、伏案书写 | 直接保留该状态，不改成“即将” | 后续有变化时才写动作演进 |
-| 连续过程：走过长廊、挥剑斩下、转身离去 | 取已确认动作的真实起始凝固态，不画结果态或抽象预备姿势 | 完整路径、速度、结束状态与时序 |
-| 景别变化：远景→中景、近景→特写 | 精确取左侧起始景别；远景不能擅自升级成大远景 | 全部运镜路径与落幅 |
-| 黑场淡入、叠化 | 区分转场与首张可用内容图；模型需要可辨识参考时不把全黑图当稳定身份参考 | 已确认转场的发生位置；能力冲突时询问处理方案 |
-| 已确定末帧 | 使用该单元确认结束状态，与首帧保持身份/空间一致 | 首尾之间真正发生的变化 |
+| Khoảnh khắc tĩnh: dừng bước ngước nhìn, đứng nhìn chăm chú, cười lạnh, cúi bàn viết | Giữ nguyên trạng thái đó, không đổi thành "sắp sửa" | Chỉ khi có biến đổi tiếp theo mới viết diễn tiến động tác |
+| Quá trình liên tục: đi qua hành lang dài, vung kiếm chém xuống, quay người rời đi | Lấy trạng thái đóng băng khởi đầu thật của động tác đã xác nhận, không vẽ trạng thái kết quả hay tư thế chuẩn bị trừu tượng | Toàn bộ quỹ đạo, tốc độ, trạng thái kết thúc và trình tự thời gian |
+| Thay đổi cỡ cảnh: viễn cảnh→trung cảnh, cận cảnh→cận cảnh đặc tả | Lấy chính xác cỡ cảnh khởi đầu bên trái; viễn cảnh không được tự ý nâng thành đại viễn cảnh | Toàn bộ quỹ đạo chuyển động máy và khung kết |
+| Fade in từ màn đen, hòa tan (dissolve) | Phân biệt chuyển cảnh với ảnh nội dung khả dụng đầu tiên; khi mô hình cần tham chiếu nhận diện được thì không dùng ảnh đen hoàn toàn làm tham chiếu danh tính ổn định | Vị trí xảy ra chuyển cảnh đã xác nhận; khi xung đột năng lực thì hỏi phương án xử lý |
+| Khung cuối đã xác định | Dùng trạng thái kết thúc đã xác nhận của đơn vị đó, giữ nhất quán danh tính/không gian với khung đầu | Biến đổi thực sự xảy ra giữa khung đầu và khung cuối |
 
-只有分镜确实描述“剑已举至头顶随后劈下”，首帧才选举剑状态；不能凭“挥剑”自行发明错误握法、剑尖朝向或攻击目标。转换不是把所有动词都退回尚未开始。
+Chỉ khi phân cảnh thực sự mô tả "kiếm đã giơ lên quá đầu rồi chém xuống" thì khung đầu mới chọn trạng thái giơ kiếm; không được dựa vào "vung kiếm" mà tự bịa cách cầm sai, hướng mũi kiếm hay mục tiêu tấn công. Chuyển đổi không phải là lùi mọi động từ về trạng thái chưa bắt đầu.
 
-### 字段映射
+### Ánh xạ trường
 
-| 分镜信息 | 图像提示词落点 |
+| Thông tin phân cảnh | Vị trí trong prompt ảnh |
 |---|---|
-| 场景、主体、物件与画面描述 | 画面主段 / scene_and_framing + subject_and_action，逐项保留 |
-| 景别、角度 | 明确构图、裁切范围、观察方向；词汇见 [镜头知识](shotCraft.md) |
-| 动作、姿态、朝向、空间 | 依首帧判断保留该瞬间状态，并写谁在左/右、看谁、持有什么 |
-| 情绪 | 已确认的表情、眼线、肌肉或姿态，不换成另一情绪 |
-| 已采用场景光照与风格 | 从真实参考继承，不另造相冲突的文字方案 |
-| 运镜、台词、音效 | 留在本集视频说明，不写成图上字幕、运动拼贴或声音文字 |
-| 资产来源 | 真实媒体输入与用途对应，画布文本记录源节点/版本/本集引用节点 |
+| Bối cảnh, chủ thể, vật thể và mô tả khung hình | Đoạn chính của khung hình / scene_and_framing + subject_and_action, giữ từng mục |
+| Cỡ cảnh, góc máy | Bố cục rõ ràng, phạm vi cắt khung, hướng quan sát; từ vựng xem [Kiến thức shot](shotCraft.md) |
+| Động tác, tư thế, hướng, không gian | Theo phán đoán khung đầu giữ trạng thái của khoảnh khắc đó, và viết ai ở trái/phải, nhìn ai, cầm gì |
+| Cảm xúc | Biểu cảm, hướng mắt, cơ mặt hoặc tư thế đã xác nhận, không đổi sang cảm xúc khác |
+| Ánh sáng bối cảnh và phong cách đã chọn dùng | Kế thừa từ tham chiếu thật, không tự tạo phương án văn bản xung đột |
+| Chuyển động máy, lời thoại, hiệu ứng âm thanh | Để lại trong mô tả video của tập này, không viết thành phụ đề trên ảnh, cắt ghép chuyển động hay chữ âm thanh |
+| Nguồn tài sản | Đầu vào media thật tương ứng với mục đích sử dụng, văn bản canvas ghi node nguồn/phiên bản/node tham chiếu của tập này |
 
-旧通用技巧要求“画面→光影→风格”三段，最终面板文档却排除独立光影设计。这里保留画面优先与短风格约束，默认光影由已采用场景图承担；仅当用户/确认分镜明确需要文字约束且与参考一致时补充，不凭空补旧模板的光影字段。
+Kỹ thuật chung cũ yêu cầu ba đoạn "khung hình→ánh sáng→phong cách", nhưng tài liệu panel cuối cùng lại loại bỏ thiết kế ánh sáng độc lập. Ở đây giữ ưu tiên khung hình và ràng buộc phong cách ngắn, ánh sáng mặc định do ảnh bối cảnh đã chọn dùng đảm nhận; chỉ bổ sung khi người dùng/phân cảnh đã xác nhận rõ ràng cần ràng buộc bằng văn bản và nhất quán với tham chiếu, không tự bổ sung trường ánh sáng của mẫu cũ.
 
-## 位置与身份
+## Vị trí và danh tính
 
-从确认分镜读取本场基准与变化点，继承左右、前后、朝向和道具归属。缺乏明确方向时可参照互动对象提出方案，不能在每张图独立随机决定；影响连续性的缺项先回分镜确认。
+Đọc mốc chuẩn và các điểm thay đổi của cảnh này từ phân cảnh đã xác nhận, kế thừa trái phải, trước sau, hướng và quyền sở hữu đạo cụ. Khi thiếu hướng rõ ràng có thể tham chiếu đối tượng tương tác để đề xuất phương án, không được quyết định ngẫu nhiên độc lập ở từng ảnh; thiếu sót ảnh hưởng đến tính liên tục thì quay lại phân cảnh để xác nhận trước.
 
-两个角色对话可以写“{{ref 1}} 位于左前，3/4 正面朝右看向 {{ref 2}}；{{ref 2}} 位于右后，面朝左”；不能只写“双人对话”让模型自行交换身份。过肩镜须说明哪位是前景肩背，哪位在焦点位置。人物转向只能发生在分镜已有变化点，之后沿用新状态。
+Hai nhân vật đối thoại có thể viết "{{ref 1}} ở phía trước bên trái, 3/4 chính diện quay sang phải nhìn {{ref 2}}; {{ref 2}} ở phía sau bên phải, mặt hướng sang trái"; không được chỉ viết "đối thoại hai người" để mô hình tự hoán đổi danh tính. Shot qua vai phải nói rõ ai là vai/lưng ở tiền cảnh, ai ở vị trí lấy nét. Nhân vật chỉ được đổi hướng tại điểm thay đổi đã có trong phân cảnh, sau đó tiếp tục dùng trạng thái mới.
 
-为不同角色保留各自来源和稳定辨识特征；避免同款分身，但不得删除剧情明确需要的相似角色。镜面或水面中的形象仍属于原角色，遵守 [空间与连续性](shotCraft.md#空间与连续性)，不凭“镜像”增加一个真人，也不机械翻转所有反射。
+Giữ nguồn riêng và đặc điểm nhận diện ổn định cho từng nhân vật khác nhau; tránh bản sao giống hệt, nhưng không được xóa các nhân vật giống nhau mà cốt truyện cần rõ ràng. Hình ảnh trong gương hoặc mặt nước vẫn thuộc về nhân vật gốc, tuân theo [Không gian và tính liên tục](shotCraft.md#không-gian-và-tính-liên-tục), không dựa vào "phản chiếu" mà thêm một người thật, cũng không lật máy móc mọi hình phản chiếu.
 
-## Seedream 中文参考模板
+## Mẫu tham chiếu đoạn văn cho Seedream
 
-只为当前一镜填写一个版本，所有编号、主体和内容须替换为已验证输入。下面为提示词正文模板，不是 API 参数：
+Chỉ điền một phiên bản cho shot hiện tại, mọi số thứ tự, chủ thể và nội dung phải thay bằng đầu vào đã xác minh. Bên dưới là mẫu thân prompt, không phải tham số API:
 
 ~~~text
-{{ref 1}} 为角色A参考，{{ref 2}} 为角色B参考，{{ref 3}} 为本场景参考。
+{{ref 1}} là tham chiếu nhân vật A, {{ref 2}} là tham chiếu nhân vật B, {{ref 3}} là tham chiếu bối cảnh này.
 
-【画面】在 {{ref 3}} 的已确认空间内，[起始景别及角度]。
-{{ref 1}} 位于[明确位置]，面朝[方向/对象]，[该瞬间动作与表情]；
-{{ref 2}} 位于[明确位置]，[状态与互动关系]。
-[分镜中其他关键物件、空间层次和可见信息，不删不添]。
+[Khung hình] Trong không gian đã xác nhận của {{ref 3}}, [cỡ cảnh khởi đầu và góc máy].
+{{ref 1}} ở [vị trí rõ ràng], mặt hướng về [hướng/đối tượng], [động tác và biểu cảm ở khoảnh khắc đó];
+{{ref 2}} ở [vị trí rõ ràng], [trạng thái và quan hệ tương tác].
+[Các vật thể then chốt khác, lớp không gian và thông tin nhìn thấy được trong phân cảnh, không xóa không thêm].
 
-【风格与一致性】[当前确认风格的必要短锚点]。
-保持各参考角色的面部、发型、服饰与既定状态；沿用场景参考的空间和既定光照。
-主体清晰，[符合当前画风的线条/材质质量要求]；无额外画外字幕、水印或界面覆盖文字。
+[Phong cách và nhất quán] [Mốc neo ngắn cần thiết của phong cách đã xác nhận hiện tại].
+Giữ khuôn mặt, kiểu tóc, trang phục và trạng thái đã định của từng nhân vật tham chiếu; tiếp tục dùng không gian và ánh sáng đã định của tham chiếu bối cảnh.
+Chủ thể rõ ràng, [yêu cầu chất lượng nét vẽ/chất liệu phù hợp với phong cách vẽ hiện tại]; không có phụ đề ngoài khung, watermark hay chữ phủ giao diện.
 ~~~
 
-正文中的主体通过相应真实引用标记与名称明确对应，不能只在开头列参考，正文却写含糊“他/她”。不再追加一份英文复述造成不同画面。旧模板没有独立负向词段；当前若只暴露一个 prompt 字符串，就把必要排除项写进正文，不发明 negativePrompt 参数。
+Các chủ thể trong thân prompt phải tương ứng rõ ràng với ký hiệu tham chiếu thật và tên tương ứng, không được chỉ liệt kê tham chiếu ở đầu rồi trong thân lại viết "anh ấy/cô ấy" mơ hồ. Không thêm một bản diễn đạt lại bằng tiếng Anh gây ra khung hình khác. Mẫu cũ không có đoạn negative riêng; hiện tại nếu chỉ có một chuỗi prompt thì viết các mục loại trừ cần thiết vào thân prompt, không bịa ra tham số negativePrompt.
 
-## Nanobanana/Gemini 结构化参考模板
+## Mẫu tham chiếu có cấu trúc cho Nanobanana/Gemini
 
-这是传给 prompt 的结构化文本；JSON 字段是写作组织方式，不代表当前模型 API 实际存在这些参数。参考图片仍需真实连接，不能仅把 URL 写进 JSON。
+Đây là văn bản có cấu trúc truyền vào prompt; các trường JSON là cách tổ chức khi viết, không có nghĩa là API của mô hình hiện tại thực sự có các tham số này. Ảnh tham chiếu vẫn cần kết nối thật, không được chỉ viết URL vào JSON.
 
 ~~~json
 {
@@ -94,34 +94,34 @@ v1.1.8 通用提示词技巧提供 Seedream 中文段落与 Nanobanana/Gemini �
 }
 ~~~
 
-角色参考可以有多项，编号保持真实全体输入序列，不能把全局第 3 个输入重编号为“角色1”。场景/道具引用在 shot 中明确指向实际编号，不冒充角色。确需已确认的光照文字约束时可加 lighting 字段；没有该需求便不为填满旧模板额外设计。negative 仅为提示词文字中的排除项，是否支持独立负向参数仍以节点 schema 为准。
+Tham chiếu nhân vật có thể có nhiều mục, số thứ tự giữ theo chuỗi toàn bộ đầu vào thật, không được đánh số lại đầu vào thứ 3 toàn cục thành "nhân vật 1". Tham chiếu bối cảnh/đạo cụ trong shot phải trỏ rõ đến số thứ tự thực tế, không giả làm nhân vật. Khi thực sự cần ràng buộc ánh sáng bằng văn bản đã xác nhận thì có thể thêm trường lighting; không có nhu cầu đó thì không thiết kế thêm chỉ để lấp đầy mẫu cũ. negative chỉ là các mục loại trừ trong văn bản prompt, việc có hỗ trợ tham số negative độc lập hay không vẫn căn cứ theo schema của node.
 
-## 单帧转换示例
+## Ví dụ chuyển đổi một khung hình
 
-确认分镜为：“站厅出口，右侧指示牌；角色A 背着包停步仰望，手攥车票，左前位、3/4 正面朝右；全景固定；紧张但已作决定。”真实输入为人物、背包、车票、站厅四张参考。
+Phân cảnh đã xác nhận là: "Lối ra sảnh ga, biển chỉ dẫn bên phải; nhân vật A đeo ba lô dừng bước ngước nhìn, tay nắm chặt vé tàu, vị trí phía trước bên trái, 3/4 chính diện quay sang phải; toàn cảnh cố định; căng thẳng nhưng đã quyết định." Đầu vào thật là bốn tham chiếu: nhân vật, ba lô, vé tàu, sảnh ga.
 
-可写：
+Có thể viết:
 
 ~~~text
-{{ref 1}} 为角色A，{{ref 2}} 为背包，{{ref 3}} 为车票，{{ref 4}} 为站厅。
-【画面】{{ref 4}} 出口的全景构图，右侧保留确认的指示牌。{{ref 1}} 在左前位置停步，身体3/4正面朝右，仰望右侧指示牌，背着 {{ref 2}}，手中攥着 {{ref 3}}；眼神紧张但稳定。保留站厅前后空间关系。
-【风格与一致性】沿用已确认风格及参考形象、场景状态；主体清晰，无额外字幕、水印和界面覆盖。
+{{ref 1}} là nhân vật A, {{ref 2}} là ba lô, {{ref 3}} là vé tàu, {{ref 4}} là sảnh ga.
+[Khung hình] Bố cục toàn cảnh tại lối ra của {{ref 4}}, bên phải giữ biển chỉ dẫn đã xác nhận. {{ref 1}} dừng bước ở vị trí phía trước bên trái, thân người 3/4 chính diện quay sang phải, ngước nhìn biển chỉ dẫn bên phải, đeo {{ref 2}}, tay nắm chặt {{ref 3}}; ánh mắt căng thẳng nhưng vững vàng. Giữ quan hệ không gian trước sau của sảnh ga.
+[Phong cách và nhất quán] Tiếp tục dùng phong cách đã xác nhận cùng hình tượng tham chiếu và trạng thái bối cảnh; chủ thể rõ ràng, không có phụ đề thừa, watermark và lớp phủ giao diện.
 ~~~
 
-不能把“停步仰望”改为“正要抬头”，不能漏车票，不能为了画面好看添花瓣，也不能把未确认的人群、灯色写成事实。视频里的台词和车站环境音另留在视频说明，不出现在单帧提示词中。
+Không được đổi "dừng bước ngước nhìn" thành "sắp ngẩng đầu", không được bỏ sót vé tàu, không được thêm cánh hoa cho đẹp, cũng không được viết đám đông, màu đèn chưa xác nhận thành sự thật. Lời thoại và âm thanh môi trường nhà ga trong video để riêng trong mô tả video, không xuất hiện trong prompt khung đơn.
 
-## 质量与忠实性检查
+## Kiểm tra chất lượng và độ trung thực
 
-- 逐项回溯分镜：主体/关键物件是否齐全，场景是否同一地点，起始景别/角度是否正确，动作语义与情绪是否一致，朝向是否沿基准。
-- 风格与画质词是辅助；避免堆词覆盖画面主体。旧技巧将 film grain、柔焦、失焦等列为降质风险；用户确认胶片颗粒、空气透视或风格性柔化时保留意图，并明确主体/关键细节应清楚，不能把风格本身判成错误。
-- 景深可写 background bokeh, subject in sharp focus，不把背景虚化扩散成全图失焦；雾、烟和反射扭曲只在分镜确有需要时出现。
-- 默认排除画外字幕、水印、UI；故事世界中的牌匾、信件、短信屏幕和道具文字若是确认信息，原文和存在方式必须保留，不能用“no text”一并删除。文字生成不可靠时记录需用户核对的内容。
-- 同场批量逐镜处理，不跳行、不合并；身份/场景锚点保持一致，表情、动作、构图依各镜变化；模型/模式变更需检查原确认是否仍覆盖。
+- Đối chiếu ngược từng mục với phân cảnh: chủ thể/vật thể then chốt có đầy đủ không, bối cảnh có cùng địa điểm không, cỡ cảnh/góc máy khởi đầu có đúng không, ngữ nghĩa động tác và cảm xúc có nhất quán không, hướng có theo mốc chuẩn không.
+- Từ ngữ phong cách và chất lượng ảnh chỉ là phụ trợ; tránh chồng chất từ ngữ lấn át chủ thể khung hình. Kỹ thuật cũ liệt kê film grain, soft focus, mất nét... là rủi ro giảm chất lượng; khi người dùng xác nhận hạt phim, phối cảnh không khí hoặc làm mềm mang tính phong cách thì giữ ý đồ đó, đồng thời nói rõ chủ thể/chi tiết then chốt phải rõ ràng, không được coi bản thân phong cách là lỗi.
+- Độ sâu trường ảnh có thể viết background bokeh, subject in sharp focus, không để làm mờ hậu cảnh lan thành mất nét toàn ảnh; sương mù, khói và méo phản chiếu chỉ xuất hiện khi phân cảnh thực sự cần.
+- Mặc định loại trừ phụ đề ngoài khung, watermark, UI; biển hiệu, lá thư, màn hình tin nhắn và chữ trên đạo cụ trong thế giới câu chuyện nếu là thông tin đã xác nhận thì nguyên văn và cách tồn tại phải được giữ, không được dùng "no text" để xóa hết. Khi việc tạo chữ không đáng tin cậy thì ghi lại nội dung cần người dùng kiểm tra.
+- Xử lý hàng loạt cùng cảnh thì làm từng shot, không bỏ dòng, không gộp; mốc neo danh tính/bối cảnh giữ nhất quán, biểu cảm, động tác, bố cục thay đổi theo từng shot; khi đổi mô hình/chế độ cần kiểm tra xác nhận ban đầu còn bao phủ không.
 
-## 写入本集画布
+## Ghi vào canvas của tập này
 
-每个实际需图单元保留：分镜来源与版本、首帧/末帧选择理由、起始景别与状态、当前模板/模型、完整执行提示词、真实参考映射。提示词通过节点函数写入，结构化说明写本集已有文本节点；节点字段以 schema 为准。
+Mỗi đơn vị thực sự cần ảnh giữ lại: nguồn và phiên bản phân cảnh, lý do chọn khung đầu/khung cuối, cỡ cảnh và trạng thái khởi đầu, mẫu/mô hình hiện tại, prompt thực thi đầy đủ, ánh xạ tham chiếu thật. Prompt được ghi qua hàm node, mô tả có cấu trúc ghi vào node văn bản đã có của tập này; trường của node căn cứ theo schema.
 
-在“图像转换检查”记录逐项结果和未解决项，回读生成节点 prompt 与引用。生成成功后还要实际看图，确认身份、手部、接触关系、位置朝向及关键文字，不能以提示词检查替代图片验收。没有图像查看能力时保留待用户预览状态。
+Ghi kết quả từng mục và các mục chưa giải quyết vào "Kiểm tra chuyển đổi ảnh", đọc lại prompt và tham chiếu của node tạo. Sau khi tạo thành công còn phải thực sự xem ảnh, xác nhận danh tính, bàn tay, quan hệ tiếp xúc, vị trí hướng và chữ then chốt, không được dùng kiểm tra prompt thay cho nghiệm thu ảnh. Khi không có khả năng xem ảnh thì giữ trạng thái chờ người dùng xem trước.
 
-依据 v1.1.8（cd3e7c4）的 production_skills/storyboard_prompt_techniques.md 与 production_execution_storyboard_panel.md。景别术语和反射关系按实际构图校正；旧模型模板、旧引用字样及光影字段冲突按上述边界迁移。
+Căn cứ vào production_skills/storyboard_prompt_techniques.md và production_execution_storyboard_panel.md của v1.1.8 (cd3e7c4). Thuật ngữ cỡ cảnh và quan hệ phản chiếu được hiệu chỉnh theo bố cục thực tế; mẫu mô hình cũ, cách ghi tham chiếu cũ và xung đột về trường ánh sáng được chuyển đổi theo các ranh giới nêu trên.

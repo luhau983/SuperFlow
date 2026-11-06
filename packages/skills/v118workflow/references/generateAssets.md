@@ -1,53 +1,53 @@
-# 资产提示词与图片生成
+# Prompt tài sản và tạo ảnh
 
-基础资产和衍生资产都在 `画布/资产.json` 完成。具体节点、连接、生成及状态操作见 [canvasOperations.md](canvasOperations.md)。
+Tài sản cơ bản và tài sản phái sinh đều được hoàn thành trong `Canvas/Tài sản.json`. Các thao tác cụ thể về node, kết nối, tạo và trạng thái xem [canvasOperations.md](canvasOperations.md).
 
-## 输入与准备
+## Đầu vào và chuẩn bị
 
-- 使用已确认的资产清单、描述、风格和本次生成范围，核对真实资产节点与现有图片。
-- 执行前读取 [资产设计方法](knowledge/assetDesign.md) 中对应类别、变体、提示词模板和验收章节，再读 [画风与视觉规则](knowledge/visualStyles.md) 的共通规则与所选分支；从资产画布回读已确认“项目视觉约定”，落实为本次具体设计，不能只加风格标签。
-- 角色身份、年龄、常规服装及世界设定来自确认剧本和资产设计，不能套用某个旧风格的固定审美。
-- 读取当前图像模型能力、可用比例、分辨率和参考图限制；参数已在本次范围获确认时沿用授权。
-- 未确认的参数或范围变化先展示并确认；不能把对提示词的确认解释为无限量生成授权。
-- 衍生资产必须读取其确认父图，将父图作为实际图片输入，只写父图路径文字不算绑定参考。
+- Dùng danh sách tài sản, mô tả, phong cách và phạm vi tạo lần này đã xác nhận, kiểm tra các node tài sản thật và ảnh hiện có.
+- Trước khi thực hiện đọc các chương về loại tương ứng, biến thể, mẫu prompt và nghiệm thu trong [Phương pháp thiết kế tài sản](knowledge/assetDesign.md), rồi đọc quy tắc chung và nhánh đã chọn của [Phong cách vẽ và quy tắc hình ảnh](knowledge/visualStyles.md); đọc lại "Quy ước hình ảnh dự án" đã xác nhận từ canvas tài sản, cụ thể hóa thành thiết kế cụ thể cho lần này, không được chỉ thêm nhãn phong cách.
+- Thân phận, tuổi tác, trang phục thường ngày của nhân vật và thiết lập thế giới đến từ kịch bản đã xác nhận và thiết kế tài sản, không được áp thẩm mỹ cố định của một phong cách cũ nào đó.
+- Đọc năng lực hiện tại của mô hình ảnh, các tỉ lệ khả dụng, độ phân giải và giới hạn ảnh tham chiếu; nếu tham số đã được xác nhận trong phạm vi lần này thì dùng tiếp ủy quyền.
+- Tham số chưa xác nhận hoặc thay đổi phạm vi thì trước tiên trình bày và xác nhận; không được diễn giải việc xác nhận prompt thành ủy quyền tạo không giới hạn.
+- Tài sản phái sinh phải đọc ảnh cha đã xác nhận của nó, dùng ảnh cha làm đầu vào ảnh thực tế; chỉ viết chữ đường dẫn ảnh cha không tính là gắn tham chiếu.
 
-## 设计方法
+## Phương pháp thiết kế
 
-| 资产 | 画面内容 | 可验要求 |
+| Tài sản | Nội dung hình ảnh | Yêu cầu kiểm chứng được |
 |---|---|---|
-| 基础角色 | 面部特写，加正面、侧面、背面三个完整全身视图 | 沿用多数旧风格的四角度方法；国风赛博在旧面部种子上补全资料。身份、发型、体型、服装一致；全身不裁头脚，面部清楚 |
-| 基础场景 | 通常为单画面主视图；国风赛博使用同中心点前/右/后/左的 2×2 四方向设定图 | 空间主体清楚，有可读纵深；无角色、人影或人体轮廓。国风赛博四向结构、视点高度、世界光源一致，其他画风不拼多视图 |
-| 基础道具 | 按风格选独立单张静物或正侧背加细节；真人都市电影默认单张实物摄影 | 材质、尺寸关系和功能可辨；不出现握持、佩戴的人体或手部；摄影静物有真实承载面与投影 |
-| 角色衍生 | 以父图保持身份，只改变确认的换装、变身或形态 | 新旧角色可辨为同一身份，变化范围与清单一致 |
-| 场景衍生 | 以父图保持空间结构与展示布局，改变确认时段；国风赛博沿用四方向设定图 | 地点、主体布局及核心陈设连续，时段变化明确；四向变体同步改变时段，不能只改其中一格 |
-| 明确追加的变体 | 仅在用户已另行确认时设计天气/机位/场景状态、道具状态等 | 使用相应知识方法，锁定未改变部分；不能据知识库有模板就扩大默认生成范围 |
+| Nhân vật cơ bản | Cận cảnh khuôn mặt, cộng ba góc nhìn toàn thân đầy đủ chính diện, nghiêng, sau lưng | Dùng tiếp phương pháp bốn góc của đa số phong cách cũ; cyberpunk phong cách cổ phong bổ sung đầy đủ tư liệu trên hạt giống khuôn mặt cũ. Thân phận, kiểu tóc, vóc dáng, trang phục nhất quán; toàn thân không cắt đầu chân, khuôn mặt rõ ràng |
+| Bối cảnh cơ bản | Thường là góc nhìn chính một khung hình; cyberpunk phong cách cổ phong dùng ảnh thiết lập bốn hướng 2×2 trước/phải/sau/trái cùng một tâm điểm | Chủ thể không gian rõ ràng, có chiều sâu đọc được; không có nhân vật, bóng người hay đường nét cơ thể người. Cyberpunk phong cách cổ phong nhất quán cấu trúc bốn hướng, độ cao điểm nhìn, nguồn sáng thế giới; các phong cách vẽ khác không ghép đa góc nhìn |
+| Đạo cụ cơ bản | Theo phong cách chọn tĩnh vật đơn độc một ảnh hoặc chính-nghiêng-sau kèm chi tiết; điện ảnh đô thị người thật mặc định một ảnh chụp vật thật | Chất liệu, quan hệ kích thước và chức năng nhận ra được; không xuất hiện cơ thể người hay bàn tay cầm, đeo; tĩnh vật chụp ảnh có mặt đỡ và bóng đổ thật |
+| Phái sinh nhân vật | Dùng ảnh cha giữ thân phận, chỉ thay đổi việc thay trang phục, biến thân hoặc hình thái đã xác nhận | Nhân vật mới và cũ nhận ra là cùng một thân phận, phạm vi thay đổi khớp với danh sách |
+| Phái sinh bối cảnh | Dùng ảnh cha giữ cấu trúc không gian và bố cục trình bày, thay đổi khung giờ đã xác nhận; cyberpunk phong cách cổ phong dùng tiếp ảnh thiết lập bốn hướng | Địa điểm, bố cục chủ thể và bày trí cốt lõi liên tục, thay đổi khung giờ rõ ràng; biến thể bốn hướng đổi khung giờ đồng bộ, không được chỉ đổi một ô |
+| Biến thể bổ sung rõ ràng | Chỉ khi người dùng đã xác nhận riêng mới thiết kế thời tiết/góc máy/trạng thái bối cảnh, trạng thái đạo cụ, v.v. | Dùng phương pháp kiến thức tương ứng, khóa phần không thay đổi; không được vì kho kiến thức có mẫu mà mở rộng phạm vi tạo mặc định |
 
-角色多视图和国风赛博场景四方向图是资产识别资料，不等于成片比例；按当前模型能力选择合适资产图比例。四方向方法与模型无法清晰容纳时的处理见 [场景四方向设定](knowledge/assetDesign.md#国风赛博场景四方向设定)。
-提示词分别写主体、结构/材质、必要风格和禁止项，避免长篇风格词掩盖资产本身。
-角色、场景、道具按知识中的设计卡与模板具体化；保留真人电影的自然肤感/适量细颗粒、黏土手工痕迹或扁平纯色块等分支差异。只在当前模型支持时使用独立负向词，并检查正负冲突。
-光照与色调在场景资产中统一确认，后续分镜沿用，不能每镜重新定义一套视觉基础。
+Ảnh đa góc nhìn nhân vật và ảnh bốn hướng bối cảnh cyberpunk phong cách cổ phong là tư liệu nhận diện tài sản, không đồng nghĩa với tỉ lệ thành phẩm; chọn tỉ lệ ảnh tài sản phù hợp theo năng lực mô hình hiện tại. Cách xử lý khi phương pháp bốn hướng và mô hình không chứa được rõ ràng xem [Thiết lập bốn hướng cho bối cảnh](knowledge/assetDesign.md#thiết-lập-bốn-hướng-cho-bối-cảnh-cyberpunk-phong-cách-cổ-phong).
+Prompt viết riêng chủ thể, cấu trúc/chất liệu, phong cách cần thiết và mục cấm, tránh để chuỗi từ phong cách dài che lấp bản thân tài sản.
+Nhân vật, bối cảnh, đạo cụ được cụ thể hóa theo thẻ thiết kế và mẫu trong kiến thức; giữ các khác biệt nhánh như cảm giác da tự nhiên/hạt mịn vừa phải của điện ảnh người thật, dấu vết thủ công của đất sét hoặc khối màu phẳng thuần. Chỉ dùng từ phủ định độc lập khi mô hình hiện tại hỗ trợ, và kiểm tra xung đột giữa khẳng định và phủ định.
+Ánh sáng và tông màu được xác nhận thống nhất trong tài sản bối cảnh, phân cảnh phía sau dùng tiếp, không được mỗi shot định nghĩa lại một bộ nền tảng hình ảnh.
 
-## 提示词确认与生成
+## Xác nhận prompt và tạo
 
-1. 把每项核心辨识、色盘/光源/材质/展示方式等设计决定、最终提示词、参考图来源和本次参数写入资产画布，并关联视觉约定版本；已有确认内容优先复用。
-2. 回读并展示提示词与生成范围；缺少确认时停在这里，已有明确授权则不重复索要同一许可。
-3. 按实时节点工具信息建立或更新图像生成节点及实际参考输入，不编造插件字段。
-4. 仅启动已确认范围中的待生成项目；保留已有选用图和候选，不默认全量重跑。
-5. 记录实际任务/节点标识和「生成中」状态；发起请求不代表图片已经成功。
-6. 按实时工具查询终态并回读结果；失败只报告对应项目和原因，修订范围后再决定重试。
-7. 切换到其他画布不等于取消任务；按记录定位原节点查询，不重复启动同一个待完成任务。
+1. Ghi các quyết định thiết kế như nhận diện cốt lõi, bảng màu/nguồn sáng/chất liệu/cách trình bày của mỗi mục, prompt cuối cùng, nguồn ảnh tham chiếu và tham số lần này vào canvas tài sản, và liên kết với phiên bản quy ước hình ảnh; ưu tiên dùng lại nội dung đã xác nhận.
+2. Đọc lại và trình bày prompt cùng phạm vi tạo; thiếu xác nhận thì dừng ở đây, đã có ủy quyền rõ ràng thì không đòi lại cùng một sự cho phép.
+3. Theo thông tin công cụ node thời gian thực, lập hoặc cập nhật node tạo ảnh và đầu vào tham chiếu thực tế, không bịa trường plugin.
+4. Chỉ khởi động các mục chờ tạo trong phạm vi đã xác nhận; giữ ảnh đã chọn dùng và ứng viên hiện có, không mặc định chạy lại toàn bộ.
+5. Ghi lại định danh tác vụ/node thực tế và trạng thái "Đang tạo"; gửi yêu cầu không có nghĩa ảnh đã thành công.
+6. Theo công cụ thời gian thực truy vấn trạng thái cuối và đọc lại kết quả; thất bại chỉ báo cáo mục tương ứng và nguyên nhân, sửa lại phạm vi rồi mới quyết định thử lại.
+7. Chuyển sang canvas khác không có nghĩa là hủy tác vụ; theo bản ghi định vị node gốc để truy vấn, không khởi động lặp cùng một tác vụ chưa hoàn thành.
 
-## 图片验收与确认
+## Nghiệm thu và xác nhận ảnh
 
-- 实际查看成功图片，检查表中要求、风格一致性、参考身份和明确缺陷；不能只依据提示词判断质量。
-- 按知识文件的类别验收检查视图、材料、光源和状态变化；“清楚”不能误判为要消除所有真实毛孔、衣物褶皱、手工纹理或有意摄影颗粒。
-- 回读确认图片已保存且可访问，生成结果与资产条目、父子关系对应。
-- 展示每项候选及发现的问题，让用户选择采用、局部重做或暂留；未选用版本仍是候选。
-- 用户确认后记录选用图片的真实引用、适用范围和确认状态；本集画布仅引用这些资产。
-- 本阶段结束于资产验收，不自动生成分镜或视频；后续由主流程逐步推进。
+- Xem thực tế ảnh thành công, kiểm tra các yêu cầu trong bảng, tính nhất quán phong cách, thân phận tham chiếu và khiếm khuyết rõ ràng; không được chỉ dựa vào prompt để đánh giá chất lượng.
+- Theo nghiệm thu theo loại của tệp kiến thức, kiểm tra góc nhìn, vật liệu, nguồn sáng và thay đổi trạng thái; "rõ ràng" không được đánh giá nhầm thành phải xóa mọi lỗ chân lông thật, nếp nhăn quần áo, vân thủ công hay hạt nhiễu chụp ảnh có chủ ý.
+- Đọc lại để xác nhận ảnh đã được lưu và truy cập được, kết quả tạo tương ứng với mục tài sản và quan hệ cha con.
+- Trình bày từng ứng viên và các vấn đề phát hiện, để người dùng chọn chọn dùng, làm lại cục bộ hoặc tạm giữ; phiên bản chưa được chọn dùng vẫn là ứng viên.
+- Sau khi người dùng xác nhận, ghi lại tham chiếu thật, phạm vi áp dụng và trạng thái xác nhận của ảnh được chọn dùng; canvas của tập này chỉ tham chiếu các tài sản này.
+- Giai đoạn này kết thúc ở nghiệm thu tài sản, không tự động tạo phân cảnh hay video; phần sau do quy trình chính đẩy từng bước.
 
-## 完成标准
+## Tiêu chuẩn hoàn thành
 
-确认范围内每项都有真实可读图片和明确状态，或明确列出失败/跳过项。
-衍生资产可追溯到父资产及实际父图输入，复用资产没有被无意覆盖。
-完整方法来源见 [sourceMap.md](sourceMap.md) 的资产设计和生成映射。
+Mỗi mục trong phạm vi xác nhận đều có ảnh thật đọc được và trạng thái rõ ràng, hoặc liệt kê rõ mục thất bại/bỏ qua.
+Tài sản phái sinh truy ngược được về tài sản cha và đầu vào ảnh cha thực tế, tài sản dùng lại không bị ghi đè ngoài ý muốn.
+Nguồn phương pháp đầy đủ xem ánh xạ thiết kế và tạo tài sản trong [sourceMap.md](sourceMap.md).

@@ -1,116 +1,116 @@
-# 视频制作的画布转换
+# Chuyển đổi canvas cho sản xuất video
 
-把已确定的创作内容变成用户可以编辑、连接和继续生成的画布。适用于剧本、小说和创意技能中的画布制作阶段；创作判断由对应技能负责，本文件只说明如何落实。工具调用约定见 [画布操作手册](../SKILL.md)，不需要访问外部资料。
+Biến nội dung sáng tác đã chốt thành canvas mà người dùng có thể chỉnh sửa, kết nối và tiếp tục tạo. Áp dụng cho giai đoạn làm canvas trong các skill kịch bản, tiểu thuyết và ý tưởng; phán đoán sáng tác do skill tương ứng phụ trách, tệp này chỉ giải thích cách thực hiện. Quy ước gọi công cụ xem [Sổ tay thao tác canvas](../SKILL.md), không cần truy cập tài liệu bên ngoài.
 
-## 0. 逐阶段协作
+## 0. Phối hợp từng giai đoạn
 
-默认采用 Seedance 2.0/2.5 多参生产：先完成并确认本次范围的完整剧本，再根据剧本生成角色、场景、道具资产；从完整剧本拆出多个片段，每片段的全部镜头转成一份视频提示词，资产直接作为视频输入。一个片段可以有多个镜头和动作，对应一个视频节点；不默认生成关键帧。用户明确提出首帧、首尾帧、构图锁定等特殊要求时，再增加对应阶段。
+Mặc định dùng quy trình sản xuất đa tham chiếu Seedance 2.0/2.5: trước tiên hoàn thành và xác nhận kịch bản hoàn chỉnh của phạm vi lần này, rồi dựa vào kịch bản tạo tài sản nhân vật, bối cảnh, đạo cụ; từ kịch bản hoàn chỉnh tách ra nhiều đoạn, toàn bộ shot của mỗi đoạn được chuyển thành một prompt video, tài sản dùng trực tiếp làm đầu vào video. Một đoạn có thể có nhiều shot và động tác, tương ứng một node video; mặc định không tạo khung hình chính (keyframe). Khi người dùng nêu rõ yêu cầu đặc biệt như khung đầu, khung đầu và khung cuối, khóa bố cục, mới thêm giai đoạn tương ứng.
 
-写资产提示词前必须读取 [资产图规范](../../script/references/assetGuide.md)，拆片段和写视频提示词前必须读取 [片段制作指南](../../script/references/productionGuide.md)。本文件负责画布映射，不能用操作说明代替上述具体模板。
+Trước khi viết prompt tài sản phải đọc [Quy chuẩn ảnh tài sản](../../script/references/assetGuide.md), trước khi tách đoạn và viết prompt video phải đọc [Hướng dẫn sản xuất đoạn](../../script/references/productionGuide.md). Tệp này phụ trách ánh xạ lên canvas, không thể dùng hướng dẫn thao tác thay cho các mẫu cụ thể nói trên.
 
-| 阶段 | 给用户看的成果 | 确认后才推进的内容 |
+| Giai đoạn | Thành quả trình cho người dùng xem | Nội dung chỉ được đẩy tiếp sau khi xác nhận |
 | --- | --- | --- |
-| 需求与简报 | 已知需求、尚缺的受众/时长/画幅/风格/声音/参考用途 | 故事与剧本；每轮只问当前必要的少量问题 |
-| 完整剧本 | 本次范围的逐场正文、完整动作和对白/OS/VO、开头经过与结尾；梗概不能代替正文 | 根据剧本提取角色、场景和道具；不能因题目熟悉就跳过剧本 |
-| 资产设计与准备 | 剧本资产清单、分类型提示词、角色面部特写及正侧背三视图等实际资产成果 | 按确认范围生成并验收素材，已有合格资产复用；通过后供视频使用 |
-| 剧本分片段与视频提示词 | 每片段的剧本范围、内部镜头、预计时长、承接状态及一份完整多参提示词 | 一个明确范围的完整片段小样，不按内部镜头各建生成任务 |
-| 视频小样 | 实际视频、已检查内容及需调整之处 | 用户确认效果后扩展其同意的镜头范围 |
-| 批量制作与交付 | 对应片段的素材、实际规格、剩余问题 | 剪辑/合成或下一批；没有合成能力就交付片段，不宣称成片 |
+| Yêu cầu và bản tóm tắt | Các yêu cầu đã biết, những gì còn thiếu về khán giả/thời lượng/tỉ lệ khung/phong cách/âm thanh/công dụng tham chiếu | Câu chuyện và kịch bản; mỗi vòng chỉ hỏi số ít câu hỏi thực sự cần lúc này |
+| Kịch bản hoàn chỉnh | Phần thân từng cảnh của phạm vi lần này, động tác đầy đủ và lời thoại/OS/VO, mở đầu, diễn biến và kết thúc; tóm tắt không thể thay cho phần thân | Dựa vào kịch bản trích xuất nhân vật, bối cảnh và đạo cụ; không được bỏ qua kịch bản chỉ vì đề tài quen thuộc |
+| Thiết kế và chuẩn bị tài sản | Danh sách tài sản của kịch bản, prompt theo từng loại, cận cảnh khuôn mặt nhân vật và bộ ba góc nhìn trước-nghiêng-sau cùng các thành quả tài sản thực tế khác | Tạo và nghiệm thu tư liệu theo phạm vi đã xác nhận, tái sử dụng tài sản đạt chuẩn đã có; đạt rồi mới dùng cho video |
+| Tách đoạn kịch bản và prompt video | Phạm vi kịch bản của mỗi đoạn, các shot bên trong, thời lượng dự kiến, trạng thái nối tiếp và một prompt đa tham chiếu hoàn chỉnh | Một bản mẫu nhỏ của một đoạn hoàn chỉnh có phạm vi rõ ràng, không tạo tác vụ riêng cho từng shot bên trong |
+| Bản mẫu video | Video thực tế, nội dung đã kiểm tra và những chỗ cần điều chỉnh | Sau khi người dùng xác nhận hiệu quả thì mở rộng sang phạm vi shot mà họ đồng ý |
+| Sản xuất hàng loạt và bàn giao | Tư liệu của các đoạn tương ứng, quy cách thực tế, các vấn đề còn lại | Dựng/ghép hoặc lô tiếp theo; không có khả năng ghép thì bàn giao các đoạn, không tuyên bố là phim hoàn chỉnh |
 
-- 每阶段先完成可审阅成果，再用可用的 `askUser` 询问“按当前方案继续 / 调整”；未提供该工具时文字提问并等待答复。等待真实回答后再推进，不在同一轮连做多个未经确认的阶段，也不把每次工具调用变成一次提问。涉及消耗算力生成时，问题明确写出本次生成方案和收费性质。
-- 用户已明确确认或授权连续完成的具体阶段直接沿用。确认简报不代表确认剧本，确认资产生成不代表验收生成结果，允许一个小样不代表允许整片批量生产。
-- `askUser` 的 `title`、`question` 都必填；多问题用 `fields`，字段名用 `visualStyle`、`referenceUse` 这样唯一的小驼峰名称。不要同时传 `fields` 和顶层 `options`。表单失败时修正参数重发，不能当作用户跳过；阶段确认被跳过、取消或未回答时保留成果并暂停，不自动批准，也不循环追问。
-- 用户调整内容后，先同步更新受影响的简报、分镜和节点提示词，再展示更新后的阶段成果。比如改为“无旁白”时，不能让画布保留旧旁白，而另用聊天里的新提示词直接生成。
-- 画布制作沿节点内的实际配置与生成能力执行；不能为了绕过阶段确认或节点参数缺口，转用其他生成工具偷偷换一套方案。
+- Mỗi giai đoạn trước tiên hoàn thành thành quả có thể duyệt, rồi dùng `askUser` nếu có để hỏi "Tiếp tục theo phương án hiện tại / Điều chỉnh"; khi không có công cụ đó thì hỏi bằng văn bản và chờ trả lời. Chờ câu trả lời thật rồi mới đẩy tiếp, không làm liền nhiều giai đoạn chưa được xác nhận trong cùng một lượt, cũng không biến mỗi lần gọi công cụ thành một lần hỏi. Khi có việc tạo tiêu tốn credit tính toán, câu hỏi phải ghi rõ phương án tạo lần này và tính chất tính phí.
+- Các giai đoạn cụ thể mà người dùng đã xác nhận rõ ràng hoặc ủy quyền làm liên tục thì tiếp tục áp dụng. Xác nhận bản tóm tắt không có nghĩa là xác nhận kịch bản, xác nhận tạo tài sản không có nghĩa là nghiệm thu kết quả tạo, cho phép một bản mẫu nhỏ không có nghĩa là cho phép sản xuất hàng loạt cả phim.
+- `title`, `question` của `askUser` đều bắt buộc; nhiều câu hỏi thì dùng `fields`, tên trường dùng tên lowerCamelCase duy nhất như `visualStyle`, `referenceUse`. Không truyền đồng thời `fields` và `options` cấp cao nhất. Khi biểu mẫu thất bại thì sửa tham số và gửi lại, không được coi là người dùng bỏ qua; khi bước xác nhận giai đoạn bị bỏ qua, hủy hoặc không được trả lời thì giữ thành quả và tạm dừng, không tự động phê duyệt, cũng không hỏi dồn lặp lại.
+- Sau khi người dùng điều chỉnh nội dung, trước tiên đồng bộ cập nhật bản tóm tắt, phân cảnh và prompt của node bị ảnh hưởng, rồi trình bày thành quả giai đoạn đã cập nhật. Ví dụ khi đổi thành "không có lời dẫn", không được để canvas giữ lời dẫn cũ rồi dùng prompt mới trong khung chat để tạo trực tiếp.
+- Việc làm canvas thực hiện theo cấu hình và khả năng tạo thực tế bên trong node; không được để lách việc xác nhận giai đoạn hay chỗ thiếu tham số của node mà chuyển sang công cụ tạo khác để lén đổi sang một phương án khác.
 
-## 1. 读取现状，再决定需要哪些节点
+## 1. Đọc hiện trạng, rồi mới quyết định cần những node nào
 
-用 `getCanvas` 确认目标画布概览，按需传 `include: ["nodeTypes"]` 查询可用类型。用 `findCanvasNodes` 定位已有节点；已知 ID 时直接用 `getCanvasNodes` 查询必要字段，用 `getCanvasEdges` 查询局部连接，用 `getNodeTools` 查询函数。遵守分页、截断信息和游标，不读取整图详情；全图任务分批完成，仅保留当前批次和摘要。在当前画布制作时沿用当前画布；只有明确需要新画布或切换已有作品时才使用相应工具。
+Dùng `getCanvas` để xác nhận tổng quan canvas mục tiêu, khi cần thì truyền `include: ["nodeTypes"]` để tra các loại khả dụng. Dùng `findCanvasNodes` để định vị node đã có; khi đã biết ID thì dùng thẳng `getCanvasNodes` tra các trường cần thiết, dùng `getCanvasEdges` tra kết nối cục bộ, dùng `getNodeTools` tra hàm. Tuân thủ phân trang, thông tin cắt bớt và con trỏ, không đọc chi tiết toàn đồ thị; tác vụ toàn đồ thị hoàn thành theo lô, chỉ giữ lô hiện tại và bản tóm tắt. Khi làm trên canvas hiện tại thì tiếp tục dùng canvas hiện tại; chỉ khi rõ ràng cần canvas mới hoặc chuyển sang tác phẩm đã có mới dùng công cụ tương ứng.
 
-- 节点类型从 `getCanvas` 的 `availableNodeTypes` 选择，内容修改与生成函数从 `getNodeTools` 返回的 `nodeTools` 清单选择，再通过 `nodeTools` 执行。名称相似不代表能力相同，不把示例名称当作固定类型 ID。
-- 用剧本场号、片段号或用户已有名称定位内容；内部镜号保留在片段计划和提示词中。结合文本、素材及连接区分同名节点，续作时只补当前缺项。
-- 文本、图像、视频是内容职责，不强制每个环节都建节点。已经存在的媒体输出可以直接连接下游，不另建复制结果的节点。
-- 先完成当前已确认阶段的一个制作单元，填内容、核对引用，再展开获准的范围。资产未确认时不批量建立整片视频节点，也不先建一批空节点再补内容。
+- Loại node chọn từ `availableNodeTypes` của `getCanvas`, hàm sửa nội dung và hàm tạo chọn từ danh sách `nodeTools` do `getNodeTools` trả về, rồi thực thi qua `nodeTools`. Tên giống nhau không có nghĩa là khả năng giống nhau, không coi tên ví dụ là ID loại cố định.
+- Dùng số cảnh của kịch bản, số đoạn hoặc tên sẵn có của người dùng để định vị nội dung; số shot bên trong giữ lại trong kế hoạch đoạn và prompt. Kết hợp văn bản, tư liệu và kết nối để phân biệt các node cùng tên, khi làm tiếp chỉ bổ sung các mục còn thiếu hiện tại.
+- Văn bản, hình ảnh, video là vai trò nội dung, không bắt buộc mỗi khâu đều phải tạo node. Đầu ra media đã tồn tại có thể kết nối thẳng xuống hạ nguồn, không tạo thêm node sao chép kết quả.
+- Trước tiên hoàn thành một đơn vị sản xuất của giai đoạn hiện đã xác nhận, điền nội dung, đối chiếu tham chiếu, rồi mới mở rộng phạm vi được phép. Khi tài sản chưa được xác nhận thì không tạo hàng loạt node video cho cả phim, cũng không tạo trước một loạt node rỗng rồi mới bổ sung nội dung.
 
-## 2. 内容落在可编辑的位置
+## 2. Nội dung đặt ở vị trí có thể chỉnh sửa
 
-| 内容 | 放在哪里 | 怎样使用 |
+| Nội dung | Đặt ở đâu | Cách dùng |
 | --- | --- | --- |
-| 创意简报、完整剧本、片段与镜头表 | 文本节点 | 保存可编辑的正文和规划；不直接连到图片或视频生成节点。 |
-| 角色、场景、道具设计 | 对应资产的图片生成节点 | 按资产图规范填写：角色面部特写加完整三视图，场景/道具按各自类型与画风布局；不把片段动作、对白、运镜当成出图提示词。 |
-| 已确认角色图、场景图、道具图 | 已有媒体输出或素材节点 | 直接复用并连接多参视频节点；已有文件通过实际素材导入函数装入节点。 |
-| 一个片段的全部镜头 | 一个视频生成节点的提示词 | 从本段对应剧本与镜头计划转写一份三段式提示词，包含真实素材定义、顺序镜头及风格约束；不把内部镜头拆成多个节点。 |
-| 特殊要求的关键帧或首尾帧 | 对应图片生成节点 | 仅在该路线已明确确认时准备，不作为多参制作的固定中间步骤。 |
+| Bản tóm tắt sáng tạo, kịch bản hoàn chỉnh, bảng đoạn và shot | Node văn bản | Lưu phần thân và kế hoạch có thể chỉnh sửa; không nối thẳng vào node tạo ảnh hay tạo video. |
+| Thiết kế nhân vật, bối cảnh, đạo cụ | Node tạo ảnh của tài sản tương ứng | Điền theo quy chuẩn ảnh tài sản: nhân vật gồm cận cảnh khuôn mặt cộng bộ ba góc nhìn đầy đủ, bối cảnh/đạo cụ bố cục theo loại và phong cách vẽ riêng; không coi động tác, lời thoại, chuyển động máy của đoạn là prompt tạo ảnh. |
+| Ảnh nhân vật, ảnh bối cảnh, ảnh đạo cụ đã xác nhận | Đầu ra media đã có hoặc node tư liệu | Tái sử dụng trực tiếp và kết nối vào node video đa tham chiếu; tệp đã có thì nạp vào node qua hàm nhập tư liệu thực tế. |
+| Toàn bộ shot của một đoạn | Prompt của một node tạo video | Từ kịch bản tương ứng và kế hoạch shot của đoạn này chuyển thành một prompt ba phần, gồm định nghĩa tư liệu thực, các shot theo thứ tự và ràng buộc phong cách; không tách các shot bên trong thành nhiều node. |
+| Khung hình chính hoặc khung đầu/khung cuối theo yêu cầu đặc biệt | Node tạo ảnh tương ứng | Chỉ chuẩn bị khi lộ trình đó đã được xác nhận rõ ràng, không phải bước trung gian cố định của sản xuất đa tham chiếu. |
 
-操作顺序为：`addNode` → 记录返回的 `node.id` → `getNodeTools` 查询函数 → `renameNodes`（需要时，传 `renames` 数组）→ `nodeTools` 填内容。创建时也可直接设置名称；已有节点从修改内容开始。只创建空节点或把提示词留在聊天里，都不算完成画布搭建。
+Thứ tự thao tác là: `addNode` → ghi lại `node.id` được trả về → `getNodeTools` tra hàm → `renameNodes` (khi cần, truyền mảng `renames`) → `nodeTools` điền nội dung. Khi tạo cũng có thể đặt tên trực tiếp; node đã có thì bắt đầu từ bước sửa nội dung. Chỉ tạo node rỗng hoặc để prompt lại trong khung chat đều không được tính là đã dựng xong canvas.
 
-当前内置节点可能提供 `node:setText`、`node:setImage`、`node:setVideo`、`node:setAudio`、`node:setPrompt`、`node:getConfig`、`node:setConfig` 和相应生成函数；只有本次函数清单确实包含它时才使用，参数读取该函数说明，不将这些名称套给其他插件。
+Node tích hợp sẵn hiện tại có thể cung cấp `node:setText`, `node:setImage`, `node:setVideo`, `node:setAudio`, `node:setPrompt`, `node:getConfig`, `node:setConfig` và các hàm tạo tương ứng; chỉ dùng khi danh sách hàm lần này thực sự có nó, tham số thì đọc theo mô tả của hàm đó, không áp các tên này cho plugin khác.
 
-文本节点写入的是可供下游读取的文本内容，不等同于触发节点内的语言模型。文字已由当前助手完成时直接写入，不需要再次生成。用 `getCanvasNodes` 的 `fields: ["data"], dataKeys: ["textPath"]` 读取正文文件位置，再读取实际文件核对；需要查看当前内存正文时用 `path: ["outputs", "text", "value"]` 分段读取。默认详情未包含正文不代表节点为空，也不要猜路径或直接改文件替代节点函数。
+Thứ được ghi vào node văn bản là nội dung văn bản để hạ nguồn đọc, không đồng nghĩa với việc kích hoạt mô hình ngôn ngữ bên trong node. Khi chữ đã được trợ lý hiện tại viết xong thì ghi thẳng vào, không cần tạo lại. Dùng `fields: ["data"], dataKeys: ["textPath"]` của `getCanvasNodes` để đọc vị trí tệp phần thân, rồi đọc tệp thực tế để đối chiếu; khi cần xem phần thân hiện có trong bộ nhớ thì dùng `path: ["outputs", "text", "value"]` để đọc theo đoạn. Chi tiết mặc định không có phần thân không có nghĩa là node rỗng, cũng đừng đoán đường dẫn hay sửa thẳng tệp thay cho hàm node.
 
-新节点的文件或模型可能仍在初始化。收到明确的“尚未加载”错误时保留该节点，先处理独立内容，待初始化后再尝试；不要删除重建，也不要把暂未加载和确实未配置模型混为一谈。
+Tệp hoặc model của node mới có thể vẫn đang khởi tạo. Khi nhận lỗi rõ ràng "chưa được tải" thì giữ node đó, xử lý trước nội dung độc lập, đợi khởi tạo xong rồi thử lại; không xóa và dựng lại, cũng không lẫn lộn giữa tạm thời chưa tải với thực sự chưa cấu hình model.
 
-素材导入必须使用已存在且可读取的文件。图片名称、描述、待生成提示词都不能当作图片文件。已有媒体在画布上时直接复用；缺少导入能力则明确该缺口，不用文本路径冒充媒体输出。
+Nhập tư liệu phải dùng tệp đã tồn tại và đọc được. Tên ảnh, mô tả, prompt chờ tạo đều không thể coi là tệp ảnh. Media đã có trên canvas thì tái sử dụng trực tiếp; thiếu khả năng nhập thì nêu rõ chỗ thiếu đó, không dùng đường dẫn văn bản giả làm đầu ra media.
 
-## 3. 连接输入依赖，不连接制作步骤
+## 3. Kết nối phụ thuộc đầu vào, không kết nối các bước sản xuất
 
-先读取两端真实端口，再用 `connectNodes` 连接输出与兼容输入。端口 ID 和类型从最新节点信息获取。每条边都应回答“下游要使用上游的什么内容”。
+Trước tiên đọc cổng thực của hai đầu, rồi dùng `connectNodes` kết nối đầu ra với đầu vào tương thích. ID và loại cổng lấy từ thông tin node mới nhất. Mỗi cạnh đều phải trả lời được câu hỏi "hạ nguồn cần dùng nội dung gì của thượng nguồn".
 
-- 已连接的文字会作为上下文整段加入提示词，所以剧本和片段表不能当装饰线接入生成节点。助手先读完整剧本，再把本段原文和全部内部镜头转写到目标提示词中；剧本仍是内容来源。
-- 图像生成用于资产准备，视频直接接入已确认资产，以多参提示词描述整个片段；不能拿一张风格图代替小蝌蚪、青蛙或池塘资产，也不能把角色三视图变成视频里并排的三个角色。
-- 风格图只用于已确认的配色、笔触或材质；角色图约束身份外观，场景图约束环境空间，道具图约束物件形制。视频、音频参考仅在当前任务需要且目标实际支持时加入，不机械连接全部资产。
-- 每项实际使用的媒体都在提示词中写 `{{ref N}}`、素材名称和具体用途，不能只连边，或写“若附带参考图”。多个角色分别说明谁做什么，不能让模型猜素材对应关系。
-- 普通参考图不天然等于首帧或尾帧。首尾约束需要支持该方式的实际配置和正确顺序，不能仅在提示词里写“作为首帧”便宣称设置完成。
-- 先接线，再用 `getCanvasEdges` 的 `nodeIds: [目标ID], direction: "incoming"` 分页读完整目标入边。用 `getCanvasNodes` 的 `fields: ["data"], dataKeys: ["referenceOrder"]` 读取目标排序，用 `fields: ["ports", "outputs"]` 分批读取源节点并核对引用编号，最后调用目标的 `node:setPrompt`。默认详情不返回这些字段；分页和字段截断都须按[画布读取规则](../SKILL.md#读取画布)补齐。文字和媒体共用编号，不能把第一张图片一律写成参考 1。编号无法确认时不猜、不触发生成；接线、删除或排序改变后重新核对。
-- 两个视频节点的前后排列不要求连边。只有下段实际使用上段视频作为参考、延续等输入且目标支持时才连；剪辑顺序写在名称、位置或说明中。
+- Văn bản đã kết nối sẽ được đưa nguyên khối vào prompt làm ngữ cảnh, vì vậy kịch bản và bảng đoạn không thể nối vào node tạo như dây trang trí. Trợ lý trước tiên đọc hết kịch bản hoàn chỉnh, rồi chuyển nguyên văn đoạn này và toàn bộ shot bên trong vào prompt đích; kịch bản vẫn là nguồn nội dung.
+- Tạo ảnh dùng để chuẩn bị tài sản, video nối thẳng với tài sản đã xác nhận, dùng prompt đa tham chiếu mô tả toàn bộ đoạn; không thể lấy một ảnh phong cách thay cho tài sản nòng nọc, ếch hay ao, cũng không thể biến bộ ba góc nhìn của nhân vật thành ba nhân vật đứng cạnh nhau trong video.
+- Ảnh phong cách chỉ dùng cho phối màu, nét vẽ hoặc chất liệu đã xác nhận; ảnh nhân vật ràng buộc ngoại hình nhận dạng, ảnh bối cảnh ràng buộc không gian môi trường, ảnh đạo cụ ràng buộc hình dạng đồ vật. Tham chiếu video, âm thanh chỉ thêm vào khi tác vụ hiện tại cần và node đích thực sự hỗ trợ, không máy móc kết nối mọi tài sản.
+- Mỗi media thực sự được dùng đều phải ghi trong prompt `{{ref N}}`, tên tư liệu và công dụng cụ thể, không được chỉ nối cạnh, hoặc viết "nếu có kèm ảnh tham chiếu". Nhiều nhân vật thì nói rõ từng người làm gì, không để model đoán quan hệ tương ứng của tư liệu.
+- Ảnh tham chiếu thông thường không mặc nhiên là khung đầu hay khung cuối. Ràng buộc khung đầu/khung cuối cần cấu hình thực tế hỗ trợ cách đó và thứ tự đúng, không thể chỉ viết "làm khung đầu" trong prompt rồi tuyên bố đã thiết lập xong.
+- Nối dây trước, rồi dùng `nodeIds: [ID-mục-tiêu], direction: "incoming"` của `getCanvasEdges` để đọc đủ các cạnh vào của node đích theo trang. Dùng `fields: ["data"], dataKeys: ["referenceOrder"]` của `getCanvasNodes` để đọc thứ tự của node đích, dùng `fields: ["ports", "outputs"]` để đọc các node nguồn theo lô và đối chiếu số tham chiếu, cuối cùng gọi `node:setPrompt` của node đích. Chi tiết mặc định không trả về các trường này; phân trang và cắt bớt trường đều phải bổ sung theo [Quy tắc đọc canvas](../SKILL.md#đọc-canvas). Văn bản và media dùng chung dãy số, không được mặc định viết ảnh đầu tiên thành tham chiếu 1. Không xác nhận được số thì không đoán, không kích hoạt tạo; sau khi nối dây, xóa hoặc thay đổi thứ tự thì đối chiếu lại.
+- Thứ tự trước sau của hai node video không yêu cầu nối cạnh. Chỉ khi đoạn sau thực sự dùng video đoạn trước làm tham chiếu, kéo dài tiếp hoặc đầu vào khác và node đích hỗ trợ thì mới nối; thứ tự dựng ghi trong tên, vị trí hoặc phần ghi chú.
 
-当前内置节点按目标输入端口（通常为 `in`）收集有效入边。存在 `data.referenceOrder[端口ID]` 时，按其中的键排序，键为 `encodeURIComponent(JSON.stringify([source, sourceHandle]))`；未列入的项按入边顺序排在后面，没有排序配置时保持入边顺序。列表中第 N 项就是 `{{ref N}}`。这些是核对依据，不是让助手直接修改节点数据的接口。
+Node tích hợp sẵn hiện tại thu thập các cạnh vào hợp lệ theo cổng đầu vào đích (thường là `in`). Khi có `data.referenceOrder[ID-cổng]` thì sắp xếp theo các khóa trong đó, khóa là `encodeURIComponent(JSON.stringify([source, sourceHandle]))`; các mục không được liệt kê xếp phía sau theo thứ tự cạnh vào, không có cấu hình sắp xếp thì giữ thứ tự cạnh vào. Mục thứ N trong danh sách chính là `{{ref N}}`. Đây là căn cứ đối chiếu, không phải giao diện để trợ lý trực tiếp sửa dữ liệu node.
 
-提示词开头用真实 `{{ref N}}` 定义主体、场景、道具及稳定特征；之后按本段原镜号逐镜写动作与空间、单一主运镜、完整台词和声音，最后写已确认风格与必要约束。写法和完整多镜示例见 [制作指南](../../script/references/productionGuide.md)。不能用一句“引用小蝌蚪和池塘，游向青蛙”替代整段剧情与镜头，也不能仅因有标记便宣称模型已准确遵循。
+Đầu prompt dùng `{{ref N}}` thật để định nghĩa chủ thể, bối cảnh, đạo cụ và các đặc trưng ổn định; tiếp theo theo số shot gốc của đoạn này viết từng shot về động tác và không gian, một chuyển động máy chính duy nhất, lời thoại đầy đủ và âm thanh, cuối cùng viết phong cách đã xác nhận và các ràng buộc cần thiết. Cách viết và ví dụ đầy đủ nhiều shot xem [Hướng dẫn sản xuất](../../script/references/productionGuide.md). Không thể dùng một câu "tham chiếu nòng nọc và ao, bơi về phía ếch" thay cho toàn bộ cốt truyện và shot của đoạn, cũng không thể chỉ vì có đánh dấu mà tuyên bố model đã tuân theo chính xác.
 
-生成用到的上游内容必须准备好。可先搭好依赖并填写下游提示词，但空输出、尚未生成的图像不能作为已就绪参考启动下游。
+Nội dung thượng nguồn được dùng khi tạo phải được chuẩn bị sẵn sàng. Có thể dựng trước phụ thuộc và điền prompt hạ nguồn, nhưng đầu ra rỗng hay ảnh chưa được tạo không thể làm tham chiếu đã sẵn sàng để khởi động hạ nguồn.
 
-## 4. 触发生成前核对当前能力
+## 4. Đối chiếu khả năng hiện tại trước khi kích hoạt tạo
 
-读取生成节点的实际提示词、当前配置与已连接素材，先展示本次生成对象与数量、模型、画幅/分辨率/视频时长、完整提示词及参考，并告知会产生费用，再询问是否消耗算力生成，等明确同意后才调用生成函数。费用无可靠报价时说明未知。单张、变体和小样也适用；一个具体批次可确认一次，超出已批准范围的追加、重生成或可能收费的重试重新确认。确认内容设计或让助手继续，不等于批准未经说明、需要消耗算力的生成调用。用户只要求搭建或修改提示词时，不自动生成。
+Đọc prompt thực tế, cấu hình hiện tại và tư liệu đã kết nối của node tạo, trước tiên trình bày đối tượng và số lượng tạo lần này, model, tỉ lệ khung/độ phân giải/thời lượng video, prompt đầy đủ và tham chiếu, đồng thời thông báo sẽ phát sinh chi phí, rồi hỏi có tiêu tốn credit tính toán để tạo không, đợi đồng ý rõ ràng mới gọi hàm tạo. Khi chi phí không có báo giá đáng tin cậy thì nói là chưa biết. Ảnh đơn, biến thể và bản mẫu nhỏ cũng áp dụng; một lô cụ thể có thể xác nhận một lần, các lần bổ sung, tạo lại hoặc thử lại có thể tính phí vượt phạm vi đã phê duyệt thì xác nhận lại. Xác nhận thiết kế nội dung hay để trợ lý tiếp tục không đồng nghĩa với phê duyệt lần gọi tạo cần tiêu tốn credit tính toán mà chưa được giải thích. Khi người dùng chỉ yêu cầu dựng hoặc sửa prompt thì không tự động tạo.
 
-模型、比例、分辨率、模式、时长与声音选项必须与用户当前确认一致。需要核对时，通过本节点的 `node:getConfig` 读取当前配置及可用模型能力；沿用用户已确认且满足任务的配置，不为普通编辑重新选模型。未指定供应商时默认按工具返回顺序选择实际可用且支持所需输入、型号与规格的 Toonflow 模型，节点自动填入的默认模型不算用户指定；没有适用的 Toonflow 模型则说明并确认替代供应商或模型。视频尚未确定制作模型时，按已确认路线选择实际提供的 Seedance 2.0/2.5 多参能力，不能只因名称相同就假定支持所需素材、数量和规格。提示词写“9:16”不能让 `16:9` 节点变成竖屏，写“6秒”也不能覆盖实际 `4` 秒。
+Các tùy chọn model, tỉ lệ, độ phân giải, chế độ, thời lượng và âm thanh phải nhất quán với xác nhận hiện tại của người dùng. Khi cần đối chiếu, đọc cấu hình hiện tại và khả năng model khả dụng qua `node:getConfig` của node này; tiếp tục dùng cấu hình người dùng đã xác nhận và đáp ứng tác vụ, không chọn lại model cho chỉnh sửa thông thường. Khi không chỉ định nhà cung cấp, mặc định chọn theo thứ tự công cụ trả về model Toonflow thực sự khả dụng và hỗ trợ đầu vào, phiên bản và quy cách cần thiết, model mặc định do node tự điền không tính là người dùng chỉ định; không có model Toonflow phù hợp thì nêu rõ và xác nhận nhà cung cấp hoặc model thay thế. Khi video chưa chốt model sản xuất, chọn khả năng đa tham chiếu Seedance 2.0/2.5 thực sự được cung cấp theo lộ trình đã xác nhận, không thể chỉ vì trùng tên mà giả định hỗ trợ tư liệu, số lượng và quy cách cần thiết. Prompt viết "9:16" không thể làm node `16:9` thành khung dọc, viết "6 giây" cũng không thể ghi đè `4` giây thực tế.
 
-需要调整时，通过实际提供的 `node:setConfig` 只修改本次所需选项，参数和支持范围以函数说明及 `node:getConfig` 为准；切换模型时一并提供供应商与模型。配置修改不触发生成，核对生效结果后再按已确认范围调用生成函数。目标确实没有可用配置能力时，才指出具体节点与待调整选项，请用户处理。不得把参数塞进 `node:setPrompt`、直接改画布 JSON，或转用媒体工具绕开冲突。
+Khi cần điều chỉnh, dùng `node:setConfig` thực sự được cung cấp để chỉ sửa các tùy chọn cần cho lần này, tham số và phạm vi hỗ trợ lấy mô tả hàm và `node:getConfig` làm chuẩn; khi đổi model thì cung cấp kèm nhà cung cấp và model. Sửa cấu hình không kích hoạt tạo, đối chiếu kết quả đã có hiệu lực rồi mới gọi hàm tạo theo phạm vi đã xác nhận. Chỉ khi node đích thực sự không có khả năng cấu hình khả dụng mới chỉ ra node cụ thể và các tùy chọn cần chỉnh, nhờ người dùng xử lý. Không được nhét tham số vào `node:setPrompt`, sửa trực tiếp JSON canvas hoặc chuyển sang công cụ media để lách xung đột.
 
-节点只为未设置或不兼容的选项补默认值：图片使用模型支持的最低分辨率，比例默认 `16:9`；视频使用支持的最短时长和对应最低分辨率，比例默认 `9:16`，声音默认开启并服从模型音频能力。已有有效设置不被默认值覆盖，也不主动把用户已确认的较高规格改成默认最低值。
+Node chỉ bổ sung giá trị mặc định cho các tùy chọn chưa thiết lập hoặc không tương thích: ảnh dùng độ phân giải thấp nhất mà model hỗ trợ, tỉ lệ mặc định `16:9`; video dùng thời lượng ngắn nhất được hỗ trợ và độ phân giải thấp nhất tương ứng, tỉ lệ mặc định `9:16`, âm thanh mặc định bật và tuân theo khả năng âm thanh của model. Thiết lập hợp lệ đã có không bị giá trị mặc định ghi đè, cũng không chủ động đổi quy cách cao hơn mà người dùng đã xác nhận về mức thấp nhất mặc định.
 
-按已确认依赖推进：完整剧本 → 角色/场景/道具资产 → 剧本分片段与逐段多参提示词 → 片段小样 → 获准的其余片段。规划表记录时长，正式 Seedance 提示词默认按镜号组织而不写绝对秒数时间轴。已有资产直接复用，不逐镜增加关键帧，不对同一节点重复发起生成。
+Đẩy tiến theo phụ thuộc đã xác nhận: kịch bản hoàn chỉnh → tài sản nhân vật/bối cảnh/đạo cụ → tách đoạn kịch bản và prompt đa tham chiếu cho từng đoạn → bản mẫu đoạn → các đoạn còn lại được phép. Bảng kế hoạch ghi thời lượng, prompt Seedance chính thức mặc định tổ chức theo số shot mà không viết trục thời gian theo số giây tuyệt đối. Tài sản đã có thì tái sử dụng trực tiếp, không thêm khung hình chính cho từng shot, không phát lệnh tạo lặp lại trên cùng một node.
 
-请求失败时先读取错误并检查当前参数。在已确认规格内可以纠正明确的参数格式问题；不能自行降分辨率、缩时长、换模型/模式、删除参考或改变声音来“跑通”。这些变化要先解释影响并询问用户。同类错误未找到原因时停下，不连续试不同制作路线。
+Khi yêu cầu thất bại, trước tiên đọc lỗi và kiểm tra tham số hiện tại. Trong phạm vi quy cách đã xác nhận có thể sửa lỗi định dạng tham số rõ ràng; không được tự giảm độ phân giải, rút ngắn thời lượng, đổi model/chế độ, xóa tham chiếu hoặc thay đổi âm thanh để "chạy được". Những thay đổi này phải giải thích ảnh hưởng trước và hỏi người dùng. Lỗi cùng loại mà chưa tìm ra nguyên nhân thì dừng lại, không liên tục thử các lộ trình sản xuất khác nhau.
 
-## 5. 后台开始与完成分开处理
+## 5. Xử lý tách biệt việc bắt đầu chạy nền và việc hoàn thành
 
-发起前记录该节点原有输出。生成函数返回“已开始”后，当前步骤仅是已提交；不要立即宣称有新素材，也不要再次调用同一生成函数来等待结果。
+Trước khi phát lệnh, ghi lại đầu ra vốn có của node đó. Sau khi hàm tạo trả về "đã bắt đầu", bước hiện tại chỉ mới là đã gửi; đừng tuyên bố ngay là có tư liệu mới, cũng đừng gọi lại cùng hàm tạo đó để chờ kết quả.
 
-- 优先使用工具实际提供的完成通知、等待或状态能力。当前没有可靠状态查询时，不编造查询函数，也不把节点仍存在或旧输出仍可见当作成功。
-- 可先完成其他不依赖此结果的文字和结构工作，再读取画布检查输出。需要重新生成时，旧输出不能证明本次完成；应有新的结果或明确完成证据，并确认媒体可读。
-- 只有上游结果确实就绪且用户确认本阶段效果后，才启动下游；助手自评不能代替用户验收。没有新结果且无法确认状态时标记待完成，保留已搭好的结构与依赖，不高频空转查询或重复提交。
-- 当前媒体生成由节点持有，卸载可能取消任务。生成期间不为了整理工作而切换画布、删除或重建生成节点；整理可在同一画布移动位置。
-- 本轮只换了提示词时，已有媒体仍是旧版本；报告修改完成和生成状态时分清，不能把旧图当成修改后结果。
-- 生成进行中改提示词不会改变已提交的那次请求；要让修改参与下一次生成，先确认当前任务结束或通过实际停止能力取消。停止对话也不等于停止节点后台任务。
+- Ưu tiên dùng khả năng thông báo hoàn thành, chờ hoặc trạng thái mà công cụ thực sự cung cấp. Khi hiện không có truy vấn trạng thái đáng tin cậy, không bịa ra hàm truy vấn, cũng không coi việc node vẫn tồn tại hay đầu ra cũ vẫn hiển thị là thành công.
+- Có thể làm trước các công việc văn bản và cấu trúc khác không phụ thuộc vào kết quả này, rồi đọc canvas để kiểm tra đầu ra. Khi cần tạo lại, đầu ra cũ không chứng minh được lần này đã xong; phải có kết quả mới hoặc bằng chứng hoàn thành rõ ràng, và xác nhận media đọc được.
+- Chỉ khi kết quả thượng nguồn thực sự sẵn sàng và người dùng xác nhận hiệu quả của giai đoạn này mới khởi động hạ nguồn; tự đánh giá của trợ lý không thay được việc người dùng nghiệm thu. Không có kết quả mới và không xác nhận được trạng thái thì đánh dấu là chờ hoàn thành, giữ cấu trúc và phụ thuộc đã dựng, không truy vấn chạy không với tần suất cao hay gửi trùng lặp.
+- Việc tạo media hiện tại do node nắm giữ, gỡ bỏ có thể hủy tác vụ. Trong lúc tạo, không chuyển canvas, xóa hay dựng lại node tạo chỉ để sắp xếp công việc; sắp xếp có thể di chuyển vị trí trên cùng canvas.
+- Khi lượt này chỉ đổi prompt, media đã có vẫn là phiên bản cũ; khi báo cáo việc sửa đã xong và trạng thái tạo phải phân biệt rõ, không thể coi ảnh cũ là kết quả sau khi sửa.
+- Đổi prompt trong lúc đang tạo không làm thay đổi yêu cầu đã gửi lần đó; muốn bản sửa tham gia lần tạo tiếp theo thì trước tiên xác nhận tác vụ hiện tại đã kết thúc hoặc hủy qua khả năng dừng thực tế. Dừng hội thoại cũng không đồng nghĩa với dừng tác vụ chạy nền của node.
 
-## 6. 示例：三镜头组成一个视频片段
+## 6. Ví dụ: ba shot hợp thành một đoạn video
 
-假设已确认的完整短剧本为“林宁推门进屋，发现桌上的信，拆开信封后停住”，无对白。模型实际容量能容纳这段连续事件；节点类型、ID 与端口仍从当前工具获取。
+Giả sử kịch bản ngắn hoàn chỉnh đã xác nhận là "Lâm Ninh đẩy cửa vào phòng, phát hiện lá thư trên bàn, mở phong bì rồi khựng lại", không có lời thoại. Dung lượng thực tế của model chứa được chuỗi sự kiện liên tục này; loại node, ID và cổng vẫn lấy từ công cụ hiện tại.
 
-1. 从剧本提取林宁、房间、信件，复用已有合格素材；缺项按资产图规范制作，展示角色参考板、无人物场景图和道具图并等待确认。
-2. 将该连续事件作为“场01·片段01”，内部安排三个镜头：中景跟拍进屋，特写发现信件，中近景固定观察拆信后的反应。三个镜头都保留在该片段的同一份视频提示词中。
-3. 只创建一个“场01·片段01·视频”节点，接入三个真实资产，核对引用顺序，按三段式写素材定义、三个镜头的完整动作/环境音和风格约束。剧本文本不直接连入节点，不额外制作开门、信件、反应三张分镜图。
-4. 核对节点实际模型、模式、时长、画幅与声音，展示片段计划、完整提示词、数量与费用，用户明确批准本次算力消耗方案后再调用一次生成；展示实际片段并询问调整。其他片段仅按已获准的算力消耗范围继续，不按每个内部镜头另发一次请求。
-5. 要展示结果使用 `fitCanvas`；局部排布用 `moveNodes`，只有用户要求整理整幅画布时才用 `arrangeCanvas`。多个片段不因时间先后自动连边，未剪辑时明确交付为视频片段。
+1. Từ kịch bản trích xuất Lâm Ninh, căn phòng, lá thư, tái sử dụng tư liệu đạt chuẩn đã có; mục thiếu thì làm theo quy chuẩn ảnh tài sản, trình bày bảng tham chiếu nhân vật, ảnh bối cảnh không có người và ảnh đạo cụ rồi chờ xác nhận.
+2. Lấy chuỗi sự kiện liên tục này làm "Cảnh 01·Đoạn 01", bên trong bố trí ba shot: trung cảnh máy bám theo vào phòng, đặc tả phát hiện lá thư, trung cận cảnh máy cố định quan sát phản ứng sau khi mở thư. Cả ba shot đều giữ trong cùng một prompt video của đoạn này.
+3. Chỉ tạo một node "Cảnh 01·Đoạn 01·Video", nối ba tài sản thực, đối chiếu thứ tự tham chiếu, viết theo ba phần gồm định nghĩa tư liệu, động tác/âm thanh môi trường đầy đủ của ba shot và ràng buộc phong cách. Văn bản kịch bản không nối thẳng vào node, không làm thêm ba ảnh phân cảnh mở cửa, lá thư, phản ứng.
+4. Đối chiếu model, chế độ, thời lượng, tỉ lệ khung và âm thanh thực tế của node, trình bày kế hoạch đoạn, prompt đầy đủ, số lượng và chi phí, sau khi người dùng phê duyệt rõ ràng phương án tiêu tốn credit tính toán lần này mới gọi tạo một lần; trình bày đoạn thực tế và hỏi điều chỉnh. Các đoạn khác chỉ tiếp tục theo phạm vi tiêu tốn credit tính toán đã được phép, không gửi riêng một yêu cầu cho mỗi shot bên trong.
+5. Muốn hiển thị kết quả thì dùng `fitCanvas`; bố trí cục bộ dùng `moveNodes`, chỉ khi người dùng yêu cầu sắp xếp toàn bộ canvas mới dùng `arrangeCanvas`. Nhiều đoạn không tự động nối cạnh vì thứ tự thời gian, khi chưa dựng thì nói rõ là bàn giao dưới dạng các đoạn video.
 
-## 7. 核对画布交付
+## 7. Đối chiếu bàn giao canvas
 
-完成后用 `getCanvasNodes` / `getCanvasEdges` 核对受影响节点、文字或提示词、局部连接与输出，按需 `fitCanvas` 展示本次范围。检查截断提示，必要时沿 `path` 分段补齐内容。不要把交付核对变成默认重排整幅画布；若已按用户要求调用 `arrangeCanvas`，它已适配视口，无需额外整理或重复适配。标题或位置不能代替内容验证。
+Khi hoàn thành, dùng `getCanvasNodes` / `getCanvasEdges` đối chiếu các node bị ảnh hưởng, văn bản hoặc prompt, kết nối cục bộ và đầu ra, khi cần thì `fitCanvas` để hiển thị phạm vi lần này. Kiểm tra các thông báo cắt bớt, khi cần thì bổ sung nội dung theo đoạn dọc theo `path`. Đừng biến việc đối chiếu bàn giao thành mặc định sắp xếp lại toàn bộ canvas; nếu đã gọi `arrangeCanvas` theo yêu cầu người dùng thì nó đã khớp khung nhìn, không cần sắp xếp thêm hay khớp lại. Tiêu đề hay vị trí không thể thay cho việc kiểm chứng nội dung.
 
-分别报告已写入内容、已建立引用、已提交生成、已有新产物、已查看验收和已合成的部分。只有文件工具时不能用直接编写画布文件冒充实时操作；缺少画布工具时保留创作成果，并明确需要打开目标画布或启用相应能力。
+Báo cáo riêng từng phần: nội dung đã ghi, tham chiếu đã thiết lập, việc tạo đã gửi, sản phẩm mới đã có, phần đã xem và nghiệm thu, phần đã ghép. Khi chỉ có công cụ tệp thì không thể dùng việc viết trực tiếp tệp canvas để giả làm thao tác thời gian thực; khi thiếu công cụ canvas thì giữ thành quả sáng tác, và nói rõ cần mở canvas mục tiêu hoặc bật khả năng tương ứng.
 
-## 参考依据
+## Căn cứ tham khảo
 
-创作方法的公开来源见 [制作来源说明](../../script/references/sources.md)。操作时使用本手册、已安装的本地制作指南和实际工具返回值，无需访问外部资料。
+Nguồn công khai của phương pháp sáng tác xem [Ghi chú nguồn sản xuất](../../script/references/sources.md). Khi thao tác, dùng sổ tay này, hướng dẫn sản xuất cục bộ đã cài và giá trị trả về thực tế của công cụ, không cần truy cập tài liệu bên ngoài.

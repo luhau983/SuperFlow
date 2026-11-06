@@ -1,54 +1,54 @@
-# 将分镜表落实为画布节点
+# Đưa bảng phân cảnh thành node trên canvas
 
-输入是已确认分镜表，输出是当前集画布中的可核查制作单元；本阶段不启动图片或视频任务。
-具体节点工具和字段见 [canvasOperations.md](canvasOperations.md)，不能复制旧分镜面板 XML。
+Đầu vào là bảng phân cảnh đã xác nhận, đầu ra là các đơn vị sản xuất có thể kiểm tra trên canvas của tập hiện tại; giai đoạn này không khởi động tác vụ ảnh hay video.
+Công cụ node và trường cụ thể xem [canvasOperations.md](canvasOperations.md), không được sao chép XML bảng phân cảnh cũ.
 
-## 前置条件
+## Điều kiện tiên quyết
 
-- 从当前集画布回读确认后的导演规划、分镜表及确认记录，例如 `画布/分集/第001集.json`。
-- 从 `画布/资产.json` 核对选用资产与真实图片，正式台词需要复核时回到 `画布/剧本.json`。
-- 读取实时模型与节点能力，确认当前采用文本多参或首帧路线；不按固定品牌强制选择。
-- 已确认的模型、参数与范围保持有效；路线变化须先说明对节点数量和输入的影响并确认。
-- 分镜含“待素材/待方案确认”项时，仅对用户已确认且依赖齐全的子集建立可执行单元，逐项保留原镜号/片段号；未解决项保留完整文字与缺口记录，不计为已完成面板。多参片段内任一必要镜头受阻时，整片段待处理，不能删掉该镜后生成其余镜头。
+- Từ canvas của tập hiện tại đọc lại kế hoạch đạo diễn, bảng phân cảnh và bản ghi xác nhận sau khi xác nhận, ví dụ `Canvas/Tập/Tập 001.json`.
+- Từ `Canvas/Tài sản.json` kiểm tra tài sản được chọn dùng và ảnh thật, khi cần rà lại lời thoại chính thức thì quay về `Canvas/Kịch bản.json`.
+- Đọc năng lực mô hình và node thời gian thực, xác nhận hiện tại chọn dùng tuyến văn bản đa tham chiếu hay khung đầu; không bắt buộc chọn theo một thương hiệu cố định.
+- Mô hình, tham số và phạm vi đã xác nhận giữ hiệu lực; thay đổi tuyến phải trước tiên nói rõ ảnh hưởng tới số lượng node và đầu vào rồi xác nhận.
+- Khi phân cảnh có mục "Chờ tư liệu/Chờ xác nhận phương án", chỉ lập đơn vị có thể thực thi cho tập con mà người dùng đã xác nhận và phụ thuộc đầy đủ, giữ nguyên từng số shot/số đoạn gốc; các mục chưa giải quyết giữ văn bản đầy đủ và bản ghi chỗ thiếu, không tính là bảng đã hoàn thành. Khi bất kỳ shot cần thiết nào trong đoạn đa tham chiếu bị chặn, cả đoạn chờ xử lý, không được xóa shot đó rồi tạo các shot còn lại.
 
-按路线读取知识再转节点：路线 A 读 [视频模式与模板](knowledge/videoPromptCraft.md) 的模式选择与共用约束，核实已确认片段能被当前模式承载；路线 B 完整读 [分镜图提示词与首帧知识](knowledge/imagePromptCraft.md)，据实际图像模型选中文段落或英文 JSON 正文模板。两条路线都用 [镜头知识](knowledge/shotCraft.md) 的空间与连续性核对承接；风格只取 [视觉风格](knowledge/visualStyles.md) 的已确认条目。本阶段只准备节点与说明，不因读到生成模板就启动任务。
+Đọc kiến thức theo tuyến rồi mới chuyển thành node: tuyến A đọc phần chọn chế độ và ràng buộc chung của [Chế độ video và mẫu](knowledge/videoPromptCraft.md), xác minh đoạn đã xác nhận có thể được chế độ hiện tại đáp ứng; tuyến B đọc đầy đủ [Kiến thức prompt ảnh phân cảnh và khung đầu](knowledge/imagePromptCraft.md), theo mô hình ảnh thực tế chọn mẫu chính văn đoạn văn tiếng Việt hoặc JSON tiếng Anh. Cả hai tuyến đều dùng phần không gian và tính liên tục của [Kiến thức shot](knowledge/shotCraft.md) để kiểm tra sự tiếp nối; phong cách chỉ lấy mục đã xác nhận của [Phong cách hình ảnh](knowledge/visualStyles.md). Giai đoạn này chỉ chuẩn bị node và ghi chú, không vì đọc thấy mẫu tạo mà khởi động tác vụ.
 
-## 路线 A：文本多参
+## Tuyến A: Văn bản đa tham chiếu
 
-1. 每个已确认片段建立一个视频制作单元，保持片段顺序和原定时长，不重新合并或拆分；模型/模式无法承载原多镜片段时返回分镜/模式确认，不能强制改成 Seedance 或删镜。
-2. 把该片段全部镜头文字、台词、音效和时序保存在可读说明中；不能用概述替换原分镜。
-3. 引用该片段的确认资产图，并按模型支持情况准备其他参考输入；不是每个资产都必须上传。
-4. 同场片段衔接采用确认分镜表的结束/开始状态；换场时不凭空附加连续动作。
-5. 不强制生成分镜图；只有用户明确选择且模型支持相应参考方式时才额外准备。
+1. Mỗi đoạn đã xác nhận lập một đơn vị sản xuất video, giữ thứ tự đoạn và thời lượng định sẵn ban đầu, không gộp hay tách lại; khi mô hình/chế độ không đáp ứng được đoạn nhiều shot ban đầu thì quay lại xác nhận phân cảnh/chế độ, không được ép đổi sang Seedance hoặc xóa shot.
+2. Lưu toàn bộ văn bản shot, lời thoại, hiệu ứng âm thanh và trình tự thời gian của đoạn đó trong ghi chú đọc được; không được dùng tóm tắt thay cho phân cảnh gốc.
+3. Tham chiếu các ảnh tài sản đã xác nhận của đoạn đó, và chuẩn bị các đầu vào tham chiếu khác theo mức hỗ trợ của mô hình; không phải tài sản nào cũng bắt buộc tải lên.
+4. Sự nối tiếp giữa các đoạn cùng cảnh chọn dùng trạng thái kết thúc/bắt đầu của bảng phân cảnh đã xác nhận; khi đổi cảnh không gán thêm động tác liên tục vô căn cứ.
+5. Không bắt buộc tạo ảnh phân cảnh; chỉ khi người dùng chọn rõ ràng và mô hình hỗ trợ cách tham chiếu tương ứng mới chuẩn bị thêm.
 
-## 路线 B：首帧
+## Tuyến B: Khung đầu
 
-1. 每个已确认镜头建立一个独立视频制作单元，镜号顺序和单镜时长与分镜表一致。
-2. 为该镜准备首帧图像节点：静态瞬间照原描述保留，连续动作取真实起始瞬间，不能把站立、凝视、冷笑等既有状态一律改成“即将发生”；视频说明保留完整动作过程。
-3. 复合景别如「远景→近景」取起始景别出首帧，不能直接把结果态画成首帧。
-4. 用图像知识中适用模型的完整模板写入提示词，逐项保留视觉主体、关键物件、空间关系、朝向、情绪及场景，绑定确认资产的实际图片输入。Nanobanana JSON 是 prompt 正文，不能把其中 role/shot/negative 等当节点工具参数。
-5. 只有当前模型支持首尾帧且用户选定该模式时才准备末帧；不默认每镜增加尾帧任务。
+1. Mỗi shot đã xác nhận lập một đơn vị sản xuất video độc lập, thứ tự số shot và thời lượng mỗi shot nhất quán với bảng phân cảnh.
+2. Chuẩn bị node ảnh khung đầu cho shot đó: khoảnh khắc tĩnh giữ theo mô tả gốc, động tác liên tục lấy khoảnh khắc bắt đầu thật, không được đổi hết các trạng thái sẵn có như đứng, nhìn chăm chú, cười lạnh thành "sắp xảy ra"; ghi chú video giữ toàn bộ quá trình động tác.
+3. Cỡ cảnh phức hợp như "Toàn cảnh→Cận cảnh" lấy cỡ cảnh bắt đầu làm khung đầu, không được vẽ thẳng trạng thái kết quả làm khung đầu.
+4. Dùng mẫu đầy đủ cho mô hình áp dụng trong kiến thức ảnh để ghi prompt, giữ từng mục chủ thể hình ảnh, vật then chốt, quan hệ không gian, hướng quay, cảm xúc và bối cảnh, gắn đầu vào ảnh thực tế của tài sản đã xác nhận. Nanobanana JSON là chính văn prompt, không được coi role/shot/negative v.v. trong đó là tham số công cụ node.
+5. Chỉ khi mô hình hiện tại hỗ trợ khung đầu và khung cuối và người dùng chọn chế độ đó mới chuẩn bị khung cuối; không mặc định mỗi shot thêm tác vụ khung cuối.
 
-## 引用与提示词规则
+## Quy tắc tham chiếu và prompt
 
-- 每个参考标记对应一个实际媒体输入，图片、视频或音频的编号以当前节点真实输入顺序为准；`@图N` 不是所有模型的通用语法。
-- 缺图时先修复输入或重新确认引用范围，不能删除某项图片后仍保留错位编号。
-- 同场人物站位和朝向沿确认分镜描述连续；必要变化必须有叙事或动作依据。
-- 分镜图提示词不承载台词和音效，但本单元的视频说明必须完整保留它们。
-- 场景图已承担的风格和光照保持一致，不额外引入冲突设定。
-- 输入节点与生成节点保持明确关系，避免把说明卡片误当成已配置生成任务。
+- Mỗi dấu tham chiếu tương ứng với một đầu vào media thực tế, số thứ tự của ảnh, video hoặc âm thanh lấy theo thứ tự đầu vào thật của node hiện tại làm chuẩn; `@ảnhN` không phải cú pháp chung của mọi mô hình.
+- Khi thiếu ảnh, trước tiên sửa đầu vào hoặc xác nhận lại phạm vi tham chiếu, không được xóa một ảnh nào đó mà vẫn giữ số thứ tự bị lệch.
+- Vị trí đứng và hướng quay của nhân vật trong cùng cảnh liên tục theo mô tả phân cảnh đã xác nhận; thay đổi cần thiết phải có căn cứ tự sự hoặc động tác.
+- Prompt ảnh phân cảnh không mang lời thoại và hiệu ứng âm thanh, nhưng ghi chú video của đơn vị này phải giữ chúng đầy đủ.
+- Phong cách và ánh sáng mà ảnh bối cảnh đã đảm nhận giữ nhất quán, không đưa thêm thiết lập xung đột.
+- Node đầu vào và node tạo giữ quan hệ rõ ràng, tránh nhầm thẻ ghi chú thành tác vụ tạo đã cấu hình.
 
-## 可验产出
+## Đầu ra kiểm chứng được
 
-本集画布可见每个单元的镜号/片段号、原分镜文字、时长、路线、真实资产引用和待生成节点。
-文本多参的视频单元数量等于本次确认且依赖齐全的片段数；首帧路线的视频单元数量等于本次确认且依赖齐全的镜头行数。另列原计划总数和待处理数量；只有全部覆盖后，才与整集片段数/镜头行数相等。
-需要图片的单元具有可编辑提示词及真实参考输入；不需要图片的单元明确标识该选择。
-各单元的本集说明同时保存：模板/模式选择理由、首帧或末帧的语义判断、起始景别和状态、同场空间基准/变化、真实参考顺序及用途映射。完整原分镜与声音保留在可读说明；后续视频准备再写该模式的完整视频执行提示词。
-布局按阅读和制作顺序排列，资产仍保存在统一资产画布，不能建立第二份正式资产库。
+Trên canvas của tập này nhìn thấy được số shot/số đoạn, văn bản phân cảnh gốc, thời lượng, tuyến, tham chiếu tài sản thật và node chờ tạo của mỗi đơn vị.
+Số đơn vị video của văn bản đa tham chiếu bằng số đoạn được xác nhận lần này và phụ thuộc đầy đủ; số đơn vị video của tuyến khung đầu bằng số dòng shot được xác nhận lần này và phụ thuộc đầy đủ. Liệt kê riêng tổng số kế hoạch ban đầu và số chờ xử lý; chỉ khi bao phủ toàn bộ mới bằng số đoạn/số dòng shot của cả tập.
+Các đơn vị cần ảnh có prompt chỉnh sửa được và đầu vào tham chiếu thật; các đơn vị không cần ảnh đánh dấu rõ lựa chọn đó.
+Ghi chú tập này của mỗi đơn vị đồng thời lưu: lý do chọn mẫu/chế độ, phán đoán ngữ nghĩa khung đầu hoặc khung cuối, cỡ cảnh và trạng thái bắt đầu, chuẩn/thay đổi không gian cùng cảnh, thứ tự tham chiếu thật và ánh xạ mục đích. Phân cảnh gốc đầy đủ và âm thanh giữ trong ghi chú đọc được; bước chuẩn bị video sau đó mới viết prompt thực thi video đầy đủ của chế độ đó.
+Bố cục sắp theo thứ tự đọc và sản xuất, tài sản vẫn lưu trên canvas tài sản thống nhất, không được lập kho tài sản chính thức thứ hai.
 
-## 回读与确认
+## Đọc lại và xác nhận
 
-回读实际节点，逐项核对数量、镜号/片段号、时长、参考顺序及工具字段是否已正确保存。
-展示当前集画布、采用路线和预计生成范围，等待用户确认制作单元与提示词。
-确认后记录状态并停止；需要分镜图时进入 [storyboardImages.md](storyboardImages.md)，否则进入视频准备。
-旧版面板残留字段和模式差异见 [sourceMap.md](sourceMap.md)。
+Đọc lại các node thực tế, kiểm tra từng mục số lượng, số shot/số đoạn, thời lượng, thứ tự tham chiếu và các trường công cụ đã được lưu đúng chưa.
+Trình bày canvas của tập hiện tại, tuyến chọn dùng và phạm vi tạo dự kiến, chờ người dùng xác nhận đơn vị sản xuất và prompt.
+Sau khi xác nhận, ghi trạng thái và dừng; cần ảnh phân cảnh thì vào [storyboardImages.md](storyboardImages.md), nếu không thì vào chuẩn bị video.
+Các trường còn sót của bảng phân cảnh cũ và khác biệt chế độ xem [sourceMap.md](sourceMap.md).

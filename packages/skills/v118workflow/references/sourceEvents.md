@@ -1,57 +1,57 @@
-# 原文与章节事件
+# Nguyên văn và sự kiện chương
 
-本阶段把用户提供的小说或故事整理为可追溯的事件表，为故事骨架提供依据。
+Giai đoạn này sắp xếp tiểu thuyết hoặc câu chuyện người dùng cung cấp thành bảng sự kiện có thể truy nguồn, làm căn cứ cho khung xương câu chuyện.
 
-## 输入
+## Đầu vào
 
-- 已确认的项目配置，以及改编范围和忠实原著、可调整内容等限制。
-- 用户提供的章节原文、故事文本或已有剧本；保留真实来源与原有编号。
-- 剧本画布已有的原文索引、事件表和确认记录；已有确认继续沿用。
+- Cấu hình dự án đã xác nhận, cùng các giới hạn như phạm vi chuyển thể, mức trung thành với nguyên tác, nội dung được phép điều chỉnh.
+- Nguyên văn các chương, văn bản câu chuyện hoặc kịch bản sẵn có do người dùng cung cấp; giữ nguồn thật và đánh số gốc.
+- Chỉ mục nguyên văn, bảng sự kiện và bản ghi xác nhận đã có trên canvas kịch bản; các xác nhận đã có tiếp tục dùng.
 
-## 执行前必读
+## Bắt buộc đọc trước khi thực hiện
 
-- 必须读取 [编剧方法](knowledge/scriptCraft.md) 的“适用顺序”“事件判断与三种密度”，再提取原文；不能用改编提案替代原文事实。
-- 类型已确认时，必须读取 [叙事类型](knowledge/narrativeGenres.md) 的“使用与落画布”及对应类型，识别需要保留的日常、沉默、关系、线索或行动；类型未定时只提取事实并记录候选，不擅自定调。
+- Phải đọc các phần "Thứ tự áp dụng", "Đánh giá sự kiện và ba mức mật độ" của [Phương pháp biên kịch](knowledge/scriptCraft.md), rồi mới trích xuất nguyên văn; không được dùng đề xuất chuyển thể thay cho sự thật nguyên văn.
+- Khi thể loại đã được xác nhận, phải đọc phần "Sử dụng và đưa lên canvas" của [Thể loại tự sự](knowledge/narrativeGenres.md) và thể loại tương ứng, nhận diện những đời thường, im lặng, quan hệ, manh mối hoặc hành động cần giữ lại; khi thể loại chưa định thì chỉ trích xuất sự thật và ghi lại các ứng viên, không tự ý định giọng điệu.
 
-## 执行方法
+## Phương pháp thực hiện
 
-1. 按 [画布操作](canvasOperations.md) 读取工作区与剧本画布，定位已有成果。
-2. 核对实际可读的原文及章节范围；缺少章节或附件无法读取时，明确缺口，先补齐本阶段必要输入。
-3. 原文篇幅较大时按章处理，保留来源路径和章节索引；不能只凭简介声称已读完整原文。
-4. 小说输入按原章节顺序，每章恰好一行汇总事件；提取对主角和主线影响最大的事件，其他事件只保留必要的因果、人物关系或伏笔。多事件细项另写该章补充说明，不增加汇总表行数，也不合并不同章节。
-5. 核心事件写清“谁采取什么行动，造成什么结果”，约 30–60 字；不复述整段对话。
-6. 统一同一角色的主要称呼，并记录别名；不把别名当作新角色。
-7. 标注主线关系、信息密度、情绪及预计可改编时长。沿用旧估时参考：高密度且高情绪约45–60秒、中等约35–45秒、低密度约25–35秒；每行写具体估算值并带“秒”，情绪用文字标签以“+”连接。该值是章节内容的改编估计，不代表一章一集，也不是后续视频请求时长。
-8. 用户仅提供原创故事设想时，可按已确认的段落或情节单元整理；新增创作内容明确标记为提案，不能伪装成原文事实。
+1. Theo [Thao tác canvas](canvasOperations.md) đọc workspace và canvas kịch bản, định vị các kết quả đã có.
+2. Kiểm tra nguyên văn thực sự đọc được và phạm vi chương; khi thiếu chương hoặc tệp đính kèm không đọc được, nêu rõ chỗ thiếu, trước tiên bổ sung đầu vào cần thiết cho giai đoạn này.
+3. Khi nguyên văn dài thì xử lý theo chương, giữ đường dẫn nguồn và chỉ mục chương; không được chỉ dựa vào tóm tắt mà tuyên bố đã đọc toàn bộ nguyên văn.
+4. Đầu vào tiểu thuyết theo thứ tự chương gốc, mỗi chương đúng một dòng sự kiện tổng hợp; trích xuất sự kiện có ảnh hưởng lớn nhất tới nhân vật chính và tuyến chính, các sự kiện khác chỉ giữ nhân quả, quan hệ nhân vật hoặc phục bút cần thiết. Chi tiết nhiều sự kiện viết riêng vào phần bổ sung của chương đó, không tăng số dòng của bảng tổng hợp, cũng không gộp các chương khác nhau.
+5. Sự kiện cốt lõi viết rõ "ai thực hiện hành động gì, gây ra kết quả gì", khoảng 30–60 chữ; không thuật lại cả đoạn hội thoại.
+6. Thống nhất cách gọi chính của cùng một nhân vật và ghi lại tên khác; không coi tên khác là nhân vật mới.
+7. Đánh dấu quan hệ với tuyến chính, mật độ thông tin, cảm xúc và thời lượng chuyển thể dự kiến. Dùng tiếp mức tham chiếu ước tính thời gian cũ: mật độ cao và cảm xúc cao khoảng 45–60 giây, trung bình khoảng 35–45 giây, mật độ thấp khoảng 25–35 giây; mỗi dòng ghi giá trị ước tính cụ thể kèm "giây", cảm xúc dùng nhãn chữ nối bằng "+". Giá trị này là ước tính chuyển thể cho nội dung chương, không có nghĩa một chương một tập, cũng không phải thời lượng của yêu cầu video phía sau.
+8. Khi người dùng chỉ cung cấp ý tưởng câu chuyện nguyên bản, có thể sắp xếp theo các đoạn hoặc đơn vị tình tiết đã xác nhận; nội dung sáng tác mới phải đánh dấu rõ là đề xuất, không được ngụy trang thành sự thật nguyên văn.
 
-## 写入剧本画布
+## Ghi vào canvas kịch bản
 
-默认位置为工作区 `画布/剧本.json`；实际路径与节点操作遵循 [画布操作](canvasOperations.md)。
+Vị trí mặc định là `Canvas/Kịch bản.json` trong workspace; đường dẫn thực tế và thao tác node theo [Thao tác canvas](canvasOperations.md).
 
-- 在“原文索引”节点保存来源、覆盖范围、章节标题及缺失情况。
-- 在“章节事件表”节点保存事件表；内容较长时按实际章节分组，仍放在同一剧本画布。
-- 汇总行保持下列七字段；目标/阻碍、新信息与知情者、重要道具、关系变化和伏笔的细项另附章节补充说明，保留真实来源。补充说明与对应章节汇总保存在同一节点，后续读取章节事件时一并读取，不只读取七字段表。需强化的密度或类型表达另写“改编候选”文本节点，不改写事实表。
-- 原文已有可读文件时优先登记来源与定位方式，避免重复堆放全文。
-- 更新已有对应节点；不得因为再次进入本阶段重复创建剧本画布或整套事件表。
+- Lưu nguồn, phạm vi bao phủ, tiêu đề chương và tình trạng thiếu trong node "Chỉ mục nguyên văn".
+- Lưu bảng sự kiện trong node "Bảng sự kiện chương"; khi nội dung dài thì nhóm theo chương thực tế, vẫn đặt trên cùng canvas kịch bản.
+- Dòng tổng hợp giữ bảy trường dưới đây; chi tiết mục tiêu/trở ngại, thông tin mới và người biết, đạo cụ quan trọng, thay đổi quan hệ và phục bút đính kèm riêng trong phần bổ sung của chương, giữ nguồn thật. Phần bổ sung lưu cùng node với dòng tổng hợp của chương tương ứng, khi đọc sự kiện chương ở bước sau thì đọc cùng lúc, không chỉ đọc bảng bảy trường. Mật độ hoặc biểu đạt thể loại cần tăng cường viết riêng trong node văn bản "Ứng viên chuyển thể", không sửa bảng sự thật.
+- Khi nguyên văn đã có tệp đọc được thì ưu tiên đăng ký nguồn và cách định vị, tránh chất đống toàn văn lặp lại.
+- Cập nhật node tương ứng đã có; không được vì vào lại giai đoạn này mà tạo lặp canvas kịch bản hoặc cả bộ bảng sự kiện.
 
-小说事件汇总表固定七字段、一章一行；为画布阅读可加表头。原创设想没有原章节时，按已确认的情节单元一单元一行，并明确不是原著章节：
+Bảng tổng hợp sự kiện tiểu thuyết cố định bảy trường, một chương một dòng; có thể thêm tiêu đề bảng để dễ đọc trên canvas. Ý tưởng nguyên bản không có chương gốc thì theo đơn vị tình tiết đã xác nhận, một đơn vị một dòng, và nói rõ không phải chương nguyên tác:
 
-| 来源章节/段落 | 涉及角色 | 核心事件 | 主线关系及理由 | 信息密度 | 预计时长（秒） | 情绪 |
+| Chương/đoạn nguồn | Nhân vật liên quan | Sự kiện cốt lõi | Quan hệ tuyến chính và lý do | Mật độ thông tin | Thời lượng dự kiến (giây) | Cảm xúc |
 |---|---|---|---|---|---|---|
-| 真实编号与标题 | 规范称呼 | 行动与结果 | 强/中/弱（简短理由） | 高/中/低 | 50秒等具体估算 | 冲突+转折等文字标签 |
+| Số và tiêu đề thật | Cách gọi chuẩn | Hành động và kết quả | Mạnh/Trung bình/Yếu (lý do ngắn) | Cao/Trung bình/Thấp | Ước tính cụ thể như 50 giây | Nhãn chữ như Xung đột+Bước ngoặt |
 
-## 质量门与确认
+## Cổng chất lượng và xác nhận
 
-- 每行能定位到已读取的来源；不存在虚构章节或越过已确认范围的内容。
-- 已确认范围无遗漏；小说汇总行数等于已处理章节数，编号逐项对应，不能把三章拆成多行事件后声称仍是旧版汇总格式。无法读取或尚未处理的章节明确标为未完成，不伪造事件补齐行数。
-- 事件忠于原文；人物称呼一致；主线强弱有依据；对话提取落到结果。
-- 依据所读方法复核：是否把“发生事件”误当成有因果变化的情节，是否因某行主线弱而漏掉该类型重要的情感日常、线索或环境信息。
-- 写入后回读节点，核对事件表和来源索引确实存在且内容完整。
-- 向用户展示覆盖范围、事件摘要和需要决策的缺口，等待明确确认。
-- 用户要求修改时只改涉及章节并重新检查；不重跑已确认的其他章节。
+- Mỗi dòng đều định vị được về nguồn đã đọc; không có chương hư cấu hoặc nội dung vượt phạm vi đã xác nhận.
+- Phạm vi đã xác nhận không bị bỏ sót; số dòng tổng hợp tiểu thuyết bằng số chương đã xử lý, đánh số khớp từng mục, không được tách ba chương thành nhiều dòng sự kiện rồi tuyên bố vẫn là định dạng tổng hợp cũ. Các chương không đọc được hoặc chưa xử lý phải đánh dấu rõ là chưa hoàn thành, không ngụy tạo sự kiện để đủ số dòng.
+- Sự kiện trung thành với nguyên văn; cách gọi nhân vật nhất quán; độ mạnh yếu tuyến chính có căn cứ; trích xuất hội thoại phải đi đến kết quả.
+- Rà soát theo phương pháp đã đọc: có nhầm "sự kiện xảy ra" thành tình tiết có biến đổi nhân quả không, có vì dòng nào đó tuyến chính yếu mà bỏ sót đời thường cảm xúc, manh mối hoặc thông tin môi trường quan trọng với thể loại này không.
+- Sau khi ghi, đọc lại node, kiểm tra bảng sự kiện và chỉ mục nguồn thực sự tồn tại và nội dung đầy đủ.
+- Trình bày cho người dùng phạm vi bao phủ, tóm tắt sự kiện và các chỗ thiếu cần quyết định, chờ xác nhận rõ ràng.
+- Khi người dùng yêu cầu sửa, chỉ sửa các chương liên quan và kiểm tra lại; không chạy lại các chương khác đã xác nhận.
 
-确认后进入 [故事骨架](storySkeleton.md)；不能把事件提取完成当作故事骨架已获认可。
+Sau khi xác nhận vào [Khung xương câu chuyện](storySkeleton.md); không được coi việc trích xuất sự kiện hoàn tất là khung xương câu chuyện đã được chấp thuận.
 
-## 旧版依据
+## Căn cứ bản cũ
 
-`src/routes/novel/event/generateEvents.ts`、`src/utils/cleanNovel.ts`、`src/lib/initDB.ts` 中的 `eventExtraction`。
+`eventExtraction` trong `src/routes/novel/event/generateEvents.ts`, `src/utils/cleanNovel.ts`, `src/lib/initDB.ts`.

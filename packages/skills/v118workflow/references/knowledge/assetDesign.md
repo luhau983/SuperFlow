@@ -1,230 +1,230 @@
-# 资产设计、变体与提示词方法
+# Thiết kế tài sản, biến thể và phương pháp viết prompt
 
-本文件融合 v1.1.8 各画风的角色、场景、道具、三类衍生与图像/视频视觉约束。执行资产提取前读取“设计依据与画布记录”；制作哪一类资产，再读取对应章节、模板和验收项。画风选择与差异见 [visualStyles.md](visualStyles.md)，真实画布工具操作见 [canvasOperations.md](../canvasOperations.md)。
+Tệp này hợp nhất các ràng buộc thị giác về nhân vật, bối cảnh, đạo cụ, ba loại phái sinh và hình ảnh/video của từng phong cách vẽ trong v1.1.8. Trước khi trích xuất tài sản, hãy đọc "Cơ sở thiết kế và ghi chép trên canvas"; làm loại tài sản nào thì đọc thêm chương, mẫu và mục nghiệm thu tương ứng. Việc chọn phong cách vẽ và khác biệt giữa chúng xem [visualStyles.md](visualStyles.md), thao tác công cụ canvas thực tế xem [canvasOperations.md](../canvasOperations.md).
 
-## 设计依据与画布记录
+## Cơ sở thiết kế và ghi chép trên canvas
 
-所有资产的唯一主记录放在 `画布/资产.json`；`画布/剧本.json` 提供事实来源，分集制作画布只引用确认版本。知识文件提供设计方法，不替剧本新增人物、道具或剧情。
+Bản ghi chính duy nhất của mọi tài sản đặt trong `Canvas/Tài sản.json`; `Canvas/Kịch bản.json` cung cấp nguồn sự thật, các canvas sản xuất theo tập chỉ tham chiếu phiên bản đã xác nhận. Tệp kiến thức cung cấp phương pháp thiết kế, không thay kịch bản thêm nhân vật, đạo cụ hay tình tiết mới.
 
-先分清三种信息：剧本明确事实、用户给定参考、待确认的美术选择。未知发型、服装或结构可以提出具体方案，但要标为提案。画风不能替代角色个性，更不能把旧模板的性别、身高、肤色和五官默认值套给所有人物。
+Trước hết phân biệt ba loại thông tin: sự thật rõ ràng trong kịch bản, tham chiếu do người dùng đưa, và lựa chọn mỹ thuật còn chờ xác nhận. Kiểu tóc, trang phục hay cấu trúc chưa biết có thể đề xuất phương án cụ thể, nhưng phải đánh dấu là đề xuất. Phong cách vẽ không thể thay thế cá tính nhân vật, càng không được áp các giá trị mặc định về giới tính, chiều cao, màu da và ngũ quan của mẫu cũ cho mọi nhân vật.
 
-每个资产说明节点至少保存以下设计卡；这些是内容要求，不是编造的节点字段。
+Mỗi node mô tả tài sản tối thiểu lưu thẻ thiết kế dưới đây; đây là yêu cầu về nội dung, không phải trường node bịa ra.
 
-| 项目 | 记录内容 |
+| Hạng mục | Nội dung ghi chép |
 |---|---|
-| 身份与来源 | 唯一名称/别名、类别、出场集场、剧本依据或用户参考 |
-| 核心辨识 | 角色面部/发型/轮廓，场景布局地标，道具形状与功能 |
-| 视觉约定 | 所用风格、具体色盘、材质表达、背景和展示方式 |
-| 光源与构图 | 基础光位、软硬、明暗关系、视图/机位和需要看清的细节 |
-| 事实与提案 | 哪些已确认、哪些是补足视觉信息的待确认选择 |
-| 变体 | 父资产与父图真实引用、不变项、仅允许改变的部分、适用集场 |
-| 执行与选用 | 最终提示词、实际参考输入、已确认参数范围、候选图与选用图引用、状态 |
+| Danh tính và nguồn gốc | Tên duy nhất/bí danh, loại, tập và cảnh xuất hiện, căn cứ kịch bản hoặc tham chiếu của người dùng |
+| Nhận diện cốt lõi | Khuôn mặt/kiểu tóc/đường nét của nhân vật, bố cục và mốc nhận diện của bối cảnh, hình dạng và chức năng của đạo cụ |
+| Quy ước thị giác | Phong cách sử dụng, bảng màu cụ thể, cách thể hiện chất liệu, nền và cách trình bày |
+| Nguồn sáng và bố cục | Vị trí sáng cơ bản, mềm hay cứng, quan hệ sáng tối, góc nhìn/vị trí máy và chi tiết cần nhìn rõ |
+| Sự thật và đề xuất | Những gì đã xác nhận, những gì là lựa chọn chờ xác nhận để bổ sung thông tin thị giác |
+| Biến thể | Tham chiếu thật tới tài sản cha và ảnh cha, các hạng mục không đổi, phần duy nhất được phép thay đổi, tập và cảnh áp dụng |
+| Thực thi và chọn dùng | Prompt cuối cùng, đầu vào tham chiếu thực tế, phạm vi tham số đã xác nhận, tham chiếu ảnh ứng viên và ảnh được chọn, trạng thái |
 
-先确认可复用的设计，后写生成提示词。基础角色、空间布局或风格改变会影响下游：记录受影响的变体与分镜，回到对应确认点处理，不能覆写主记录后假装下游仍有效。
+Xác nhận thiết kế có thể tái sử dụng trước, rồi mới viết prompt tạo. Thay đổi nhân vật cơ bản, bố cục không gian hay phong cách sẽ ảnh hưởng tới hạ nguồn: ghi lại các biến thể và phân cảnh bị ảnh hưởng, quay về điểm xác nhận tương ứng để xử lý, không được ghi đè bản ghi chính rồi giả vờ hạ nguồn vẫn còn hiệu lực.
 
-## 角色：先辨识，再造型
+## Nhân vật: nhận diện trước, tạo hình sau
 
-### 建立有差异的基础人物
+### Xây dựng nhân vật cơ bản có khác biệt
 
-用身份、年龄阶段、生活环境、性格和剧情职能推导外观，不用“美丽/英俊/高质量”代替设计。至少确定两三个跨角度可辨的特征，避免不同角色共享同一张模板脸。
+Dùng danh tính, giai đoạn tuổi, môi trường sống, tính cách và chức năng trong cốt truyện để suy ra ngoại hình, không dùng "đẹp/điển trai/chất lượng cao" thay cho thiết kế. Xác định ít nhất hai ba đặc điểm có thể nhận ra ở mọi góc, tránh để các nhân vật khác nhau dùng chung một khuôn mặt mẫu.
 
-| 维度 | 可观察的选择 |
+| Chiều | Lựa chọn có thể quan sát |
 |---|---|
-| 头脸轮廓 | 长/圆/方、颧骨与下颌关系、额头宽度、下巴形状；不只替换名字 |
-| 五官结构 | 眉形、眼裂与眼距、鼻梁转折、唇形、耳廓；保持组合而不是堆“精致” |
-| 肤发特征 | 由设定确定的肤色、发际线、发色、长度、分缝、卷直、胡须、小痣或疤痕 |
-| 体态 | 身高关系、体型、肩颈、重心和自然站姿；儿童、老人等服从实际年龄 |
-| 基础服装 | 时代、身份、职业与日常状态匹配的完整衣服和鞋，便于后续换装 |
-| 气质 | 从视线、眉眼放松程度、嘴角和站姿体现，基础图以中性微表情为主 |
+| Đường nét đầu mặt | Dài/tròn/vuông, quan hệ gò má và hàm dưới, độ rộng trán, hình cằm; không chỉ thay tên |
+| Cấu trúc ngũ quan | Dáng mày, khe mắt và khoảng cách hai mắt, chỗ gãy sống mũi, dáng môi, vành tai; giữ tổ hợp thay vì chồng chất "tinh xảo" |
+| Đặc điểm da tóc | Màu da, đường chân tóc, màu tóc, độ dài, ngôi rẽ, xoăn hay thẳng, râu, nốt ruồi nhỏ hoặc sẹo do thiết lập quyết định |
+| Dáng người | Quan hệ chiều cao, vóc dáng, vai cổ, trọng tâm và tư thế đứng tự nhiên; trẻ em, người già... tuân theo tuổi thực |
+| Trang phục cơ bản | Quần áo và giày hoàn chỉnh khớp với thời đại, thân phận, nghề nghiệp và trạng thái thường ngày, tiện cho việc thay đồ sau này |
+| Khí chất | Thể hiện qua ánh nhìn, độ thả lỏng của mày mắt, khoé miệng và tư thế đứng; ảnh cơ bản chủ yếu dùng vi biểu cảm trung tính |
 
-真人都市电影可用清冷克制、温柔倾听、干练利落、青春直接、市井阅历等作为观察方向：分别改变骨相、眼神、表情与生活痕迹；不要把这些方向固定绑定某种性别、肤色或身高。保留自然皮肤纹理、碎发和适度不对称，避免所有角色都变成精修广告模特。
+Phim điện ảnh đô thị người thật có thể dùng các hướng quan sát như lạnh lùng tiết chế, dịu dàng lắng nghe, gọn gàng tháo vát, trẻ trung thẳng thắn, từng trải đời phố chợ: lần lượt thay đổi cốt tướng, ánh mắt, biểu cảm và dấu vết cuộc sống; không gắn cố định các hướng này với một giới tính, màu da hay chiều cao nào. Giữ kết cấu da tự nhiên, tóc con và độ bất đối xứng vừa phải, tránh để mọi nhân vật đều thành người mẫu quảng cáo đã chỉnh sửa kỹ.
 
-### 面部特写加完整三视图
+### Cận cảnh khuôn mặt cộng bản vẽ ba góc nhìn hoàn chỉnh
 
-同一画面从左至右展示面部近景、正面全身、侧面全身、背面全身。近景从完整头顶至锁骨附近，脸部足够大；三个全身从头顶到脚底完整，不裁掉发饰、衣摆和鞋。侧面约 90°，背面约 180°，前后左右特征相互对应。
+Cùng một khung hình trình bày từ trái sang phải: cận cảnh khuôn mặt, toàn thân chính diện, toàn thân nghiêng, toàn thân sau lưng. Cận cảnh lấy từ đỉnh đầu đầy đủ tới gần xương quai xanh, khuôn mặt đủ lớn; ba toàn thân lấy đủ từ đỉnh đầu tới lòng bàn chân, không cắt mất trang sức tóc, vạt áo và giày. Góc nghiêng khoảng 90°, sau lưng khoảng 180°, đặc điểm trước sau trái phải tương ứng với nhau.
 
-- 同一人、同一发型、同一体型、同一套衣服；钮扣、衣襟、纹样、口袋、腰带、鞋和配饰位置一致。
-- 简洁背景与主体有明度区别，灯光均匀而保留结构。常用浅灰；日式动画可用象牙白，国风二维可用月白，黏土可用暖奶油，真人都市电影可用中灰背景纸。
-- 真人分支理解为同一次人物棚拍的四角度记录，保留自然重心，不使用假人式立正；三维/二维用对应媒介表达，不能混入照片术语。
-- 宽画幅便于并排，但只选当前模型实际支持的比例。若一次输出无法清楚容纳，先说明并确认分图方案，仍保持面部与完整正侧背资料齐全。
-- 国风赛博旧基础模板只有面部超特写；本流程保留其“差异化面孔”方法，再统一补全全身资料，不能把一张脸当作完成的角色设定。
+- Cùng một người, cùng kiểu tóc, cùng vóc dáng, cùng một bộ quần áo; vị trí cúc áo, vạt áo, hoa văn, túi, thắt lưng, giày và phụ kiện nhất quán.
+- Nền đơn giản có độ sáng khác biệt với chủ thể, ánh sáng đều nhưng vẫn giữ được cấu trúc. Thường dùng xám nhạt; hoạt hình Nhật có thể dùng trắng ngà, 2D cổ phong có thể dùng trắng ánh trăng, đất sét có thể dùng kem sữa ấm, phim điện ảnh đô thị người thật có thể dùng phông giấy xám trung tính.
+- Nhánh người thật được hiểu là ghi lại bốn góc trong cùng một buổi chụp studio nhân vật, giữ trọng tâm tự nhiên, không dùng tư thế đứng nghiêm như ma-nơ-canh; 3D/2D thể hiện bằng chất liệu tương ứng, không trộn thuật ngữ nhiếp ảnh.
+- Khung ngang rộng tiện xếp cạnh nhau, nhưng chỉ chọn tỉ lệ mà mô hình hiện tại thực sự hỗ trợ. Nếu một lần xuất không chứa được rõ ràng, trước hết nói rõ và xác nhận phương án chia ảnh, vẫn giữ đủ tư liệu khuôn mặt và chính diện/nghiêng/sau lưng hoàn chỉnh.
+- Mẫu cơ bản cũ của cổ phong cyberpunk chỉ có siêu cận cảnh khuôn mặt; quy trình này giữ lại phương pháp "khuôn mặt khác biệt" của nó, rồi thống nhất bổ sung tư liệu toàn thân, không được coi một khuôn mặt là thiết lập nhân vật đã hoàn thành.
 
-### 角色造型分层与变体
+### Phân lớp tạo hình nhân vật và biến thể
 
-| 层 | 设计决定 | 保持边界 |
+| Lớp | Quyết định thiết kế | Ranh giới giữ nguyên |
 |---|---|---|
-| 基础身份 | 已确认的脸、体型、肤发识别点和基准站姿 | 换装不能变成另一个人；明确变身需求另记允许改变的结构 |
-| 妆容 | 素肌、日常、场合、盛典或剧情状态；眉眼、面颊、唇部具体变化 | 道具、天气、动作词不自动触发浓妆；妆后仍能认出角色 |
-| 发型/头饰 | 梳理、扎束、盘发、编发与必要发饰 | 发际线、发色和未授权长度不变；侧背结构可对应 |
-| 内搭 | 贴身层的领口、袖长、面料与颜色 | 层间关系合理，不穿插悬浮 |
-| 主服/外套 | 时代、场合、温度、身份决定的廓形与剪裁 | 正侧背为同件服装，重量与褶皱符合材质 |
-| 鞋与配饰 | 完整鞋款、腰带、首饰、眼镜、帽子、包袋 | 不漏鞋；配饰贴合身体，不凭空漂浮或嵌入皮肤 |
+| Danh tính cơ bản | Khuôn mặt, vóc dáng, điểm nhận diện da tóc và tư thế đứng chuẩn đã xác nhận | Thay đồ không được biến thành người khác; nhu cầu biến hình rõ ràng thì ghi riêng các cấu trúc được phép thay đổi |
+| Trang điểm | Mặt mộc, thường ngày, theo dịp, lễ hội hoặc trạng thái cốt truyện; thay đổi cụ thể ở mày mắt, má, môi | Đạo cụ, thời tiết, từ chỉ động tác không tự động kích hoạt trang điểm đậm; sau khi trang điểm vẫn nhận ra nhân vật |
+| Kiểu tóc/trang sức đầu | Chải, buộc, búi, tết và trang sức tóc cần thiết | Đường chân tóc, màu tóc và độ dài chưa được cho phép không đổi; cấu trúc nghiêng và sau lưng tương ứng được |
+| Lớp trong | Cổ áo, độ dài tay, chất vải và màu của lớp sát người | Quan hệ giữa các lớp hợp lý, không xuyên lớp hay lơ lửng |
+| Trang phục chính/áo khoác | Phom dáng và đường cắt do thời đại, dịp, nhiệt độ, thân phận quyết định | Chính diện/nghiêng/sau lưng là cùng một món đồ, trọng lượng và nếp gấp hợp với chất liệu |
+| Giày và phụ kiện | Kiểu giày hoàn chỉnh, thắt lưng, trang sức, kính, mũ, túi | Không thiếu giày; phụ kiện bám sát cơ thể, không lơ lửng vô cớ hay cắm vào da |
 
-居家晨起可用素肌与松散发型；通勤用适度整理、合体衣物；正式会面加强剪裁和局部妆容；婚礼/盛典可以完整妆造。以上是提案方法，不自动给每个角色加妆或饰品。现代穿搭的叠穿应有天气/场合理由；传统穿搭重视领型、衣襟、腰带、裙袍与鞋的形制；赛博变体要说明传统载体与功能部件如何连接。
+Buổi sáng ở nhà có thể dùng mặt mộc và kiểu tóc lỏng; đi làm thì chỉnh trang vừa phải, quần áo vừa người; gặp mặt trang trọng thì nhấn mạnh đường cắt và trang điểm cục bộ; đám cưới/lễ hội có thể trang điểm tạo hình đầy đủ. Trên đây là phương pháp đề xuất, không tự động thêm trang điểm hay trang sức cho mọi nhân vật. Mặc nhiều lớp kiểu hiện đại phải có lý do về thời tiết/dịp; trang phục truyền thống coi trọng hình chế của cổ áo, vạt áo, thắt lưng, váy bào và giày; biến thể cyberpunk phải nói rõ vật mang truyền thống và bộ phận chức năng kết nối với nhau thế nào.
 
-角色变体以已确认父图为真实输入，写清保留项与变化项。服装设定图不加入手持手机、咖啡杯、武器或背景剧情动作；这些通过独立道具和分镜整合。显著变身可以改变经确认的身体结构，但必须记录识别连续性与新边界。
+Biến thể nhân vật lấy ảnh cha đã xác nhận làm đầu vào thật, ghi rõ hạng mục giữ nguyên và hạng mục thay đổi. Ảnh thiết lập trang phục không thêm hành động cầm điện thoại, cốc cà phê, vũ khí hay hành động cốt truyện trong bối cảnh; những thứ này được tích hợp thông qua đạo cụ độc lập và phân cảnh. Biến hình đáng kể có thể thay đổi cấu trúc cơ thể đã được xác nhận, nhưng phải ghi lại tính liên tục về nhận diện và ranh giới mới.
 
-## 场景：建立可复用的空间
+## Bối cảnh: xây dựng không gian có thể tái sử dụng
 
-### 基础场景设计
+### Thiết kế bối cảnh cơ bản
 
-先确定这个地点的功能、时代地域、室内外、主要使用者和剧情路线，再设计结构。多数画风使用单张代表性主视图，看清入口、出口、主要活动区域与固定地标；国风赛博使用下述四方向设定，不能用漂亮局部代替完整空间。
+Trước hết xác định chức năng của địa điểm, thời đại và vùng miền, trong nhà hay ngoài trời, người sử dụng chính và lộ trình cốt truyện, rồi mới thiết kế cấu trúc. Đa số phong cách vẽ dùng một khung nhìn chính đại diện duy nhất, nhìn rõ lối vào, lối ra, khu vực hoạt động chính và mốc cố định; cổ phong cyberpunk dùng thiết lập bốn hướng nói dưới đây, không được dùng một góc cục bộ đẹp mắt thay cho không gian hoàn chỉnh.
 
-| 层次 | 设计内容 |
+| Tầng | Nội dung thiết kế |
 |---|---|
-| 固定骨架 | 墙、门窗、楼梯、柱、道路、水岸等的位置与关系；能支持人物实际行走 |
-| 主要陈设 | 桌、柜、床、屏风、吧台、工位等的用途、材质和朝向 |
-| 前中后景 | 门框/树枝/家具边作前景，活动区域在中景，走廊/窗外/远山作后景延伸 |
-| 光源 | 哪个方向的窗、哪盏灯、太阳位置与时段，哪里产生投影和反射 |
-| 环境 | 季节、天气、植被、地表状态；树种与地域、季节匹配 |
-| 生活/历史痕迹 | 与地点经历有关的磨损、修补、摆放、灰尘；不是默认全场破旧 |
+| Khung xương cố định | Vị trí và quan hệ của tường, cửa ra vào, cửa sổ, cầu thang, cột, đường, bờ nước...; có thể hỗ trợ nhân vật đi lại thực tế |
+| Bài trí chính | Công dụng, chất liệu và hướng đặt của bàn, tủ, giường, bình phong, quầy bar, bàn làm việc... |
+| Tiền, trung, hậu cảnh | Khung cửa/cành cây/cạnh đồ nội thất làm tiền cảnh, khu vực hoạt động ở trung cảnh, hành lang/ngoài cửa sổ/núi xa làm hậu cảnh kéo dài |
+| Nguồn sáng | Cửa sổ ở hướng nào, ngọn đèn nào, vị trí mặt trời và thời điểm, chỗ nào sinh ra bóng đổ và phản chiếu |
+| Môi trường | Mùa, thời tiết, thảm thực vật, trạng thái mặt đất; loài cây khớp với vùng miền và mùa |
+| Dấu vết sinh hoạt/lịch sử | Sự hao mòn, sửa chữa, sắp đặt, bụi bặm liên quan đến trải nghiệm của địa điểm; không mặc định toàn cảnh cũ nát |
 
-资产场景不出现人物、人影、人体轮廓或剪影。空场仍可叙事：一把未推回的椅子、半杯水表示刚离开；整齐的椅子与打开的投影表示即将开始；墙上挂钩与地面旧轮廓表示搬离。细节必须符合剧本，不额外暗示未发生的事件。
+Bối cảnh tài sản không xuất hiện người, bóng người, đường nét cơ thể hay hình bóng. Bối cảnh trống vẫn có thể kể chuyện: một chiếc ghế chưa đẩy vào, nửa cốc nước cho thấy vừa rời đi; ghế xếp ngay ngắn và máy chiếu đang mở cho thấy sắp bắt đầu; móc trên tường và đường viền cũ trên sàn cho thấy đã dọn đi. Chi tiết phải khớp kịch bản, không ám chỉ thêm sự kiện chưa xảy ra.
 
-现代室内可从公寓、办公室、会议室、咖啡厅、便利店、医院、教室选功能结构；室外从街道、老巷、小区、天台、地铁口、河岸等选空间骨架。传统空间关注院落、回廊、殿堂、窗棂、飞檐及木石构造。赛博空间先有可辨的中式结构再加入技术系统，不用霓虹代替建筑。
+Nội thất hiện đại có thể chọn cấu trúc chức năng từ căn hộ, văn phòng, phòng họp, quán cà phê, cửa hàng tiện lợi, bệnh viện, lớp học; ngoại cảnh chọn khung không gian từ đường phố, ngõ cũ, khu dân cư, sân thượng, cửa ga tàu điện ngầm, bờ sông... Không gian truyền thống chú trọng sân viện, hành lang, điện đường, song cửa, mái cong và kết cấu gỗ đá. Không gian cyberpunk phải có cấu trúc kiểu Trung Hoa nhận ra được trước rồi mới thêm hệ thống công nghệ, không dùng đèn neon thay cho kiến trúc.
 
-构图以平视或能清楚交代布局的视角为起点。真人都市电影可用 24–35mm 式广角/标准视角与较大清晰范围；扁平风用色块遮挡和尺度关系；黏土用微缩布景与适量景深。镜头数值是美术表达，实际参数以当前工具为准。
+Bố cục lấy góc nhìn ngang tầm mắt hoặc góc nhìn có thể giải thích rõ bố cục làm điểm khởi đầu. Phim điện ảnh đô thị người thật có thể dùng góc rộng/tiêu chuẩn kiểu 24–35mm và vùng rõ nét lớn hơn; phong cách phẳng dùng mảng màu che khuất và quan hệ tỉ lệ; đất sét dùng bối cảnh thu nhỏ và độ sâu trường ảnh vừa phải. Thông số ống kính là biểu đạt mỹ thuật, tham số thực tế theo công cụ hiện tại.
 
-### 国风赛博场景四方向设定
+### Thiết lập bốn hướng cho bối cảnh cyberpunk phong cách cổ phong
 
-`3D_guofeng_cyber` 是旧版 11 种画风中场景展示方式的特例，基础与衍生场景均保留四方向资料。其他 10 种仍默认单画面，不将这个布局推广给所有风格。
+`3D_guofeng_cyber` là trường hợp đặc biệt về cách trình bày bối cảnh trong 11 phong cách vẽ của phiên bản cũ, cả bối cảnh cơ bản lẫn bối cảnh phái sinh đều giữ tư liệu bốn hướng. 10 phong cách còn lại vẫn mặc định một khung hình, không mở rộng bố cục này cho mọi phong cách.
 
-- 同一中心点、同一视点高度，只改变朝向：左上前方 0°、右上右方 90°、左下后方 180°、右下左方 270°，排成 2×2。不是从场景外绕着建筑拍四张外立面。
-- 小空间可采用人眼平视，大尺度都市可采用已确认的高空中心视点；父图一旦确认，变体沿用该中心点和高度，不把高空父图突然降到旧衍生模板的 1.6 米默认值。
-- 建筑、入口、通道、赛博装置与固定陈设在同一世界中有唯一位置；相邻方向的边界、材质、季节和天气能对上。自然光及霓虹等人工光源保持世界位置，受光与阴影随观察方向合理变化，不要求每格都在画面同一侧亮。
-- 旧版 1:1 适合 2×2 排布，实际比例与分辨率须受模型支持并得到确认。若四格无法清楚展示，说明缺口并确认拆为四张同一场景资料图；四图共同属于资产画布中的同一个场景及版本，不能宣称一张单向图已补齐资料。
-- 分镜引用时注明采用哪一方向及其空间关系，输出仍为该镜的单画面，不把资产资料的四格布局带进分镜或视频。
+- Cùng một điểm trung tâm, cùng độ cao điểm nhìn, chỉ thay đổi hướng nhìn: trên trái là phía trước 0°, trên phải là phía phải 90°, dưới trái là phía sau 180°, dưới phải là phía trái 270°, xếp thành 2×2. Không phải đứng ngoài bối cảnh vòng quanh tòa nhà chụp bốn mặt tiền.
+- Không gian nhỏ có thể dùng góc nhìn ngang tầm mắt người, đô thị quy mô lớn có thể dùng điểm nhìn trung tâm trên cao đã xác nhận; một khi ảnh cha đã được xác nhận, biến thể dùng lại điểm trung tâm và độ cao đó, không đột ngột hạ ảnh cha trên cao xuống giá trị mặc định 1,6 mét của mẫu phái sinh cũ.
+- Kiến trúc, lối vào, lối đi, thiết bị cyberpunk và bài trí cố định có vị trí duy nhất trong cùng một thế giới; ranh giới, chất liệu, mùa và thời tiết của các hướng liền kề khớp được với nhau. Ánh sáng tự nhiên và các nguồn sáng nhân tạo như neon giữ vị trí trong thế giới, vùng nhận sáng và bóng đổ thay đổi hợp lý theo hướng quan sát, không yêu cầu ô nào cũng sáng ở cùng một phía của khung hình.
+- Tỉ lệ 1:1 của phiên bản cũ hợp với cách xếp 2×2, tỉ lệ và độ phân giải thực tế phải được mô hình hỗ trợ và được xác nhận. Nếu bốn ô không thể trình bày rõ ràng, nói rõ chỗ thiếu và xác nhận việc tách thành bốn ảnh tư liệu của cùng một bối cảnh; bốn ảnh cùng thuộc về một bối cảnh và một phiên bản trong canvas tài sản, không được tuyên bố một ảnh một hướng đã bổ sung đủ tư liệu.
+- Khi phân cảnh tham chiếu, ghi rõ dùng hướng nào và quan hệ không gian của nó, đầu ra vẫn là một khung hình duy nhất của shot đó, không mang bố cục bốn ô của tư liệu tài sản vào phân cảnh hay video.
 
-### 场景变体
+### Biến thể bối cảnh
 
-| 变体 | 必须保留 | 可以改变及其连带影响 |
+| Biến thể | Bắt buộc giữ nguyên | Có thể thay đổi và ảnh hưởng kéo theo |
 |---|---|---|
-| 时段 | 地点结构、陈设位置、镜头视角和已存在磨损 | 太阳高度/方向、冷暖、影长、窗外亮度、人工灯开关与光源层级 |
-| 天气 | 同一地点、主要布局、未受影响物件 | 雨丝、玻璃雨痕、湿地反射、积雪位置、雾的远近层次；表面变化合乎材质 |
-| 机位/焦段 | 世界结构、实际物件位置、时段天气、世界光源 | 取景范围、透视与遮挡关系、景深；不能把换角度变成换地方 |
-| 明确的剧情状态 | 仍可辨识的空间骨架与连续性线索 | 仅已确认的修复、破损、装饰、布置等，说明原因和适用场次 |
+| Thời điểm trong ngày | Cấu trúc địa điểm, vị trí bài trí, góc máy và hao mòn đã có | Độ cao/hướng mặt trời, nóng lạnh, độ dài bóng, độ sáng ngoài cửa sổ, bật tắt đèn nhân tạo và thứ bậc nguồn sáng |
+| Thời tiết | Cùng địa điểm, bố cục chính, đồ vật không bị ảnh hưởng | Sợi mưa, vệt mưa trên kính, phản chiếu mặt đất ướt, vị trí tuyết đọng, tầng xa gần của sương mù; thay đổi bề mặt hợp với chất liệu |
+| Vị trí máy/tiêu cự | Cấu trúc thế giới, vị trí đồ vật thực tế, thời điểm và thời tiết, nguồn sáng của thế giới | Phạm vi khuôn hình, phối cảnh và quan hệ che khuất, độ sâu trường ảnh; không được biến đổi góc thành đổi địa điểm |
+| Trạng thái cốt truyện rõ ràng | Khung xương không gian vẫn nhận ra được và manh mối liên tục | Chỉ những sửa chữa, hư hại, trang trí, sắp đặt đã xác nhận, nói rõ nguyên nhân và cảnh áp dụng |
 
-v1.1.8 SOP 默认自动提取同地点时段变化；天气、机位、破损等在用户明确需要后才加入独立设计范围。知识中有这些方法，不等于流程自动扩张。变体沿用父场景展示方式：普通场景单幅，国风赛博四方向设定；四个方向同步改变已确认状态，不能一格白天、另一格夜晚。
+SOP v1.1.8 mặc định tự động trích xuất thay đổi thời điểm trong ngày của cùng địa điểm; thời tiết, vị trí máy, hư hại... chỉ được đưa vào phạm vi thiết kế độc lập sau khi người dùng nêu rõ nhu cầu. Kiến thức có các phương pháp này không có nghĩa quy trình tự động mở rộng. Biến thể dùng lại cách trình bày của bối cảnh cha: bối cảnh thường một khung, cổ phong cyberpunk thiết lập bốn hướng; bốn hướng đồng bộ thay đổi trạng thái đã xác nhận, không được một ô ban ngày còn ô khác ban đêm.
 
-白昼转夜不能只换天空：自然光减弱，路灯/室内灯重新成为主光，反射与投影同步改变。晴转雨不能只加雨线：地面变湿、玻璃挂水、空气与窗光改变。变换视角时保持光源在世界中的位置，重新计算画面中的受光方向。
+Chuyển ngày sang đêm không thể chỉ đổi bầu trời: ánh sáng tự nhiên yếu đi, đèn đường/đèn trong nhà trở lại làm nguồn sáng chính, phản chiếu và bóng đổ đồng bộ thay đổi. Chuyển nắng sang mưa không thể chỉ thêm vệt mưa: mặt đất ướt, kính đọng nước, không khí và ánh sáng cửa sổ thay đổi. Khi đổi góc nhìn, giữ vị trí nguồn sáng trong thế giới, tính lại hướng nhận sáng trong khung hình.
 
-## 道具：结构、材料与剧情状态
+## Đạo cụ: cấu trúc, chất liệu và trạng thái cốt truyện
 
-### 判断是否单列及如何展示
+### Phán đoán có tách riêng hay không và cách trình bày
 
-道具有独立剧情或视觉作用才建立资产；通用背景陈设可留在场景。写清用途、形状、尺寸关系、结构连接、主辅材质和状态，不用“精致道具”代替可检查信息。
+Đạo cụ chỉ được lập tài sản khi có vai trò cốt truyện hoặc thị giác độc lập; bài trí nền thông thường có thể để lại trong bối cảnh. Ghi rõ công dụng, hình dạng, quan hệ kích thước, kết nối cấu trúc, chất liệu chính phụ và trạng thái, không dùng "đạo cụ tinh xảo" thay cho thông tin có thể kiểm tra.
 
-| 类别 | 重点识别信息 |
+| Loại | Thông tin nhận diện trọng tâm |
 |---|---|
-| 通讯/电子设备 | 机身轮廓、屏幕与按键、接口、保护壳、开关状态与必要界面 |
-| 餐饮器物 | 杯口、杯柄、器皿容量、材质、内容物及剧情要求的水汽/残留 |
-| 办公/学习用品 | 封面、装订、页边、笔夹、工牌等；文字仅按剧情需要设计 |
-| 出行/随身用品 | 钥匙齿形、伞骨与伞面、包袋结构、肩带、卡片边缘 |
-| 饰品/信物 | 纹样、镶嵌、扣合、刻痕、独特缺口，以及为何可被认出 |
-| 家居/健康用品 | 容器、开口、材质、使用方式所需结构；不凭空补真实个人信息 |
-| 传统/幻想器物 | 时代工艺、木金玉陶等材料、形制和明确的特殊机制/效果 |
+| Thiết bị liên lạc/điện tử | Đường viền thân máy, màn hình và phím bấm, cổng kết nối, ốp bảo vệ, trạng thái bật tắt và giao diện cần thiết |
+| Đồ dùng ăn uống | Miệng cốc, quai cốc, dung tích vật chứa, chất liệu, thứ đựng bên trong và hơi nước/cặn mà cốt truyện yêu cầu |
+| Đồ dùng văn phòng/học tập | Bìa, cách đóng gáy, mép trang, kẹp bút, thẻ nhân viên...; chữ chỉ thiết kế theo nhu cầu cốt truyện |
+| Đồ dùng đi lại/mang theo người | Răng chìa khoá, nan và mặt ô, cấu trúc túi, dây đeo vai, mép thẻ |
+| Trang sức/tín vật | Hoa văn, khảm nạm, khớp cài, vết khắc, chỗ khuyết độc đáo, và vì sao có thể nhận ra |
+| Đồ gia dụng/sức khoẻ | Vật chứa, miệng mở, chất liệu, cấu trúc cần cho cách sử dụng; không tự bịa thêm thông tin cá nhân thật |
+| Khí vật truyền thống/huyễn tưởng | Kỹ nghệ thời đại, các chất liệu như gỗ, kim loại, ngọc, gốm, hình chế và cơ chế/hiệu ứng đặc biệt rõ ràng |
 
-多数风格可用正面、侧面、背面加细节的 2×2 展示，主体完整、比例一致，各角度结构对得上。若单张足以识别或用户已确认其他方式，按需求选择。**真人都市电影 `realpeople_modern_city` 默认单张实物静物摄影**：灰背景纸、浅木纹或米白台面，有真实承载面、柔和接触阴影，不套四宫格建模布局。
+Đa số phong cách có thể dùng cách trình bày 2×2 gồm chính diện, nghiêng, sau lưng cộng chi tiết, chủ thể hoàn chỉnh, tỉ lệ nhất quán, cấu trúc các góc khớp nhau. Nếu một ảnh đơn đủ để nhận diện hoặc người dùng đã xác nhận cách khác, chọn theo nhu cầu. **Phim điện ảnh đô thị người thật `realpeople_modern_city` mặc định là một ảnh nhiếp ảnh tĩnh vật thật**: phông giấy xám, mặt bàn vân gỗ nhạt hoặc trắng kem, có mặt đỡ thật, bóng tiếp xúc mềm, không áp bố cục mô hình bốn ô.
 
-独立道具图不出现人物、手、佩戴者或使用动作；饰品可以平放，武器或工具可以安全静置。背景简洁，道具完整入画，表面细节不被景深虚化掉。资产名称与用途写在画布说明中，不要求生成器把标签画进图里。
+Ảnh đạo cụ độc lập không xuất hiện người, tay, người đeo hay động tác sử dụng; trang sức có thể đặt phẳng, vũ khí hoặc dụng cụ có thể đặt yên an toàn. Nền đơn giản, đạo cụ vào khung đầy đủ, chi tiết bề mặt không bị độ sâu trường ảnh làm mờ. Tên và công dụng của tài sản ghi trong phần mô tả trên canvas, không yêu cầu bộ tạo vẽ nhãn vào ảnh.
 
-### 材质如何表达状态
+### Chất liệu thể hiện trạng thái như thế nào
 
-先确定物件是否新、日常使用、长期使用、受损或封存，再选择具体痕迹。同一材质的老化和损伤有因果顺序；不要给陶瓷生锈、给纸张写金属凹痕。
+Trước hết xác định đồ vật là mới, dùng hằng ngày, dùng lâu năm, bị hư hại hay được niêm cất, rồi mới chọn dấu vết cụ thể. Lão hoá và hư hại của cùng một chất liệu có thứ tự nhân quả; không cho gốm sứ bị gỉ, không viết vết móp kim loại cho giấy.
 
-| 材质 | 正常质感 | 时间或使用痕迹 | 可读损伤/环境变化 |
+| Chất liệu | Kết cấu bình thường | Dấu vết thời gian hoặc sử dụng | Hư hại/thay đổi môi trường đọc được |
 |---|---|---|---|
-| 金属 | 拉丝、锻造或抛光反射，边缘高光 | 接触区磨亮、微划痕、适当氧化 | 凹陷、弯折、断口、锈蚀；雨水成珠或水膜 |
-| 玉/石 | 温润透色或石纹，磨光差异 | 摩挲包浆、边角磨损 | 裂纹、缺口、崩片，保持原纹理身份 |
-| 玻璃 | 通透、边缘折射、真实反射 | 手印、水渍、浅划痕 | 裂线、碎裂、缺片；湿度形成凝结 |
-| 陶瓷 | 釉面柔光、胎釉区别 | 杯口/底磨损、细微开片 | 缺口、裂缝、碎片、露胎 |
-| 木材 | 木纹、漆面与裸木差异 | 包浆、漆面磨损、色泽变深 | 劈裂、断口、虫蛀或烧痕，按剧情选择 |
-| 纸 | 纤维、折痕、吸光表面 | 页边起毛、泛黄、反复翻阅痕迹 | 撕裂、缺角、浸湿起皱、墨迹洇开 |
-| 织物 | 编织、绒感、垂坠与受力褶皱 | 褪色、起毛、受力部位磨薄 | 撕裂、脱线、破洞、湿重贴附或局部污渍 |
-| 皮革 | 皮纹、柔硬、缝线与边油 | 弯折纹、包浆、边缘磨损 | 开裂、破口、表层剥落，五金单独变化 |
-| 塑料/电子面板 | 注塑合模线、哑光/亮面、屏幕反光 | 微划痕、褪色、按键区磨亮 | 崩边、裂口、变形、碎屏、漏液或显示故障 |
+| Kim loại | Phản chiếu kiểu xước tóc, rèn hoặc đánh bóng, highlight ở cạnh | Vùng tiếp xúc mòn bóng, vết xước nhỏ, oxy hoá vừa phải | Móp, cong, chỗ gãy, gỉ sét; nước mưa đọng thành giọt hoặc màng nước |
+| Ngọc/đá | Ấm mịn trong màu hoặc vân đá, khác biệt độ mài bóng | Lớp bóng do vuốt ve, mòn góc cạnh | Vết nứt, sứt mẻ, bong mảnh, giữ danh tính vân gốc |
+| Thuỷ tinh | Trong suốt, khúc xạ ở cạnh, phản chiếu thật | Dấu tay, vệt nước, vết xước nhẹ | Đường nứt, vỡ vụn, thiếu mảnh; độ ẩm tạo ngưng tụ |
+| Gốm sứ | Ánh dịu mặt men, khác biệt giữa xương gốm và men | Mòn miệng/đáy cốc, rạn men nhỏ | Sứt mẻ, vết nứt, mảnh vỡ, lộ xương gốm |
+| Gỗ | Vân gỗ, khác biệt giữa mặt sơn và gỗ trần | Lớp bóng thời gian, mòn sơn, màu sẫm đi | Nứt toác, chỗ gãy, mọt hoặc vết cháy, chọn theo cốt truyện |
+| Giấy | Sợi giấy, nếp gấp, bề mặt hút sáng | Mép trang xơ, ố vàng, dấu vết lật giở nhiều lần | Rách, mất góc, ướt nhăn, mực loang |
+| Vải | Kiểu dệt, cảm giác nhung, độ rủ và nếp gấp do chịu lực | Phai màu, xù lông, chỗ chịu lực mòn mỏng | Rách, tuột chỉ, lỗ thủng, ướt nặng bám dính hoặc vết bẩn cục bộ |
+| Da thuộc | Vân da, độ mềm cứng, đường may và dầu viền | Nếp gập, lớp bóng thời gian, mòn mép | Nứt, rách, bong lớp mặt, phần kim loại thay đổi riêng |
+| Nhựa/mặt panel điện tử | Đường ghép khuôn ép phun, mờ/bóng, phản chiếu màn hình | Vết xước nhỏ, phai màu, vùng phím mòn bóng | Sứt cạnh, vết nứt, biến dạng, vỡ màn hình, rò dịch hoặc lỗi hiển thị |
 
-上述物理痕迹须译成所选媒介：赛璐璐用线与色面，扁平设计用简洁符号，三维表现表面与反光，黏土保留手工痕迹，真人写实描述摄影机可见的材料行为。不能为扁平道具加写实纤维贴图。
+Các dấu vết vật lý trên phải được chuyển sang chất liệu biểu đạt đã chọn: cel dùng nét và mảng màu, thiết kế phẳng dùng ký hiệu đơn giản, 3D thể hiện bề mặt và phản chiếu, đất sét giữ dấu vết thủ công, tả thực người thật mô tả hành vi vật liệu mà máy quay nhìn thấy. Không được thêm texture sợi tả thực cho đạo cụ phong cách phẳng.
 
-道具变体保持原来的轮廓、核心纹样和结构锚点，以及展示机位、背景、光源。状态变化要一眼可辨、原因可追溯。关键残片保留可辨识部分；“被珍藏”可通过包裹与反复开合痕迹表达，“贴身心爱”可通过特定摩挲位置表达，不需要加入持有者的手。崭新状态与重度磨损互斥；电灯/屏幕正常发光与无依据魔法能量也要区分。
+Biến thể đạo cụ giữ nguyên đường viền, hoa văn cốt lõi và điểm neo cấu trúc ban đầu, cũng như vị trí máy trình bày, nền, nguồn sáng. Thay đổi trạng thái phải nhận ra ngay, nguyên nhân truy được. Mảnh vỡ then chốt giữ phần có thể nhận diện; "được trân trọng cất giữ" có thể thể hiện qua lớp bọc và dấu vết mở ra đóng lại nhiều lần, "yêu quý mang sát người" có thể thể hiện qua vị trí vuốt ve cụ thể, không cần thêm tay người giữ. Trạng thái mới tinh và mòn nặng loại trừ nhau; đèn điện/màn hình phát sáng bình thường cũng phải phân biệt với năng lượng phép thuật vô căn cứ.
 
-SOP 不自动提取道具衍生；仅对用户明确的额外状态需求使用这些方法，并单独确认范围。
+SOP không tự động trích xuất phái sinh đạo cụ; chỉ dùng các phương pháp này cho nhu cầu trạng thái bổ sung mà người dùng nêu rõ, và xác nhận phạm vi riêng.
 
-## 可直接填充的提示词模板
+## Mẫu prompt có thể điền trực tiếp
 
-方括号内填已确认内容，删除不适用项；以下是语义模板，不要求当前工具具有同名字段。参考必须绑定实际图片输入，单写“参考某路径”不构成参考图。专用引用标记仅在所选模型和当前工具确实支持时使用。
+Trong ngoặc vuông điền nội dung đã xác nhận, xoá mục không áp dụng; dưới đây là mẫu ngữ nghĩa, không yêu cầu công cụ hiện tại có trường cùng tên. Tham chiếu phải gắn với đầu vào ảnh thực tế, chỉ viết "tham chiếu đường dẫn nào đó" không cấu thành ảnh tham chiếu. Ký hiệu tham chiếu chuyên dụng chỉ dùng khi mô hình được chọn và công cụ hiện tại thực sự hỗ trợ.
 
-### 基础角色
-
-```text
-[所选画风与媒介]的角色设定资料，[角色名/身份/年龄阶段]。
-核心辨识：[头脸轮廓、五官组合、发际线、发型及少量独特特征]；[已确认体型与自然站姿]。
-穿着[完整基础服装与鞋，形制、颜色、材质]，表情中性自然。
-同一画面依次为面部近景、正面全身、侧面全身、背面全身；面部清楚，三个全身头脚完整。
-四角度是同一人物、同一发型、同一服装与站姿，侧背结构互相对应。
-[简洁背景]，[符合媒介的展示光照]；不加入剧情环境或手持道具，不加标签叠字。
-```
-
-角色衍生把开头换成“以已绑定的父图作为身份参考”，逐项写“不变：[脸/体型/发色/站姿]；仅改变：[妆容/发型/内搭/主服/鞋/配饰]”，再复用视图规范。不要把所有层都改一遍。
-
-### 基础场景与场景变体
-
-下面是单画面场景模板；国风赛博改用其后的四方向模板，不能把“单幅/不拼多视图”与四格要求混写。
+### Nhân vật cơ bản
 
 ```text
-[所选画风与媒介]，[地点名称与功能]，单幅空间主视图，[时代地域]，[时段/季节/天气]。
-空间骨架：[入口、窗、通道与主体区域的位置]；固定陈设：[主要物件及相对位置]。
-前景[框架/遮挡]，中景[主要活动区]，后景[空间延伸]，主体结构清楚。
-主光来自[真实位置与来源]，[软硬与冷暖]；[辅光、反射和阴影]。
-[材料与必要的使用痕迹]；无人、无人影或人体轮廓，不拼成多视图，不加画外叠字。
+Tư liệu thiết lập nhân vật [phong cách vẽ và chất liệu biểu đạt đã chọn], [tên nhân vật/thân phận/giai đoạn tuổi].
+Nhận diện cốt lõi: [đường nét đầu mặt, tổ hợp ngũ quan, đường chân tóc, kiểu tóc và một vài đặc điểm độc đáo]; [vóc dáng đã xác nhận và tư thế đứng tự nhiên].
+Mặc [trang phục cơ bản hoàn chỉnh và giày, hình chế, màu sắc, chất liệu], biểu cảm trung tính tự nhiên.
+Cùng một khung hình lần lượt là cận cảnh khuôn mặt, toàn thân chính diện, toàn thân nghiêng, toàn thân sau lưng; khuôn mặt rõ ràng, ba toàn thân đủ đầu đến chân.
+Bốn góc là cùng một nhân vật, cùng kiểu tóc, trang phục và tư thế đứng, cấu trúc nghiêng và sau lưng tương ứng với nhau.
+[Nền đơn giản], [ánh sáng trình bày phù hợp chất liệu biểu đạt]; không thêm môi trường cốt truyện hay đạo cụ cầm tay, không thêm nhãn hay chữ chồng lên.
 ```
 
-国风赛博模板：
+Phái sinh nhân vật đổi phần mở đầu thành "lấy ảnh cha đã gắn làm tham chiếu danh tính", ghi từng mục "Không đổi: [khuôn mặt/vóc dáng/màu tóc/tư thế đứng]; Chỉ thay đổi: [trang điểm/kiểu tóc/lớp trong/trang phục chính/giày/phụ kiện]", rồi dùng lại quy chuẩn góc nhìn. Không thay đổi tất cả các lớp một lượt.
+
+### Bối cảnh cơ bản và biến thể bối cảnh
+
+Dưới đây là mẫu bối cảnh một khung hình; cổ phong cyberpunk dùng mẫu bốn hướng phía sau, không được viết lẫn "một khung/không ghép nhiều góc nhìn" với yêu cầu bốn ô.
 
 ```text
-国风赛博三维场景四方向设定，[地点功能、时代地域、中式结构与技术系统]，[统一时段/季节/天气]。
-固定中心点[位置]与视点高度[已确认高度]，仅旋转观察方向；同一画面2×2：左上前方0°、右上右方90°、左下后方180°、右下左方270°。
-空间骨架[门窗、通道、建筑和陈设在世界中的相对位置]；四向边界与固定地标能够对应，不改变中心点或独立缩放某一格。
-主光[世界位置与来源]，赛博装置[固定位置及发光状态]，各视角的受光、投影和反射服从同一组光源。
-[PBR材质、中式形制、具体科技部件与必要使用痕迹]；四向季节天气一致，无人物、人影、人体或动物轮廓，不加画外标签水印。
+[Phong cách vẽ và chất liệu biểu đạt đã chọn], [tên và chức năng địa điểm], một khung nhìn chính của không gian, [thời đại và vùng miền], [thời điểm/mùa/thời tiết].
+Khung xương không gian: [vị trí lối vào, cửa sổ, lối đi và khu vực chính]; bài trí cố định: [đồ vật chính và vị trí tương đối].
+Tiền cảnh [khung/vật che], trung cảnh [khu vực hoạt động chính], hậu cảnh [phần không gian kéo dài], cấu trúc chủ thể rõ ràng.
+Nguồn sáng chính đến từ [vị trí và nguồn thật], [mềm cứng và nóng lạnh]; [ánh sáng phụ, phản chiếu và bóng đổ].
+[Chất liệu và dấu vết sử dụng cần thiết]; không người, không bóng người hay đường nét cơ thể, không ghép thành nhiều góc nhìn, không thêm chữ chồng ngoài khung.
 ```
 
-四方向变体以已绑定父图为参考，锁定四向布局、中心点、高度、建筑与装置位置，再写各方向同步发生的时段/天气等已确认变化；状态改变不等于新建另一个地点。
-
-场景变体示例：以已绑定的“庭院·日景”父图为参考，保持院门、廊柱、石桌、植被位置与同一机位，仅改为夜景；天光减弱成冷蓝环境，门侧两盏已设灯笼亮起，石桌与地面的暖色投影服从灯笼位置；仍为同一个无人庭院。未确认下雨就不增加湿地反射。
-
-### 基础道具与道具变体
+Mẫu cổ phong cyberpunk:
 
 ```text
-[所选画风与媒介]，[道具名/类型]独立静物，[用途对应的结构]，[形状与尺寸关系]。
-[主辅材质、颜色、核心纹样、工艺]，当前状态[已确认状态与具体可见痕迹]。
-[已确认的单视图或正侧背加细节布局]，结构对应、完整入画，无人、无手、无佩戴或握持动作。
-[背景与承载方式]，[符合媒介的光照及投影]，关键细节清楚，不加标签水印。
+Thiết lập bốn hướng cho bối cảnh 3D cyberpunk phong cách cổ phong, [chức năng địa điểm, thời đại và vùng miền, cấu trúc kiểu Trung Hoa và hệ thống công nghệ], [thời điểm/mùa/thời tiết thống nhất].
+Điểm trung tâm cố định [vị trí] và độ cao điểm nhìn [độ cao đã xác nhận], chỉ xoay hướng quan sát; cùng một khung hình 2×2: trên trái phía trước 0°, trên phải phía phải 90°, dưới trái phía sau 180°, dưới phải phía trái 270°.
+Khung xương không gian [vị trí tương đối trong thế giới của cửa, cửa sổ, lối đi, kiến trúc và bài trí]; ranh giới bốn hướng và mốc cố định có thể tương ứng, không thay đổi điểm trung tâm hay phóng to thu nhỏ riêng một ô.
+Nguồn sáng chính [vị trí trong thế giới và nguồn], thiết bị cyberpunk [vị trí cố định và trạng thái phát sáng], vùng nhận sáng, bóng đổ và phản chiếu ở mỗi góc nhìn tuân theo cùng một bộ nguồn sáng.
+[Chất liệu PBR, hình chế kiểu Trung Hoa, bộ phận công nghệ cụ thể và dấu vết sử dụng cần thiết]; mùa và thời tiết bốn hướng nhất quán, không có đường nét nhân vật, bóng người, cơ thể hay động vật, không thêm nhãn hay watermark ngoài khung.
 ```
 
-道具变体示例：以已绑定的“旧信封”父图为参考，保留纸色、封口、折痕位置和同一静物机位，仅改为淋雨后；纸面局部吸水变深、边缘微卷、既有墨迹轻微洇开，保持可辨字形与封口结构；不擅自添加撕裂、烧焦或新文字。
+Biến thể bốn hướng lấy ảnh cha đã gắn làm tham chiếu, khoá bố cục bốn hướng, điểm trung tâm, độ cao, vị trí kiến trúc và thiết bị, rồi ghi các thay đổi đã xác nhận như thời điểm/thời tiết diễn ra đồng bộ ở mỗi hướng; thay đổi trạng thái không có nghĩa là tạo một địa điểm khác.
 
-### 负向约束的选择
+Ví dụ biến thể bối cảnh: lấy ảnh cha "Sân viện · cảnh ngày" đã gắn làm tham chiếu, giữ vị trí cổng sân, cột hành lang, bàn đá, cây cối và cùng một vị trí máy, chỉ đổi thành cảnh đêm; ánh sáng trời yếu đi thành môi trường xanh lam lạnh, hai chiếc đèn lồng đã đặt sẵn bên cổng sáng lên, bóng đổ ấm trên bàn đá và mặt đất tuân theo vị trí đèn lồng; vẫn là cùng một sân viện không người. Chưa xác nhận trời mưa thì không thêm phản chiếu mặt đất ướt.
 
-先排除与当前任务直接冲突的内容，再加少量确有风险的缺陷词。不要把所有旧负词整段粘贴。
+### Đạo cụ cơ bản và biến thể đạo cụ
 
-| 任务 | 适用的约束方向 | 不应机械加入 |
+```text
+[Phong cách vẽ và chất liệu biểu đạt đã chọn], tĩnh vật độc lập [tên/loại đạo cụ], [cấu trúc tương ứng với công dụng], [hình dạng và quan hệ kích thước].
+[Chất liệu chính phụ, màu sắc, hoa văn cốt lõi, kỹ nghệ], trạng thái hiện tại [trạng thái đã xác nhận và dấu vết nhìn thấy cụ thể].
+[Bố cục một góc nhìn hoặc chính diện/nghiêng/sau lưng cộng chi tiết đã xác nhận], cấu trúc tương ứng, vào khung đầy đủ, không người, không tay, không động tác đeo hay cầm nắm.
+[Nền và cách đặt đỡ], [ánh sáng và bóng đổ phù hợp chất liệu biểu đạt], chi tiết then chốt rõ ràng, không thêm nhãn hay watermark.
+```
+
+Ví dụ biến thể đạo cụ: lấy ảnh cha "Phong bì cũ" đã gắn làm tham chiếu, giữ màu giấy, chỗ dán, vị trí nếp gấp và cùng một vị trí máy tĩnh vật, chỉ đổi thành sau khi dầm mưa; mặt giấy hút nước sẫm màu cục bộ, mép hơi quăn, vết mực có sẵn loang nhẹ, giữ nét chữ nhận ra được và cấu trúc chỗ dán; không tự ý thêm vết rách, cháy sém hay chữ mới.
+
+### Lựa chọn ràng buộc phủ định
+
+Trước hết loại trừ nội dung xung đột trực tiếp với nhiệm vụ hiện tại, rồi thêm một ít từ chỉ lỗi thực sự có rủi ro. Không dán nguyên cả đoạn từ phủ định cũ.
+
+| Nhiệm vụ | Hướng ràng buộc phù hợp | Không nên thêm máy móc |
 |---|---|---|
-| 角色设定 | 不同人拼图、脸漂移、漏视图、裁头脚、错误肢体、服装跨视图改变 | 一律禁止居中/棚拍，或规定所有人物同身高肤色 |
-| 场景资产 | 人物、人影、结构变形、无来源光影、覆盖空间的大字；单画面分支再排除拼贴多视图 | 禁止国风赛博已确认的四方向资料，或禁止剧情需要的路牌、书信、室内设备 |
-| 独立道具 | 手/人物、悬浮结构、视图不一致、无依据改变材质 | 禁止本身确会发光的屏幕/灯，或同时要求崭新与磨损 |
-| 画风 | 与所选媒介矛盾的照片/三维/二维词，具体到该分支 | 给赛璐璐加“禁止赛璐璐”，给真人电影一律禁止颗粒 |
+| Thiết lập nhân vật | Ghép nhiều người khác nhau, mặt bị trôi, thiếu góc nhìn, cắt đầu chân, chi sai, trang phục thay đổi giữa các góc nhìn | Cấm tuyệt đối căn giữa/chụp studio, hoặc quy định mọi nhân vật cùng chiều cao màu da |
+| Tài sản bối cảnh | Người, bóng người, cấu trúc biến dạng, ánh sáng bóng đổ không có nguồn, chữ lớn phủ lên không gian; nhánh một khung hình còn loại trừ ghép nhiều góc nhìn | Cấm tư liệu bốn hướng đã xác nhận của cổ phong cyberpunk, hoặc cấm biển đường, thư từ, thiết bị trong nhà mà cốt truyện cần |
+| Đạo cụ độc lập | Tay/người, cấu trúc lơ lửng, góc nhìn không nhất quán, đổi chất liệu vô căn cứ | Cấm màn hình/đèn vốn thực sự phát sáng, hoặc đồng thời yêu cầu mới tinh và mòn cũ |
+| Phong cách vẽ | Từ ảnh chụp/3D/2D mâu thuẫn với chất liệu biểu đạt đã chọn, cụ thể tới nhánh đó | Thêm "cấm cel" cho cel, cấm hạt nhiễu tuyệt đối cho phim điện ảnh người thật |
 
-模型不支持独立负向提示词时，将必要要求写成正向可见条件，例如“同一人物的四角度、头脚完整、背景简洁、服装一致”。分辨率与比例使用已确认且受支持的实际参数，“4K/8K”文字不等于实际输出尺寸。
+Khi mô hình không hỗ trợ prompt phủ định riêng, viết các yêu cầu cần thiết thành điều kiện nhìn thấy được dạng khẳng định, ví dụ "bốn góc của cùng một nhân vật, đủ đầu đến chân, nền đơn giản, trang phục nhất quán". Độ phân giải và tỉ lệ dùng tham số thực tế đã xác nhận và được hỗ trợ, chữ "4K/8K" không bằng kích thước đầu ra thực tế.
 
-## 生成前与回读验收
+## Kiểm tra trước khi tạo và nghiệm thu khi đọc lại
 
-生成前核对设计卡、提示词、参考图和参数是否同一版本；沿用已确认范围，不新增未授权批次。设计稿、排队、生成中、候选、已选用须分清，不能跳过主流程的确认点。
+Trước khi tạo, đối chiếu thẻ thiết kế, prompt, ảnh tham chiếu và tham số có cùng phiên bản không; dùng lại phạm vi đã xác nhận, không thêm lô chưa được cho phép. Bản thiết kế, đang xếp hàng, đang tạo, ứng viên, đã chọn dùng phải phân biệt rõ, không được bỏ qua các điểm xác nhận của quy trình chính.
 
-- 角色：与其他角色区分明显，面部与正侧背是同一人，衣服和鞋齐全，未擅改年龄、体型、肤发识别点；真人、黏土、扁平等材质各自成立。
-- 场景：地点布局可读且连续，没有偷偷加入人影；光源可解释，空间与材质符合风格，时段/天气变化产生了正确连带影响。国风赛博还须核对前/右/后/左排布、同中心点同高度、四向地标衔接和统一状态，不能只验收其中一格。
-- 道具：轮廓、结构和关键纹样可辨，材质/状态合理，没有手或持有者；真人都市电影的单张静物有可信承载与投影。
-- 变体：实际用了确认父图；只改变允许项；不变项、状态差异和适用集场均可回读。
-- 通用：提示词无互斥指令，真实图片可访问；看实际结果后记录问题和选用结论，不以“工具返回成功”代替视觉验收。
+- Nhân vật: khác biệt rõ với nhân vật khác, khuôn mặt và chính diện/nghiêng/sau lưng là cùng một người, quần áo và giày đầy đủ, không tự ý đổi tuổi, vóc dáng, điểm nhận diện da tóc; chất liệu người thật, đất sét, phẳng... đều tự đứng vững.
+- Bối cảnh: bố cục địa điểm đọc được và liên tục, không lén thêm bóng người; nguồn sáng giải thích được, không gian và chất liệu hợp phong cách, thay đổi thời điểm/thời tiết tạo ra ảnh hưởng kéo theo đúng. Cổ phong cyberpunk còn phải đối chiếu cách xếp trước/phải/sau/trái, cùng điểm trung tâm cùng độ cao, mốc bốn hướng nối tiếp và trạng thái thống nhất, không được chỉ nghiệm thu một ô.
+- Đạo cụ: đường viền, cấu trúc và hoa văn then chốt nhận ra được, chất liệu/trạng thái hợp lý, không có tay hay người cầm; ảnh tĩnh vật đơn của phim điện ảnh đô thị người thật có mặt đỡ và bóng đổ đáng tin.
+- Biến thể: thực sự dùng ảnh cha đã xác nhận; chỉ thay đổi hạng mục được phép; hạng mục không đổi, khác biệt trạng thái và tập/cảnh áp dụng đều đọc lại được.
+- Chung: prompt không có chỉ thị loại trừ nhau, ảnh thật truy cập được; xem kết quả thực tế rồi ghi vấn đề và kết luận chọn dùng, không lấy "công cụ trả về thành công" thay cho nghiệm thu thị giác.
 
-通过验收并获用户选用确认后，才将真实图片引用写入资产主记录及受影响分集。修订只针对失败项，保留已确认图与候选，不默认覆盖全部资产。
+Chỉ sau khi qua nghiệm thu và được người dùng xác nhận chọn dùng, mới ghi tham chiếu ảnh thật vào bản ghi chính của tài sản và các tập bị ảnh hưởng. Chỉnh sửa chỉ nhắm vào hạng mục không đạt, giữ lại ảnh đã xác nhận và ứng viên, không mặc định ghi đè toàn bộ tài sản.

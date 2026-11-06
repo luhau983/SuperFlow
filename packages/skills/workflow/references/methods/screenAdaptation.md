@@ -1,178 +1,178 @@
-# 剧本改编：让故事在画面与声音中发生
+# Chuyển thể kịch bản: để câu chuyện xảy ra trong hình ảnh và âm thanh
 
-用于小说、梗概到剧本的转化，以及已授权的剧本修改。故事尚缺主要行动或结尾时，按需要使用[故事开发](storyDevelopment.md)，不要求补齐整套上游文档。
-已定稿剧本默认保留剧情与完整对白。以下检查用于解释制作需求和发现冲突；改变事件、信息揭示、人物动机或台词属于改编提案，按[输入与剧本](../sourceAndScript.md)处理。
-各方法是内部写作工具，不是逐项交稿或审批清单。例子只展示写法，不能当作本项目已有事实。
+Dùng cho việc chuyển tiểu thuyết, tóm tắt thành kịch bản, và việc sửa kịch bản đã được ủy quyền. Khi câu chuyện còn thiếu hành động chính hoặc kết thúc, dùng [Phát triển câu chuyện](storyDevelopment.md) theo nhu cầu, không yêu cầu bổ sung đủ cả bộ tài liệu thượng nguồn.
+Kịch bản đã là bản chốt mặc định giữ nguyên cốt truyện và toàn bộ lời thoại. Các kiểm tra dưới đây dùng để giải thích nhu cầu sản xuất và phát hiện xung đột; thay đổi sự kiện, hé lộ thông tin, động cơ nhân vật hoặc lời thoại thuộc đề xuất chuyển thể, xử lý theo [Đầu vào và kịch bản](../sourceAndScript.md).
+Mỗi phương pháp là công cụ viết nội bộ, không phải danh sách nộp bài hay phê duyệt từng mục. Ví dụ chỉ minh họa cách viết, không thể coi là sự thật đã có của dự án này.
 
-## 1. 把原文依据映射到视听表达
+## 1. Ánh xạ căn cứ nguyên tác sang biểu đạt nghe nhìn
 
-什么时候用：小说有大量叙述、背景或心理，或压缩改编容易漏掉必要信息时。
+Khi nào dùng: tiểu thuyết có nhiều tường thuật, bối cảnh hoặc tâm lý, hoặc chuyển thể nén dễ bỏ sót thông tin cần thiết.
 
-先提取本次人物目标、阻碍、失败代价与关键变化，再逐项判断它在原文中怎样成立、观众在剧本中怎样得知。
-记录事件事实与讲述顺序两层：改成倒叙可能不改事件，但会改观众的判断和期待，需要检验揭示时机。
-每一项可选择直接演出、用现有行动中的证据表达、保留必要旁白，或提议合并压缩；不默认所有文学表达都该删掉。
+Trước tiên trích xuất mục tiêu nhân vật, trở ngại, cái giá thất bại và thay đổi then chốt lần này, rồi phán đoán từng mục nó thành lập thế nào trong nguyên tác, khán giả biết được thế nào trong kịch bản.
+Ghi hai tầng: sự thật sự kiện và thứ tự kể; đổi thành hồi tưởng có thể không đổi sự kiện, nhưng sẽ đổi phán đoán và kỳ vọng của khán giả, cần kiểm chứng thời điểm hé lộ.
+Mỗi mục có thể chọn diễn trực tiếp, biểu đạt bằng bằng chứng trong hành động sẵn có, giữ OS/VO cần thiết, hoặc đề xuất gộp nén; không mặc định mọi biểu đạt văn chương đều nên cắt.
 
-| 原文内容 | 选择表达方式时检查 | 交给剧本的结果 |
+| Nội dung nguyên tác | Kiểm tra khi chọn cách biểu đạt | Kết quả giao cho kịch bản |
 |---|---|---|
-| 正在发生的事件 | 谁在何处做了什么，改变了什么 | 有起止状态的动作 |
-| 人物心理或关系判断 | 当前什么触发它，怎样影响选择，能看到什么后果 | 可见的反应与策略变化 |
-| 过去经历或世界规则 | 本次哪次选择必须依赖这条信息，原文有什么证据 | 按需出现的对白、物件、声音或简短旁白 |
-| 未解信息 | 本次是否允许揭晓，角色与观众分别知道多少 | 保留未知或有明确依据的揭示 |
+| Sự kiện đang xảy ra | Ai ở đâu làm gì, thay đổi điều gì | Hành động có trạng thái đầu cuối |
+| Tâm lý nhân vật hoặc phán đoán quan hệ | Hiện điều gì kích hoạt nó, ảnh hưởng lựa chọn thế nào, thấy được hậu quả gì | Phản ứng nhìn thấy được và thay đổi chiến lược |
+| Trải nghiệm quá khứ hoặc quy tắc thế giới | Lựa chọn nào lần này bắt buộc dựa vào thông tin này, nguyên tác có bằng chứng gì | Lời thoại, đồ vật, âm thanh hoặc OS/VO ngắn xuất hiện theo nhu cầu |
+| Thông tin chưa giải đáp | Lần này có được phép hé lộ không, nhân vật và khán giả mỗi bên biết bao nhiêu | Giữ chưa biết hoặc hé lộ có căn cứ rõ ràng |
 
-### 从开场实际发生的事建立期待
+### Xây dựng kỳ vọng từ điều thực sự xảy ra ở phần mở màn
 
-先写观众进入作品时能看见或听见的一次具体事件，并核对理解它需要什么最低限度的信息。声音、文字或物件可以先出现，但它们应让观众辨认正在发生的事情，不能只留下不知所云的刺激。
-接着说明观众会等待什么变化：一个动作能否完成、两人是否会继续交谈、异常会带来什么后果，都可以形成期待，不一定要隐瞒答案。最后接到人物的下一次行动，检查这个开头是否确实启动或改变本片任务；删掉开头仍毫无影响时，要检查它是否只是额外噱头。
-教学例：洗衣店快关门时，店员发现待取外套和取衣单数量对不上，门铃随即响起。观众已知有人来取衣，会关心店员怎样处理缺件；后续若转去讲无关的约会，开场建立的等待便没有承接。
-把开场需要的辨认、反应与行动时间纳入估时，不套固定秒数。对定稿的检查用于说明表达需求；重排开头或提前透露信息仍属于改编提案。
+Trước tiên viết một sự kiện cụ thể mà khán giả thấy hoặc nghe được khi bước vào tác phẩm, và đối chiếu lượng thông tin tối thiểu cần để hiểu nó. Âm thanh, chữ hoặc đồ vật có thể xuất hiện trước, nhưng chúng phải giúp khán giả nhận ra điều đang xảy ra, không thể chỉ để lại một kích thích khó hiểu.
+Tiếp đó nói rõ khán giả sẽ chờ thay đổi gì: một hành động có hoàn thành được không, hai người có tiếp tục nói chuyện không, điều bất thường sẽ dẫn đến hậu quả gì, đều có thể tạo kỳ vọng, không nhất thiết phải giấu đáp án. Cuối cùng nối sang hành động tiếp theo của nhân vật, kiểm tra phần mở đầu này có thực sự khởi động hoặc thay đổi nhiệm vụ của phim không; nếu bỏ phần mở đầu mà vẫn không ảnh hưởng gì, cần kiểm tra xem nó có chỉ là chiêu trò thêm thắt không.
+Ví dụ minh họa: tiệm giặt sắp đóng cửa, nhân viên phát hiện số áo khoác chờ lấy và số phiếu lấy đồ không khớp, chuông cửa liền vang lên. Khán giả đã biết có người đến lấy đồ, sẽ quan tâm nhân viên xử lý việc thiếu đồ thế nào; nếu phần sau chuyển sang kể một buổi hẹn không liên quan, sự chờ đợi mà phần mở màn thiết lập sẽ không được tiếp nối.
+Đưa thời gian nhận diện, phản ứng và hành động cần cho phần mở màn vào ước tính thời lượng, không áp số giây cố định. Việc kiểm tra bản chốt dùng để nói rõ nhu cầu biểu đạt; sắp xếp lại phần mở đầu hoặc tiết lộ thông tin sớm vẫn thuộc đề xuất chuyển thể.
 
-交给下一步：必要事实在各场的承载位置，以及新增、删并、重排内容的简明清单。
-常见误用：背景只写进角色卡，成片却没有表达渠道；或为了替代一句旁白，新造一段改变剧情的回忆。
+Giao cho bước tiếp: vị trí mang tải của các sự thật cần thiết trong từng cảnh, và danh sách ngắn gọn các nội dung mới thêm, cắt gộp, sắp xếp lại.
+Dùng sai thường gặp: bối cảnh chỉ viết vào thẻ nhân vật, phim thành phẩm lại không có kênh biểu đạt; hoặc để thay một câu OS/VO mà tạo mới một đoạn hồi ức làm thay đổi cốt truyện.
 
-## 2. 区分场景任务与人物目标
+## 2. Phân biệt nhiệm vụ cảnh và mục tiêu nhân vật
 
-什么时候用：场景只是见面、解释和离开，或台词很多却没有变化时。
+Khi nào dùng: cảnh chỉ là gặp mặt, giải thích rồi rời đi, hoặc lời thoại nhiều mà không có thay đổi.
 
-先确定本场结束后哪件事会不同，再写角色眼下实际要完成的动作。场景可以让两人开始配合，人物自己只是在设法把书架搬进房间；剧情作用应通过这项任务的过程发生。
-先用动词写目标：让对方留下、取回记录、阻止签字、确认身份；尽量能判断当场成败，避免只写“获得理解”。
-再写阻力及其反应：对手也有当下目的，环境或规则也会对行动形成具体限制。
-按“目标 → 阻碍 → 行动 → 反应 → 策略调整 → 结果”整理本场，先成立行动再写对白。
-结尾标明局势、关系、资源、信息或选择中哪一项改变，结果如何造成下一场；变化可以渐进，不要求每场翻转。
+Trước tiên xác định sau khi cảnh này kết thúc điều gì sẽ khác, rồi viết hành động mà nhân vật trước mắt thực sự phải hoàn thành. Cảnh có thể khiến hai người bắt đầu phối hợp, còn bản thân nhân vật chỉ đang tìm cách khiêng giá sách vào phòng; tác dụng cốt truyện nên xảy ra qua quá trình của nhiệm vụ này.
+Trước tiên viết mục tiêu bằng động từ: giữ đối phương ở lại, lấy lại hồ sơ, ngăn ký tên, xác nhận danh tính; cố gắng để phán đoán được thành bại ngay tại chỗ, tránh chỉ viết "được thấu hiểu".
+Rồi viết lực cản và phản ứng của nó: đối thủ cũng có mục đích tức thời, môi trường hay quy tắc cũng tạo giới hạn cụ thể cho hành động.
+Sắp xếp cảnh này theo "mục tiêu → trở ngại → hành động → phản ứng → điều chỉnh chiến lược → kết quả", thành lập hành động trước rồi mới viết lời thoại.
+Kết thúc ghi rõ điều nào trong cục diện, quan hệ, nguồn lực, thông tin hoặc lựa chọn đã thay đổi, kết quả dẫn đến cảnh sau thế nào; thay đổi có thể dần dần, không yêu cầu mỗi cảnh đều lật ngược.
 
-教学例：两名室友搬书架，一人坚持整架抬过门槛，却因重量无法转向；另一人提出卸下书，再把脚轮垫到同一高度。前者放下自己一直抓着的上沿，按对方指引推底座，两人才把书架移进去。
-任务的障碍让人物有机会放弃独自指挥，配合由实际行动建立；若后续需要这种信任，便已有可回溯的依据。
-交给下一步：每场的一条行动链、主要变化和结束状态，作为对白、资产状态与后续分镜的依据。
-常见误用：让每场承担解释设定、发展关系、埋多条伏笔和大反转，所有任务都没有足够展开；必要的停顿或观察场也不必硬加争吵。
+Ví dụ minh họa: hai người bạn cùng phòng khiêng giá sách, một người khăng khăng khiêng cả giá qua ngưỡng cửa, nhưng vì quá nặng nên không xoay được; người kia đề xuất dỡ sách ra, rồi kê bánh xe lên cùng độ cao. Người đầu buông mép trên mình vẫn nắm chặt, theo chỉ dẫn của đối phương đẩy đế giá, hai người mới đưa được giá sách vào.
+Trở ngại của nhiệm vụ cho nhân vật cơ hội từ bỏ việc một mình chỉ huy, sự phối hợp được xây bằng hành động thực tế; nếu phần sau cần niềm tin này, đã có căn cứ truy ngược được.
+Giao cho bước tiếp: một chuỗi hành động, thay đổi chính và trạng thái kết thúc của mỗi cảnh, làm căn cứ cho lời thoại, trạng thái tài sản và phân cảnh về sau.
+Dùng sai thường gặp: để mỗi cảnh gánh việc giải thích thiết lập, phát triển quan hệ, cài nhiều phục bút và đảo ngược lớn, khiến mọi nhiệm vụ đều không đủ triển khai; cảnh dừng lại hay quan sát cần thiết cũng không cần cố thêm cãi vã.
 
-## 3. 从后续行为反查心理变化的证据
+## 3. Từ hành vi về sau truy ngược bằng chứng của thay đổi tâm lý
 
-什么时候用：出现“他终于明白”“她失去信任”“他被欲望驱使”等承担关键推进的结论句时。
+Khi nào dùng: xuất hiện các câu kết luận gánh vai trò đẩy tiến then chốt như "anh ấy cuối cùng đã hiểu", "cô ấy mất niềm tin", "anh ta bị dục vọng thúc đẩy".
 
-先看后文哪次行动依赖这项心理判断。例如要让人物共同执行计划，就需要让观众相信他已经接受对方参与。只在脸上添一个笑容，未必能解释这个变化。
+Trước tiên xem hành động nào ở phần sau phụ thuộc vào phán đoán tâm lý này. Ví dụ muốn nhân vật cùng thực hiện kế hoạch, cần để khán giả tin anh đã chấp nhận đối phương tham gia. Chỉ thêm một nụ cười trên mặt chưa chắc giải thích được thay đổi này.
 
-1. 找出变化前仍在起作用的限制：人物不愿交出某项决定权、不相信某条消息，或坚持某种做法。依据来自已写出的行为；原文没有的习惯不能反过来当作改编事实。
-2. 写清变化后多了哪一种可能：对方能够参与、某物开始被使用、原来回避的事情终于被处理。先确定实际差异，再从场景已有的人物和物件中选择足以表现它的动作，不按情绪名称套手势。
-3. 回到发生转变的时刻，检查人物得到了什么新证据、遭遇了什么后果。若这些经历不足以使他改变，应修补理由或放缓转变；不能让一个动作凭空证明他已经想通。
-4. 把过程写回连续表演。对方能否察觉并回应，原有互动是否随之改变，后场是否沿用了结果，都应读得出来。停顿可以表达犹豫，空间和物品的使用可以落实选择，但只有服务当前因果时才需要加入。
+1. Tìm ra giới hạn vẫn còn tác dụng trước khi thay đổi: nhân vật không muốn giao ra một quyền quyết định nào đó, không tin một tin tức nào đó, hoặc kiên trì một cách làm nào đó. Căn cứ đến từ hành vi đã được viết ra; thói quen nguyên tác không có không thể ngược lại coi là sự thật chuyển thể.
+2. Viết rõ sau khi thay đổi có thêm khả năng nào: đối phương có thể tham gia, một vật bắt đầu được sử dụng, việc vốn né tránh cuối cùng được xử lý. Trước tiên xác định khác biệt thực tế, rồi từ nhân vật và đồ vật sẵn có trong cảnh chọn hành động đủ để thể hiện nó, không áp cử chỉ theo tên cảm xúc.
+3. Quay về khoảnh khắc chuyển biến xảy ra, kiểm tra nhân vật nhận được bằng chứng mới gì, gặp hậu quả gì. Nếu những trải nghiệm này không đủ khiến anh thay đổi, nên vá lý do hoặc làm chậm chuyển biến; không thể để một hành động vô căn cứ chứng minh anh đã thông suốt.
+4. Viết quá trình trở lại thành diễn xuất liên tục. Đối phương có nhận ra và phản hồi không, tương tác ban đầu có thay đổi theo không, cảnh sau có tiếp tục dùng kết quả không, đều phải đọc ra được. Khoảng dừng có thể biểu đạt do dự, việc sử dụng không gian và đồ vật có thể cụ thể hóa lựa chọn, nhưng chỉ khi phục vụ nhân quả hiện tại mới cần thêm.
 
-教学例：原句是“她开始信任新同事”。前场她一直独自核对发货；新同事发现尺寸错误后主动退回重测。再次装箱时，她把待核对的半叠订单交给对方，自己继续处理另一半；两人随后的分工使信任成为实际决定。
-这段成立的依据是此前的检查行为及当前分工，新增动作用于真实改编时应标作提案。阅读时若只能从“信任”这个词知道变化，就继续检查缺的是经历、可见决定还是后续承接，不靠增加表情形容词解决。
+Ví dụ minh họa: câu gốc là "cô ấy bắt đầu tin đồng nghiệp mới". Cảnh trước cô luôn một mình đối chiếu hàng gửi; đồng nghiệp mới phát hiện sai kích thước liền chủ động trả lại đo lại. Khi đóng thùng lần nữa, cô giao nửa xấp đơn chờ đối chiếu cho đối phương, mình tiếp tục xử lý nửa kia; sự phân công giữa hai người sau đó khiến niềm tin trở thành quyết định thực tế.
+Căn cứ thành lập của đoạn này là hành vi kiểm tra trước đó và sự phân công hiện tại, hành động mới thêm khi dùng cho chuyển thể thật phải đánh dấu là đề xuất. Khi đọc nếu chỉ có thể biết thay đổi từ chữ "tin", thì tiếp tục kiểm tra thứ còn thiếu là trải nghiệm, quyết định nhìn thấy được hay sự tiếp nối về sau, không giải quyết bằng cách thêm tính từ biểu cảm.
 
-交给下一步：可以表演的关键行为、必要反应时间、道具和空间的前后状态。
-常见误用：把每句情绪都兑换成一个无后果的小动作；或删掉原作有叙述功能的旁白，只剩难以读懂的沉默。
+Giao cho bước tiếp: hành vi then chốt có thể diễn, thời gian phản ứng cần thiết, trạng thái trước sau của đạo cụ và không gian.
+Dùng sai thường gặp: đổi mỗi câu cảm xúc thành một động tác nhỏ không có hậu quả; hoặc cắt OS/VO có chức năng tự sự của nguyên tác, chỉ còn lại sự im lặng khó hiểu.
 
-## 4. 安排信息差与揭示时机
+## 4. Sắp xếp chênh lệch thông tin và thời điểm hé lộ
 
-什么时候用：悬疑、误会、身份或关系揭晓依赖“谁知道什么”，或观众感到混乱时。
+Khi nào dùng: hồi hộp, hiểu lầm, hé lộ danh tính hoặc quan hệ phụ thuộc vào "ai biết gì", hoặc khán giả cảm thấy rối.
 
-先写该信息的真实内容和依据，再记角色甲、角色乙、观众此刻各自知道、误信或不知道什么；未知答案不能由这张表自动补全。
-选择信息关系时看希望产生的体验，不要求观众始终比角色多一点或少一点。
+Trước tiên viết nội dung thật và căn cứ của thông tin đó, rồi ghi lúc này nhân vật A, nhân vật B, khán giả mỗi bên biết, tin nhầm hoặc không biết điều gì; đáp án chưa biết không thể được bảng này tự động bổ sung.
+Chọn quan hệ thông tin theo trải nghiệm mong muốn tạo ra, không yêu cầu khán giả lúc nào cũng biết nhiều hơn hay ít hơn nhân vật một chút.
 
-| 信息关系 | 适合效果 | 执行要点 |
+| Quan hệ thông tin | Hiệu quả phù hợp | Điểm thực hiện |
 |---|---|---|
-| 观众先知道 | 担心、期待人物发现 | 给观众清楚证据，让人物未知有合理原因，后续行动逼近后果 |
-| 角色先知道 | 好奇、重新理解人物 | 观众至少知道值得追问的问题，人物的隐瞒符合目的，不靠故意不给必要画面拖延 |
-| 同时得知 | 冲击、共情、选择压力 | 给信息辨认与反应时间，随后改变行动，不止停在解释谜底 |
+| Khán giả biết trước | Lo lắng, mong nhân vật phát hiện | Cho khán giả bằng chứng rõ ràng, việc nhân vật chưa biết có lý do hợp lý, hành động sau đó tiến sát hậu quả |
+| Nhân vật biết trước | Tò mò, hiểu lại nhân vật | Khán giả ít nhất biết câu hỏi đáng truy hỏi, việc che giấu của nhân vật phù hợp mục đích, không cố ý không cho hình ảnh cần thiết để kéo dài |
+| Cùng lúc biết | Chấn động, đồng cảm, áp lực lựa chọn | Cho thời gian nhận diện thông tin và phản ứng, sau đó thay đổi hành động, không chỉ dừng ở giải thích đáp án |
 
-把重要信息安排在会影响下一次判断或选择的位置；也可提前展示结果制造悬念，但须核对是否破坏原有视角或谜底。
-反转应重新解释已有线索。误导可以来自人物误判、证据不完整或合理的双重解释，不能让已客观展示的事实无故失效。
-每次揭示后问：接下来谁因此改变策略、信任或风险判断；若无人受影响，可能只是额外说明。
-交给下一步：各段的观众问题、信息来源、揭示位置和行动后果，可直接注入场景而不单独交表。
-常见误用：隐藏所有信息使观众连主角在做什么都不知道；或为延长悬念让人物拒绝明显能完成任务的交流。
+Đặt thông tin quan trọng ở vị trí sẽ ảnh hưởng phán đoán hoặc lựa chọn tiếp theo; cũng có thể cho thấy kết quả trước để tạo hồi hộp, nhưng phải đối chiếu xem có phá góc nhìn hay đáp án bí ẩn ban đầu không.
+Đảo ngược nên diễn giải lại các manh mối đã có. Đánh lạc hướng có thể đến từ phán đoán sai của nhân vật, bằng chứng không đầy đủ hoặc cách giải thích kép hợp lý, không thể để sự thật đã được thể hiện khách quan vô cớ mất hiệu lực.
+Sau mỗi lần hé lộ hỏi: tiếp theo ai vì thế mà thay đổi chiến lược, niềm tin hay phán đoán rủi ro; nếu không ai bị ảnh hưởng, có thể chỉ là lời giải thích thêm.
+Giao cho bước tiếp: câu hỏi khán giả, nguồn thông tin, vị trí hé lộ và hậu quả hành động của từng đoạn, có thể đưa thẳng vào cảnh mà không cần nộp bảng riêng.
+Dùng sai thường gặp: giấu mọi thông tin khiến khán giả đến nhân vật chính đang làm gì cũng không biết; hoặc để kéo dài hồi hộp mà để nhân vật từ chối một cuộc trao đổi rõ ràng có thể hoàn thành nhiệm vụ.
 
-## 5. 用潜台词写有目的的对白
+## 5. Dùng ẩn ý để viết lời thoại có mục đích
 
-什么时候用：人物总在直说感受、对白复述画面，或不同角色说话可互换时。
+Khi nào dùng: nhân vật luôn nói thẳng cảm xúc, lời thoại lặp lại hình ảnh, hoặc cách nói của các nhân vật có thể hoán đổi.
 
-从这段交流希望造成的实际后果开始：人物说完之后，对方要不要留下、交代实情或接受某个安排。可以先在内部写出直接请求，检验它是否符合当前关系；若直说没有代价，就没有必要绕开。
-确实不能直说时，再找受阻的原因怎样进入语言。例如怕遭拒绝的人可能借一项尚未完成的事情延长相处，想夺回主动的人可能只回答对方问题中的一部分。采用的说法必须依靠场内事实，让观众能从措辞与行动的不一致中推断意图；不要靠新编身世解释一句含糊台词。
-继续写对方如何理解并回应，再让说话者根据这次回应坚持、改口或停止。回避、错位、打断和沉默由这次交锋产生，不能机械插入；需要明确传达的任务信息照常说清。措辞、语速和停顿沿用已知性格与声音要求。
+Bắt đầu từ hậu quả thực tế mà cuộc trao đổi này muốn tạo ra: sau khi nhân vật nói xong, đối phương có ở lại, khai thật hay chấp nhận một sắp xếp nào không. Có thể trước tiên viết nội bộ lời yêu cầu trực tiếp, kiểm chứng nó có phù hợp quan hệ hiện tại không; nếu nói thẳng không có cái giá, thì không cần vòng vo.
+Khi thật sự không thể nói thẳng, mới tìm nguyên nhân bị cản trở đi vào ngôn ngữ thế nào. Ví dụ người sợ bị từ chối có thể mượn một việc chưa xong để kéo dài thời gian ở cạnh nhau, người muốn giành lại thế chủ động có thể chỉ trả lời một phần câu hỏi của đối phương. Cách nói được chọn phải dựa vào sự thật trong cảnh, để khán giả suy ra ý đồ từ sự không nhất quán giữa lời lẽ và hành động; không dựa vào thân thế mới biên để giải thích một câu thoại mơ hồ.
+Tiếp tục viết đối phương hiểu và phản hồi thế nào, rồi để người nói dựa vào phản hồi này mà kiên trì, đổi lời hoặc dừng lại. Né tránh, lệch nhịp, ngắt lời và im lặng sinh ra từ lần đối đáp này, không thể chèn một cách máy móc; thông tin nhiệm vụ cần truyền đạt rõ thì vẫn nói rõ như thường. Lời lẽ, tốc độ nói và khoảng dừng tiếp tục theo tính cách và yêu cầu giọng nói đã biết.
 
-教学例：父亲正在记第二天早餐需要的分量，女儿的行李停在门边。
+Ví dụ minh họa: người cha đang ghi phần ăn cần cho bữa sáng hôm sau, hành lý của con gái để cạnh cửa.
 
 ```text
-父亲指着便签：明早还做两份？
-女儿把做法贴上冰箱：这些够你吃三天。
-父亲等了一会儿，把便签上的“二”改成“一”。
+Người cha chỉ vào tờ giấy nhớ: Sáng mai vẫn làm hai phần à?
+Con gái dán cách làm lên tủ lạnh: Chỗ này đủ bố ăn ba ngày.
+Người cha chờ một lúc, sửa chữ "hai" trên tờ giấy nhớ thành "một".
 ```
 
-父亲借准备早餐探问她是否留下，女儿把回应落在他独自生活的安排上；父亲修改分量，说明他已经接收到这个回答。行李及正在做的事给交流提供了解读依据。
-对白检查依次问：是否改变行动或判断、是否重复画面、对方是否本来就知道、能否由更准确的行动承担。
-交给下一步：完整对白、说话人、必要动作和停顿；OS、VO、画内声音保持区别，不能把文字声线描述当成真实音频资产。
-常见误用：机械删短每句话破坏人物节奏，或擅自改写定稿对白来追求“更有潜台词”。
+Người cha mượn việc chuẩn bị bữa sáng để dò hỏi cô có ở lại không, con gái đặt câu trả lời vào sự sắp xếp cho cuộc sống một mình của ông; người cha sửa phần ăn, cho thấy ông đã nhận được câu trả lời này. Hành lý và việc đang làm cung cấp căn cứ giải đọc cho cuộc trao đổi.
+Kiểm tra lời thoại lần lượt hỏi: có thay đổi hành động hay phán đoán không, có lặp lại hình ảnh không, đối phương vốn đã biết chưa, có thể do một hành động chính xác hơn đảm nhận không.
+Giao cho bước tiếp: lời thoại hoàn chỉnh, người nói, hành động và khoảng dừng cần thiết; OS, VO, âm thanh trong khung giữ phân biệt, không thể coi mô tả giọng bằng chữ là tài sản âm thanh thật.
+Dùng sai thường gặp: máy móc cắt ngắn từng câu phá nhịp điệu nhân vật, hoặc tự ý viết lại lời thoại bản chốt để theo đuổi "nhiều ẩn ý hơn".
 
-## 6. 让道具与空间成为行动资源
+## 6. Để đạo cụ và không gian trở thành nguồn lực hành động
 
-什么时候用：关系全靠解释、场景像任意背景，或物件在场间忽隐忽现时。
+Khi nào dùng: quan hệ hoàn toàn dựa vào giải thích, bối cảnh như một phông nền tùy ý, hoặc đồ vật lúc ẩn lúc hiện giữa các cảnh.
 
-从本场动作反查哪些物件确实不可替代：拿走它，谁会无法完成下一步，观众又会失去哪条理解依据。需要被争取的东西应有取得条件；承载关系或消息的东西应有已建立的来历，不能靠编剧在说明里宣称其意义。
-随后追踪使用过程，包括谁持有、是否可用、何时暴露、怎样转交或损坏。如果后文会改变它的用途或重新解释它，前面须留有可辨认的依据。不用给所有陈设附象征意义。
-空间先写功能关系：谁能进入、出口由谁控制、声音是否互通、两人之间有什么阻挡，再决定行动如何改变这些关系。
-例如两人隔着柜台争取同一张收据，店员撤走中间的挡板让双方核对签名；空间变化让对抗转为合作，比旁白宣布和解更可见。
+Từ hành động của cảnh này truy ngược những đồ vật nào thật sự không thể thay thế: lấy nó đi, ai sẽ không hoàn thành được bước tiếp, khán giả sẽ mất căn cứ hiểu nào. Thứ cần tranh giành nên có điều kiện để có được; thứ mang quan hệ hoặc tin tức nên có lai lịch đã được thiết lập, không thể dựa vào biên kịch tuyên bố ý nghĩa trong phần mô tả.
+Sau đó theo dõi quá trình sử dụng, gồm ai nắm giữ, có dùng được không, khi nào bị lộ, chuyển giao hay hư hỏng thế nào. Nếu phần sau sẽ thay đổi công dụng hoặc diễn giải lại nó, phía trước phải để lại căn cứ nhận ra được. Không cần gán ý nghĩa tượng trưng cho mọi đồ bày biện.
+Không gian trước tiên viết quan hệ chức năng: ai có thể vào, lối ra do ai kiểm soát, âm thanh có thông nhau không, giữa hai người có gì ngăn cách, rồi mới quyết định hành động thay đổi các quan hệ này thế nào.
+Ví dụ hai người cách quầy tranh cùng một tờ biên lai, nhân viên rút tấm chắn ở giữa để hai bên đối chiếu chữ ký; thay đổi không gian khiến đối kháng chuyển thành hợp tác, dễ thấy hơn so với OS/VO tuyên bố làm hòa.
 
-交给下一步：资产的必要用途、起止状态、持有人及重要空间关系；只提取实际出现的需求，不为一个比喻新增资产。
-常见误用：物件只用于好看却被当成关键线索；或用“她靠近了”表示信任，却没有说明是否影响正在发生的互动。
+Giao cho bước tiếp: công dụng cần thiết, trạng thái đầu cuối, người nắm giữ của tài sản và các quan hệ không gian quan trọng; chỉ trích xuất nhu cầu thực sự xuất hiện, không vì một phép ẩn dụ mà thêm tài sản.
+Dùng sai thường gặp: đồ vật chỉ để đẹp lại bị coi là manh mối then chốt; hoặc dùng "cô ấy lại gần" để biểu thị niềm tin, mà không nói rõ có ảnh hưởng đến tương tác đang diễn ra không.
 
-## 7. 以行动与反应组织场景节奏
+## 7. Tổ chức nhịp cảnh bằng hành động và phản ứng
 
-什么时候用：冲突开始太晚、结果已经明确却继续解释，或事件密集到来不及感受时。
+Khi nào dùng: xung đột bắt đầu quá muộn, kết quả đã rõ mà vẫn tiếp tục giải thích, hoặc sự kiện dày đặc đến mức không kịp cảm nhận.
 
-尝试晚进早出：从足以理解冲突的时刻进入，在关键结果与必要反应成立后离开，压缩无功能的入场、寒暄和重复收尾。
-前场的决定可以直接接后场的执行；省略交通和等待前，先确认不会丢失地点、时间、道具或人物知情状态的必要变化。
-重要揭示可落在反应上；若后果尚未让观众理解，就保留反应与结果，不为追求快节奏立刻切走。
-检查每个段落承担的主推进，以及其在行动、关系、信息、必要体验中的作用；可以合并重复作用，不以“必须满足两项”机械删戏。
-慢节奏段落也应有观察方向，例如同一动作的重复逐渐暴露变化。恐惧等待、悲伤停留和喜剧停顿都有自己的时间需求。
+Thử vào muộn ra sớm: vào từ thời điểm đủ để hiểu xung đột, rời đi sau khi kết quả then chốt và phản ứng cần thiết đã thành lập, nén các đoạn vào cảnh, chào hỏi và kết thúc lặp lại không có chức năng.
+Quyết định của cảnh trước có thể nối thẳng vào việc thực hiện ở cảnh sau; trước khi lược đi di chuyển và chờ đợi, trước tiên xác nhận sẽ không mất các thay đổi cần thiết về địa điểm, thời gian, đạo cụ hay trạng thái biết chuyện của nhân vật.
+Hé lộ quan trọng có thể đặt vào phản ứng; nếu hậu quả chưa khiến khán giả hiểu, thì giữ phản ứng và kết quả, không vì theo đuổi nhịp nhanh mà lập tức cắt đi.
+Kiểm tra đẩy tiến chính mà mỗi đoạn đảm nhận, và tác dụng của nó trong hành động, quan hệ, thông tin, trải nghiệm cần thiết; có thể gộp các tác dụng lặp lại, không máy móc cắt cảnh theo "phải thỏa mãn hai mục".
+Đoạn nhịp chậm cũng nên có hướng quan sát, ví dụ sự lặp lại của cùng một hành động dần bộc lộ thay đổi. Chờ đợi sợ hãi, dừng lại đau buồn và khoảng dừng hài đều có nhu cầu thời gian riêng.
 
-交给下一步：明确的场景进入点、结束结果、必要停顿和转场依据。若后续目标是 Seedance，剧本确认后直接交给主 `SKILL.md` PART A，镜头与分段不在本方法中继续设计。
-常见误用：把每场剪到只剩结果，观众看不见人物怎样选择；或靠频繁切镜头掩盖行动原地重复。
+Giao cho bước tiếp: điểm vào cảnh rõ ràng, kết quả kết thúc, khoảng dừng cần thiết và căn cứ chuyển cảnh. Nếu mục tiêu về sau là Seedance, sau khi kịch bản được xác nhận thì giao thẳng cho PART A của `SKILL.md` chính, shot và phân đoạn không tiếp tục thiết kế trong phương pháp này.
+Dùng sai thường gặp: cắt mỗi cảnh chỉ còn kết quả, khán giả không thấy nhân vật lựa chọn thế nào; hoặc dùng cắt shot liên tục để che hành động lặp lại tại chỗ.
 
-## 8. 按实际展开估时
+## 8. Ước tính thời lượng theo triển khai thực tế
 
-什么时候用：形成梗概后的初估、完成对白动作后的校准，以及硬时长与内容疑似冲突时。
+Khi nào dùng: ước tính ban đầu sau khi có tóm tắt, hiệu chỉnh sau khi hoàn thành lời thoại và hành động, và khi thời lượng cứng nghi xung đột với nội dung.
 
-1. 列本次不能丢的因果、关系信息、关键选择、结果与必要体验，先判断需要哪些叙事段落。
-2. 分别估自然说完对白、完成动作、辨认画内信息、反应停顿和转场所需时间。早期没有细节时给区间并说明假设。
-3. 标出同时发生与先后发生的部分：能边说边做的同一段可重叠；必须看完文字再反应的部分应依次累计。
-4. 用读演或实际表演校准复杂对白与动作；语速、字数、场数只能辅助，不是固定换算公式。
-5. 合计当前范围，并与已知硬限制核对；没有用户时长要求也可主动估算，不让用户承担技术估时。
+1. Liệt kê nhân quả, thông tin quan hệ, lựa chọn then chốt, kết quả và trải nghiệm cần thiết không được mất lần này, trước tiên phán đoán cần những đoạn tự sự nào.
+2. Ước tính riêng thời gian cần để nói hết lời thoại tự nhiên, hoàn thành hành động, nhận diện thông tin trong khung, khoảng dừng phản ứng và chuyển cảnh. Giai đoạn đầu chưa có chi tiết thì đưa khoảng và nói rõ giả định.
+3. Đánh dấu phần xảy ra đồng thời và phần xảy ra tuần tự: cùng một đoạn vừa nói vừa làm được có thể chồng lên nhau; phần phải xem xong chữ rồi mới phản ứng thì cộng dồn theo thứ tự.
+4. Dùng đọc diễn hoặc diễn thực tế để hiệu chỉnh lời thoại và hành động phức tạp; tốc độ nói, số chữ, số cảnh chỉ để hỗ trợ, không phải công thức quy đổi cố định.
+5. Cộng tổng phạm vi hiện tại, và đối chiếu với giới hạn cứng đã biết; không có yêu cầu thời lượng của người dùng cũng có thể chủ động ước tính, không để người dùng gánh việc ước tính kỹ thuật.
 
-例如暂估一段对白需 12 秒，人物全程边说边封箱需 8 秒，可重叠的这段计约 12 秒；随后读封条 4 秒、反应 2 秒、转场 2 秒，总计约 20 秒。
-若封箱必须等对白结束后才开始，就不能取较大值，需改成顺序累计。这个例子只说明计时方法，不代表固定表演速度。
-估时要区分剧情所需时间、模型单次支持时间、生成素材总时长和最终剪辑时长；素材可以重叠，模型上限不证明剧情塞得下。
+Ví dụ tạm ước một đoạn lời thoại cần 12 giây, nhân vật vừa nói vừa dán thùng suốt cần 8 giây, đoạn chồng được này tính khoảng 12 giây; sau đó đọc nhãn niêm phong 4 giây, phản ứng 2 giây, chuyển cảnh 2 giây, tổng cộng khoảng 20 giây.
+Nếu việc dán thùng phải chờ lời thoại kết thúc mới bắt đầu, thì không thể lấy giá trị lớn hơn, cần đổi thành cộng dồn tuần tự. Ví dụ này chỉ minh họa cách tính giờ, không đại diện cho tốc độ diễn cố định.
+Ước tính thời lượng phải phân biệt thời gian cốt truyện cần, thời gian mô hình hỗ trợ cho một lần, tổng thời lượng tư liệu được tạo và thời lượng dựng cuối cùng; tư liệu có thể chồng nhau, giới hạn mô hình không chứng minh cốt truyện nhét vừa.
 
-交给下一步：总时长区间、主要耗时段与假设。若后续目标是 Seedance，这只是剧本层估时输入；实际生成分段、单段时长与 Batch 只由主 `SKILL.md` PART A A2/A3 决定。
-常见误用：把一段概述“二人修好机器”按几个字估成几秒，或把并行对白和动作全部相加导致虚高。
+Giao cho bước tiếp: khoảng tổng thời lượng, các đoạn tốn thời gian chính và giả định. Nếu mục tiêu về sau là Seedance, đây chỉ là đầu vào ước tính ở tầng kịch bản; phân đoạn tạo thực tế, thời lượng mỗi đoạn và Batch chỉ do A2/A3 trong PART A của `SKILL.md` chính quyết định.
+Dùng sai thường gặp: ước một đoạn khái quát "hai người sửa xong máy" thành vài giây theo vài chữ, hoặc cộng hết lời thoại và hành động song song khiến thời lượng bị đội lên ảo.
 
-## 9. 压缩时保住选择的依据与后果
+## 9. Khi nén vẫn giữ căn cứ và hậu quả của lựa chọn
 
-什么时候用：估时超出约束、段落重复，或用户明确要求更紧凑时；已定稿内容仅提出具体压缩方案，不擅自执行改剧情。
+Khi nào dùng: ước tính vượt ràng buộc, các đoạn lặp lại, hoặc người dùng yêu cầu rõ phải gọn hơn; nội dung bản chốt chỉ đề xuất phương án nén cụ thể, không tự ý thực hiện thay đổi cốt truyện.
 
-按影响从小到大检查：无功能的进出场与等待 → 重复说明和相同冲突 → 可合并的场景任务 → 支线展开 → 重要事件与结局。
-前几项也要检查是否承载必要情绪、线索或空间连续性；“合并场景”不是无代价操作，可能改变谁听到了秘密。
-每个压缩点写清删并什么、节省来自哪里、失去什么体验、如何保留因果；不能只写“节奏加快”。
-核心动机、规则建立、关键选择、信息揭示及后果不能只靠吞字、快放或删反应压进去。若已紧凑，应明确没有安全压缩空间。
-只有存在实质取舍时比较较完整展开与压缩展开，并推荐适合当前内容的一版；不强制每次交两套时间或两套创意。
-若硬限制无法容纳，给具体的延长、分段或调整范围方案及影响，沿用现有确认流程，不悄悄改结局或拆集。
+Kiểm tra theo mức ảnh hưởng từ nhỏ đến lớn: ra vào cảnh và chờ đợi không có chức năng → giải thích lặp lại và xung đột giống nhau → nhiệm vụ cảnh có thể gộp → triển khai tuyến phụ → sự kiện quan trọng và kết thúc.
+Các mục đầu cũng phải kiểm tra có mang cảm xúc, manh mối hoặc tính liên tục không gian cần thiết không; "gộp cảnh" không phải thao tác không có cái giá, có thể thay đổi ai nghe được bí mật.
+Mỗi điểm nén viết rõ cắt gộp gì, tiết kiệm đến từ đâu, mất trải nghiệm gì, giữ nhân quả thế nào; không thể chỉ viết "nhịp nhanh hơn".
+Động cơ cốt lõi, thiết lập quy tắc, lựa chọn then chốt, hé lộ thông tin và hậu quả không thể chỉ dựa vào nuốt chữ, tua nhanh hay cắt phản ứng để nhét vào. Nếu đã gọn, nên nói rõ không còn không gian nén an toàn.
+Chỉ khi có đánh đổi thực chất mới so sánh triển khai đầy đủ hơn với triển khai nén, và đề xuất bản phù hợp với nội dung hiện tại; không bắt buộc mỗi lần giao hai bộ thời gian hay hai bộ ý tưởng.
+Nếu giới hạn cứng không chứa nổi, đưa phương án cụ thể về kéo dài, phân đoạn hoặc phạm vi điều chỉnh và ảnh hưởng, tiếp tục dùng quy trình xác nhận hiện có, không lặng lẽ đổi kết thúc hay chia tập.
 
-交给下一步：采用的执行范围、估时与保留边界；后续不得把不同版本的事件和时间混用。
-常见误用：保留所有事件名称却删掉它们之间的选择和反应，看似“内容全在”，实际只剩剧情摘要。
+Giao cho bước tiếp: phạm vi thực hiện được chọn dùng, ước tính thời lượng và ranh giới giữ lại; về sau không được trộn sự kiện và thời gian của các phiên bản khác nhau.
+Dùng sai thường gặp: giữ tên mọi sự kiện nhưng cắt các lựa chọn và phản ứng giữa chúng, trông như "nội dung đều còn", thực tế chỉ còn lại tóm tắt cốt truyện.
 
-## 10. 写清可制作的事件与连续性
+## 10. Viết rõ sự kiện và tính liên tục có thể sản xuất
 
-什么时候用：剧本将进入资产、分镜和媒体阶段，或涉及多人动作、频繁换装、多地点与大规模变化时。
+Khi nào dùng: kịch bản sắp vào giai đoạn tài sản, phân cảnh và media, hoặc liên quan đến hành động nhiều người, thay trang phục thường xuyên, nhiều địa điểm và thay đổi quy mô lớn.
 
-每个关键段落先识别主要可见事件，再写其起因、关键行动、结果，避免一行塞满多个同时变化的角色、物件和空间。
-复杂场面是否保留取决于其戏剧价值与实际制作条件。能力限制要核实，不把“特写一定容易生成”或“群像不能做”当固定事实。
-未获改剧情授权时，不在本方法中擅改事件。若后续目标是 Seedance，如何承载动作、拆镜或分段由主 `SKILL.md` PART A 决定。
-状态变化发生在哪场、由谁触发、之后持续多久，都应在剧本中能找到；没有变化的角色外观与物件继续沿用。
-保留剧情必要的声音、画内文字、OS/VO和听见条件；剧本不必堆满景别、运镜或生成参数，后续据本场任务选择表达。
+Mỗi đoạn then chốt trước tiên nhận diện sự kiện nhìn thấy được chính, rồi viết nguyên nhân, hành động then chốt, kết quả của nó, tránh nhét vào một dòng nhiều nhân vật, đồ vật và không gian cùng thay đổi.
+Có giữ cảnh phức tạp hay không tùy vào giá trị kịch tính và điều kiện sản xuất thực tế. Giới hạn năng lực phải kiểm chứng, không coi "đặc tả chắc chắn dễ tạo" hay "cảnh đông người không làm được" là sự thật cố định.
+Khi chưa được ủy quyền sửa cốt truyện, không tự ý sửa sự kiện trong phương pháp này. Nếu mục tiêu về sau là Seedance, cách mang tải hành động, chia shot hay phân đoạn do PART A của `SKILL.md` chính quyết định.
+Thay đổi trạng thái xảy ra ở cảnh nào, do ai kích hoạt, kéo dài bao lâu sau đó, đều phải tìm thấy được trong kịch bản; ngoại hình nhân vật và đồ vật không thay đổi thì tiếp tục dùng.
+Giữ âm thanh cần thiết cho cốt truyện, chữ trong khung, OS/VO và điều kiện nghe thấy; kịch bản không cần chất đầy cỡ cảnh, chuyển động máy hay tham số tạo, về sau chọn cách biểu đạt theo nhiệm vụ của cảnh.
 
-交给下一步：有场次、地点与时段、人物、完整动作和对白、必要声音、起止状态的当前剧本；资产需求能回溯到这些内容。
-常见误用：为了生成方便擅删关键群众或改场景，或者把未采用的外观提案当作剧本已经发生的状态变化。
+Giao cho bước tiếp: kịch bản hiện tại có số cảnh, địa điểm và thời điểm, nhân vật, hành động và lời thoại hoàn chỉnh, âm thanh cần thiết, trạng thái đầu cuối; nhu cầu tài sản truy ngược được về các nội dung này.
+Dùng sai thường gặp: vì tiện tạo mà tự ý xóa quần chúng then chốt hoặc đổi bối cảnh, hoặc coi đề xuất ngoại hình chưa chọn dùng là thay đổi trạng thái đã xảy ra trong kịch bản.
 
-## 11. 交付前做一次连续阅读
+## 11. Đọc liên tục một lượt trước khi giao
 
-沿人物经历读一遍，确认他现在要什么、怎样行动、得到什么结果、为何进入下一步；再沿观众视角读一遍，检查理解依据与揭示时机。
-核对关键心理变化已有视听证据，重要道具与规则已建立，完整对白和必要停顿能容纳于估时，结尾符合当前范围。
-只把实质未决项与改编补充带入交付，不把所有内部检查另写成报告。用户仅要求制作时，保留原稿并说明具体执行问题。
-当前有效剧本若进入 Seedance 制作，直接交由主 `SKILL.md` 内嵌 PART A 落实镜头、片段、声音与最终提示词；不自动继承本篇示例或未确认改编分支。
+Đọc một lượt theo trải nghiệm của nhân vật, xác nhận hiện giờ anh ta muốn gì, hành động thế nào, nhận được kết quả gì, vì sao vào bước tiếp; rồi đọc một lượt theo góc nhìn khán giả, kiểm tra căn cứ hiểu và thời điểm hé lộ.
+Đối chiếu các thay đổi tâm lý then chốt đã có bằng chứng nghe nhìn, đạo cụ và quy tắc quan trọng đã được thiết lập, lời thoại hoàn chỉnh và khoảng dừng cần thiết chứa vừa trong ước tính thời lượng, kết thúc phù hợp phạm vi hiện tại.
+Chỉ đưa các mục chưa quyết thực chất và phần bổ sung chuyển thể vào bàn giao, không viết mọi kiểm tra nội bộ thành báo cáo riêng. Khi người dùng chỉ yêu cầu sản xuất, giữ nguyên bản thảo gốc và nói rõ vấn đề thực hiện cụ thể.
+Kịch bản đang hiệu lực nếu vào sản xuất Seedance, giao thẳng cho PART A tích hợp trong `SKILL.md` chính để cụ thể hóa shot, đoạn, âm thanh và prompt cuối cùng; không tự động kế thừa ví dụ của bài này hay các nhánh chuyển thể chưa xác nhận.

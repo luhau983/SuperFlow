@@ -1,157 +1,157 @@
-# 故事开发：把创意变成有因果的行动
+# Phát triển câu chuyện: biến ý tưởng thành hành động có nhân quả
 
-用于从零创作、已有故事诊断、需要大纲的复杂故事，以及续作承接。它补充[输入与剧本](../sourceAndScript.md)的写作方法，不新增制作阶段或确认关口。
-已定稿剧本直接提取制作资料；以下方法可用来定位执行疑点，不能成为自动重写人物、情节、对白或结局的理由。
-方法提供判断工具，不规定作品必须正向成长、反转、悬念收尾或采用某个类型。引用的例子均为方法示例，不是当前项目事实。
+Dùng cho sáng tác từ con số không, chẩn đoán câu chuyện có sẵn, câu chuyện phức tạp cần dàn ý, và tiếp nối phần sau. Nó bổ sung phương pháp viết cho [Đầu vào và kịch bản](../sourceAndScript.md), không thêm giai đoạn sản xuất hay cửa xác nhận mới.
+Kịch bản đã là bản chốt thì trích xuất trực tiếp tư liệu sản xuất; các phương pháp dưới đây có thể dùng để định vị điểm nghi vấn khi thực hiện, không thể trở thành lý do tự động viết lại nhân vật, tình tiết, lời thoại hay kết thúc.
+Phương pháp cung cấp công cụ phán đoán, không quy định tác phẩm bắt buộc phải trưởng thành theo hướng tích cực, đảo ngược, kết thúc bằng hồi hộp hay theo một thể loại nào. Các ví dụ được dẫn đều là ví dụ phương pháp, không phải sự thật của dự án hiện tại.
 
-## 1. 先分清事实、提案与未知
+## 1. Trước tiên phân biệt sự thật, đề xuất và điều chưa biết
 
-什么时候用：收到故事、片段或续作资料时，以及写作中准备补一个动机、规则或答案时。
+Khi nào dùng: khi nhận được câu chuyện, đoạn hoặc tư liệu phần tiếp, và khi đang viết chuẩn bị bổ sung một động cơ, quy tắc hay đáp án.
 
-1. 从本次范围找出实际发生的事件、人物说过的话、已建立的关系和规则，保留出处。
-2. 区分“人物认为如此”和“故事已经证实如此”；不可靠叙述、传闻和角色谎言不能直接登记为真相。
-3. 将为了串起剧情而新增的动机、对白、因果桥梁单列为提案；作者未揭开的身份、信件内容和机制继续保持未知。
-4. 缺口只在影响本次选择时处理。可合理提出的创意主动补齐，事实性缺项则说明依据不足；不要求用户填写整套问卷。
+1. Từ phạm vi lần này tìm ra các sự kiện thực sự xảy ra, lời nhân vật đã nói, quan hệ và quy tắc đã thiết lập, giữ nguồn gốc.
+2. Phân biệt "nhân vật cho là vậy" với "câu chuyện đã chứng thực là vậy"; lời kể không đáng tin, tin đồn và lời nói dối của nhân vật không thể ghi thẳng thành sự thật.
+3. Liệt kê riêng các động cơ, lời thoại, cầu nối nhân quả được thêm vào để xâu chuỗi cốt truyện là đề xuất; danh tính, nội dung thư và cơ chế mà tác giả chưa hé lộ tiếp tục giữ là chưa biết.
+4. Chỗ thiếu chỉ xử lý khi ảnh hưởng đến lựa chọn lần này. Ý tưởng có thể đề xuất hợp lý thì chủ động bổ sung, còn thiếu sót về sự thật thì nói rõ căn cứ chưa đủ; không yêu cầu người dùng điền cả bộ bảng hỏi.
 
-交给下一步：一份能区分已知依据、创作补充和保留悬念的工作底稿，可直接附在当前剧本旁，无须另造报告。
-常见误用：从“她收起信”推断“信中是父亲遗言”，继而把遗言写进高潮；这个答案必须另有来源或属于明确提案。
+Giao cho bước tiếp: một bản nháp làm việc phân biệt được căn cứ đã biết, phần sáng tác bổ sung và hồi hộp được giữ lại, có thể đính trực tiếp cạnh kịch bản hiện tại, không cần tạo báo cáo riêng.
+Dùng sai thường gặp: từ "cô ấy cất lá thư" suy ra "trong thư là di ngôn của cha", rồi viết di ngôn vào cao trào; đáp án này phải có nguồn khác hoặc thuộc đề xuất rõ ràng.
 
-## 2. 用故事命题收束创意
+## 2. Dùng mệnh đề câu chuyện để thu gọn ý tưởng
 
-什么时候用：用户只有情绪、题材或一句设定，或现有故事支线很多、难以说清核心时。
+Khi nào dùng: người dùng chỉ có cảm xúc, đề tài hoặc một câu thiết lập, hoặc câu chuyện hiện có nhiều tuyến phụ, khó nói rõ cốt lõi.
 
-先找本次希望观众持续关心的问题，再写一个工作句：什么样的人，必须完成什么，受什么阻碍，失败会失去什么。
-把抽象目标落到一次可识别的行动；“追求自由”可落实为“在家人回来前搬走自己的工作台”，但新行动仍属于创作提案。
-再写命题的另一半：人物因何选择，从什么状态走向什么状态。主题由结果证明，不由结尾一段道理替代。
-若用户尚无方向，给少量彼此有差异的情境供其表达偏好；已有兴趣则发展它，不不断另造竞争故事。
+Trước tiên tìm câu hỏi mà lần này muốn người xem liên tục quan tâm, rồi viết một câu làm việc: người như thế nào, phải hoàn thành điều gì, gặp trở ngại gì, thất bại sẽ mất gì.
+Đưa mục tiêu trừu tượng xuống một hành động nhận diện được; "theo đuổi tự do" có thể cụ thể hóa thành "chuyển bàn làm việc của mình đi trước khi gia đình về", nhưng hành động mới vẫn thuộc đề xuất sáng tác.
+Rồi viết nửa còn lại của mệnh đề: nhân vật vì sao lựa chọn, đi từ trạng thái nào đến trạng thái nào. Chủ đề được chứng minh bằng kết quả, không thay bằng một đoạn đạo lý ở cuối.
+Nếu người dùng chưa có hướng, đưa ít tình huống khác biệt nhau để họ bày tỏ sở thích; đã có hứng thú thì phát triển nó, không liên tục tạo thêm câu chuyện cạnh tranh.
 
-没有事件时，可以从一件日常事务里找出不能照常完成的环节，再追问由谁处理、他为什么迟疑、一次处理会怎样影响别人。先试写人物的一次决定；若删掉设定中的新奇名词仍有具体冲突，这个方向才有继续发展的基础。
-教学例：食堂新人把两批午餐标签贴反，发餐前想悄悄调换箱子；核对特殊餐时，他发现仅凭外包装无法复原，只得叫停发餐，请班长共同检查。
-接着需要发展的，是他怎样承担耽误发餐的责任、同事怎样回应，而不是继续增加更大的事故。例子仅演示从任务失误引出选择。
+Khi chưa có sự kiện, có thể từ một việc thường ngày tìm ra khâu không thể hoàn thành như thường lệ, rồi hỏi tiếp ai xử lý, vì sao người đó do dự, một lần xử lý sẽ ảnh hưởng người khác thế nào. Trước tiên thử viết một quyết định của nhân vật; nếu bỏ các danh từ mới lạ trong thiết lập mà vẫn có xung đột cụ thể, hướng này mới có cơ sở phát triển tiếp.
+Ví dụ minh họa: người mới ở nhà ăn dán ngược nhãn hai lô cơm trưa, trước giờ phát cơm định lặng lẽ đổi thùng; khi đối chiếu suất ăn đặc biệt, anh phát hiện chỉ dựa vào bao bì ngoài không thể khôi phục, đành phải dừng phát cơm, mời tổ trưởng cùng kiểm tra.
+Tiếp theo cần phát triển là anh chịu trách nhiệm về việc chậm phát cơm thế nào, đồng nghiệp phản hồi ra sao, chứ không phải tiếp tục thêm sự cố lớn hơn. Ví dụ chỉ minh họa việc dẫn ra lựa chọn từ sai sót trong nhiệm vụ.
 
-### 让观看条件影响具体取舍
+### Để điều kiện xem ảnh hưởng đến các lựa chọn cụ thể
 
-先沿用已知的发布用途、观看方式和观众对题材的熟悉程度；没有依据时，把判断写成工作假设。平台名称不能直接推出“观众只接受快节奏”，年龄标签也不能代替具体需求。
-从本片希望留下的体验倒推取舍：初次接触人物的观众需要尽早看懂正在发生的事；熟悉前作的观众更需要知道这次哪里变了。移动端观看时检查小字和多人同时说话是否难以辨认；依赖迟疑、尴尬或失落的段落则需要保留反应时间。把这些判断落实为保留哪次互动、简化哪条说明、让哪个结果更清楚，而不是另写一套受众画像。
-故事规模也应与可用篇幅相称：如果主要体验来自两人的一次重新配合，就优先展开这次互动；额外人物或背景只有影响选择时才占时间。
+Trước tiên tiếp tục dùng mục đích phát hành, cách xem và mức độ quen thuộc của khán giả với đề tài đã biết; khi không có căn cứ, viết phán đoán thành giả định làm việc. Tên nền tảng không thể suy thẳng ra "khán giả chỉ chấp nhận nhịp nhanh", nhãn độ tuổi cũng không thể thay cho nhu cầu cụ thể.
+Từ trải nghiệm mà phim muốn để lại mà suy ngược các lựa chọn: khán giả lần đầu gặp nhân vật cần sớm hiểu điều đang xảy ra; khán giả quen phần trước cần biết lần này cái gì đã thay đổi. Khi xem trên di động, kiểm tra chữ nhỏ và nhiều người cùng nói có khó nhận ra không; đoạn dựa vào sự do dự, ngượng ngùng hay hụt hẫng thì cần giữ thời gian phản ứng. Đưa các phán đoán này thành việc giữ tương tác nào, đơn giản hóa lời giải thích nào, làm kết quả nào rõ hơn, chứ không viết thêm một bộ chân dung khán giả.
+Quy mô câu chuyện cũng phải tương xứng với độ dài khả dụng: nếu trải nghiệm chính đến từ một lần hai người phối hợp lại với nhau, ưu tiên triển khai lần tương tác này; nhân vật hay bối cảnh thêm chỉ chiếm thời gian khi ảnh hưởng đến lựa chọn.
 
-### 把参考作品转成可检验的写作选择
+### Chuyển tác phẩm tham chiếu thành lựa chọn viết kiểm chứng được
 
-用户提供参考作品时，先说清借鉴的具体效果，再根据实际读到或看到的内容解释它如何实现。叙事上可观察观众何时理解任务、何时修正判断；视觉上可观察注意力如何被安排、环境怎样影响动作。未读到的片段不补成分析结论。
-随后回到本项目，为相同的表达目的设计符合现有人物、事件和空间的做法，并检查它是否有效。不要搬用参考的角色关系组合、标志性设定、连续剧情、对白或镜头段落；也不把片名和风格标签当作已经完成的分析。无需参考时直接开发当前故事。
+Khi người dùng cung cấp tác phẩm tham chiếu, trước tiên nói rõ hiệu quả cụ thể được vay mượn, rồi dựa trên nội dung thực sự đã đọc hoặc đã xem để giải thích nó được thực hiện thế nào. Về tự sự có thể quan sát khi nào khán giả hiểu nhiệm vụ, khi nào sửa lại phán đoán; về thị giác có thể quan sát sự chú ý được sắp xếp thế nào, môi trường ảnh hưởng hành động ra sao. Đoạn chưa đọc tới không bù thành kết luận phân tích.
+Sau đó quay lại dự án này, vì cùng mục đích biểu đạt mà thiết kế cách làm phù hợp với nhân vật, sự kiện và không gian hiện có, và kiểm tra nó có hiệu quả không. Không bê nguyên tổ hợp quan hệ nhân vật, thiết lập đặc trưng, cốt truyện liên tục, lời thoại hay trường đoạn shot của tham chiếu; cũng không coi tên phim và nhãn phong cách là phân tích đã hoàn thành. Không cần tham chiếu thì trực tiếp phát triển câu chuyện hiện tại.
 
-交给下一步：一句行动命题、一项主要观众问题，以及结尾拟检验的价值变化，供人物与事件设计共用。
-常见误用：把“勇气、爱、救赎”当作命题，或用更多专有名词让一个没有行动方向的设定显得复杂。
+Giao cho bước tiếp: một câu mệnh đề hành động, một câu hỏi khán giả chính, và sự thay đổi giá trị dự kiến kiểm chứng ở kết thúc, để thiết kế nhân vật và sự kiện dùng chung.
+Dùng sai thường gặp: coi "dũng cảm, tình yêu, cứu chuộc" là mệnh đề, hoặc dùng thêm danh từ riêng để làm một thiết lập không có hướng hành động trông phức tạp.
 
-## 3. 从读不通或留不住注意的地方诊断
+## 3. Chẩn đoán từ chỗ đọc không thông hoặc không giữ được chú ý
 
-什么时候用：用户要求评估、素材丰富但短片主线不明，或改编时需要判断哪些内容已经具备。
-读完约定范围，先用已有事件复述人物正在处理什么，标出自己开始无法解释下一步、认不出人物差异，或不再关心结果的位置。诊断围绕这些具体位置展开，不给所有故事套同一组评分栏。
+Khi nào dùng: người dùng yêu cầu đánh giá, tư liệu phong phú nhưng tuyến chính của phim ngắn không rõ, hoặc khi chuyển thể cần phán đoán nội dung nào đã có đủ.
+Đọc hết phạm vi đã thỏa thuận, trước tiên dùng các sự kiện đã có để kể lại nhân vật đang xử lý điều gì, đánh dấu vị trí mình bắt đầu không giải thích được bước tiếp, không nhận ra khác biệt giữa các nhân vật, hoặc không còn quan tâm đến kết quả. Chẩn đoán xoay quanh các vị trí cụ thể này, không áp cùng một bộ cột chấm điểm cho mọi câu chuyện.
 
-如果不明白人物为何这样做，就回到这次决定之前：他想改变的事情是否明确，他掌握的消息和惯常做法是否足以解释决定，对方是否真的妨碍了它。能从文本找到的依据写出来；没有读到动机不等于已经证明人物没有动机，也不能代替作者补上。
-如果事情很多却没有进展，就选前后相邻的两次重要行动，检查后一次是否依赖前一次的结果。再试想由另一个人物完成同一动作：若原因和结果都不变，可能是人物特点尚未参与剧情；若某段拿掉也不影响任何选择或必要体验，可能是重复展开。由此定位具体的因果断点、游离目标或角色作用，不一律删掉慢段落。
-如果知道发生什么却缺少期待，就从文本已有的未完成行动、矛盾关系或异常结果中找一个仍待发生的变化，说明观众为何会关心。它可以是任务能否完成，也可以是一次交流会怎样结束；原文开篇平缓不代表没有可用的开场材料。
-如果好奇变成混乱，则沿一条重要消息追踪它如何被发现、隐瞒、误读或证实。分别核对人物与观众得到消息的依据，以及得知后会改变什么决定；答案尚未提供时保持未知。公开目标的作品可以没有秘密，不能为了制造信息差破坏已经成立的行动。
+Nếu không hiểu vì sao nhân vật làm vậy, thì quay lại trước quyết định này: điều anh ta muốn thay đổi có rõ không, thông tin anh nắm và cách làm quen thuộc có đủ giải thích quyết định không, đối phương có thật sự cản trở nó không. Căn cứ tìm được từ văn bản thì viết ra; chưa đọc thấy động cơ không có nghĩa đã chứng minh nhân vật không có động cơ, cũng không thể bổ sung thay tác giả.
+Nếu nhiều chuyện xảy ra mà không có tiến triển, chọn hai hành động quan trọng liền kề, kiểm tra hành động sau có phụ thuộc kết quả hành động trước không. Rồi thử tưởng tượng một nhân vật khác làm cùng hành động: nếu nguyên nhân và kết quả đều không đổi, có thể đặc điểm nhân vật chưa tham gia vào cốt truyện; nếu bỏ một đoạn mà không ảnh hưởng lựa chọn hay trải nghiệm cần thiết nào, có thể là triển khai lặp lại. Từ đó định vị điểm đứt nhân quả, mục tiêu lạc lõng hay vai trò nhân vật cụ thể, không mặc định cắt bỏ đoạn chậm.
+Nếu biết điều gì xảy ra nhưng thiếu sự mong đợi, từ các hành động chưa xong, quan hệ mâu thuẫn hoặc kết quả bất thường đã có trong văn bản tìm một thay đổi vẫn còn chờ xảy ra, nói rõ vì sao khán giả sẽ quan tâm. Nó có thể là nhiệm vụ có hoàn thành được không, cũng có thể là một cuộc trao đổi sẽ kết thúc thế nào; phần mở đầu nguyên tác bình lặng không có nghĩa là không có tư liệu mở màn dùng được.
+Nếu tò mò biến thành hỗn loạn, thì theo dấu một thông tin quan trọng xem nó được phát hiện, che giấu, hiểu nhầm hoặc chứng thực thế nào. Đối chiếu riêng căn cứ để nhân vật và khán giả nhận được thông tin, cùng việc biết rồi sẽ thay đổi quyết định nào; khi đáp án chưa được cung cấp thì giữ là chưa biết. Tác phẩm có mục tiêu công khai có thể không có bí mật, không thể vì tạo chênh lệch thông tin mà phá hành động đã thành lập.
 
-把发现落到受影响事件，区分“已有内容无法支撑”与“本次资料尚未提供”，并指出仍然有效的材料。结论靠文本依据，不靠等级或分数。
-用户只要诊断时，交付发现与依据；用户同时授权开发时，针对具体断点继续修复，并标明新增内容。
-交给下一步：保留哪些有效条件、优先处理哪个问题及其影响范围；不生成“诊断未过不得继续”的门槛。
-常见误用：只给“人物弱、节奏慢”的标签，没有指出哪次决定缺依据；或为了增加悬念给温和关系戏硬加秘密。
+Đưa phát hiện vào sự kiện bị ảnh hưởng, phân biệt "nội dung hiện có không đỡ được" với "tư liệu lần này chưa cung cấp", và chỉ ra tư liệu vẫn còn hiệu lực. Kết luận dựa vào căn cứ văn bản, không dựa vào cấp bậc hay điểm số.
+Khi người dùng chỉ cần chẩn đoán, giao phát hiện và căn cứ; khi người dùng đồng thời ủy quyền phát triển, tiếp tục sửa vào điểm đứt cụ thể, và đánh dấu nội dung mới thêm.
+Giao cho bước tiếp: giữ những điều kiện hiệu lực nào, ưu tiên xử lý vấn đề nào và phạm vi ảnh hưởng của nó; không tạo ngưỡng "chẩn đoán chưa qua thì không được tiếp tục".
+Dùng sai thường gặp: chỉ đưa nhãn "nhân vật yếu, nhịp chậm" mà không chỉ ra quyết định nào thiếu căn cứ; hoặc vì tăng hồi hộp mà cố gắn bí mật vào cảnh quan hệ ôn hòa.
 
-## 4. 用目标、缺陷与选择塑造人物
+## 4. Dùng mục tiêu, khuyết điểm và lựa chọn để khắc họa nhân vật
 
-什么时候用：主角只能被动承受事件、人物可以互换，或高潮选择缺乏可信动机时。
+Khi nào dùng: nhân vật chính chỉ thụ động chịu đựng sự kiện, các nhân vật có thể hoán đổi, hoặc lựa chọn ở cao trào thiếu động cơ đáng tin.
 
-1. 写外在目标：本次到底要得到、阻止、证明或保住什么，何时算成功。
-2. 写内在需要：人物可能需要承认、放弃或承担什么；它可以与外在目标冲突，也可以保持一致。
-3. 写旧策略：他惯于怎样解决问题，为什么过去有效，为什么这次会造成损失。
-4. 把缺陷落实为行为与后果，例如“怕失控”表现为替同伴做决定，使同伴不再提供帮助。
-5. 在压力下安排真正的选择，让观众从行为识别人；外貌、标签和身世只能解释行为，不能替代它。
+1. Viết mục tiêu bên ngoài: lần này rốt cuộc muốn đạt được, ngăn chặn, chứng minh hay giữ lấy điều gì, khi nào tính là thành công.
+2. Viết nhu cầu bên trong: nhân vật có thể cần thừa nhận, từ bỏ hoặc gánh vác điều gì; nó có thể xung đột với mục tiêu bên ngoài, cũng có thể giữ nhất quán.
+3. Viết chiến lược cũ: anh ta quen giải quyết vấn đề thế nào, vì sao trước đây hiệu quả, vì sao lần này gây tổn thất.
+4. Đưa khuyết điểm thành hành vi và hậu quả, ví dụ "sợ mất kiểm soát" biểu hiện bằng việc quyết định thay đồng đội, khiến đồng đội không còn giúp đỡ.
+5. Dưới áp lực sắp xếp lựa chọn thực sự, để khán giả nhận ra con người qua hành vi; ngoại hình, nhãn và thân thế chỉ giải thích được hành vi, không thay được nó.
 
-不要给每个角色强加创伤、秘密或成长弧。坚定不变的主角也可用选择改变周围人；悲剧可由拒绝改变造成结果。
-关键配角按本次功能建立：谁阻挡目标、提供信息、提出另一种选择、承受结果；同一人可以承担多个功能。
-交给下一步：角色的当前目标、惯用策略、关键关系与选择依据，足够支持场景写作即可，不必先写完整生平。
-常见误用：只写“外冷内热”；应补一个会影响本次剧情的矛盾，如嘴上拒绝合作，却提前替对方保留了工具。
+Không ép mỗi nhân vật phải có sang chấn, bí mật hay cung trưởng thành. Nhân vật chính kiên định không đổi cũng có thể dùng lựa chọn để thay đổi người xung quanh; bi kịch có thể do từ chối thay đổi gây ra kết quả.
+Nhân vật phụ then chốt được xây dựng theo chức năng lần này: ai cản mục tiêu, cung cấp thông tin, đưa ra lựa chọn khác, gánh chịu kết quả; một người có thể đảm nhận nhiều chức năng.
+Giao cho bước tiếp: mục tiêu hiện tại, chiến lược quen dùng, quan hệ then chốt và căn cứ lựa chọn của nhân vật, đủ hỗ trợ viết cảnh là được, không cần viết xong tiểu sử đầy đủ trước.
+Dùng sai thường gặp: chỉ viết "ngoài lạnh trong nóng"; nên bổ sung một mâu thuẫn ảnh hưởng đến cốt truyện lần này, như ngoài miệng từ chối hợp tác nhưng đã giữ sẵn dụng cụ cho đối phương.
 
-## 5. 把事件串成因果，再安排升级
+## 5. Xâu sự kiện thành nhân quả, rồi sắp xếp leo thang
 
-什么时候用：梗概像事件清单、连续受挫却没有推进，或主角突然获得解法时。
+Khi nào dùng: tóm tắt giống danh sách sự kiện, liên tục thất bại mà không có tiến triển, hoặc nhân vật chính đột nhiên có được lời giải.
 
-先写“人物预期 → 采取行动 → 实际后果 → 被迫改用的策略”。实际后果与预期的落差，需要来自对手、既定规则或人物误判。
-把主要事件用“因为、所以、但是”连接；倒叙可以改变讲述顺序，事件的发生原因仍应成立。
-对抗力量不限于反派；环境、时间、制度、关系和主角旧策略都可施压。只选择能互相作用的层次，不强凑三层冲突。
+Trước tiên viết "dự tính của nhân vật → hành động → hậu quả thực tế → chiến lược buộc phải đổi sang". Khoảng cách giữa hậu quả thực tế và dự tính phải đến từ đối thủ, quy tắc đã định hoặc phán đoán sai của nhân vật.
+Nối các sự kiện chính bằng "vì, nên, nhưng"; hồi tưởng có thể đổi thứ tự kể, nhưng nguyên nhân xảy ra sự kiện vẫn phải thành lập.
+Lực đối kháng không giới hạn ở phản diện; môi trường, thời gian, chế độ, quan hệ và chiến lược cũ của nhân vật chính đều có thể gây áp lực. Chỉ chọn các tầng có thể tác động lẫn nhau, không gượng ghép ba tầng xung đột.
 
-| 可改变的条件 | 如何形成升级，而不是重复 |
+| Điều kiện có thể thay đổi | Tạo leo thang thế nào, chứ không lặp lại |
 |---|---|
-| 时间与空间 | 机会窗口缩短、退路关闭，原先可慢慢解决的问题必须立刻选择 |
-| 资源 | 工具、证据或帮助耗损，迫使人物改用另一种方法 |
-| 信息 | 新事实推翻旧判断，使原计划可能伤害真正目标 |
-| 关系 | 合作附带新条件、盟友开始怀疑，解决外部问题要付关系代价 |
-| 失败代价 | 从可恢复的不便变成具体损失，并由前面的决定累积而来 |
+| Thời gian và không gian | Cửa sổ cơ hội thu hẹp, đường lui đóng lại, vấn đề vốn có thể giải quyết từ từ buộc phải chọn ngay |
+| Nguồn lực | Dụng cụ, bằng chứng hoặc sự giúp đỡ hao hụt, buộc nhân vật đổi sang cách khác |
+| Thông tin | Sự thật mới lật đổ phán đoán cũ, khiến kế hoạch ban đầu có thể làm hại mục tiêu thực sự |
+| Quan hệ | Hợp tác kèm điều kiện mới, đồng minh bắt đầu nghi ngờ, giải quyết vấn đề bên ngoài phải trả giá bằng quan hệ |
+| Cái giá thất bại | Từ bất tiện có thể khôi phục thành tổn thất cụ thể, và được tích lũy từ các quyết định trước |
 
-例如：管理员为保住旧钟而隐瞒故障 → 同事照常启动它导致零件破损 → 他必须公开自己隐瞒的检修记录才能阻止再次启动。
-每一步都改变他的可选行动；若只是接连遇到三个陌生人的阻拦，阻碍数量增加未必构成升级。
-交给下一步：一条能追溯原因的事件链，以及各转折改变的目标、资源、关系或认知。
-常见误用：临近结尾才补新能力救场；关键规则和解题资源应提前建立，但不必提前解释全部用途。
+Ví dụ: người quản lý vì muốn giữ chiếc đồng hồ cũ mà giấu hỏng hóc → đồng nghiệp khởi động nó như thường khiến linh kiện vỡ → anh phải công khai hồ sơ bảo trì mình đã giấu mới ngăn được việc khởi động lại.
+Mỗi bước đều thay đổi các hành động anh có thể chọn; nếu chỉ liên tiếp gặp ba người lạ ngăn cản, số trở ngại tăng lên chưa chắc tạo thành leo thang.
+Giao cho bước tiếp: một chuỗi sự kiện truy được nguyên nhân, và mục tiêu, nguồn lực, quan hệ hoặc nhận thức mà mỗi bước ngoặt thay đổi.
+Dùng sai thường gặp: sát kết thúc mới bổ sung năng lực mới để cứu nguy; quy tắc then chốt và nguồn lực giải đề nên được thiết lập trước, nhưng không cần giải thích trước toàn bộ công dụng.
 
-## 6. 用代价选择完成高潮与主题
+## 6. Dùng lựa chọn có cái giá để hoàn thành cao trào và chủ đề
 
-什么时候用：高潮只有大场面，或结尾虽解释了谜底却没有人物结果时。
+Khi nào dùng: cao trào chỉ có cảnh hoành tráng, hoặc kết thúc tuy giải thích đáp án bí ẩn nhưng không có kết quả cho nhân vật.
 
-回到命题，找人物最不愿同时失去的两样东西，再检查压力是否确实让二者难以兼得。
-危机提供代价，选择暴露价值排序，高潮展示选择的行动与后果；不要只让人物说“我决定了”就切到结果。
-前面应建立代价为什么私人而具体。一次公开承认错误，可以比没有情感关联的大规模破坏更有分量。
-结尾回应主要等待问题，并用关系、处境、物件或动作与开头形成对照；悲剧、停滞或矛盾结果同样可以成立。
-开放结局可以不回答事情最终怎样，但要让本次人物选择或情绪过程到达有意义的位置；不能仅在高潮前截断。
+Quay lại mệnh đề, tìm hai thứ nhân vật ít muốn mất cùng lúc nhất, rồi kiểm tra áp lực có thật sự khiến hai thứ khó vẹn toàn không.
+Khủng hoảng cung cấp cái giá, lựa chọn bộc lộ thứ tự giá trị, cao trào thể hiện hành động và hậu quả của lựa chọn; đừng chỉ để nhân vật nói "tôi quyết định rồi" rồi cắt sang kết quả.
+Phía trước nên thiết lập vì sao cái giá mang tính riêng tư và cụ thể. Một lần công khai nhận lỗi có thể nặng ký hơn sự phá hủy quy mô lớn không có liên hệ cảm xúc.
+Kết thúc đáp lại câu hỏi chờ đợi chính, và dùng quan hệ, hoàn cảnh, đồ vật hoặc hành động tạo đối chiếu với phần mở đầu; bi kịch, đình trệ hay kết quả mâu thuẫn đều có thể thành lập.
+Kết mở có thể không trả lời sự việc cuối cùng ra sao, nhưng phải để lựa chọn của nhân vật hoặc quá trình cảm xúc lần này đến một vị trí có ý nghĩa; không thể chỉ cắt ngang trước cao trào.
 
-交给下一步：最后选择、可见结果、必要的情绪停留，以及仍有意保留的问题。
-常见误用：两个选项一边毫无代价、一边明显错误，却宣称人物经历了两难；也不要为了制造两难篡改定稿。
+Giao cho bước tiếp: lựa chọn cuối cùng, kết quả nhìn thấy được, khoảng dừng cảm xúc cần thiết, và câu hỏi vẫn cố ý giữ lại.
+Dùng sai thường gặp: hai lựa chọn một bên chẳng có cái giá gì, một bên rõ ràng sai, mà lại tuyên bố nhân vật trải qua tình thế khó xử; cũng đừng vì tạo tình thế khó xử mà sửa bản chốt.
 
-## 7. 为当前难题分配推进与停留的时间
+## 7. Phân bổ thời gian đẩy tiến và dừng lại cho bài toán hiện tại
 
-什么时候用：已有事件但重心不清，或不同段落争抢篇幅时。先选当前故事最需要让观众经历的一次改变，再找出理解它所需的前提、改变发生的过程和承受后果的时间。题材名称不能直接决定这些段落怎样展开。
+Khi nào dùng: đã có sự kiện nhưng trọng tâm không rõ, hoặc các đoạn khác nhau tranh giành độ dài. Trước tiên chọn một thay đổi mà câu chuyện hiện tại cần cho khán giả trải qua nhất, rồi tìm ra tiền đề cần để hiểu nó, quá trình thay đổi xảy ra và thời gian gánh chịu hậu quả. Tên đề tài không thể trực tiếp quyết định các đoạn này triển khai thế nào.
 
-先尝试把这次改变写成完整场景，观察它实际卡在哪里，再处理相应问题：
+Trước tiên thử viết thay đổi này thành một cảnh hoàn chỉnh, quan sát nó thực sự vướng ở đâu, rồi xử lý vấn đề tương ứng:
 
-- **行动容易结束，后文只能不断添事。** 写清任务完成的条件，检查现有环境与人物是否真的会阻止完成。危险应改变可用路线或应对方法；规则应落实成某次行动受到的限制。处于弱势的人要面对具体的资格、资源或权力差异，并用故事已建立的能力争取空间。给阻碍与应对足够篇幅，不用陌生援手突然解决。
-- **每次尝试看起来都一样。** 顺着一次补救追踪它留下的问题：误判怎样让下一次更难，获得的便利又让谁承担损失。写诱惑时先让好处成立，再让使用它的代价进入下一次决定；写失误连锁时让后果来自人物刚做的事。两种情况都需要策略改变，不能仅加大事故规模。
-- **结果清楚，人物却像没有经历过。** 对比他面对相似处境时的做法，把内在变化落实到一次不同的选择。关系变化要影响合作、拒绝或依赖的方式；身份被隐瞒、公开或使用时，要改变他与周围人的相处条件。给旧习惯、新认识和实际互动留出辨认时间，不把追逐或大反转当成必需品。
-- **读者只等一个解释，中段没有事可看。** 让查证或等待中的人物仍有当前任务。每条新信息应使某个判断成立或失效，并影响随后行动；解释答案之前，先确保观众已经知道什么值得追问。若作品靠情感而非谜题推进，则把时间留给交流和观察，无须制造秘密。
+- **Hành động dễ kết thúc, phần sau chỉ có thể liên tục thêm chuyện.** Viết rõ điều kiện hoàn thành nhiệm vụ, kiểm tra môi trường và nhân vật hiện có có thật sự ngăn hoàn thành không. Nguy hiểm nên thay đổi lộ trình hoặc cách ứng phó khả dụng; quy tắc nên được cụ thể hóa thành giới hạn mà một hành động nào đó phải chịu. Người ở thế yếu phải đối mặt với chênh lệch cụ thể về tư cách, nguồn lực hoặc quyền lực, và dùng năng lực câu chuyện đã thiết lập để tranh thủ không gian. Dành đủ độ dài cho trở ngại và ứng phó, không dùng người giúp lạ mặt đột nhiên giải quyết.
+- **Mỗi lần thử trông đều giống nhau.** Theo dấu một lần cứu vãn xem nó để lại vấn đề gì: phán đoán sai khiến lần sau khó hơn thế nào, tiện lợi có được lại khiến ai chịu tổn thất. Khi viết cám dỗ, trước tiên để lợi ích thành lập, rồi để cái giá của việc dùng nó đi vào quyết định tiếp theo; khi viết chuỗi sai sót, để hậu quả đến từ việc nhân vật vừa làm. Cả hai trường hợp đều cần thay đổi chiến lược, không thể chỉ tăng quy mô sự cố.
+- **Kết quả rõ ràng, nhưng nhân vật như chưa từng trải qua.** So sánh cách anh ta làm khi đối mặt hoàn cảnh tương tự, đưa thay đổi bên trong thành một lựa chọn khác biệt. Thay đổi quan hệ phải ảnh hưởng cách hợp tác, từ chối hoặc phụ thuộc; khi danh tính bị che giấu, công khai hay sử dụng, phải thay đổi điều kiện anh chung sống với người xung quanh. Dành thời gian nhận ra cho thói quen cũ, nhận thức mới và tương tác thực tế, không coi rượt đuổi hay đảo ngược lớn là thứ bắt buộc.
+- **Người đọc chỉ chờ một lời giải thích, đoạn giữa không có gì để xem.** Để nhân vật đang tra xét hoặc chờ đợi vẫn có nhiệm vụ hiện tại. Mỗi thông tin mới nên làm một phán đoán nào đó thành lập hoặc mất hiệu lực, và ảnh hưởng hành động sau đó; trước khi giải thích đáp án, trước tiên đảm bảo khán giả đã biết điều gì đáng truy hỏi. Nếu tác phẩm đẩy tiến bằng cảm xúc chứ không phải câu đố, thì để thời gian cho trao đổi và quan sát, không cần tạo bí mật.
 
-这些处理可以在同一场景交织使用，也可以完全不需要。回看篇幅时，优先保留一次选择发生前的必要依据及其后果；压缩重复尝试时，不能连同策略改变一起抹去。事件小而清楚的故事可以很快完成，复杂选择则可能需要跨场建立，不能按镜头或台词数量平均分配时间。
-对弱因果、碎片式或观察式作品，改查视角、情绪、重复意象或主题的内部秩序，不能因其不合常规就自动改写。
-交给下一步：主导观众问题、最需要展开的转折和情绪落点，供大纲与估时分配篇幅。
-常见误用：把上述症状当作故事必须经历的阶段，逐个补场；或为了“节奏更强”删掉刚好让选择成立的停留。
+Các cách xử lý này có thể đan xen trong cùng một cảnh, cũng có thể hoàn toàn không cần. Khi xem lại độ dài, ưu tiên giữ căn cứ cần thiết trước khi một lựa chọn xảy ra và hậu quả của nó; khi nén các lần thử lặp lại, không thể xóa luôn sự thay đổi chiến lược. Câu chuyện có sự kiện nhỏ mà rõ có thể hoàn thành rất nhanh, lựa chọn phức tạp thì có thể cần xây dựng qua nhiều cảnh, không thể chia đều thời gian theo số shot hay số lời thoại.
+Với tác phẩm nhân quả yếu, rời rạc hoặc mang tính quan sát, chuyển sang kiểm tra trật tự nội tại của góc nhìn, cảm xúc, hình ảnh lặp lại hoặc chủ đề, không thể vì nó không theo lệ thường mà tự động viết lại.
+Giao cho bước tiếp: câu hỏi khán giả chủ đạo, bước ngoặt cần triển khai nhất và điểm rơi cảm xúc, để dàn ý và ước tính thời lượng phân bổ độ dài.
+Dùng sai thường gặp: coi các triệu chứng trên là các giai đoạn câu chuyện bắt buộc phải trải qua, bổ sung cảnh từng cái một; hoặc vì "nhịp mạnh hơn" mà cắt đi khoảng dừng vừa đủ để lựa chọn thành lập.
 
-## 8. 需要时写大纲，让结构承担交接
+## 8. Khi cần thì viết dàn ý, để cấu trúc đảm nhận việc bàn giao
 
-什么时候用：故事跨多个阶段、角色关系复杂或用户要求先看结构；短而清楚的故事可直接写剧本，定稿剧本无需逆补大纲。
+Khi nào dùng: câu chuyện kéo qua nhiều giai đoạn, quan hệ nhân vật phức tạp hoặc người dùng yêu cầu xem cấu trúc trước; câu chuyện ngắn và rõ có thể viết thẳng kịch bản, kịch bản bản chốt không cần bổ sung ngược dàn ý.
 
-先把事件按阶段目标分组，不预设组数。每组写清关键事件、人物行动、阻力或代价、结束变化，以及怎样导致下一组。
-再核对角色功能与关系：双方各想要什么、互相掌握什么资源或信息、本次事件之后关系怎样变。
-可用“甲需要乙的许可；乙依赖甲的技术；故障公开后双方失去合作基础”这样的文字表达，无需为画关系图增设文档。
-检查一个段落能否删去：如果关键原因、选择依据、必要体验或后续兑现会丢失，应保留；只重复相同作用的段落可提议合并。
-情绪停留本身可以是必要体验，不以“没有新信息”为由一律删除。
+Trước tiên nhóm sự kiện theo mục tiêu giai đoạn, không đặt trước số nhóm. Mỗi nhóm viết rõ sự kiện then chốt, hành động nhân vật, lực cản hoặc cái giá, thay đổi khi kết thúc, và dẫn đến nhóm sau thế nào.
+Rồi đối chiếu chức năng và quan hệ nhân vật: hai bên mỗi bên muốn gì, nắm nguồn lực hoặc thông tin gì của nhau, sau sự kiện lần này quan hệ thay đổi thế nào.
+Có thể diễn đạt bằng chữ như "A cần sự cho phép của B; B phụ thuộc kỹ thuật của A; hỏng hóc bị công khai thì hai bên mất nền tảng hợp tác", không cần thêm tài liệu để vẽ sơ đồ quan hệ.
+Kiểm tra một đoạn có thể bỏ không: nếu nguyên nhân then chốt, căn cứ lựa chọn, trải nghiệm cần thiết hoặc sự hoàn trả về sau sẽ mất, thì nên giữ; đoạn chỉ lặp lại cùng tác dụng có thể đề xuất gộp.
+Bản thân khoảng dừng cảm xúc có thể là trải nghiệm cần thiết, không lấy lý do "không có thông tin mới" để cắt hết.
 
-交给下一步：连贯梗概、必要角色及功能、关系变化、按实际需要分组的事件结构；沿用已有定位和时长约束。
-常见误用：为了填满五段添事件，或在大纲阶段虚构外貌、生平和未确认答案，迫使后续资产继承这些内容。
+Giao cho bước tiếp: tóm tắt mạch lạc, các nhân vật cần thiết và chức năng, thay đổi quan hệ, cấu trúc sự kiện được nhóm theo nhu cầu thực tế; tiếp tục dùng định vị và ràng buộc thời lượng đã có.
+Dùng sai thường gặp: vì lấp đầy năm đoạn mà thêm sự kiện, hoặc ở giai đoạn dàn ý hư cấu ngoại hình, tiểu sử và đáp án chưa xác nhận, buộc tài sản về sau phải kế thừa.
 
-## 9. 续作从已采用状态继续
+## 9. Phần tiếp nối tiếp từ trạng thái đã chọn dùng
 
-什么时候用：续集、同一作品后续片段或重用旧角色与场景时；只读取用户指定历史与本次实际相关资料。
+Khi nào dùng: phần tiếp theo, các đoạn sau của cùng tác phẩm hoặc khi dùng lại nhân vật và bối cảnh cũ; chỉ đọc lịch sử người dùng chỉ định và tư liệu thực sự liên quan lần này.
 
-1. 从历史提取已发生事件、关系、规则、时间线、道具归属、伤势及空间状态，标明采用版本。
-2. 对照本次内容，分别记为沿用、新增、有原因的变化、冲突、资料缺失；新构思不写成历史。
-3. 变化写出“此前状态 → 本次触发事件 → 后续状态”，既不冻结人物，也不靠重设历史解决矛盾。
-4. 继承稳定的风格和人物基础，重新检查本集目标、开场问题与收束；上集已解决的任务不自动成为本集目标。
-5. 历史剧本与已采用片段有差异时指出具体影响，未确定的部分保持待定；不按文件时间擅自裁决。
+1. Từ lịch sử trích xuất sự kiện đã xảy ra, quan hệ, quy tắc, dòng thời gian, quyền sở hữu đạo cụ, thương tích và trạng thái không gian, ghi rõ phiên bản được chọn dùng.
+2. Đối chiếu với nội dung lần này, ghi riêng thành tiếp tục dùng, mới thêm, thay đổi có lý do, xung đột, thiếu tư liệu; ý tưởng mới không viết thành lịch sử.
+3. Thay đổi viết ra "trạng thái trước → sự kiện kích hoạt lần này → trạng thái sau", vừa không đóng băng nhân vật, vừa không giải quyết mâu thuẫn bằng cách đặt lại lịch sử.
+4. Kế thừa phong cách và nền tảng nhân vật ổn định, kiểm tra lại mục tiêu tập này, câu hỏi mở màn và phần khép lại; nhiệm vụ đã giải quyết ở tập trước không tự động thành mục tiêu tập này.
+5. Khi kịch bản lịch sử và các đoạn đã chọn dùng có khác biệt, chỉ ra ảnh hưởng cụ thể, phần chưa xác định giữ chờ định; không tự ý phân xử theo thời gian tệp.
 
-剧情变化与资产变化分开：信任破裂可能只影响表演；服装破损才可能需要相应外观状态。缺少无关的历史文件不阻止当前创作。
-交给下一步：本次起点、不可改写的历史事实、新事件范围、可复用状态与有因变化，供剧本和资产提取使用。
-常见误用：只读上集最后一句就续写，或为介绍旧角色重新编一份身份、性格和世界规则。
+Thay đổi cốt truyện và thay đổi tài sản tách riêng: niềm tin rạn vỡ có thể chỉ ảnh hưởng diễn xuất; quần áo rách mới có thể cần trạng thái ngoại hình tương ứng. Thiếu các tệp lịch sử không liên quan không cản trở sáng tác hiện tại.
+Giao cho bước tiếp: điểm xuất phát lần này, các sự thật lịch sử không được viết lại, phạm vi sự kiện mới, trạng thái có thể tái dùng và thay đổi có nguyên nhân, để kịch bản và trích xuất tài sản sử dụng.
+Dùng sai thường gặp: chỉ đọc câu cuối của tập trước rồi viết tiếp, hoặc vì giới thiệu nhân vật cũ mà biên lại danh tính, tính cách và quy tắc thế giới.
 
-## 10. 将内部判断变成可用成果
+## 10. Biến phán đoán nội bộ thành thành quả dùng được
 
-上述方法按问题选用，不要求逐项交报告。一般交付一个当前故事方向：主角行动、关键因果、选择与结果；必要时附大纲和实质提案。
-已有明确授权的改稿范围内直接完成修订；超出范围的实质变化说明影响，使用工作流已有确认方式，不新增逐方法确认。
-准备写成视听文本时进入[剧本改编](screenAdaptation.md)，把事件链落为场景任务、完整行动、对白与声音；后续制作只读取当前有效剧本，不继承未采用的创意分支。若目标是 Seedance，剧本定稿后直接进入主 `SKILL.md` PART A。
+Các phương pháp trên được chọn dùng theo vấn đề, không yêu cầu nộp báo cáo từng mục. Thông thường giao một hướng câu chuyện hiện tại: hành động của nhân vật chính, nhân quả then chốt, lựa chọn và kết quả; khi cần kèm dàn ý và đề xuất thực chất.
+Trong phạm vi sửa bản thảo đã có ủy quyền rõ ràng thì hoàn thành chỉnh sửa trực tiếp; thay đổi thực chất vượt phạm vi thì nói rõ ảnh hưởng, dùng cách xác nhận sẵn có của quy trình, không thêm xác nhận theo từng phương pháp.
+Khi chuẩn bị viết thành văn bản nghe nhìn thì vào [Chuyển thể kịch bản](screenAdaptation.md), đưa chuỗi sự kiện thành nhiệm vụ cảnh, hành động hoàn chỉnh, lời thoại và âm thanh; sản xuất về sau chỉ đọc kịch bản đang hiệu lực, không kế thừa các nhánh ý tưởng chưa được chọn dùng. Nếu mục tiêu là Seedance, sau khi kịch bản thành bản chốt thì vào thẳng PART A của `SKILL.md` chính.

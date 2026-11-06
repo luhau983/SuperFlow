@@ -1,277 +1,277 @@
-# 十一种画风与视觉规则
+# Mười một phong cách vẽ và quy tắc thị giác
 
-本文件把 v1.1.8 的风格前缀、美术提示词和导演视觉规则合为可执行知识。先读共通规则，再按已确认画风读取对应小节；资产具体设计与提示词模板见 [assetDesign.md](assetDesign.md)。不需要访问旧仓库、旧提示词服务或旧模型。
+Tệp này hợp nhất tiền tố phong cách, prompt mỹ thuật và quy tắc thị giác của đạo diễn trong v1.1.8 thành kiến thức có thể thực thi. Đọc quy tắc chung trước, rồi đọc tiểu mục tương ứng với phong cách vẽ đã xác nhận; thiết kế cụ thể và mẫu prompt cho tài sản xem [assetDesign.md](assetDesign.md). Không cần truy cập kho mã cũ, dịch vụ prompt cũ hay mô hình cũ.
 
-## 先建立项目视觉约定
+## Trước hết thiết lập quy ước thị giác của dự án
 
-在 `画布/资产.json` 保存一份“项目视觉约定”，记录所选风格及以下决定，后续资产与各集引用同一版本。
+Lưu một bản "Quy ước thị giác của dự án" trong `Canvas/Tài sản.json`, ghi lại phong cách đã chọn và các quyết định dưới đây; các tài sản và từng tập sau đó tham chiếu cùng một phiên bản.
 
-| 维度 | 必须作出的决定 |
+| Chiều | Quyết định bắt buộc phải đưa ra |
 |---|---|
-| 叙事世界 | 年代、地域、现实或架空、科技水平；这些决定人物与物件能否出现 |
-| 表现媒介 | 手绘赛璐璐、平面色块、风格化三维、黏土定格或真人摄影，不混写互斥的渲染方式 |
-| 造型 | 人物比例与脸部辨识、线条粗细、轮廓语言、服装形制；不能给所有人套同一肤色、身高、脸型 |
-| 色彩 | 基底色、主要辅助色、少量强调色，以及关键段落的冷暖变化 |
-| 光影 | 主要光源类型、方向、软硬、明暗层次；角色设定照与剧情场景允许各有用途明确的打光 |
-| 材质 | 皮肤、头发、服装、建筑和道具如何体现该媒介，使用痕迹是否有故事依据 |
-| 构图与运动 | 空间层次、常用视角、镜头运动与人物动作的气质；具体镜头仍服从剧情 |
-| 清晰度与禁项 | 主体识别要求、是否采用细颗粒、避免的媒介混入、叠字或多余装饰 |
+| Thế giới tự sự | Niên đại, vùng miền, hiện thực hay hư cấu, trình độ công nghệ; những điều này quyết định nhân vật và đồ vật nào được xuất hiện |
+| Chất liệu biểu đạt | Cel vẽ tay, mảng màu phẳng, 3D cách điệu, đất sét stop-motion hay nhiếp ảnh người thật, không viết lẫn các cách render loại trừ nhau |
+| Tạo hình | Tỉ lệ nhân vật và nhận diện khuôn mặt, độ dày nét, ngôn ngữ đường viền, hình chế trang phục; không được áp cho mọi người cùng màu da, chiều cao, dáng mặt |
+| Màu sắc | Màu nền, màu phụ chính, một ít màu nhấn, và thay đổi nóng lạnh ở các đoạn then chốt |
+| Ánh sáng và bóng | Loại nguồn sáng chính, hướng, mềm cứng, tầng sáng tối; ảnh thiết lập nhân vật và bối cảnh cốt truyện được phép có cách đánh sáng với mục đích rõ ràng riêng |
+| Chất liệu bề mặt | Da, tóc, trang phục, kiến trúc và đạo cụ thể hiện chất liệu biểu đạt đó ra sao, dấu vết sử dụng có căn cứ câu chuyện hay không |
+| Bố cục và chuyển động | Tầng không gian, góc nhìn thường dùng, khí chất của chuyển động máy và động tác nhân vật; shot cụ thể vẫn tuân theo cốt truyện |
+| Độ rõ và hạng mục cấm | Yêu cầu nhận diện chủ thể, có dùng hạt mịn hay không, chất liệu biểu đạt cần tránh trộn vào, chữ chồng hoặc trang trí thừa |
 
-色值是配色参考，不是所有画面的固定像素；色温、焦段、光比是摄影或美术意图的表达，不是假定模型一定支持的精确参数。先写“左侧窗光照亮右侧墙面”等可见效果，再按需要补数字。肤色、发色、体型由角色设定和确认设计决定，不从风格色盘机械取值。
+Mã màu là tham chiếu phối màu, không phải pixel cố định cho mọi khung hình; nhiệt độ màu, tiêu cự, tỉ lệ sáng là biểu đạt ý đồ nhiếp ảnh hoặc mỹ thuật, không phải tham số chính xác mà mô hình chắc chắn hỗ trợ. Trước hết viết hiệu ứng nhìn thấy được như "ánh sáng cửa sổ bên trái chiếu sáng bức tường bên phải", rồi bổ sung con số khi cần. Màu da, màu tóc, vóc dáng do thiết lập nhân vật và thiết kế đã xác nhận quyết định, không lấy máy móc từ bảng màu phong cách.
 
-同一地点保持主光源的世界位置、固定陈设和材质。反打时光源在画面中的左右关系可能变化，不能把“画面左侧亮”当作所有机位的恒定规律。时段、天气、开灯或转入另一空间导致的变化须有依据。
+Cùng một địa điểm giữ vị trí nguồn sáng chính trong thế giới, bài trí cố định và chất liệu. Khi đảo góc, quan hệ trái phải của nguồn sáng trong khung hình có thể thay đổi, không được coi "bên trái khung hình sáng" là quy luật bất biến cho mọi vị trí máy. Thay đổi do thời điểm, thời tiết, bật đèn hay chuyển sang không gian khác gây ra phải có căn cứ.
 
-场景通常用前景框架、中景主体、后景延伸交代空间；扁平风用遮挡、大小和色块层次表达，不强加镜头虚化。资产图要清楚展示身份和结构，电影镜头才按叙事选择遮挡、景深与留白。
+Bối cảnh thường dùng khung tiền cảnh, chủ thể trung cảnh, hậu cảnh kéo dài để giải thích không gian; phong cách phẳng biểu đạt bằng che khuất, kích thước và tầng mảng màu, không áp đặt làm mờ ống kính. Ảnh tài sản phải trình bày rõ danh tính và cấu trúc, shot điện ảnh mới chọn che khuất, độ sâu trường ảnh và khoảng trống theo tự sự.
 
-正向提示词优先写可见对象和媒介特征；负向提示词只在当前模型支持时单独设置，否则改写为正向约束。禁止把“赛璐璐”同时放进正向与负向，或把真人摄影写成 PBR 引擎渲染。清晰主体不等于禁止所有颗粒和运动模糊：有意的胶片结构、镜头景深、视频动作拖影与失控噪点、失焦、全画面涂抹要区分。
+Prompt khẳng định ưu tiên viết đối tượng nhìn thấy được và đặc trưng chất liệu biểu đạt; prompt phủ định chỉ đặt riêng khi mô hình hiện tại hỗ trợ, nếu không thì viết lại thành ràng buộc khẳng định. Cấm đặt "cel" đồng thời vào cả prompt khẳng định và phủ định, hay viết nhiếp ảnh người thật thành render bằng engine PBR. Chủ thể rõ nét không có nghĩa cấm mọi hạt nhiễu và nhoè chuyển động: phải phân biệt cấu trúc phim nhựa có chủ ý, độ sâu trường ảnh ống kính, vệt kéo động tác trong video với nhiễu mất kiểm soát, mất nét, nhoè toàn khung hình.
 
-旧模板中的禁现代元素、固定人物肤色身高、固定光位、必用某模型等条目不作为跨项目规则。以用户确认的世界设定、画风和当前模型能力为准。画面内有剧情作用的招牌、书信、屏幕文字可以保留；字幕、水印、标题卡等画外叠字仅在明确要求时出现。
+Các mục trong mẫu cũ như cấm yếu tố hiện đại, cố định màu da chiều cao nhân vật, cố định vị trí đèn, bắt buộc dùng một mô hình nào đó không được coi là quy tắc liên dự án. Lấy thiết lập thế giới, phong cách vẽ do người dùng xác nhận và năng lực của mô hình hiện tại làm chuẩn. Biển hiệu, thư từ, chữ trên màn hình có vai trò cốt truyện trong khung hình có thể giữ lại; chữ chồng ngoài khung như phụ đề, watermark, thẻ tiêu đề chỉ xuất hiện khi được yêu cầu rõ ràng.
 
-## 1. 90 年代日式动画 · `2D_90s_japanese_anime`
+## 1. Hoạt hình Nhật thập niên 90 · `2D_90s_japanese_anime`
 
-**媒介与造型**：手绘赛璐璐平涂，纤细流畅的轮廓线，均匀色面配少量清楚的阴影层。怀旧、日常、温柔的叙事感来自配色与观察，不靠全画面模糊或粗噪点。人物表情自然，避免无依据的大眼、幼化与夸张比例。
+**Chất liệu biểu đạt và tạo hình**: cel vẽ tay tô phẳng, đường viền mảnh và mượt, mảng màu đều kèm một ít tầng bóng rõ ràng. Cảm giác tự sự hoài cổ, đời thường, dịu dàng đến từ phối màu và sự quan sát, không dựa vào làm mờ toàn khung hay nhiễu hạt thô. Biểu cảm nhân vật tự nhiên, tránh mắt to, trẻ hoá và tỉ lệ cường điệu vô căn cứ.
 
-**色盘**：暖黄 `#F5E6D0`、象牙白 `#F5F0E8` 作生活基底；粉 `#F4D5D5`、天空蓝 `#87AEC9`、淡紫 `#D0C4D6`、琥珀 `#C9A96E` 用于情绪层次。整体中低饱和，强调色只占局部。
+**Bảng màu**: vàng ấm `#F5E6D0`, trắng ngà `#F5F0E8` làm nền sinh hoạt; hồng `#F4D5D5`, xanh da trời `#87AEC9`, tím nhạt `#D0C4D6`, hổ phách `#C9A96E` dùng cho tầng cảm xúc. Tổng thể độ bão hoà trung bình thấp, màu nhấn chỉ chiếm cục bộ.
 
-| 情境 | 光色处理 |
+| Tình huống | Xử lý ánh sáng và màu |
 |---|---|
-| 日常、校园 | 柔和自然光，暖黄/象牙白与灰蓝平衡；清楚保留窗框和人物阴影 |
-| 心动、黄昏 | 粉色或淡橙点缀，夕照暖轮廓，背景可留一点冷蓝 |
-| 夜晚、独处 | 淡蓝/淡紫环境与窗户或路灯暖点形成距离 |
-| 回忆 | 色彩略淡、暖度略升，仍保持脸部和线条可读 |
+| Đời thường, trường học | Ánh sáng tự nhiên mềm, cân bằng vàng ấm/trắng ngà với xanh xám; giữ rõ khung cửa sổ và bóng nhân vật |
+| Rung động, hoàng hôn | Điểm xuyết hồng hoặc cam nhạt, viền ấm của nắng chiều, nền có thể để lại chút xanh lạnh |
+| Ban đêm, một mình | Môi trường xanh nhạt/tím nhạt tạo khoảng cách với điểm ấm từ cửa sổ hoặc đèn đường |
+| Hồi ức | Màu hơi nhạt, độ ấm hơi tăng, vẫn giữ khuôn mặt và nét vẽ đọc được |
 
-**材质与资产**：服装用褶皱线和色面表现棉、针织、制服；木纹、金属反光适度简化为手绘纹理与高光线。基础图可用暖象牙背景。按确认年代选择校服、衬衫、针织衫、通勤衣物，不能凭“怀旧”擅自删掉剧本必需设备。
+**Chất liệu bề mặt và tài sản**: trang phục dùng nét nếp gấp và mảng màu để thể hiện vải bông, len đan, đồng phục; vân gỗ, phản chiếu kim loại được giản lược vừa phải thành texture vẽ tay và nét highlight. Ảnh cơ bản có thể dùng nền ngà ấm. Chọn đồng phục học sinh, áo sơ mi, áo len, quần áo đi làm theo niên đại đã xác nhận, không được tự ý bỏ thiết bị kịch bản cần chỉ vì "hoài cổ".
 
-**空间与动态**：窗、走廊、屋顶、街道、列车等形成日常空间；风吹窗帘、树叶、雨滴可以承接情绪。常用稳定观察、缓推、自然转头和视线变化，强动作按剧情增加，不强制所有镜头都慢。
+**Không gian và động thái**: cửa sổ, hành lang, mái nhà, đường phố, đoàn tàu... tạo thành không gian đời thường; gió thổi rèm, lá cây, giọt mưa có thể tiếp nối cảm xúc. Thường dùng quan sát ổn định, đẩy máy chậm, quay đầu tự nhiên và thay đổi ánh nhìn, động tác mạnh thêm vào theo cốt truyện, không bắt buộc mọi shot đều chậm.
 
-**正向锚词**：`90年代日式动画，手绘赛璐璐平涂，精细流畅线条，柔和暖色，清晰主体，怀旧日常质感`。视频可用 `hand-drawn cel animation, soft warm tones, clean line art, nostalgic aesthetic`。
+**Từ neo khẳng định**: `hoạt hình Nhật thập niên 90, cel vẽ tay tô phẳng, nét vẽ tinh tế mượt mà, tông ấm dịu, chủ thể rõ nét, chất cảm đời thường hoài cổ`. Video có thể dùng `hand-drawn cel animation, soft warm tones, clean line art, nostalgic aesthetic`.
 
-**规避**：写实照片、塑料三维、泛滥霓虹、粗断线、大面积复杂渐变、黑块吞没面部。不要误用 `no cel-shading` 抵消本风格。
+**Tránh**: ảnh chụp tả thực, 3D nhựa, neon tràn lan, nét đứt thô, chuyển sắc phức tạp diện rộng, mảng đen nuốt khuôn mặt. Đừng dùng nhầm `no cel-shading` để triệt tiêu chính phong cách này.
 
-## 2. 国风二次元 · `2D_chinese_guofeng`
+## 2. Anime cổ phong · `2D_chinese_guofeng`
 
-**媒介与造型**：东方形制与新国潮审美，结合日式动画的赛璐璐渲染；细腻笔触、干净线条与清晰色面并存。古典神韵主要由建筑、服装轮廓、色彩与姿态体现，不靠随意堆砌云纹和金饰。
+**Chất liệu biểu đạt và tạo hình**: hình chế phương Đông và thẩm mỹ tân quốc triều, kết hợp render cel của hoạt hình Nhật; nét bút tinh tế, đường nét sạch và mảng màu rõ ràng cùng tồn tại. Thần thái cổ điển chủ yếu thể hiện qua kiến trúc, đường viền trang phục, màu sắc và tư thế, không dựa vào chồng chất tuỳ tiện vân mây và trang sức vàng.
 
-**色盘**：月白 `#E8EAF5`、青绿 `#4A9B8A`、靛蓝 `#2B4C7E` 构成主要层次；朱红 `#C93752`、金 `#D4AF37`、胭脂 `#A94A5F`、赭石 `#965E3E` 作段落强调。中等饱和，墨色线条保留细节。
+**Bảng màu**: trắng ánh trăng `#E8EAF5`, xanh ngọc `#4A9B8A`, chàm `#2B4C7E` tạo tầng chính; đỏ son `#C93752`, vàng kim `#D4AF37`, son phấn `#A94A5F`, đất son `#965E3E` làm điểm nhấn theo đoạn. Độ bão hoà trung bình, nét mực giữ chi tiết.
 
-| 情境 | 光色处理 |
+| Tình huống | Xử lý ánh sáng và màu |
 |---|---|
-| 庭院日常、温情 | 月白底、胭脂小面积点缀，柔和侧光或窗光 |
-| 山林、仙意 | 青绿/月白、少量金色轮廓，远景轻雾而近景清楚 |
-| 殿堂、庆典 | 朱红与金色主导，明确门窗/灯烛来源，避免全画面金光 |
-| 月夜、对峙 | 靛蓝、墨色与冷月白，人物边缘或面部有可读亮面 |
+| Đời thường trong sân viện, ấm áp | Nền trắng ánh trăng, điểm xuyết son phấn diện tích nhỏ, ánh sáng bên mềm hoặc ánh sáng cửa sổ |
+| Núi rừng, tiên khí | Xanh ngọc/trắng ánh trăng, một ít viền vàng kim, viễn cảnh sương nhẹ còn cận cảnh rõ ràng |
+| Điện đường, lễ hội | Đỏ son và vàng kim chủ đạo, nguồn từ cửa/đèn nến rõ ràng, tránh ánh vàng phủ toàn khung |
+| Đêm trăng, đối đầu | Chàm, màu mực và trắng ánh trăng lạnh, viền hoặc khuôn mặt nhân vật có mặt sáng đọc được |
 
-**材质与资产**：丝绸通过平涂亮面与流动褶皱表达，金属以短而准确的亮线表现，玉石用透色和柔和色面表现；不混入写实毛孔和三维引擎参数。浅月白背景有利于深发与衣摆辨识。
+**Chất liệu bề mặt và tài sản**: lụa thể hiện qua mặt sáng tô phẳng và nếp gấp chảy trôi, kim loại thể hiện bằng nét sáng ngắn và chính xác, ngọc thể hiện bằng màu trong và mảng màu dịu; không trộn lỗ chân lông tả thực và tham số engine 3D. Nền trắng ánh trăng nhạt giúp nhận rõ tóc sẫm và vạt áo.
 
-**空间与动态**：屏风、纱帘、雕花窗、飞檐、回廊构成遮挡与层次；袖摆、衣带、花雨、竹叶增加流动。镜头可缓推或轻移，动作讲究姿态与关键轮廓，不能让装饰淹没人物行为。
+**Không gian và động thái**: bình phong, rèm sa, cửa sổ chạm hoa, mái cong, hành lang tạo che khuất và tầng lớp; tay áo, dải áo, mưa hoa, lá trúc tăng sự chuyển động. Máy có thể đẩy chậm hoặc dịch nhẹ, động tác chú trọng tư thế và đường viền then chốt, không được để trang trí nhấn chìm hành vi nhân vật.
 
-**正向锚词**：`国风二次元，新国潮美学，东方形制，赛璐璐平涂，细腻笔触，清晰线条，同色系层次阴影`。
+**Từ neo khẳng định**: `anime cổ phong, thẩm mỹ tân quốc triều, hình chế phương Đông, cel tô phẳng, nét bút tinh tế, đường nét rõ ràng, bóng phân tầng cùng tông màu`.
 
-**规避**：真人照片、厚重塑料三维、粗黑描边、脏黑阴影、无依据的西式奇幻或赛博元素；衣物不能仅靠换色假装换装。
+**Tránh**: ảnh người thật, 3D nhựa dày nặng, viền đen thô, bóng đen bẩn, yếu tố kỳ ảo phương Tây hoặc cyberpunk vô căn cứ; quần áo không được giả vờ thay đồ chỉ bằng đổi màu.
 
-## 3. 二维扁平设计 · `2D_flat_design`
+## 3. Thiết kế phẳng 2D · `2D_flat_design`
 
-**媒介与造型**：纯色块、几何形与均匀清楚的轮廓，简化五官和结构。没有真实阴影、渐变、材质贴图与三维体积；“光影方案”在此转译为色块组合和明度区域，不能写实打光。
+**Chất liệu biểu đạt và tạo hình**: mảng màu đơn sắc, hình hình học và đường viền đều rõ ràng, giản lược ngũ quan và cấu trúc. Không có bóng thật, chuyển sắc, texture chất liệu và khối 3D; "phương án ánh sáng" ở đây được chuyển thành tổ hợp mảng màu và vùng độ sáng, không được đánh sáng tả thực.
 
-**色盘**：蓝 `#3B82F6`、橙 `#F59E0B`、白、灰作基础；紫 `#C084FC`、粉 `#FB7185`、浅黄 `#FDE047`、薄荷 `#5EEAD4` 用作重点。可以较高饱和，但控制颜色数量和大色块面积。
+**Bảng màu**: xanh lam `#3B82F6`, cam `#F59E0B`, trắng, xám làm nền; tím `#C084FC`, hồng `#FB7185`, vàng nhạt `#FDE047`, bạc hà `#5EEAD4` dùng làm trọng điểm. Có thể bão hoà khá cao, nhưng kiểm soát số lượng màu và diện tích mảng lớn.
 
-| 情境 | 色块方案 |
+| Tình huống | Phương án mảng màu |
 |---|---|
-| 日常、温情 | 橙与象牙白为大面积，蓝作辅助 |
-| 心动、轻快 | 粉与橙或浅黄，少量几何装饰 |
-| 职场、理性 | 蓝、冷灰、白，矩形构成秩序 |
-| 夜景、回忆 | 深蓝/紫配黄色小点；回忆可降低整体饱和 |
+| Đời thường, ấm áp | Cam và trắng ngà diện tích lớn, xanh lam làm phụ |
+| Rung động, nhẹ nhàng | Hồng với cam hoặc vàng nhạt, một ít trang trí hình học |
+| Công sở, lý tính | Xanh lam, xám lạnh, trắng, hình chữ nhật tạo trật tự |
+| Cảnh đêm, hồi ức | Xanh đậm/tím phối điểm vàng nhỏ; hồi ức có thể giảm độ bão hoà tổng thể |
 
-**材质与资产**：金属、木、布的差异通过轮廓、固有色和极少标志线表达，不出现高光渐变、纤维微纹理、毛孔或透明折射。变体保持原几何语言，裂损用少量清晰裂线，湿润状态不自动增加体积光。
+**Chất liệu bề mặt và tài sản**: khác biệt giữa kim loại, gỗ, vải thể hiện qua đường viền, màu gốc và rất ít nét đặc trưng, không xuất hiện chuyển sắc highlight, vi texture sợi, lỗ chân lông hay khúc xạ trong suốt. Biến thể giữ ngôn ngữ hình học ban đầu, nứt vỡ dùng một ít đường nứt rõ ràng, trạng thái ẩm ướt không tự động thêm ánh sáng thể tích.
 
-**构图**：靠重叠、大小、色域分区和留白区分前后；圆形可显亲和，三角形可示方向，矩形可示稳定。关系来自具体布局，不必给每种形状固定情绪含义。
+**Bố cục**: phân biệt trước sau bằng chồng lấp, kích thước, phân vùng màu và khoảng trống; hình tròn có thể gợi thân thiện, tam giác có thể chỉ hướng, chữ nhật có thể gợi ổn định. Quan hệ đến từ bố cục cụ thể, không cần gán ý nghĩa cảm xúc cố định cho từng hình.
 
-**动态**：清楚的位移、轮廓变化和简洁关键动作；固定构图或平移较稳妥。避免无依据的写实镜头景深、环绕穿越和重力材质模拟。
+**Động thái**: dịch chuyển rõ ràng, thay đổi đường viền và động tác then chốt đơn giản; bố cục cố định hoặc lia ngang khá an toàn. Tránh độ sâu trường ảnh ống kính tả thực, quay vòng xuyên qua và mô phỏng chất liệu theo trọng lực vô căn cứ.
 
-**正向锚词**：`2D扁平设计，vector art，几何造型，纯色填充，清晰均匀线条，色块分区，留白，无阴影无渐变`。
+**Từ neo khẳng định**: `thiết kế phẳng 2D, vector art, tạo hình hình học, tô màu đơn sắc, đường nét đều rõ ràng, phân vùng mảng màu, khoảng trống, không bóng không chuyển sắc`.
 
-**规避**：`3D rendering, photorealism, shadows, gradients, textures, realistic lighting`。时代与物件由项目决定，不能因为旧模板偶有“古风”字样就改写现代世界。
+**Tránh**: `3D rendering, photorealism, shadows, gradients, textures, realistic lighting`. Thời đại và đồ vật do dự án quyết định, không được vì mẫu cũ thỉnh thoảng có chữ "cổ phong" mà viết lại thế giới hiện đại.
 
-## 4. 成熟都市言情动画 · `2D_mature_urban_romance`
+## 4. Hoạt hình ngôn tình đô thị trưởng thành · `2D_mature_urban_romance`
 
-**媒介与造型**：成熟人物比例、赛璐璐上色、清晰细线和戏剧化低调光影。精致面容与衣料层次服务都市关系戏，表情以眼神、嘴角、眉线的小变化表达，不默认 Q 版或喜剧夸张。
+**Chất liệu biểu đạt và tạo hình**: tỉ lệ nhân vật trưởng thành, tô màu cel, nét mảnh rõ ràng và ánh sáng low-key kịch tính. Gương mặt tinh tế và tầng lớp vải vóc phục vụ chuyện quan hệ đô thị, biểu cảm thể hiện qua thay đổi nhỏ ở ánh mắt, khoé miệng, đường mày, không mặc định chibi hay cường điệu hài hước.
 
-**色盘**：淡蓝 `#B8D4E3`、蓝灰 `#7A8B99`、墨色 `#1A1A2E`、银 `#C0C7CE` 作冷基底；奶粉 `#F2D7D5`、琥珀 `#C9A96E`、象牙白作情绪暖点。中低饱和、较强明暗反差，暗部仍有层次。
+**Bảng màu**: xanh nhạt `#B8D4E3`, xanh xám `#7A8B99`, màu mực `#1A1A2E`, bạc `#C0C7CE` làm nền lạnh; hồng sữa `#F2D7D5`, hổ phách `#C9A96E`, trắng ngà làm điểm ấm cảm xúc. Độ bão hoà trung bình thấp, tương phản sáng tối khá mạnh, vùng tối vẫn có tầng lớp.
 
-| 情境 | 光色处理 |
+| Tình huống | Xử lý ánh sáng và màu |
 |---|---|
-| 心动、亲密 | 冷背景中的柔和暖侧光/轮廓光，关注视线与面部反应 |
-| 职场、克制 | 窗光与灰蓝/银色材质，清楚分割人物和玻璃空间 |
-| 对峙、隐忍 | 硬侧光、较深阴影、唇线或眼神的紧张变化 |
-| 和解、回忆 | 逐步增加琥珀与粉色，保留原有色彩连续性 |
+| Rung động, thân mật | Ánh sáng bên/ánh sáng viền ấm dịu trên nền lạnh, chú ý ánh nhìn và phản ứng khuôn mặt |
+| Công sở, kiềm chế | Ánh sáng cửa sổ với chất liệu xanh xám/bạc, phân tách rõ nhân vật và không gian kính |
+| Đối đầu, nhẫn nhịn | Ánh sáng bên cứng, bóng khá sâu, thay đổi căng thẳng ở đường môi hoặc ánh mắt |
+| Hoà giải, hồi ức | Tăng dần hổ phách và hồng, giữ tính liên tục màu sắc vốn có |
 
-**材质与资产**：西装、衬衫、大衣、裙装显示合乎剪裁的褶皱和材质差别；玻璃、木质家具、金属通过二维绘制表达，避免为“极致细节”加入摄影/PBR 媒介词。
+**Chất liệu bề mặt và tài sản**: vest, sơ mi, áo khoác dài, váy thể hiện nếp gấp và khác biệt chất liệu hợp với đường cắt; kính, đồ gỗ, kim loại biểu đạt bằng vẽ 2D, tránh thêm từ chỉ chất liệu nhiếp ảnh/PBR vì "chi tiết tột cùng".
 
-**空间与动态**：公寓窗前、办公室隔断、咖啡厅、雨夜街道；门框和反射制造关系距离。缓推、静止反应、视线错位适合细腻对话，衣摆和窗帘的轻动辅助情绪。
+**Không gian và động thái**: trước cửa sổ căn hộ, vách ngăn văn phòng, quán cà phê, đường phố đêm mưa; khung cửa và phản chiếu tạo khoảng cách quan hệ. Đẩy máy chậm, phản ứng tĩnh, lệch ánh nhìn hợp với đối thoại tinh tế, vạt áo và rèm cửa khẽ động hỗ trợ cảm xúc.
 
-**正向锚词**：`成熟都市言情动画，赛璐璐上色，清晰线条，电影式构图，戏剧化低调光影，冷底暖点，克制微表情`。
+**Từ neo khẳng định**: `hoạt hình ngôn tình đô thị trưởng thành, tô màu cel, đường nét rõ ràng, bố cục kiểu điện ảnh, ánh sáng low-key kịch tính, nền lạnh điểm ấm, vi biểu cảm kiềm chế`.
 
-**规避**：写实照片、三维塑料质感、失控荧光、脸部过度幼化、假造古代背景。现代电脑、手机等按剧本存在，不沿用旧模板与现代场景自相矛盾的禁项。
+**Tránh**: ảnh chụp tả thực, chất nhựa 3D, huỳnh quang mất kiểm soát, khuôn mặt trẻ hoá quá mức, bịa bối cảnh cổ đại. Máy tính, điện thoại hiện đại... tồn tại theo kịch bản, không dùng lại các hạng mục cấm tự mâu thuẫn với bối cảnh hiện đại của mẫu cũ.
 
-## 5. 三维动画渲染 · `3D_anime_render`
+## 5. Render hoạt hình 3D · `3D_anime_render`
 
-**媒介与造型**：有真实空间体积的风格化三维，保留赛璐珞式清楚轮廓、高细节但经设计的材质。温暖都市生活感与立体卡通造型并存；角色比例以确认设计为准，不能同时要求“风格化比例”和“绝对禁止卡通比例”。
+**Chất liệu biểu đạt và tạo hình**: 3D cách điệu có khối không gian thật, giữ đường viền rõ ràng kiểu cel, chất liệu chi tiết cao nhưng được thiết kế. Cảm giác đời sống đô thị ấm áp cùng tồn tại với tạo hình hoạt hình lập thể; tỉ lệ nhân vật theo thiết kế đã xác nhận, không được đồng thời yêu cầu "tỉ lệ cách điệu" và "tuyệt đối cấm tỉ lệ hoạt hình".
 
-**色盘**：暖橙 `#F5A673`、天空蓝 `#87AEC9`、粉 `#F4D5D5`、薄荷 `#9DC2A5`、琥珀与象牙白。较明快而非荧光，亮暗过渡柔和，轮廓仍清楚。
+**Bảng màu**: cam ấm `#F5A673`, xanh da trời `#87AEC9`, hồng `#F4D5D5`, bạc hà `#9DC2A5`, hổ phách và trắng ngà. Khá tươi sáng nhưng không huỳnh quang, chuyển tiếp sáng tối mềm, đường viền vẫn rõ.
 
-| 情境 | 光色处理 |
+| Tình huống | Xử lý ánh sáng và màu |
 |---|---|
-| 清晨、日常 | 柔和自然光，暖黄/象牙白配冷天空光 |
-| 咖啡厅、居家 | 暖侧光，布料和木面保留立体层次 |
-| 工作、校园 | 中性顶光与环境补光，避免全场过暖 |
-| 黄昏、夜景 | 琥珀边光、粉橙局部；夜晚暖灯与蓝色空间对照 |
+| Sáng sớm, đời thường | Ánh sáng tự nhiên mềm, vàng ấm/trắng ngà phối ánh trời lạnh |
+| Quán cà phê, ở nhà | Ánh sáng bên ấm, vải và mặt gỗ giữ tầng lập thể |
+| Công việc, trường học | Ánh sáng đỉnh trung tính và ánh sáng môi trường bổ trợ, tránh toàn cảnh quá ấm |
+| Hoàng hôn, cảnh đêm | Viền sáng hổ phách, cục bộ hồng cam; ban đêm đèn ấm đối chiếu không gian xanh |
 
-**材质与资产**：服装有可信褶皱，金属有风格化高光，食物有温润表面；皮肤不做照片级毛孔或蜡像高亮。模型精度重点用于脸、手、服装边缘和道具轮廓。
+**Chất liệu bề mặt và tài sản**: trang phục có nếp gấp đáng tin, kim loại có highlight cách điệu, đồ ăn có bề mặt ấm mịn; da không làm lỗ chân lông cấp ảnh chụp hay độ bóng tượng sáp. Độ chính xác của mô hình tập trung vào mặt, tay, mép trang phục và đường viền đạo cụ.
 
-**空间与动态**：门窗、走廊、楼梯构成立体纵深；云、车灯、窗帘可轻动。动作自然顺滑、重心合理，镜头移动有空间路径，不套用黏土的停格节奏。
+**Không gian và động thái**: cửa, hành lang, cầu thang tạo chiều sâu lập thể; mây, đèn xe, rèm cửa có thể khẽ động. Động tác tự nhiên mượt mà, trọng tâm hợp lý, chuyển động máy có lộ trình không gian, không áp nhịp dừng khung của đất sét.
 
-**正向锚词**：`3D动画渲染，赛璐珞质感，清晰轮廓，高细节风格化材质，柔和暖调电影打光，立体空间`。
+**Từ neo khẳng định**: `render hoạt hình 3D, chất cảm cel, đường viền rõ ràng, chất liệu cách điệu chi tiết cao, đánh sáng điện ảnh tông ấm dịu, không gian lập thể`.
 
-**规避**：照片写实、廉价塑料、低多边形、死黑阴影、完全平面化；不要用材质术语覆盖人物识别描述。
+**Tránh**: tả thực như ảnh chụp, nhựa rẻ tiền, low-poly, bóng đen chết, phẳng hoá hoàn toàn; đừng để thuật ngữ chất liệu đè lên mô tả nhận diện nhân vật.
 
-## 6. 国风三维 · `3D_chinese_traditional`
+## 6. 3D cổ phong · `3D_chinese_traditional`
 
-**媒介与造型**：高精度三维建模、可信 PBR 材质、接触阴影与空间纵深；东方传统形制是骨架。古典气质来自结构、工艺和灯光，不是把二维插画加上景深。
+**Chất liệu biểu đạt và tạo hình**: mô hình 3D độ chính xác cao, chất liệu PBR đáng tin, bóng tiếp xúc và chiều sâu không gian; hình chế truyền thống phương Đông là khung xương. Khí chất cổ điển đến từ cấu trúc, kỹ nghệ và ánh sáng, không phải là thêm độ sâu trường ảnh vào tranh minh hoạ 2D.
 
-**色盘**：月白 `#E0E8F0`、青绿 `#4A8C7E`、朱红 `#B22222`、靛蓝 `#3B4B7C`、金 `#D4AF37`、墨色。整体中等饱和，红金可以华丽但不能压过角色与场景结构。
+**Bảng màu**: trắng ánh trăng `#E0E8F0`, xanh ngọc `#4A8C7E`, đỏ son `#B22222`, chàm `#3B4B7C`, vàng kim `#D4AF37`, màu mực. Tổng thể bão hoà trung bình, đỏ vàng có thể lộng lẫy nhưng không được lấn át cấu trúc nhân vật và bối cảnh.
 
-| 情境 | 光色处理 |
+| Tình huống | Xử lý ánh sáng và màu |
 |---|---|
-| 宫殿、庆典 | 红金与月白，门窗光和灯火分层，金属高光不过曝 |
-| 山林、静谧 | 青绿/月白、薄层体积光，近景材质与远景空气区分 |
-| 室内温情 | 局部胭脂/金暖光，木、丝、玉各有不同反光 |
-| 月夜、威胁 | 靛蓝/墨色冷基底，少量暖点或清楚轮廓光 |
+| Cung điện, lễ hội | Đỏ vàng và trắng ánh trăng, ánh sáng cửa và ánh đèn phân tầng, highlight kim loại không cháy sáng |
+| Núi rừng, tĩnh lặng | Xanh ngọc/trắng ánh trăng, ánh sáng thể tích lớp mỏng, phân biệt chất liệu cận cảnh và không khí viễn cảnh |
+| Ấm áp trong nhà | Ánh sáng ấm son phấn/vàng cục bộ, gỗ, lụa, ngọc có phản quang khác nhau |
+| Đêm trăng, đe doạ | Nền lạnh chàm/màu mực, một ít điểm ấm hoặc viền sáng rõ ràng |
 
-**材质与资产**：丝绸有织物光泽和下垂；木材有纹理与合理包浆；金属反射与粗糙度有别；玉石温润透光；陶瓷有釉面。材质各异，不能统一成塑料。角色设定背景可用中灰，避免白衣轮廓消失。
+**Chất liệu bề mặt và tài sản**: lụa có ánh vải và độ rủ; gỗ có vân và lớp bóng thời gian hợp lý; kim loại khác biệt về phản chiếu và độ nhám; ngọc ấm mịn thấu sáng; gốm sứ có mặt men. Chất liệu mỗi thứ một khác, không được đồng loạt thành nhựa. Nền thiết lập nhân vật có thể dùng xám trung tính, tránh làm mất đường viền áo trắng.
 
-**空间与动态**：飞檐、斗拱、瓦片、窗棂有正确构造；屏风、纱幕参与透光和遮挡。衣袖、飘带、植物随风有明确来源，稳健推拉或轻环绕展示空间，剧情动作不受“全部慢镜”限制。
+**Không gian và động thái**: mái cong, đấu củng, ngói, song cửa có cấu tạo đúng; bình phong, màn sa tham gia vào thấu sáng và che khuất. Tay áo, dải lụa, cây cối bay theo gió có nguồn rõ ràng, đẩy kéo ổn định hoặc quay vòng nhẹ để trình bày không gian, động tác cốt truyện không bị giới hạn bởi "toàn bộ quay chậm".
 
-**正向锚词**：`国风3D，高精度建模，PBR物理材质，中国传统色，东方建筑与服饰形制，体积光，接触阴影，空间纵深`。
+**Từ neo khẳng định**: `3D cổ phong, mô hình độ chính xác cao, chất liệu vật lý PBR, màu truyền thống Trung Hoa, hình chế kiến trúc và trang phục phương Đông, ánh sáng thể tích, bóng tiếp xúc, chiều sâu không gian`.
 
-**规避**：低模、粗糙贴图、均匀塑料反光、平面插画、无依据的赛博或西式奇幻；真人照片也不是本分支默认媒介。
+**Tránh**: low-poly, texture thô, phản quang nhựa đồng đều, tranh minh hoạ phẳng, yếu tố cyberpunk hoặc kỳ ảo phương Tây vô căn cứ; ảnh người thật cũng không phải chất liệu biểu đạt mặc định của nhánh này.
 
-## 7. 黏土定格 · `3D_clay_stopmotion`
+## 7. Đất sét stop-motion · `3D_clay_stopmotion`
 
-**媒介与造型**：手工塑形的黏土角色、微缩布景与定格拍摄感。圆润轮廓、细小指压痕、工具刻痕和材质不完美属于风格，不应作为缺陷全部磨平。
+**Chất liệu biểu đạt và tạo hình**: nhân vật đất sét nặn tay, bối cảnh thu nhỏ và cảm giác quay dừng khung. Đường viền tròn trịa, vết ấn ngón tay nhỏ, vết khắc dụng cụ và sự không hoàn hảo của chất liệu thuộc về phong cách, không nên coi là khuyết điểm mà mài nhẵn hết.
 
-**色盘**：奶油 `#F5E6D0`、陶土红 `#C96E5A`、天空蓝 `#87AEC9`、淡紫 `#D0C4D6`、琥珀、薄荷、象牙白。温暖柔和，颜色有手工颜料的质地。
+**Bảng màu**: kem `#F5E6D0`, đỏ đất nung `#C96E5A`, xanh da trời `#87AEC9`, tím nhạt `#D0C4D6`, hổ phách, bạc hà, trắng ngà. Ấm áp dịu dàng, màu sắc có chất cảm của màu vẽ thủ công.
 
-| 情境 | 光色处理 |
+| Tình huống | Xử lý ánh sáng và màu |
 |---|---|
-| 日常、室内 | 柔和剧场侧光，奶油与陶土色，阴影轻而可见 |
-| 自然、奇想 | 微缩植物与暖点光，局部点缀而非全场发光 |
-| 夜景、回忆 | 淡蓝环境与小暖灯，回忆可降饱和但不抹去黏土纹理 |
+| Đời thường, trong nhà | Ánh sáng bên kiểu sân khấu mềm, màu kem và đất nung, bóng nhẹ nhưng nhìn thấy |
+| Thiên nhiên, kỳ tưởng | Cây cỏ thu nhỏ và đèn điểm ấm, điểm xuyết cục bộ thay vì phát sáng toàn cảnh |
+| Cảnh đêm, hồi ức | Môi trường xanh nhạt với đèn ấm nhỏ, hồi ức có thể giảm bão hoà nhưng không xoá vân đất sét |
 
-**材质与资产**：头发由有刻痕的黏土束塑成，不生成照片级单根发丝。脸、衣料可保留塑形指纹；真实小块织物、木、金属可以作为微缩道具，只要尺度和手工世界一致。基础背景可用暖奶油色。
+**Chất liệu bề mặt và tài sản**: tóc được nặn từ các lọn đất sét có vết khắc, không tạo từng sợi tóc cấp ảnh chụp. Mặt và vải có thể giữ dấu vân tay khi nặn; mảnh vải, gỗ, kim loại thật nhỏ có thể làm đạo cụ thu nhỏ, miễn là tỉ lệ khớp với thế giới thủ công. Nền cơ bản có thể dùng màu kem ấm.
 
-**空间与动态**：桌面、花盆、书本、砖墙呈微缩布景尺度；浅景深可强化小景模型，但主角眼睛、轮廓与关键道具必须清楚。动作有停格的轻微顿挫和手工调整感，不能全部变成丝滑数码三维。
+**Không gian và động thái**: mặt bàn, chậu hoa, sách, tường gạch thể hiện tỉ lệ bối cảnh thu nhỏ; độ sâu trường ảnh nông có thể làm nổi mô hình cảnh nhỏ, nhưng mắt, đường viền nhân vật chính và đạo cụ then chốt phải rõ. Động tác có chút giật nhẹ của dừng khung và cảm giác điều chỉnh bằng tay, không được biến hết thành 3D kỹ thuật số mượt như lụa.
 
-**正向锚词**：`定格黏土动画，手工塑形，清晰黏土肌理，细小指压痕，微缩布景，柔和暖光，主体清晰的浅景深`。
+**Từ neo khẳng định**: `hoạt hình đất sét stop-motion, nặn thủ công, vân đất sét rõ ràng, vết ấn ngón tay nhỏ, bối cảnh thu nhỏ, ánh sáng ấm dịu, độ sâu trường ảnh nông với chủ thể rõ nét`.
 
-**规避**：光滑塑料玩具、过分完美的数码表面、扁平矢量、赛璐璐描线、强霓虹、整幅模糊；无叙事依据的高速甩镜与连续旋转会破坏手工拍摄气质。
+**Tránh**: đồ chơi nhựa nhẵn bóng, bề mặt kỹ thuật số hoàn hảo quá mức, vector phẳng, nét viền cel, neon mạnh, mờ toàn khung; lia máy tốc độ cao và xoay liên tục không có căn cứ tự sự sẽ phá vỡ khí chất quay thủ công.
 
-## 8. 国风赛博三维 · `3D_guofeng_cyber`
+## 8. 3D cyberpunk cổ phong · `3D_guofeng_cyber`
 
-**媒介与边界**：高精度三维与 PBR 材质，中式形制是主体，机能结构与科技光效有具体用途。旧知识同时包含偏传统和明确赛博两种语境：没有科技线索时不要自行给角色装义体、给建筑挂霓虹。
+**Chất liệu biểu đạt và ranh giới**: 3D độ chính xác cao và chất liệu PBR, hình chế kiểu Trung Hoa là chủ thể, cấu trúc chức năng và hiệu ứng ánh sáng công nghệ có công dụng cụ thể. Kiến thức cũ đồng thời chứa hai ngữ cảnh thiên truyền thống và cyberpunk rõ ràng: khi không có manh mối công nghệ thì đừng tự lắp bộ phận cơ khí cho nhân vật hay treo neon lên kiến trúc.
 
-**色盘**：月白、青绿、靛蓝等传统基底，朱红/金作典仪层，青蓝或粉紫发光作受控点缀。先确定传统物件的主色，再确定技术部件的颜色和亮度；避免整张图只剩青紫泛光。
+**Bảng màu**: nền truyền thống như trắng ánh trăng, xanh ngọc, chàm, đỏ son/vàng kim làm tầng nghi lễ, phát sáng xanh lam hoặc hồng tím làm điểm xuyết có kiểm soát. Trước hết xác định màu chủ của đồ vật truyền thống, rồi mới xác định màu và độ sáng của bộ phận công nghệ; tránh để cả bức ảnh chỉ còn ánh xanh tím lan toả.
 
-| 情境 | 传统结构与科技层如何结合 |
+| Tình huống | Cấu trúc truyền thống và tầng công nghệ kết hợp ra sao |
 |---|---|
-| 殿堂、仪式 | 朱红梁柱与金属/全息局部，结构本身仍可辨 |
-| 园林、居所 | 窗棂、屏风、木/玉材质承载细小感应或投影装置 |
-| 都市商务、交通 | 新中式玻璃幕墙、榫卯感金属结构、带中式几何的站台与导视 |
-| 雨夜夜市、悬疑 | 中式街巷和招牌轮廓，受控灯带反射在湿地面，暗部保留真实材质 |
+| Điện đường, nghi lễ | Cột xà đỏ son với kim loại/hologram cục bộ, bản thân cấu trúc vẫn nhận ra được |
+| Viên lâm, nơi ở | Song cửa, bình phong, chất liệu gỗ/ngọc mang các thiết bị cảm biến hoặc chiếu hình nhỏ |
+| Thương mại, giao thông đô thị | Tường kính kiểu tân Trung Hoa, kết cấu kim loại mang cảm giác mộng ghép, sân ga và biển chỉ dẫn mang hình học kiểu Trung Hoa |
+| Chợ đêm đêm mưa, hồi hộp/bí ẩn | Đường viền phố ngõ và biển hiệu kiểu Trung Hoa, dải đèn có kiểm soát phản chiếu trên mặt đất ướt, vùng tối giữ chất liệu thật |
 
-**材质与资产**：丝绸可织入细密线路，玉与钛、青铜与机械关节、传统冠饰与小型功能部件结合。每个设计必须说明载体、连接方式和用途；不能浮贴不相干的发光符号。不同角度保持接口、发光位置、服装层次连续。
+**Chất liệu bề mặt và tài sản**: lụa có thể dệt vào mạch dây tinh mịn, ngọc kết hợp titan, đồng thau kết hợp khớp cơ khí, mũ trang sức truyền thống kết hợp bộ phận chức năng nhỏ. Mỗi thiết kế phải nói rõ vật mang, cách kết nối và công dụng; không được dán nổi các ký hiệu phát sáng không liên quan. Các góc khác nhau giữ liên tục giao diện kết nối, vị trí phát sáng, tầng lớp trang phục.
 
-**人物辨识模板**：`[年龄/身份]，[两三个互相区分的面部与发际线特征]，[角色气质]，[体态与服装形制]，高精度三维，表情中性，面部清晰`。旧基础人物文件只提供面部超特写种子；本流程进一步补齐面部与正侧背全身的识别资料，不把超特写误当完整人物资产。
+**Mẫu nhận diện nhân vật**: `[tuổi/thân phận], [hai ba đặc điểm khuôn mặt và đường chân tóc phân biệt lẫn nhau], [khí chất nhân vật], [dáng người và hình chế trang phục], 3D độ chính xác cao, biểu cảm trung tính, khuôn mặt rõ nét`. Tệp nhân vật cơ bản cũ chỉ cung cấp hạt giống siêu cận cảnh khuôn mặt; quy trình này bổ sung thêm tư liệu nhận diện khuôn mặt và toàn thân chính diện/nghiêng/sau lưng, không nhầm siêu cận cảnh là tài sản nhân vật hoàn chỉnh.
 
-**场景资料特例**：基础和衍生场景采用同一中心点的四方向 2×2 设定：左上前、右上右、左下后、右下左。四向共用视点高度、建筑与装置的世界位置、时段天气和光源，变体继承父图布局；具体方法和模板见 [场景四方向设定](assetDesign.md#国风赛博场景四方向设定)。分镜输出为单画面，不能把设定图的四格布局继承进成片。
+**Trường hợp đặc biệt về tư liệu bối cảnh**: bối cảnh cơ bản và phái sinh dùng thiết lập bốn hướng 2×2 với cùng một điểm trung tâm: trên trái phía trước, trên phải phía phải, dưới trái phía sau, dưới phải phía trái. Bốn hướng dùng chung độ cao điểm nhìn, vị trí trong thế giới của kiến trúc và thiết bị, thời điểm, thời tiết và nguồn sáng, biến thể kế thừa bố cục ảnh cha; phương pháp và mẫu cụ thể xem [Thiết lập bốn hướng cho bối cảnh](assetDesign.md#thiết-lập-bốn-hướng-cho-bối-cảnh-cyberpunk-phong-cách-cổ-phong). Đầu ra phân cảnh là một khung hình duy nhất, không được kế thừa bố cục bốn ô của ảnh thiết lập vào phim thành phẩm.
 
-**空间与动态**：飞檐、花窗、山水形制与功能性投影共处；先有操作，再有设备反馈。衣袖与机械部件各有重量，稳健运镜与科技变化服务动作，不随机抖动、故障闪屏或喷光。
+**Không gian và động thái**: mái cong, cửa sổ hoa, hình chế sơn thuỷ cùng tồn tại với chiếu hình mang tính chức năng; có thao tác trước, rồi mới có phản hồi của thiết bị. Tay áo và bộ phận cơ khí đều có trọng lượng riêng, chuyển động máy ổn định và biến đổi công nghệ phục vụ động tác, không rung ngẫu nhiên, nháy màn hình lỗi hay phun sáng.
 
-**正向锚词**：`国风赛博3D，高精度建模，PBR材质，中式形制为核心，传统材质与机能结构结合，可控自发光，传统基底色与科技点缀统一`。纯传统语境去掉赛博与发光描述。
+**Từ neo khẳng định**: `3D cyberpunk cổ phong, mô hình độ chính xác cao, chất liệu PBR, hình chế kiểu Trung Hoa làm cốt lõi, kết hợp chất liệu truyền thống với cấu trúc chức năng, tự phát sáng có kiểm soát, thống nhất màu nền truyền thống và điểm xuyết công nghệ`. Ngữ cảnh thuần truyền thống thì bỏ phần mô tả cyberpunk và phát sáng.
 
-**规避**：无中式结构的通用赛博城市、满屏霓虹、曝光溢出遮蔽材质、漂浮配件、无因果的能量特效。旧 `prefix.md` 只有“不需要任何前缀”，因此这里的可执行约定来自同目录美术与导演规则，并非凭空补出一个旧前缀。
+**Tránh**: thành phố cyberpunk chung chung không có cấu trúc kiểu Trung Hoa, neon đầy màn hình, cháy sáng tràn che mất chất liệu, phụ kiện lơ lửng, hiệu ứng năng lượng không có nhân quả. `prefix.md` cũ chỉ có "không cần bất kỳ tiền tố nào", vì vậy quy ước có thể thực thi ở đây đến từ quy tắc mỹ thuật và đạo diễn trong cùng thư mục, không phải bịa ra một tiền tố cũ.
 
-## 9. 古风真人 · `realpeople_ancient_chinese`
+## 9. Cổ phong người thật · `realpeople_ancient_chinese`
 
-**媒介与造型**：古典中国世界的真人电影摄影。自然皮肤纹理、真实发丝和布料重力，服饰与建筑遵守确认时代或架空设定；以可拍摄的材质与光源描述，避免三维引擎术语。
+**Chất liệu biểu đạt và tạo hình**: nhiếp ảnh điện ảnh người thật trong thế giới Trung Hoa cổ điển. Kết cấu da tự nhiên, sợi tóc thật và trọng lực của vải, trang phục và kiến trúc tuân theo thời đại đã xác nhận hoặc thiết lập hư cấu; mô tả bằng chất liệu và nguồn sáng có thể quay được, tránh thuật ngữ engine 3D.
 
-**色盘与光影**：月白、靛蓝、墨色、银灰形成古典基底，琥珀/金/胭脂少量升温。旧前缀和导演文件给出的色温范围并不完全一致，不固定一个数值覆盖所有场景；具体以天光、月光、窗光、烛火的来源和效果为准。
+**Bảng màu và ánh sáng**: trắng ánh trăng, chàm, màu mực, xám bạc tạo nền cổ điển, hổ phách/vàng kim/son phấn tăng ấm một ít. Khoảng nhiệt độ màu mà tiền tố cũ và tệp đạo diễn đưa ra không hoàn toàn nhất quán, không cố định một giá trị phủ cho mọi bối cảnh; cụ thể lấy nguồn và hiệu quả của ánh trời, ánh trăng, ánh cửa sổ, ánh nến làm chuẩn.
 
-| 情境 | 光色处理 |
+| Tình huống | Xử lý ánh sáng và màu |
 |---|---|
-| 庭院、日间 | 自然漫射天光，人物与木石建筑层次清楚 |
-| 私室、温情 | 暖烛/窗光的侧面照明，丝绸与皮肤不过分发亮 |
-| 月夜、独处 | 靛蓝环境与银白边缘，暖灯局部，暗处仍有轮廓 |
-| 仪式、对峙 | 屏风或窗棂的光影分割，较强反差与明确视线 |
+| Sân viện, ban ngày | Ánh trời tán xạ tự nhiên, tầng lớp nhân vật và kiến trúc gỗ đá rõ ràng |
+| Phòng riêng, ấm áp | Chiếu sáng bên bằng ánh nến/cửa sổ ấm, lụa và da không bóng quá mức |
+| Đêm trăng, một mình | Môi trường chàm và viền trắng bạc, đèn ấm cục bộ, chỗ tối vẫn có đường viền |
+| Nghi lễ, đối đầu | Ánh sáng bóng bị chia cắt bởi bình phong hoặc song cửa, tương phản khá mạnh và ánh nhìn rõ ràng |
 
-**材质与资产**：丝、麻、棉的垂坠与织纹不同，金属、玉、陶瓷反光各异；化妆后仍保留皮肤质感，不能美颜成硅胶脸。年岁和使用痕迹由角色与物件经历决定，不统一做旧。
+**Chất liệu bề mặt và tài sản**: độ rủ và kiểu dệt của lụa, gai, bông khác nhau, phản quang của kim loại, ngọc, gốm sứ mỗi thứ một khác; sau khi trang điểm vẫn giữ chất cảm da, không được làm đẹp thành mặt silicone. Tuổi tác và dấu vết sử dụng do trải nghiệm của nhân vật và đồ vật quyết định, không làm cũ đồng loạt.
 
-**空间与动态**：帷幔、门洞、回廊、院落植物形成框架与纵深。袖摆、发丝、雨滴有物理来源；文戏动作含蓄，武戏速度按剧情，镜头选择帮助观众看清动作与关系。
+**Không gian và động thái**: màn trướng, cửa vòm, hành lang, cây cối trong sân tạo khung và chiều sâu. Tay áo, sợi tóc, giọt mưa có nguồn vật lý; động tác cảnh văn hàm súc, tốc độ cảnh võ theo cốt truyện, lựa chọn shot giúp khán giả nhìn rõ động tác và quan hệ.
 
-**正向锚词**：`古风真人电影摄影，自然皮肤细节，真实织物与材质，光源方向明确，东方古典空间，清晰主体，电影构图`。
+**Từ neo khẳng định**: `nhiếp ảnh điện ảnh cổ phong người thật, chi tiết da tự nhiên, vải và chất liệu thật, hướng nguồn sáng rõ ràng, không gian cổ điển phương Đông, chủ thể rõ nét, bố cục điện ảnh`.
 
-**规避**：塑料皮肤、过度磨皮、三维游戏人物、二次元、与设定不符的现代物件、失控过曝和重滤镜。资产设定照可以居中、用棚拍柔光，不沿用分镜模板中的“一律禁止居中或棚拍”。
+**Tránh**: da nhựa, làm mịn da quá mức, nhân vật game 3D, anime, đồ vật hiện đại không khớp thiết lập, cháy sáng mất kiểm soát và filter nặng. Ảnh thiết lập tài sản có thể căn giữa, dùng ánh sáng mềm studio, không dùng lại câu "cấm tuyệt đối căn giữa hoặc chụp studio" trong mẫu phân cảnh.
 
-## 10. 真人都市电影 · `realpeople_modern_city`
+## 10. Phim điện ảnh đô thị người thật · `realpeople_modern_city`
 
-**媒介与人物**：克制、观察式的当代中国都市电影。素人感、自然不对称站姿、微表情和身体重心比完美模特姿态重要。保留毛孔、细纹、小痣、碎发、衣物穿着痕迹；这些是辨识线索，不能为“高清”全部修掉。
+**Chất liệu biểu đạt và nhân vật**: phim điện ảnh đô thị Trung Hoa đương đại kiềm chế, mang tính quan sát. Cảm giác người thường, tư thế đứng bất đối xứng tự nhiên, vi biểu cảm và trọng tâm cơ thể quan trọng hơn tư thế người mẫu hoàn hảo. Giữ lỗ chân lông, nếp nhăn nhỏ, nốt ruồi nhỏ, tóc con, dấu vết mặc của quần áo; đây là manh mối nhận diện, không được xoá hết vì "độ nét cao".
 
-**光源先行**：颜色来自真实日光和实际灯具。雾灰、都市白、藏青是常见基底；晨光、夕照、台灯、街灯可以暖，天光、荧光灯、屏幕可以冷。先说明主光从哪来，再写反射与补光，不套全场青橙或茶色滤镜。
+**Nguồn sáng đi trước**: màu sắc đến từ ánh nắng thật và đèn thực tế. Xám sương, trắng đô thị, xanh tím than là nền thường gặp; nắng sớm, nắng chiều, đèn bàn, đèn đường có thể ấm, ánh trời, đèn huỳnh quang, màn hình có thể lạnh. Trước hết nói rõ ánh sáng chính đến từ đâu, rồi mới viết phản chiếu và ánh sáng bổ trợ, không áp filter xanh cam hay màu trà cho toàn cảnh.
 
-| 情境 | 可执行光源配方 |
+| Tình huống | Công thức nguồn sáng có thể thực thi |
 |---|---|
-| 日间办公室、松弛生活 | 大面积窗光经窗帘柔化，屏幕或室内灯只作局部补光 |
-| 温情居家、市井烟火 | 台灯/吊灯/街灯的暖光主导，店铺冷白可局部对冲 |
-| 雨夜独处 | 冷天光环境、暖街灯在湿路面形成倒影、玻璃雨痕散射亮点 |
-| 悬疑、深夜脆弱 | 明确的单侧硬光或一盏小灯，暗部保留微弱形状与细节 |
-| 黄昏转夜 | 夕照退去、蓝紫天空与初亮暖灯共存，灯的开关有时间逻辑 |
+| Văn phòng ban ngày, cuộc sống thư thả | Ánh sáng cửa sổ diện rộng được rèm làm dịu, màn hình hoặc đèn trong nhà chỉ bổ trợ cục bộ |
+| Ấm áp ở nhà, khói lửa phố phường | Ánh sáng ấm của đèn bàn/đèn treo/đèn đường chủ đạo, trắng lạnh của cửa hàng có thể đối trọng cục bộ |
+| Một mình đêm mưa | Môi trường ánh trời lạnh, đèn đường ấm tạo bóng phản chiếu trên mặt đường ướt, vệt mưa trên kính tán xạ điểm sáng |
+| Hồi hộp/bí ẩn, mong manh lúc nửa đêm | Ánh sáng cứng một bên rõ ràng hoặc một ngọn đèn nhỏ, vùng tối giữ hình dạng và chi tiết mờ nhạt |
+| Hoàng hôn sang đêm | Nắng chiều rút đi, bầu trời xanh tím cùng tồn tại với đèn ấm vừa bật, bật tắt đèn có logic thời gian |
 
-**摄影语法**：24–28mm 可强调空间包围，35mm 适合人与环境共处，50mm 适合客观凝视，85mm 可压缩背景并聚焦情绪，长焦可表现远观距离；这些是视角建议，不是当前模型必有的参数。允许轻微手持呼吸、稳定器跟随、固定观察和焦点转移。
+**Ngữ pháp nhiếp ảnh**: 24–28mm có thể nhấn mạnh không gian bao quanh, 35mm hợp với người và môi trường cùng tồn tại, 50mm hợp với ánh nhìn khách quan, 85mm có thể nén hậu cảnh và tập trung cảm xúc, tele có thể thể hiện khoảng cách nhìn từ xa; đây là gợi ý góc nhìn, không phải tham số mà mô hình hiện tại chắc chắn có. Cho phép cầm tay thở nhẹ, gimbal bám theo, quan sát cố định và chuyển tiêu điểm.
 
-**资产区别**：人物是同次棚拍的面部与正侧背全身记录，站姿自然且一致。场景是单张无人空间摄影，保留地面磨损、窗玻璃指印、半杯水或歪椅子等生活线索。道具是单张静物摄影，有真实桌面/灰背景纸、方向明确的自然投影；不默认四宫格建模展示。
+**Khác biệt tài sản**: nhân vật là bản ghi khuôn mặt và toàn thân chính diện/nghiêng/sau lưng trong cùng một buổi chụp studio, tư thế đứng tự nhiên và nhất quán. Bối cảnh là một ảnh chụp không gian không người, giữ các manh mối sinh hoạt như mặt sàn mòn, dấu tay trên kính cửa sổ, nửa cốc nước hay chiếc ghế lệch. Đạo cụ là một ảnh chụp tĩnh vật, có mặt bàn thật/phông giấy xám, bóng đổ tự nhiên có hướng rõ ràng; không mặc định trình bày mô hình bốn ô.
 
-**材质与环境**：棉的微皱、牛仔的落色、皮革折痕、金属微划痕、混凝土水渍、玻璃反射体现实际使用。地方辨识通过建筑、街道、绿化、物件形制与有需要的中文标识体现；不能要求每件道具都凭空出现品牌或准确长文字。剧情要求新购物时允许崭新状态。
+**Chất liệu bề mặt và môi trường**: vải bông hơi nhăn, denim bạc màu, nếp gấp da, vết xước nhỏ trên kim loại, vết nước trên bê tông, phản chiếu kính thể hiện việc sử dụng thực tế. Nhận diện địa phương thể hiện qua kiến trúc, đường phố, cây xanh, hình chế đồ vật và biển hiệu tiếng Trung khi cần; không được yêu cầu mọi đạo cụ đều xuất hiện thương hiệu hay chữ dài chính xác từ hư không. Khi cốt truyện yêu cầu đồ mới mua thì cho phép trạng thái mới tinh.
 
-**动态与颗粒**：从重心前移到起身，从握杯到触桌再松指，写清动作因果；窗帘的风、车灯的扫光都有来源。可保留适量电影细颗粒和视频自然运动模糊，主体仍可辨，不能被通用“无噪点/无颗粒”模板消除。
+**Động thái và hạt**: từ dồn trọng tâm về trước đến đứng dậy, từ cầm cốc đến chạm bàn rồi buông ngón tay, viết rõ nhân quả của động tác; gió ở rèm cửa, ánh quét của đèn xe đều có nguồn. Có thể giữ lượng hạt điện ảnh mịn vừa phải và nhoè chuyển động tự nhiên của video, chủ thể vẫn nhận ra được, không được để mẫu chung "không nhiễu/không hạt" xoá đi.
 
-**正向锚词**：`真人都市电影摄影，当代中国都市，自然光与实景灯光，真实皮肤纹理，衣物使用褶皱，生活痕迹，克制微表情`。按镜头补 `handheld camera breathing`、`film grain texture` 或 `smooth camera movement`，不全量叠加。
+**Từ neo khẳng định**: `nhiếp ảnh điện ảnh đô thị người thật, đô thị Trung Hoa đương đại, ánh sáng tự nhiên và đèn thực cảnh, kết cấu da thật, nếp gấp quần áo đã qua sử dụng, dấu vết sinh hoạt, vi biểu cảm kiềm chế`. Tuỳ shot bổ sung `handheld camera breathing`, `film grain texture` hoặc `smooth camera movement`, không chồng toàn bộ.
 
-**规避**：CG/PBR/游戏引擎、塑料假面、无毛孔磨皮、无依据的全新样板间、模特走秀姿态、泛滥霓虹和廉价滤镜。不可把这一分支合并成下面的精致甜宠写实。
+**Tránh**: CG/PBR/game engine, mặt nạ nhựa giả, làm mịn da mất lỗ chân lông, phòng mẫu mới tinh vô căn cứ, tư thế người mẫu catwalk, neon tràn lan và filter rẻ tiền. Không được gộp nhánh này với phong cách tả thực ngọt sủng tinh tế bên dưới.
 
-## 11. 都市甜宠写实 · `realpeople_urban_modern`
+## 11. Tả thực ngọt sủng đô thị · `realpeople_urban_modern`
 
-**媒介与造型**：真人写实摄影，生活温暖、直观的关系表达，较精致的现代造型与强明暗反差。保留皮肤和材质细节，追求“真实但好看”；与上一分支的观察式、偶发与粗粝生活感分开。
+**Chất liệu biểu đạt và tạo hình**: nhiếp ảnh tả thực người thật, biểu đạt quan hệ ấm áp đời thường và trực quan, tạo hình hiện đại khá tinh tế và tương phản sáng tối mạnh. Giữ chi tiết da và chất liệu, theo đuổi "thật nhưng đẹp"; tách biệt với cảm giác đời sống quan sát, ngẫu nhiên và thô ráp của nhánh trên.
 
-**色盘**：米白 `#F5F0E8`、高级灰 `#8A8A8A`、冷蓝 `#5E7485` 作都市基底；奶油粉 `#F4D7D5`、琥珀 `#C9A96E` 用于亲密焦点；银 `#C0C7CE` 与米灰用于现代材质。中低饱和、强对比、冷底暖点，而非全程低反差小清新。
+**Bảng màu**: trắng gạo `#F5F0E8`, xám cao cấp `#8A8A8A`, xanh lạnh `#5E7485` làm nền đô thị; hồng kem `#F4D7D5`, hổ phách `#C9A96E` dùng cho tiêu điểm thân mật; bạc `#C0C7CE` và xám gạo dùng cho chất liệu hiện đại. Độ bão hoà trung bình thấp, tương phản mạnh, nền lạnh điểm ấm, chứ không phải phong cách trong trẻo tương phản thấp suốt từ đầu đến cuối.
 
-| 情境 | 光色处理 |
+| Tình huống | Xử lý ánh sáng và màu |
 |---|---|
-| 初遇、日常 | 米白/灰基底，局部暖光，主体与背景有明暗区分 |
-| 工作、冲突 | 灰/冷蓝，冷白环境光与更深阴影，保持脸部细节 |
-| 心动、约会 | 暖侧光落在人物关系焦点，奶油粉/琥珀点缀 |
-| 和解、夜游 | 先冷后暖；夜晚窗光或街灯暖点与冷背景共存 |
+| Lần đầu gặp, đời thường | Nền trắng gạo/xám, ánh sáng ấm cục bộ, chủ thể và hậu cảnh có phân biệt sáng tối |
+| Công việc, xung đột | Xám/xanh lạnh, ánh sáng môi trường trắng lạnh và bóng sâu hơn, giữ chi tiết khuôn mặt |
+| Rung động, hẹn hò | Ánh sáng bên ấm rơi vào tiêu điểm quan hệ nhân vật, điểm xuyết hồng kem/hổ phách |
+| Hoà giải, dạo đêm | Lạnh trước ấm sau; ban đêm điểm ấm từ ánh cửa sổ hoặc đèn đường cùng tồn tại với nền lạnh |
 
-**材质与资产**：西装剪裁、衬衫面料、玻璃反射、金属设备、木质家具都要清楚可信。发丝层次清晰但不假发化；角色肤色和比例仍由具体人物决定。配饰能加强识别，但不随镜头任意增减。
+**Chất liệu bề mặt và tài sản**: đường cắt vest, vải sơ mi, phản chiếu kính, thiết bị kim loại, đồ gỗ đều phải rõ ràng đáng tin. Tầng lớp sợi tóc rõ nhưng không thành tóc giả; màu da và tỉ lệ nhân vật vẫn do nhân vật cụ thể quyết định. Phụ kiện có thể tăng nhận diện, nhưng không tuỳ ý thêm bớt theo shot.
 
-**空间与动态**：公寓、办公室、咖啡厅、地铁、电梯、走廊体现通勤与停顿；窗框、玻璃和门洞表现人物距离。温柔缓推、跟随与反应镜头可强化关系，关键动作和视线方向具体化。
+**Không gian và động thái**: căn hộ, văn phòng, quán cà phê, tàu điện ngầm, thang máy, hành lang thể hiện đi làm và những khoảng dừng; khung cửa sổ, kính và cửa vòm thể hiện khoảng cách giữa các nhân vật. Đẩy máy chậm dịu dàng, bám theo và shot phản ứng có thể tăng cường quan hệ, động tác then chốt và hướng ánh nhìn được cụ thể hoá.
 
-**正向锚词**：`现代都市真人写实摄影，强对比度，清晰皮肤与面料细节，现代剪裁，真实材质，冷底暖点，温暖的关系表达`。
+**Từ neo khẳng định**: `nhiếp ảnh tả thực người thật đô thị hiện đại, độ tương phản mạnh, chi tiết da và vải rõ ràng, đường cắt hiện đại, chất liệu thật, nền lạnh điểm ấm, biểu đạt quan hệ ấm áp`.
 
-**规避**：动画/CG 媒介、过度磨皮、低反差重柔焦覆盖一切、强霓虹污染、无依据的古代服装建筑。允许剧情需要的城市灯牌；不能照抄旧文中一边给霓虹夜景方案、一边禁止所有现代色彩的矛盾语句。
+**Tránh**: chất liệu biểu đạt hoạt hình/CG, làm mịn da quá mức, tương phản thấp với soft focus nặng phủ mọi thứ, ô nhiễm neon mạnh, trang phục kiến trúc cổ đại vô căn cứ. Cho phép biển đèn thành phố mà cốt truyện cần; không được chép nguyên các câu mâu thuẫn trong văn bản cũ vừa đưa phương án cảnh đêm neon vừa cấm mọi màu sắc hiện đại.
 
-## 把风格落实到资产与分镜
+## Đưa phong cách vào tài sản và phân cảnh
 
-1. 从上述分支选定媒介和主要视觉规则；混合风格须明确哪个是主体、混合哪些维度，并作为待确认提案，不能默默混搭。
-2. 在资产画布记录具体色盘、人物造型边界、场景光源和材质表达；写出“采用哪些规则、哪些因本剧设定调整”，不能只写风格名称。
-3. 每项资产提示词只取与该类资产有关的规则。人物设定图不塞入整套城市空间词；场景资产不混入人物；道具不混入演员的手。
-4. 分镜继承确认资产的脸、服装、空间和基础光色，只按镜头调整景别、机位、动作和表情。导演所需情绪色变化要说明触发场次和连续性。
-5. 检查正负词是否冲突、素材是否跨媒介、细节是否覆盖辨识特征；实际回读图片后再判断风格成立，提示词写了不等于生成结果已经做到。
+1. Chọn chất liệu biểu đạt và quy tắc thị giác chính từ các nhánh trên; phong cách pha trộn phải nói rõ cái nào là chủ thể, pha trộn những chiều nào, và coi đó là đề xuất chờ xác nhận, không được lặng lẽ phối trộn.
+2. Ghi bảng màu cụ thể, ranh giới tạo hình nhân vật, nguồn sáng bối cảnh và cách thể hiện chất liệu trên canvas tài sản; viết ra "áp dụng những quy tắc nào, những gì được điều chỉnh vì thiết lập của phim này", không được chỉ viết tên phong cách.
+3. Prompt của mỗi tài sản chỉ lấy quy tắc liên quan đến loại tài sản đó. Ảnh thiết lập nhân vật không nhét cả bộ từ không gian thành phố; tài sản bối cảnh không trộn nhân vật; đạo cụ không trộn tay diễn viên.
+4. Phân cảnh kế thừa khuôn mặt, trang phục, không gian và ánh sáng màu cơ bản của tài sản đã xác nhận, chỉ điều chỉnh cỡ cảnh, vị trí máy, động tác và biểu cảm theo shot. Thay đổi màu cảm xúc mà đạo diễn cần phải nói rõ cảnh kích hoạt và tính liên tục.
+5. Kiểm tra từ khẳng định và phủ định có xung đột không, tư liệu có lẫn chất liệu biểu đạt không, chi tiết có che lấp đặc điểm nhận diện không; đọc lại ảnh thực tế rồi mới đánh giá phong cách đã thành hay chưa, prompt đã viết không có nghĩa kết quả tạo ra đã đạt được.

@@ -1,20 +1,20 @@
-# 画布执行
+# Thực thi canvas
 
-> **Seedance 使用边界：** 本文件只负责画布与真实模型参数/引用的执行，不参与 Seedance prompt 的创作。只要已有可执行剧本/时间轴且目标进入视频制作/生成/修订，必须先由主 `SKILL.md` 的“Seedance 路由锁存”进入内嵌 PART A；**不得把五个画布读取工具、节点的 `node:getConfig` 或配置询问当作 Seedance 之前的入口步骤。** 正式提示词必须先由 PART A 规划/定稿；本文件不得重新分段、改写 A9.1/A9.2 格式、替换 Timeline、补表演/运镜/连续性规则。用户对画幅、分辨率、模式、音频等配置问题的回答只补充当前 Seedance 任务参数，不解除或重置 Seedance 路由。
+> **Ranh giới sử dụng với Seedance:** File này chỉ phụ trách canvas và việc thực thi tham số/tham chiếu mô hình thực tế, không tham gia sáng tác prompt Seedance. Chỉ cần đã có kịch bản/timeline có thể thực thi và mục tiêu đi vào sản xuất/tạo/sửa đổi video, phải trước tiên qua "khóa định tuyến Seedance" của `SKILL.md` chính để vào PART A nhúng; **không được coi năm công cụ đọc canvas, `node:getConfig` của node hay việc hỏi cấu hình là bước vào cửa trước Seedance.** Prompt chính thức phải do PART A lập kế hoạch/chốt trước; file này không được chia đoạn lại, viết lại định dạng A9.1/A9.2, thay thế Timeline, bổ sung quy tắc diễn xuất/chuyển động máy/tính liên tục. Câu trả lời của người dùng cho các câu hỏi cấu hình như tỉ lệ khung, độ phân giải, chế độ, âm thanh chỉ bổ sung tham số cho tác vụ Seedance hiện tại, không gỡ bỏ hay đặt lại định tuyến Seedance.
 
-只用本轮实际提供的工具操作当前 Toonflow 画布。下面是当前合约；实时 `parameters` 是调用依据，宿主文档中的旧例不覆盖它。制作流程见入口，版本和结果记录见[状态与交付](stateAndDelivery.md)。
+Chỉ dùng các công cụ thực tế được cung cấp trong lượt này để thao tác canvas Toonflow hiện tại. Bên dưới là hợp đồng hiện hành; `parameters` thời gian thực là căn cứ gọi, ví dụ cũ trong tài liệu host không ghi đè nó. Quy trình sản xuất xem file vào cửa, ghi nhận phiên bản và kết quả xem [trạng thái và giao nộp](stateAndDelivery.md).
 
-## 发现与绑定
+## Khám phá và ràng buộc
 
-`getCanvas({})` 只返回激活画布概览；需要类型或画布列表时传 `include: ["nodeTypes"]` 或 `["canvases"]`。用 `findCanvasNodes` 按名称、类型或选择状态定位目标；已知节点 ID 时直接用 `getCanvasNodes` 读取必要字段，`getCanvasEdges` 读取局部连接，`getNodeTools` 发现函数与完整 schema。节点类型可能带运行时前缀，不硬编码。
+`getCanvas({})` chỉ trả về tổng quan canvas đang kích hoạt; khi cần loại hoặc danh sách canvas thì truyền `include: ["nodeTypes"]` hoặc `["canvases"]`. Dùng `findCanvasNodes` để định vị mục tiêu theo tên, loại hoặc trạng thái chọn; khi đã biết ID node thì dùng thẳng `getCanvasNodes` để đọc các trường cần thiết, `getCanvasEdges` để đọc kết nối cục bộ, `getNodeTools` để khám phá hàm và schema đầy đủ. Loại node có thể mang tiền tố runtime, không hardcode.
 
-五个画布读取工具受条数和 64 KiB 体积限制，按 `hasMore` / `nextCursor` 继续分页；节点和连线每页最多扫描 2000 项，空结果但 `hasMore: true` 仍需继续。`totalNodes/totalEdges` 是画布总量而非命中数；`selectedOnly` 现场筛选，不是冻结快照。保持原查询参数，仅替换游标；游标失效重新查询。全图任务分批处理，上下文仅保留当前批次、摘要和游标。`getCanvasNodes` 默认只读 `label/type/position`，端口、正文和输出须显式选择 `ports/data/outputs`；`dataKeys` 仅在选择 `data` 时筛选字段。详情和函数查询的 `nodeIds` 每批最多 20 个，须先去重；移动、重命名、删除和连接每批最多 64 项。
+Năm công cụ đọc canvas bị giới hạn số mục và dung lượng 64 KiB, tiếp tục phân trang theo `hasMore` / `nextCursor`; node và dây nối mỗi trang quét tối đa 2000 mục, kết quả rỗng nhưng `hasMore: true` vẫn phải tiếp tục. `totalNodes/totalEdges` là tổng lượng của canvas chứ không phải số khớp; `selectedOnly` lọc tại chỗ, không phải ảnh chụp đóng băng. Giữ nguyên tham số truy vấn ban đầu, chỉ thay con trỏ; con trỏ mất hiệu lực thì truy vấn lại. Tác vụ toàn bộ canvas xử lý theo lô, ngữ cảnh chỉ giữ lô hiện tại, tóm tắt và con trỏ. `getCanvasNodes` mặc định chỉ đọc `label/type/position`, cổng, nội dung và output phải chọn rõ `ports/data/outputs`; `dataKeys` chỉ lọc trường khi đã chọn `data`. `nodeIds` của truy vấn chi tiết và truy vấn hàm mỗi lô tối đa 20 cái, phải loại trùng trước; di chuyển, đổi tên, xóa và kết nối mỗi lô tối đa 64 mục.
 
-顶层 `nextCursor` 仅用于保持原参数继续节点分页。处理节点任一 `truncated` 时，仅查询所属节点，使用该项路径及偏移，不携带原 `cursor`：`text` 用该项 `path` 和 `nextOffset` 作为 `textOffset` 续读；`entries` 改用 `valueOffset`，没有 `nextOffset` 表示该路径已到末尾。`depth/budget` 沿该项 `path` 缩小范围重新查询，不携带旧 `cursor`；对象/数组的 `valueLimit` 最多 100，字符串的 `textLimit` 最多 4000，正偏移必须指定 `path`。路径最多 64 层和 2048 JSON UTF-8 字节，每段最多 256 字符；`pathDepthLimit/pathBytesLimit/circular` 不可靠重复请求补齐，`keyTooLong` 可用返回的 `nextOffset` 作为 `valueOffset` 跳过该键继续，但被跳过的值仍未读取。不把截断内容当完整证据。
+`nextCursor` cấp cao nhất chỉ dùng để giữ tham số ban đầu và tiếp tục phân trang node. Khi xử lý bất kỳ `truncated` nào của node, chỉ truy vấn node sở hữu nó, dùng đường dẫn và offset của mục đó, không mang `cursor` ban đầu: `text` dùng `path` và `nextOffset` của mục đó làm `textOffset` để đọc tiếp; `entries` chuyển sang dùng `valueOffset`, không có `nextOffset` nghĩa là đường dẫn đó đã đến cuối. `depth/budget` thu hẹp phạm vi theo `path` của mục đó rồi truy vấn lại, không mang `cursor` cũ; `valueLimit` của object/mảng tối đa 100, `textLimit` của chuỗi tối đa 4000, offset dương bắt buộc chỉ định `path`. Đường dẫn tối đa 64 cấp và 2048 byte JSON UTF-8, mỗi đoạn tối đa 256 ký tự; `pathDepthLimit/pathBytesLimit/circular` không thể bổ sung đầy đủ bằng cách lặp lại yêu cầu một cách đáng tin cậy, `keyTooLong` có thể dùng `nextOffset` trả về làm `valueOffset` để bỏ qua khóa đó và tiếp tục, nhưng giá trị bị bỏ qua vẫn chưa được đọc. Không coi nội dung bị cắt là bằng chứng đầy đủ.
 
-默认复用当前项目和目标画布。有既有台账时核对绑定；用户已明确切换目标则按其授权操作，含糊的“继续”遇到不同绑定先澄清。新建、切换、重命名成功后使用返回的绑定，不沿用旧 ID。
+Mặc định dùng lại dự án hiện tại và canvas đích. Khi có sổ theo dõi sẵn thì đối chiếu ràng buộc; người dùng đã nói rõ chuyển mục tiêu thì thao tác theo ủy quyền của họ, "tiếp tục" mơ hồ mà gặp ràng buộc khác thì làm rõ trước. Sau khi tạo mới, chuyển, đổi tên thành công thì dùng ràng buộc được trả về, không dùng tiếp ID cũ.
 
-| 工具 | 当前参数形状 |
+| Công cụ | Dạng tham số hiện tại |
 |---|---|
 | `getCanvas` | `{include?:["canvases","nodeTypes"],cursor?,limit?,canvasId?}` |
 | `findCanvasNodes` | `{query?,types?,selectedOnly?,cursor?,limit?,canvasId?}` |
@@ -22,7 +22,7 @@
 | `getCanvasEdges` | `{nodeIds?:[...],direction?:"incoming"/"outgoing"/"both",cursor?,limit?,canvasId?}` |
 | `getNodeTools` | `{nodeIds:[...],names?,cursor?,limit?,canvasId?}` |
 | `addNode` | `{type, position:{x,y}, label?}` |
-| `nodeTools` | `{nodeId, name:"node:函数名", args:{...}}` |
+| `nodeTools` | `{nodeId, name:"node:<tên hàm>", args:{...}}` |
 | `connectNodes` | `{connections:[{source,sourceHandle,target,targetHandle}]}` |
 | `moveNodes` | `{moves:[{nodeId,position:{x,y}}]}` |
 | `renameNodes` | `{renames:[{nodeId,label}]}` |
@@ -31,66 +31,66 @@
 | `renameCanvas` | `{canvasId?,name}` |
 | `fitCanvas` / `arrangeCanvas` | `{nodeIds?}` / `{}` |
 
-批量修改按实际数量限制拆批。`addNode` 不接受任意 `data`、指定 ID 或正文；用返回的 `node.id` 查询 `getNodeTools`，再按完整 schema 用 `nodeTools` 填内容，新增回执不包含函数清单。不要调用旧版单数移动/重命名工具，不直接写画布 JSON。
+Sửa đổi hàng loạt thì tách lô theo giới hạn số lượng thực tế. `addNode` không nhận `data` tùy ý, ID chỉ định hay nội dung; dùng `node.id` trả về để truy vấn `getNodeTools`, rồi theo schema đầy đủ dùng `nodeTools` điền nội dung, biên nhận thêm mới không chứa danh sách hàm. Đừng gọi công cụ di chuyển/đổi tên dạng số ít bản cũ, không ghi trực tiếp JSON canvas.
 
-结构操作的 ID 回执可能缩略为最多 100 项：`arrangeCanvas` 另给 `arrangedCount`，`fitCanvas` 给 `nodeCount`，`deleteNodes` 给 `removedEdgeCount`。`truncated` 只影响返回 ID 列表，不表示只完成预览部分，不为获取完整回执重复操作；改用只读工具核对。`nodeTools` 返回具体业务函数的结果，不受上述五个读取工具的 64 KiB 上限约束。
+Biên nhận ID của thao tác cấu trúc có thể bị rút gọn còn tối đa 100 mục: `arrangeCanvas` cho thêm `arrangedCount`, `fitCanvas` cho `nodeCount`, `deleteNodes` cho `removedEdgeCount`. `truncated` chỉ ảnh hưởng danh sách ID trả về, không có nghĩa chỉ hoàn thành phần xem trước, không lặp lại thao tác để lấy biên nhận đầy đủ; chuyển sang dùng công cụ chỉ đọc để đối chiếu. `nodeTools` trả về kết quả của hàm nghiệp vụ cụ thể, không chịu giới hạn 64 KiB của năm công cụ đọc nói trên.
 
-按现有布局从左到右放内容、资产、片段，同阶段纵向排列，避免覆盖用户节点。用 `fitCanvas` 展示本轮成果；`arrangeCanvas` 会整理全部顶层节点，只在整幅整理属于用户范围时调用。当前没有分组工具，不伪造分组接口。
+Theo bố cục hiện có đặt nội dung, tài sản, đoạn từ trái sang phải, cùng giai đoạn xếp dọc, tránh che node của người dùng. Dùng `fitCanvas` để hiển thị thành phẩm của lượt này; `arrangeCanvas` sẽ sắp xếp toàn bộ node cấp cao nhất, chỉ gọi khi việc sắp xếp toàn canvas thuộc phạm vi người dùng. Hiện không có công cụ nhóm, không giả tạo giao diện nhóm.
 
-## 内容与素材节点
+## Node nội dung và tư liệu
 
-- 文本使用该节点实际注册的 `node:setText({text})`。成功后用 `getCanvasNodes({ nodeIds: [目标ID], fields: ["data"], dataKeys: ["textPath"] })` 回读路径，读取对应正文核对并登记；`setText` 当前只返回正文，不返回路径。需要查看当前内存正文时用 `getCanvasNodes` 的 `path: ["outputs", "text", "value"]` 分段读取；持久化画布 JSON 不保存这份内联正文，不能据此判断文本为空。
-- 正文由节点编辑与保存，不直接写其 `textPath` 绕过界面。状态文件和版本快照用实际文本文件工具保存；快照不作为第二份可编辑正文。
-- 素材通过发现的 `node:setImage`、`node:setVideo`、`node:setAudio` 挂载，当前通常为 `{path,mimeType}`。`path` 使用工作区相对路径，指向本工作区实际存在、可读取的文件，不能填写预期输出或外部尚未导入的路径。
-- 新图以图片生成节点制作，已采用的图优先用图片素材节点固定。下一版使用新候选生成节点，保留已采用节点和连接；不为重生成替换仍被下游引用的源节点。
-- 当前文本节点没有 Agent 可调用的 `generateText`，文字由助手完成后写入。文件工具不保证支持视频理解或二进制复制，具体边界见[交付](stateAndDelivery.md)。
+- Văn bản dùng `node:setText({text})` mà node đó thực sự đăng ký. Sau khi thành công dùng `getCanvasNodes({ nodeIds: [ID đích], fields: ["data"], dataKeys: ["textPath"] })` đọc lại đường dẫn, đọc nội dung tương ứng để đối chiếu và ghi nhận; `setText` hiện chỉ trả về nội dung, không trả về đường dẫn. Khi cần xem nội dung trong bộ nhớ hiện tại thì dùng `path: ["outputs", "text", "value"]` của `getCanvasNodes` để đọc theo phân đoạn; JSON canvas được lưu bền không chứa phần nội dung inline này, không thể dựa vào đó để kết luận văn bản rỗng.
+- Nội dung do node biên tập và lưu, không ghi trực tiếp vào `textPath` của nó để vòng qua giao diện. File trạng thái và ảnh chụp phiên bản lưu bằng công cụ file văn bản thực tế; ảnh chụp không làm bản nội dung thứ hai có thể chỉnh sửa.
+- Tư liệu gắn qua `node:setImage`, `node:setVideo`, `node:setAudio` đã khám phá, hiện thường là `{path,mimeType}`. `path` dùng đường dẫn tương đối trong workspace, trỏ tới file thực sự tồn tại và đọc được trong workspace này, không được điền output dự kiến hoặc đường dẫn bên ngoài chưa nhập vào.
+- Ảnh mới làm bằng node tạo ảnh, ảnh đã chọn dùng ưu tiên cố định bằng node tư liệu ảnh. Phiên bản sau dùng node tạo ứng viên mới, giữ node và kết nối đã chọn dùng; không vì tạo lại mà thay node nguồn vẫn đang được hạ nguồn tham chiếu.
+- Node văn bản hiện tại không có `generateText` mà Agent gọi được, chữ do trợ lý hoàn thành rồi ghi vào. Công cụ file không đảm bảo hỗ trợ hiểu video hoặc sao chép nhị phân, ranh giới cụ thể xem [giao nộp](stateAndDelivery.md).
 
-## 真实引用与提示词
+## Tham chiếu thực và prompt
 
-先用 `getCanvasNodes` 的 `ports` 检查源/目标端口的 ID、方向、类型，用 `getCanvasEdges` 检查已有连接。只把本段采用的媒体接给生成节点，不用连线表示阶段、批准或依赖索引。上游还在生成或未采用的候选不能成为正式参考。
+Trước tiên dùng `ports` của `getCanvasNodes` kiểm tra ID, hướng, loại của cổng nguồn/đích, dùng `getCanvasEdges` kiểm tra kết nối đã có. Chỉ nối media được chọn dùng cho đoạn này vào node tạo, không dùng dây nối để biểu thị giai đoạn, phê duyệt hay chỉ mục phụ thuộc. Ứng viên thượng nguồn còn đang tạo hoặc chưa được chọn dùng không thể thành tham chiếu chính thức.
 
-生成节点 `prompt` 是本次唯一执行提示词入口，通过 `node:setPrompt({prompt})` 写入。完整剧本和分镜文本节点保留内容依据，不再用 STRING 连线重复挂到生成节点；当前实现会把相连文本全文追加到 prompt。现有无关 STRING 引用在已授权编辑范围内移除，否则说明影响后暂停该生成。
+`prompt` của node tạo là lối vào prompt thực thi duy nhất của lần này, ghi vào qua `node:setPrompt({prompt})`. Node văn bản kịch bản hoàn chỉnh và phân cảnh giữ vai trò căn cứ nội dung, không dùng dây STRING gắn lặp lại vào node tạo nữa; cài đặt hiện tại sẽ nối toàn văn văn bản được kết nối vào cuối prompt. Tham chiếu STRING không liên quan hiện có thì gỡ bỏ trong phạm vi chỉnh sửa đã ủy quyền, nếu không thì nêu ảnh hưởng rồi tạm dừng lần tạo đó.
 
-当供应商/画布接口实际使用 `{{ref N}}` 作为传输引用时，`{{ref N}}` 只能对应本次真实连接顺序与类型，不能把计划清单顺序当作真实顺序。**这属于执行层映射，不授权把 PART A 已定稿 `Reference binding` 的原始节点/资产句柄改写成另一套用户可见提示词格式。** 当前需分批读取现场数据还原顺序，不存在 `getReferences` 工具：
+Khi giao diện nhà cung cấp/canvas thực sự dùng `{{ref N}}` làm tham chiếu truyền tải, `{{ref N}}` chỉ được ứng với thứ tự và loại kết nối thực tế của lần này, không được coi thứ tự trong danh sách kế hoạch là thứ tự thực. **Đây thuộc ánh xạ ở tầng thực thi, không ủy quyền viết lại các handle node/tài sản gốc trong `Reference binding` đã chốt của PART A thành một định dạng prompt hiển thị cho người dùng khác.** Hiện cần đọc dữ liệu hiện trường theo lô để khôi phục thứ tự, không tồn tại công cụ `getReferences`:
 
-1. 用 `getCanvasEdges({ nodeIds: [目标ID], direction: "incoming" })` 分页读取全部入边，保持返回顺序，筛选实际输入端口的边。用 `getCanvasNodes` 显式指定 `fields: ["ports", "outputs"]` 分批核对源节点，确认源端口存在且类型兼容，从 `outputs[sourceHandle]` 取实际内容，按截断信息补齐必要字段。
-2. 用 `getCanvasNodes` 的 `fields: ["data"], dataKeys: ["referenceOrder"]` 读取目标排序。以 `encodeURIComponent(JSON.stringify([source,sourceHandle]))` 为键，按 `data.referenceOrder[目标端口]` 中的位置稳定排序；没有列入的排最后并保留原入边顺序。仅在字段完整且确实不存在排序记录时按有效入边顺序。
-3. 排序后第 N 项对应 `{{ref N}}`，不同类型共用编号。输出未就绪的输入仍占位并阻止生成，不能把空项删掉后继续套编号。节点/端口类型兼容性以运行时返回为准。
+1. Dùng `getCanvasEdges({ nodeIds: [ID đích], direction: "incoming" })` đọc phân trang toàn bộ cạnh vào, giữ thứ tự trả về, lọc các cạnh của cổng đầu vào thực tế. Dùng `getCanvasNodes` chỉ định rõ `fields: ["ports", "outputs"]` để đối chiếu node nguồn theo lô, xác nhận cổng nguồn tồn tại và loại tương thích, lấy nội dung thực tế từ `outputs[sourceHandle]`, bổ sung các trường cần thiết theo thông tin bị cắt.
+2. Dùng `fields: ["data"], dataKeys: ["referenceOrder"]` của `getCanvasNodes` đọc thứ tự đích. Lấy `encodeURIComponent(JSON.stringify([source,sourceHandle]))` làm khóa, sắp xếp ổn định theo vị trí trong `data.referenceOrder[cổng đích]`; mục không được liệt kê xếp cuối và giữ thứ tự cạnh vào ban đầu. Chỉ khi trường đầy đủ và thực sự không có bản ghi thứ tự mới dùng thứ tự cạnh vào hợp lệ.
+3. Mục thứ N sau khi sắp xếp ứng với `{{ref N}}`, các loại khác nhau dùng chung số thứ tự. Đầu vào có output chưa sẵn sàng vẫn chiếm chỗ và chặn việc tạo, không được xóa mục rỗng rồi tiếp tục áp số. Tính tương thích loại node/cổng lấy theo runtime trả về.
 
-无法取得完整输入或证明顺序时保留提示词草稿并说明待核实项，不猜编号。
+Khi không lấy được đầu vào đầy đủ hoặc không chứng minh được thứ tự thì giữ bản nháp prompt và nêu các mục cần xác minh, không đoán số.
 
-当前画布统一给引用编号，而部分供应商适配按图片、视频、音频重新组织请求。默认采用真实图片资产加已确认的原生声音方案；确需混合媒体时，必须核实画布顺序与实际模型/适配的对应关系。不能证明一致时停在“待引用映射确认”，说明具体冲突；不得静默丢掉指定音频、改模式或假称编号正确。
+Canvas hiện tại đánh số tham chiếu thống nhất, nhưng một số bộ thích ứng nhà cung cấp tổ chức lại yêu cầu theo ảnh, video, âm thanh. Mặc định chọn dùng tài sản ảnh thực cộng phương án âm thanh gốc đã xác nhận; khi thực sự cần trộn media, phải xác minh quan hệ tương ứng giữa thứ tự canvas với mô hình/bộ thích ứng thực tế. Không chứng minh được nhất quán thì dừng ở "chờ xác nhận ánh xạ tham chiếu", nêu xung đột cụ thể; không được lặng lẽ bỏ âm thanh được chỉ định, đổi chế độ hoặc nói dối là số thứ tự đúng.
 
-首帧、尾帧有明确语义，顺序变化可能交换作用。只有用户选择该路线且真实能力支持时使用，核对具体输入槽位；不强制所有片段抽尾帧。连接或参考来源变化后重新核对引用和提示词，原授权不自动覆盖变化后的执行方案。
+Khung đầu, khung cuối có ngữ nghĩa rõ ràng, thay đổi thứ tự có thể hoán đổi vai trò. Chỉ dùng khi người dùng chọn lộ trình đó và năng lực thực tế hỗ trợ, đối chiếu ô đầu vào cụ thể; không bắt buộc mọi đoạn trích khung cuối. Sau khi kết nối hoặc nguồn tham chiếu thay đổi thì đối chiếu lại tham chiếu và prompt, ủy quyền ban đầu không tự động bao phủ phương án thực thi đã thay đổi.
 
-## 配置询问不得截断 Seedance
+## Hỏi cấu hình không được cắt ngang Seedance
 
-- 本文件中的配置核实只允许发生在主 `SKILL.md` 已经锁存 Seedance 路由、并完成 A0 目标模型确认之后；若用户未指定 2.0/2.5，主 PART A 必须先用一次简短提问确认“Seedance 2.0 还是 2.5”。这个模型确认问题由主 PART A 负责，本文件不得自行选择默认模型，也不得重复询问。
-- 若宿主必须向用户确认 `ratio`、`resolution`、`mode`、`generateAudio`、provider 等执行参数，提问和用户回答都属于同一 Seedance 任务的执行参数补充。回答后继续使用 PART A 已规划/定稿的提示词，不重新进入通用工作流。
-- 若用户在配置回答中明确把模型改为 2.0/2.5，这属于 A0 输入更新：回到 PART A 按新目标模型重新路由受影响的正式提示词，然后再回本文件执行；不得仅在节点配置层换模型而继续使用另一模型的提示词外壳。
-- 若实时能力不支持 PART A 目标模型，报告能力冲突；不得静默采用节点默认模型。
+- Việc xác minh cấu hình trong file này chỉ được phép diễn ra sau khi `SKILL.md` chính đã khóa định tuyến Seedance và hoàn tất xác nhận mô hình đích A0; nếu người dùng chưa chỉ định 2.0/2.5, PART A chính phải hỏi ngắn một lần để xác nhận "Seedance 2.0 hay 2.5". Câu hỏi xác nhận mô hình này do PART A chính phụ trách, file này không được tự chọn mô hình mặc định, cũng không được hỏi lặp lại.
+- Nếu host bắt buộc phải xác nhận với người dùng các tham số thực thi như `ratio`, `resolution`, `mode`, `generateAudio`, provider, thì câu hỏi và câu trả lời của người dùng đều thuộc phần bổ sung tham số thực thi của cùng một tác vụ Seedance. Sau khi trả lời tiếp tục dùng prompt PART A đã lập kế hoạch/chốt, không quay lại quy trình làm việc chung.
+- Nếu trong câu trả lời cấu hình người dùng nói rõ đổi mô hình sang 2.0/2.5, đây là cập nhật đầu vào A0: quay về PART A định tuyến lại các prompt chính thức bị ảnh hưởng theo mô hình đích mới, rồi mới quay lại file này để thực thi; không được chỉ đổi mô hình ở tầng cấu hình node mà vẫn dùng vỏ prompt của mô hình khác.
+- Nếu năng lực thời gian thực không hỗ trợ mô hình đích của PART A, báo xung đột năng lực; không được lặng lẽ dùng mô hình mặc định của node.
 
-## 生成前准备
+## Chuẩn bị trước khi tạo
 
-1. 调用当前节点的 `node:getConfig`，核实可用模型、模式、参考类型与数量、画幅、图片尺寸或视频时长/分辨率、原生声音及音频输入能力。图片和视频的规格分开判断，不沿用不相关的默认值。
-2. 先接好实际素材，再读取当前匹配模式。通过 `node:setConfig` 设置配置：图片字段按 schema 使用 `providerId/modelId/size/ratio`；视频使用 `providerId/modelId/duration/resolution/ratio/mode/generateAudio`。只传所需且支持的字段，`providerId` 与 `modelId` 成对提供，mode 使用实际返回值。
-3. 写入完整提示词，再读配置与画布，核对实际 prompt、引用、规格和调用前 output。缺必要参考就停该生成并继续文稿；不能静默将图生图或多参改成无参考模式。
-4. 固定本次方案：对象、数量、完整提示词、参数、参考文件与用途/顺序、执行次数；展示并沿用或取得具体消耗算力授权。算力无法查询时明确未知，不把对话 Token 当媒体消耗。
-5. **临执行复核。** 用户回复后再次读取当前画布与配置，比对授权方案，包含节点、提示词、模式、声音、引用与数量。若发生变化，沿用仍匹配的对象；受影响对象重新展示差异并核对授权。不要以“已确认”执行界面后来被修改的配置。
-6. 前置和授权满足时，经 `nodeTools` 调用实际 `node:generateImage` 或 `node:generateVideo`，当前参数为 `{}`。不绕过画布改走直接媒体工具。
+1. Gọi `node:getConfig` của node hiện tại, xác minh mô hình khả dụng, chế độ, loại và số lượng tham chiếu, tỉ lệ khung, kích thước ảnh hoặc thời lượng/độ phân giải video, âm thanh gốc và khả năng đầu vào âm thanh. Thông số ảnh và video đánh giá riêng, không dùng tiếp giá trị mặc định không liên quan.
+2. Nối xong tư liệu thực tế trước, rồi đọc chế độ khớp hiện tại. Thiết lập cấu hình qua `node:setConfig`: trường ảnh theo schema dùng `providerId/modelId/size/ratio`; video dùng `providerId/modelId/duration/resolution/ratio/mode/generateAudio`. Chỉ truyền các trường cần và được hỗ trợ, `providerId` và `modelId` cung cấp theo cặp, mode dùng giá trị thực tế trả về.
+3. Ghi prompt đầy đủ, rồi đọc cấu hình và canvas, đối chiếu prompt thực tế, tham chiếu, thông số và output trước khi gọi. Thiếu tham chiếu cần thiết thì dừng lần tạo đó và tiếp tục phần văn bản; không được lặng lẽ đổi ảnh-sang-ảnh hoặc đa tham chiếu thành chế độ không tham chiếu.
+4. Cố định phương án lần này: đối tượng, số lượng, prompt đầy đủ, tham số, file tham chiếu cùng mục đích/thứ tự, số lần thực thi; trình bày và dùng tiếp hoặc lấy ủy quyền cụ thể cho việc tiêu tốn credit tính toán. Khi không truy vấn được credit tính toán thì nói rõ là chưa biết, không coi Token hội thoại là mức tiêu tốn media.
+5. **Rà soát ngay trước khi thực thi.** Sau khi người dùng trả lời, đọc lại canvas và cấu hình hiện tại, so sánh với phương án được ủy quyền, bao gồm node, prompt, chế độ, âm thanh, tham chiếu và số lượng. Nếu có thay đổi, dùng tiếp các đối tượng vẫn khớp; đối tượng bị ảnh hưởng thì trình bày lại khác biệt và đối chiếu ủy quyền. Đừng lấy "đã xác nhận" để thực thi cấu hình bị sửa sau đó trên giao diện.
+6. Khi điều kiện tiên quyết và ủy quyền được đáp ứng, qua `nodeTools` gọi `node:generateImage` hoặc `node:generateVideo` thực tế, tham số hiện tại là `{}`. Không vòng qua canvas để chuyển sang công cụ media trực tiếp.
 
-读回与执行不是宿主提供的原子操作。复核后仍发生并发编辑时，本次输出不能仅凭当前 prompt 归因；保留尝试快照，标注依据待核实，不能承诺完全消除并发竞态。
+Đọc lại và thực thi không phải thao tác nguyên tử do host cung cấp. Sau khi rà soát mà vẫn có chỉnh sửa đồng thời, output lần này không thể quy nguồn chỉ dựa vào prompt hiện tại; giữ ảnh chụp lần thử, ghi chú căn cứ cần xác minh, không thể cam kết loại bỏ hoàn toàn race condition đồng thời.
 
-## 生成中与结果回读
+## Trong khi tạo và đọc lại kết quả
 
-当前原生节点启动后立即返回 `{status:"generating"}`；`getConfig` 不提供任务终态。记录每次尝试及旧输出。同一已授权批次中，其他节点若不依赖待生成结果，可继续核对并启动；依赖基础图、变体或前段采用结果的节点必须等待，不把依赖链当作独立批次。
+Node gốc hiện tại sau khi khởi động trả về ngay `{status:"generating"}`; `getConfig` không cung cấp trạng thái cuối của tác vụ. Ghi lại mỗi lần thử và output cũ. Trong cùng một lô đã ủy quyền, các node khác nếu không phụ thuộc kết quả đang chờ tạo thì có thể tiếp tục đối chiếu và khởi động; node phụ thuộc ảnh cơ sở, biến thể hoặc kết quả chọn dùng của đoạn trước phải chờ, không coi chuỗi phụ thuộc là lô độc lập.
 
-完成本轮可执行的独立启动和文字工作后，汇总生成中的节点及依赖待办，告诉用户完成后回复，保留当前画布。没有状态/等待能力时结束本轮，不伪造后台跟进、无限轮询或把旧文件当新结果。
+Sau khi hoàn thành các lần khởi động độc lập và công việc văn bản có thể thực thi trong lượt này, tổng hợp các node đang tạo và việc chờ phụ thuộc, bảo người dùng trả lời khi xong, giữ canvas hiện tại. Khi không có khả năng theo dõi trạng thái/chờ thì kết thúc lượt này, không giả tạo việc theo dõi nền, polling vô hạn hoặc coi file cũ là kết quả mới.
 
-用户报告完成后用 `getCanvasNodes` 读取相关节点的 `outputs` 和必要 `data`，核对新输出、实际文件以及用户是否期间手动生成或替换过素材。新路径只是证据之一，不能自动证明它属于本次方案；归属不清时询问这次输出对应哪次生成，先不下游采用。
+Sau khi người dùng báo hoàn thành, dùng `getCanvasNodes` đọc `outputs` và `data` cần thiết của các node liên quan, đối chiếu output mới, file thực tế và việc người dùng có tự tạo hoặc thay tư liệu trong lúc đó không. Đường dẫn mới chỉ là một trong các bằng chứng, không tự động chứng minh nó thuộc phương án lần này; khi quy thuộc không rõ thì hỏi output này ứng với lần tạo nào, tạm chưa chọn dùng cho hạ nguồn.
 
-本轮若实际提供了新的任务查询或等待工具，可按其真实合约读取完成、失败和结果，仍保留采用与质量检查。不得根据这段说明臆造 API、jobId 或自动唤醒。
+Nếu lượt này thực sự cung cấp công cụ truy vấn hoặc chờ tác vụ mới, có thể đọc hoàn thành, thất bại và kết quả theo hợp đồng thực của nó, vẫn giữ việc chọn dùng và kiểm tra chất lượng. Không được dựa vào đoạn mô tả này để bịa API, jobId hay tự động đánh thức.
 
-生成失败、超时或取消先确认结果状态及原因。工具返回不明确时不盲重试，以免重复消耗算力；改变方案和额外尝试核对授权范围。用户切换画布、项目或关闭页面可能卸载节点并中止请求，恢复后重新发现状态，不保证后台继续。
+Tạo thất bại, quá thời gian hoặc bị hủy thì trước tiên xác nhận trạng thái kết quả và nguyên nhân. Khi công cụ trả về không rõ ràng thì không thử lại mù quáng, để tránh tiêu tốn credit tính toán lặp lại; thay đổi phương án và thử thêm thì đối chiếu phạm vi ủy quyền. Người dùng chuyển canvas, dự án hoặc đóng trang có thể gỡ node và hủy yêu cầu, sau khi khôi phục thì khám phá lại trạng thái, không đảm bảo nền vẫn tiếp tục.
 
-结果能读取时按实际能力检查；视频采用和下一片段接戏见[状态与交付](stateAndDelivery.md)。只有实际确认采用的文件才固定为素材节点，引用能力不足或用户选择外部制作时，给最少必要导入要求，不强制外部平台。
+Khi đọc được kết quả thì kiểm tra theo năng lực thực tế; việc chọn dùng video và nối cảnh đoạn tiếp theo xem [trạng thái và giao nộp](stateAndDelivery.md). Chỉ file thực sự được xác nhận chọn dùng mới cố định thành node tư liệu, khi năng lực tham chiếu không đủ hoặc người dùng chọn sản xuất bên ngoài thì đưa yêu cầu nhập tối thiểu cần thiết, không ép dùng nền tảng bên ngoài.

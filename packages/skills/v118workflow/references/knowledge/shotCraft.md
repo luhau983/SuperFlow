@@ -1,150 +1,150 @@
-# 镜头设计、表演与审阅知识
+# Kiến thức về thiết kế shot, diễn xuất và duyệt xét
 
-用于导演规划、分镜表和同场连续性检查。导演阶段只应用“分场与表演依据”，其余方法在分镜阶段应用；本文件不授权提前创建制作节点或改写定稿剧情。参数、真实节点与生成能力仍按 [画布执行](../canvasOperations.md) 读取。
+Dùng cho quy hoạch đạo diễn, bảng phân cảnh và kiểm tra tính liên tục trong cùng cảnh. Giai đoạn đạo diễn chỉ áp dụng "Phân cảnh quay và căn cứ diễn xuất", các phương pháp còn lại áp dụng ở giai đoạn phân cảnh; file này không cho phép tạo trước node sản xuất hay viết lại cốt truyện đã chốt. Tham số, node thật và năng lực tạo vẫn đọc theo [Thực thi canvas](../canvasOperations.md).
 
-阅读顺序：分场与表演依据 → 镜头语法 → 空间与连续性 → 台词与时长 → 审阅。涉及具体画风时，读取 [视觉风格](visualStyles.md) 中当前已确认风格，不把风格示例变成剧情事实。
+Thứ tự đọc: Phân cảnh quay và căn cứ diễn xuất → Ngữ pháp shot → Không gian và tính liên tục → Lời thoại và thời lượng → Duyệt xét. Khi liên quan đến phong cách vẽ cụ thể, đọc phong cách đã xác nhận hiện tại trong [Phong cách thị giác](visualStyles.md), không biến ví dụ phong cách thành sự thật cốt truyện.
 
-## 分场与表演依据
+## Phân cảnh quay và căn cứ diễn xuất
 
-一个场是同一时空中的连续戏。优先沿用正式剧本场标；没有场标时以地点变化、时间跳变、连续戏收束切场。逐场记录：
+Một cảnh là một đoạn diễn liên tục trong cùng thời gian và không gian. Ưu tiên tiếp tục dùng dấu cảnh của kịch bản chính thức; khi không có dấu cảnh thì chuyển cảnh theo thay đổi địa điểm, nhảy thời gian, hoặc đoạn diễn liên tục khép lại. Ghi lại từng cảnh:
 
-- 台词条数和原文字数，包含对白、独白、OS、VO；没有台词记零。导演阶段只统计，不预定镜头数；分镜阶段重读原文计时，不把统计摘要当完整台词。
-- 情绪浓度 0～10、情绪基调及变化，如“试探→失望→决断”。强度是规划判断，不是演员必须夸张到某个分值。
-- 最需要被观众看见的情感瞬间、角色身份与道具状态、关键空间距离、具体环境声源和拍摄难点。
-- 仅对确需衔接的场间提出动作桥梁、空镜或淡入淡出。新增过场必须标为拟增补并等待确认，不为每两场机械增加空镜。
+- Số câu lời thoại và số chữ nguyên văn, gồm đối thoại, độc thoại, OS, VO; không có lời thoại thì ghi không. Giai đoạn đạo diễn chỉ thống kê, không định trước số shot; giai đoạn phân cảnh đọc lại nguyên văn để tính thời gian, không coi bản tóm tắt thống kê là lời thoại đầy đủ.
+- Độ đậm cảm xúc 0-10, tông cảm xúc và biến đổi, như "dò xét→thất vọng→quyết đoán". Cường độ là phán đoán quy hoạch, không phải diễn viên phải cường điệu đến một mức điểm nào đó.
+- Khoảnh khắc cảm xúc khán giả cần thấy nhất, danh tính nhân vật và trạng thái đạo cụ, khoảng cách không gian then chốt, nguồn âm môi trường cụ thể và điểm khó khi quay.
+- Chỉ đề xuất cầu nối động tác, shot trống hoặc fade in/fade out cho những chỗ giữa các cảnh thực sự cần nối. Đoạn chuyển cảnh mới thêm phải được đánh dấu là dự kiến bổ sung và chờ xác nhận, không máy móc thêm shot trống giữa mỗi hai cảnh.
 
-把情绪转为可见表演时，先找剧本已有动作，再用幅度、速度、呼吸、视线和姿态解释它，不额外发明剧情动作。可用以下对应关系细化已确认表演：
+Khi chuyển cảm xúc thành diễn xuất nhìn thấy được, trước tiên tìm động tác đã có trong kịch bản, rồi dùng biên độ, tốc độ, hơi thở, ánh nhìn và tư thế để diễn giải nó, không phát minh thêm động tác cốt truyện. Có thể dùng các quan hệ tương ứng sau để chi tiết hóa diễn xuất đã xác nhận:
 
-| 表演目标 | 可见依据 | 不应替代成 |
+| Mục tiêu diễn xuất | Căn cứ nhìn thấy được | Không nên thay bằng |
 |---|---|---|
-| 克制愤怒 | 下颌绷紧、握持渐紧、视线不移、出声前短停顿 | 无依据的摔物、怒吼 |
-| 悲伤但强忍 | 眨眼变慢、呼吸中断、嘴唇收紧、低头避开对视 | 每镜流泪或突然崩溃 |
-| 试探与迟疑 | 话前看向对方、手势停在半途、重心未完全前移 | 增加一轮新对白 |
-| 决意 | 视线稳定、动作收束、姿态明确、语尾落定 | 空写“坚毅、史诗感” |
-| 轻蔑 | 已确认冷笑、抬颏、短暂斜视及互动距离 | 把既有冷笑改成“即将扬嘴角” |
+| Kìm nén giận dữ | Hàm siết chặt, nắm tay dần chặt, ánh nhìn không dời, ngừng ngắn trước khi lên tiếng | Ném đồ, gào thét vô căn cứ |
+| Đau buồn nhưng cố nén | Chớp mắt chậm lại, hơi thở ngắt quãng, môi mím lại, cúi đầu tránh nhìn nhau | Mỗi shot đều rơi lệ hoặc đột ngột suy sụp |
+| Dò xét và do dự | Nhìn đối phương trước khi nói, cử chỉ dừng giữa chừng, trọng tâm chưa dồn hẳn về trước | Thêm một lượt đối thoại mới |
+| Quyết tâm | Ánh nhìn vững, động tác thu gọn, tư thế dứt khoát, cuối câu chắc chắn | Viết suông "kiên nghị, cảm giác sử thi" |
+| Khinh miệt | Cười lạnh đã xác nhận, hất cằm, liếc ngang thoáng qua và khoảng cách tương tác | Đổi cười lạnh vốn có thành "sắp nhếch mép" |
 
-听者反应服务于说话内容：眼神、呼吸或小幅姿态变化足够时，不增加动作争抢焦点。群演只用遮、瞥、垂、攥等微动作维持场内反应，不擅自加台词或升级成第二主角。已定稿的特殊表演优先，不以词库重塑人物性格。
+Phản ứng của người nghe phục vụ nội dung lời nói: khi ánh mắt, hơi thở hoặc thay đổi tư thế nhỏ là đủ thì không thêm động tác giành tiêu điểm. Quần chúng chỉ dùng các vi động tác như che, liếc, cúi, nắm để duy trì phản ứng trong cảnh, không tự ý thêm lời thoại hay nâng thành nhân vật chính thứ hai. Diễn xuất đặc biệt đã chốt được ưu tiên, không dùng kho từ để định hình lại tính cách nhân vật.
 
-## 镜头语法
+## Ngữ pháp shot
 
-先问“本镜给观众什么新信息”，再选景别、角度和运动。地点/时间切换、主体转移、重要动作节点或有意义的景别变化可以切镜；同画面的小动作、表情微变和连续对白不必逐项切碎。
+Trước tiên hỏi "shot này đem lại thông tin mới gì cho khán giả", rồi mới chọn cỡ cảnh, góc máy và chuyển động. Chuyển địa điểm/thời gian, chuyển chủ thể, mốc động tác quan trọng hoặc thay đổi cỡ cảnh có ý nghĩa thì có thể cắt shot; động tác nhỏ, biến đổi biểu cảm vi tế và đối thoại liên tục trong cùng khung hình không cần chặt vụn từng mục.
 
-定场通常用 1～2 镜完成：一个远景缓推同时交代环境与主体，或环境全貌后接主体全景。连续拍院门、墙面、窗棂却没有信息推进，可合为含前后空间的一个镜头。旧版“每 50～100 字约 1～2 镜”只能检查是否拆得异常，不能按字数机械生产镜头。
+Định cảnh thường hoàn thành bằng 1-2 shot: một viễn cảnh đẩy chậm vào đồng thời giới thiệu môi trường và chủ thể, hoặc toàn bộ môi trường rồi nối tiếp toàn cảnh chủ thể. Quay liên tiếp cổng sân, mặt tường, song cửa sổ mà không có tiến triển thông tin thì có thể gộp thành một shot bao gồm không gian trước sau. Quy tắc bản cũ "mỗi 50-100 chữ khoảng 1-2 shot" chỉ dùng để kiểm tra việc chia có bất thường không, không được sản xuất shot máy móc theo số chữ.
 
-### 景别与信息用途
+### Cỡ cảnh và mục đích thông tin
 
-| 景别 | 构图依据 | 适合承担的信息 | 可用英文表达 |
+| Cỡ cảnh | Căn cứ bố cục | Thông tin phù hợp đảm nhận | Cách diễn đạt tiếng Anh có thể dùng |
 |---|---|---|---|
-| 大远景 | 环境全貌，人物很小 | 定场、规模、孤独、人与环境的悬殊 | extreme wide shot / establishing shot |
-| 远景 | 人物及周边空间关系清楚 | 行进路径、人物间距离、空间引入 | wide shot |
-| 全景 | 完整全身入镜 | 登场、完整肢体动作、人物与道具关系 | full shot / full body |
-| 中景 | 按所需动作确定腰部或膝部以上 | 对话、上肢动作、双方关系 | medium shot；需要膝部构图时明确 knee shot |
-| 近景/半身 | 胸部或腰部以上，明确裁切位置 | 情绪变化、对白重点、手部与面部同框 | medium close-up / upper body / half body |
-| 特写 | 面部或关键物件局部 | 决定、细微反应、关键线索 | close-up / face focus |
-| 大特写 | 极小局部 | 决定性细节、极端情绪的短促强调 | extreme close-up / macro detail |
-| 过肩镜 | 前景肩背与另一人形成关系 | 对话、压迫感、视线归属 | over-the-shoulder shot |
+| Đại viễn cảnh | Toàn bộ môi trường, nhân vật rất nhỏ | Định cảnh, quy mô, cô độc, chênh lệch giữa người và môi trường | extreme wide shot / establishing shot |
+| Viễn cảnh | Quan hệ giữa nhân vật và không gian xung quanh rõ ràng | Đường di chuyển, khoảng cách giữa các nhân vật, giới thiệu không gian | wide shot |
+| Toàn cảnh | Toàn thân vào khung trọn vẹn | Xuất hiện, động tác tay chân trọn vẹn, quan hệ giữa nhân vật và đạo cụ | full shot / full body |
+| Trung cảnh | Từ eo hoặc từ gối trở lên tùy theo động tác cần thiết | Đối thoại, động tác thân trên, quan hệ hai bên | medium shot; khi cần bố cục đến gối thì ghi rõ knee shot |
+| Cận cảnh/bán thân | Từ ngực hoặc eo trở lên, vị trí cắt khung rõ ràng | Biến đổi cảm xúc, trọng tâm lời thoại, tay và mặt cùng khung | medium close-up / upper body / half body |
+| Cận cảnh đặc tả | Khuôn mặt hoặc một phần vật thể then chốt | Quyết định, phản ứng vi tế, manh mối then chốt | close-up / face focus |
+| Đại cận cảnh đặc tả | Một phần cực nhỏ | Chi tiết mang tính quyết định, nhấn mạnh ngắn cảm xúc cực đoan | extreme close-up / macro detail |
+| Shot qua vai | Vai/lưng tiền cảnh tạo quan hệ với người còn lại | Đối thoại, cảm giác áp bức, quy thuộc ánh nhìn | over-the-shoulder shot |
 
-旧表将中景统写“膝盖以上”，不同模型词库的裁切并不一致；以已确认的构图部位补充术语，不能只靠一个英文标签。大特写不作为常态；旧版全片 2～3 次是节制提醒，不是每集必须凑足的配额。
+Bảng cũ ghi chung trung cảnh là "từ gối trở lên", nhưng kho từ của các mô hình khác nhau cắt khung không nhất quán; bổ sung thuật ngữ bằng bộ phận bố cục đã xác nhận, không được chỉ dựa vào một nhãn tiếng Anh. Đại cận cảnh đặc tả không dùng làm thường lệ; quy định 2-3 lần cho cả phim của bản cũ là lời nhắc tiết chế, không phải hạn ngạch mỗi tập phải đủ.
 
-景别可以由远到近收紧，也可由近到远释放。连续三个同景别而无信息或关系变化需要检查；有意维持同构图的叙事理由可以保留。突然由全貌切关键细节可用于揭示，不为了“逐级递进”多造镜头。
+Cỡ cảnh có thể siết lại từ xa đến gần, cũng có thể giải phóng từ gần ra xa. Ba shot liên tiếp cùng cỡ cảnh mà không có thay đổi thông tin hay quan hệ thì cần kiểm tra; có lý do tự sự cố ý duy trì cùng bố cục thì có thể giữ. Đột ngột cắt từ toàn bộ sang chi tiết then chốt có thể dùng để hé lộ, không vì "tăng dần từng bậc" mà tạo thêm shot.
 
-### 角度、视点与运镜
+### Góc máy, điểm nhìn và chuyển động máy
 
-角度说明摄像机相对主体的观察位置，运镜说明摄像机随时间怎样移动；俯拍、仰拍本身不是运动。
+Góc máy nói rõ vị trí quan sát của máy quay so với chủ thể, chuyển động máy nói rõ máy quay di chuyển thế nào theo thời gian; bản thân quay từ trên xuống, quay từ dưới lên không phải chuyển động.
 
-| 选择 | 叙事用途 | 写法必须明确 |
+| Lựa chọn | Mục đích tự sự | Cách viết phải nêu rõ |
 |---|---|---|
-| 平视 | 平等交流、客观观察 | 摄像机与人物眼线关系 |
-| 俯视/俯拍 | 空间关系、被压制或旁观 | 谁处于上方、看向哪个主体；不自动给角色弱者身份 |
-| 仰视/仰拍 | 体量、威压、仰望 | 观察对象与起始机位；不凭角度改变剧情权力关系 |
-| 过肩/反打 | 对话的观察者与被观察者 | 前景是谁、肩背在哪侧、远端人物的视线 |
-| POV | 角色所见 | 视点属于谁、看到的对象；不能与外部全知机位混写 |
-| 倾斜机位 | 已确认的不稳定感 | 倾斜用途；不能为装饰每镜倾斜 |
-| 推/拉 | 聚焦发现、情绪收紧 / 揭示全貌、关系释放 | 起幅、终点和速度，如“全景缓推至近景” |
-| 摇 | 搜索、视线转移、空间展示 | 固定机位向左/右或上/下转动及落点 |
-| 移/跟拍 | 跟随人物穿越空间 | 移动方向、跟谁、到哪里；不要与变焦混称 |
-| 升降/环绕 | 揭示空间层级、改变观察方位 | 起终机位、主体位置与是否跨轴 |
-| 固定 | 让表演或物件承担变化 | 写“固定”，不以模糊的“电影感”代替 |
+| Ngang tầm mắt | Giao tiếp bình đẳng, quan sát khách quan | Quan hệ giữa máy quay và tầm mắt nhân vật |
+| Nhìn từ trên/quay từ trên xuống | Quan hệ không gian, bị áp chế hoặc đứng ngoài quan sát | Ai ở phía trên, nhìn về chủ thể nào; không tự động gán thân phận kẻ yếu cho nhân vật |
+| Nhìn từ dưới/quay từ dưới lên | Khối lượng, uy áp, ngưỡng vọng | Đối tượng quan sát và vị trí máy bắt đầu; không dựa vào góc máy mà thay đổi quan hệ quyền lực trong cốt truyện |
+| Qua vai/shot đối đáp | Người quan sát và người bị quan sát trong đối thoại | Tiền cảnh là ai, vai/lưng ở phía nào, ánh nhìn của nhân vật phía xa |
+| POV | Thứ nhân vật nhìn thấy | Điểm nhìn thuộc về ai, đối tượng nhìn thấy; không được viết lẫn với vị trí máy toàn tri bên ngoài |
+| Máy nghiêng | Cảm giác bất ổn đã xác nhận | Mục đích nghiêng; không được nghiêng mỗi shot để trang trí |
+| Đẩy/kéo | Tập trung phát hiện, siết cảm xúc / hé lộ toàn cảnh, giải phóng quan hệ | Khung đầu, điểm kết thúc và tốc độ, như "toàn cảnh đẩy chậm vào cận cảnh" |
+| Lia | Tìm kiếm, chuyển ánh nhìn, trình bày không gian | Máy cố định xoay trái/phải hoặc lên/xuống và điểm dừng |
+| Di chuyển/quay bám theo | Đi theo nhân vật xuyên qua không gian | Hướng di chuyển, theo ai, đến đâu; đừng gọi lẫn với zoom |
+| Nâng hạ/quay vòng | Hé lộ tầng không gian, thay đổi phương vị quan sát | Vị trí máy bắt đầu và kết thúc, vị trí chủ thể và có vượt trục hành động không |
+| Cố định | Để diễn xuất hoặc vật thể đảm nhận biến đổi | Viết "cố định", không thay bằng "cảm giác điện ảnh" mơ hồ |
 
-同镜只安排能够执行的运动。Seedance 2.0 旧模板要求一镜一主要运镜，转 [视频提示词](videoPromptCraft.md) 时适用该约束；其他模式也不把推、拉、摇、旋转无依据堆在一个短镜头。
+Trong cùng shot chỉ sắp xếp những chuyển động có thể thực hiện. Mẫu cũ Seedance 2.0 yêu cầu mỗi shot một chuyển động máy chính, áp dụng ràng buộc này khi chuyển sang [Prompt video](videoPromptCraft.md); các chế độ khác cũng không chồng chất vô căn cứ đẩy, kéo, lia, xoay trong một shot ngắn.
 
-一镜到底适合跟随人物穿过同一空间、连续动作或缓慢改变观察角度。写清起幅、路径、落幅及沿途出现的新信息。旧技法允许此类持续更新信息的长镜延至约 12 秒；这不是当前模型保证。只有已确认的连续镜头且模型支持时才采用，不为少建节点把原有多镜硬合并。
+Một shot liền (long take) phù hợp để đi theo nhân vật xuyên qua cùng một không gian, động tác liên tục hoặc thay đổi chậm góc quan sát. Viết rõ khung đầu, đường đi, khung kết và thông tin mới xuất hiện dọc đường. Kỹ pháp cũ cho phép loại shot dài liên tục cập nhật thông tin này kéo dài đến khoảng 12 giây; đây không phải đảm bảo của mô hình hiện tại. Chỉ khi là shot liên tục đã xác nhận và mô hình hỗ trợ mới chọn dùng, không vì muốn tạo ít node mà gộp cứng nhiều shot vốn có.
 
-## 空间与连续性
+## Không gian và tính liên tục
 
-在每场第一次清楚交代空间后，建立简单基准：
+Sau khi giới thiệu rõ không gian lần đầu trong mỗi cảnh, thiết lập mốc chuẩn đơn giản:
 
 ~~~text
-场次 / 已确认分镜版本
-角色A：左前，3/4 正面朝右，注视角色B；右手持信
-角色B：右后，3/4 正面朝左，注视角色A；桌在两人之间
-变化点：镜3，A 放下信并向桌右侧走两步；镜4沿用变化后的站位
+Cảnh / phiên bản phân cảnh đã xác nhận
+Nhân vật A: phía trước bên trái, 3/4 chính diện quay sang phải, nhìn chăm chú nhân vật B; tay phải cầm thư
+Nhân vật B: phía sau bên phải, 3/4 chính diện quay sang trái, nhìn chăm chú nhân vật A; bàn ở giữa hai người
+Điểm thay đổi: shot 3, A đặt thư xuống và đi hai bước về phía bên phải bàn; shot 4 tiếp tục dùng vị trí đứng sau thay đổi
 ~~~
 
-位置使用左/中/右 × 前/中/后的九格表述：左前、中前、右前、左中、中中、右中、左后、中后、右后。前后主要指距镜头的深度；高低另写，不能把“跪地”自动等同于前景。基准和变化点写在本集文本节点或分镜说明中，不虚构节点数据字段。
+Vị trí dùng cách diễn đạt chín ô trái/giữa/phải × trước/giữa/sau: trước trái, trước giữa, trước phải, giữa trái, chính giữa, giữa phải, sau trái, sau giữa, sau phải. Trước sau chủ yếu chỉ độ sâu so với ống kính; cao thấp viết riêng, không được tự động coi "quỳ xuống đất" là tiền cảnh. Mốc chuẩn và điểm thay đổi được viết trong node văn bản hoặc mô tả phân cảnh của tập này, không hư cấu trường dữ liệu node.
 
-- 对话/对峙先确定互动轴线。普通反打保持画面左右与视线对应：左侧人物向右看，右侧人物向左看。不能因都想看到正脸而让两人都无理由面朝镜头。
-- 180° 连续性约束的是观众可理解的空间，不是禁止角色走位。走位、转头、摄影机跨越轴线需在确认分镜中看见建立过程；后续沿用新基准。
-- 朝向依次取已确认画面中的明确方向、互动对象与空间、既有基准。过肩前景通常是肩背，远端人物朝互动方；缺少影响意义的信息时先形成待确认方案，不凭情绪强行决定脸朝哪边。
-- 相邻镜核对角色位置、动作完成度、持物手、道具归属、眼线与服装状态。上一镜手臂抬至半空，下一镜不能没有过渡就回到身侧。
-- 不要求特写强塞全场人物，但场内人物的存在必须在相邻镜或同一片段有可理解的落点：背景、局部、过肩、反应镜或已建立的画外位置。声音能交代画外存在，不能冒充已经看见其形象。
-- 局部背影、手部、可辨识剪影也沿用对应资产版本。无依据的复制人物、同款分身、漏掉关键在场者要提出问题；剧情明确有双胞胎时不能套“禁止双胞胎”删角色。
-- 反射中的身份、服装、表情与动作应和实体处于同一时刻，不把反射当新增第二人。按镜面/水面朝向、实体姿态和相机位置判断可见部位及对应关系；水面可有符合材质与波动的畸变，不把旧文“实体朝右→所有倒影朝左”当普适物理规则，不能机械水平翻转。
+- Đối thoại/đối đầu trước tiên xác định trục hành động tương tác. Shot đối đáp thông thường giữ trái phải của khung hình tương ứng với ánh nhìn: nhân vật bên trái nhìn sang phải, nhân vật bên phải nhìn sang trái. Không được vì muốn thấy mặt chính diện của cả hai mà để cả hai vô cớ quay mặt về ống kính.
+- Tính liên tục 180° ràng buộc không gian mà khán giả có thể hiểu, không phải cấm nhân vật di chuyển. Di chuyển vị trí, quay đầu, máy quay vượt trục hành động cần thấy quá trình thiết lập trong phân cảnh đã xác nhận; sau đó tiếp tục dùng mốc chuẩn mới.
+- Hướng lần lượt lấy theo hướng rõ ràng trong khung hình đã xác nhận, đối tượng tương tác và không gian, mốc chuẩn đã có. Tiền cảnh qua vai thường là vai/lưng, nhân vật phía xa quay về phía bên tương tác; khi thiếu thông tin ảnh hưởng ý nghĩa thì trước tiên hình thành phương án chờ xác nhận, không dựa vào cảm xúc mà ép quyết định mặt hướng về phía nào.
+- Các shot liền kề kiểm tra vị trí nhân vật, mức độ hoàn thành động tác, tay cầm đồ, quyền sở hữu đạo cụ, hướng mắt và trạng thái trang phục. Shot trước cánh tay giơ lên giữa không trung, shot sau không thể không có chuyển tiếp mà trở về bên hông.
+- Không yêu cầu cận cảnh đặc tả nhét hết mọi nhân vật trong cảnh, nhưng sự hiện diện của các nhân vật trong cảnh phải có điểm đặt dễ hiểu ở shot liền kề hoặc cùng đoạn: hậu cảnh, một phần cơ thể, qua vai, shot phản ứng hoặc vị trí ngoài khung đã được thiết lập. Âm thanh có thể giới thiệu sự hiện diện ngoài khung, nhưng không thể giả làm đã nhìn thấy hình tượng của họ.
+- Bóng lưng một phần, bàn tay, bóng dáng nhận ra được cũng tiếp tục dùng phiên bản tài sản tương ứng. Nhân vật sao chép vô căn cứ, bản sao giống hệt, bỏ sót người có mặt then chốt thì phải nêu vấn đề; khi cốt truyện rõ ràng có anh em sinh đôi thì không được áp "cấm sinh đôi" mà xóa nhân vật.
+- Danh tính, trang phục, biểu cảm và động tác trong hình phản chiếu phải cùng thời điểm với thực thể, không coi hình phản chiếu là người thứ hai được thêm vào. Dựa vào hướng của mặt gương/mặt nước, tư thế thực thể và vị trí máy quay để phán đoán bộ phận nhìn thấy được và quan hệ tương ứng; mặt nước có thể có biến dạng phù hợp với chất liệu và gợn sóng, không coi "thực thể quay phải→mọi bóng phản chiếu quay trái" của tài liệu cũ là quy luật vật lý phổ quát, không được lật ngang máy móc.
 
-片段边界可通过动作、情绪、视线、声源衔接。记录“前段实际/预计结束状态 → 本段开始状态”：动接承接动作进度，静接承接终态。旧分镜表建议跨段动接，旧面板却假设连贯动作不跨组；本技能以已确认分镜边界为准，不强行冻结动作或另造过场。尚未生成的状态注明“规划”，不能声称是已观看的末帧。
+Ranh giới đoạn có thể nối qua động tác, cảm xúc, ánh nhìn, nguồn âm. Ghi lại "trạng thái kết thúc thực tế/dự kiến của đoạn trước → trạng thái bắt đầu của đoạn này": nối động thì tiếp nối tiến độ động tác, nối tĩnh thì tiếp nối trạng thái cuối. Bảng phân cảnh cũ đề xuất nối động xuyên đoạn, panel cũ lại giả định động tác liền mạch không vượt nhóm; skill này lấy ranh giới phân cảnh đã xác nhận làm chuẩn, không ép đóng băng động tác hay tạo thêm đoạn chuyển cảnh. Trạng thái chưa được tạo thì ghi chú "quy hoạch", không được tuyên bố là khung cuối đã xem.
 
-同场默认硬切；跨时空或情绪跨度大时再采用确认的空镜、声音桥梁、叠化或淡入淡出。旧通用表“跨场必加 2～3 秒空镜”让位于导演执行文档“必要才增加”的约定。换场允许重新建立位置基准，不跨不同地点强接一个物理动作。
+Cùng cảnh mặc định cắt cứng; khi vượt thời gian không gian hoặc biên độ cảm xúc lớn mới chọn dùng shot trống, cầu nối âm thanh, hòa tan hoặc fade in/fade out đã xác nhận. Quy định "chuyển cảnh nhất định thêm 2-3 giây shot trống" của bảng chung cũ nhường chỗ cho quy ước "chỉ thêm khi cần thiết" của tài liệu thực thi đạo diễn. Đổi cảnh cho phép thiết lập lại mốc chuẩn vị trí, không nối cứng một động tác vật lý xuyên qua các địa điểm khác nhau.
 
-## 台词与时长
+## Lời thoại và thời lượng
 
-台词原文、人物完整和已确认事件优先于时长启发式。对白、OS、VO、系统播报及必须传达的屏幕文字逐字保留并标来源。英文提示词也不翻译引号内原台词。纯屏幕文字要单独记其原文和呈现方式；旧版统一转 VO、逐行点亮并加滴答声是可提出的制作方案，未经确认不把无声短信变成额外旁白或增加音效。
+Nguyên văn lời thoại, nhân vật đầy đủ và sự kiện đã xác nhận được ưu tiên hơn heuristic về thời lượng. Đối thoại, OS, VO, thông báo hệ thống và chữ trên màn hình buộc phải truyền đạt đều giữ nguyên từng chữ và ghi nguồn. Prompt tiếng Anh cũng không dịch lời thoại gốc trong dấu ngoặc kép. Chữ thuần trên màn hình phải ghi riêng nguyên văn và cách trình bày; việc bản cũ thống nhất chuyển sang VO, làm sáng từng dòng và thêm tiếng tích tắc là phương án sản xuất có thể đề xuất, chưa được xác nhận thì không biến tin nhắn không tiếng thành lời dẫn bổ sung hay thêm hiệu ứng âm thanh.
 
-| 语气 | 规划语速 | 用法 |
+| Giọng điệu | Tốc độ nói quy hoạch | Cách dùng |
 |---|---|---|
-| 急促、争执 | 约 4 字/秒 | 旧执行层的快速粗估基准 |
-| 正常陈述、日常对白 | 约 3 字/秒 | 给自然发音和句尾留空间 |
-| 深情、悲伤、沉思 | 约 2 字/秒 | 给呼吸、停顿和反应时间 |
-| 低语、虚弱 | 约 2 字/秒或按实际更慢 | 不能靠压缩语速消除表演 |
+| Gấp gáp, tranh cãi | Khoảng 4 chữ/giây | Mốc ước lượng nhanh của tầng thực thi cũ |
+| Trần thuật bình thường, đối thoại thường ngày | Khoảng 3 chữ/giây | Chừa chỗ cho phát âm tự nhiên và cuối câu |
+| Thâm tình, đau buồn, trầm tư | Khoảng 2 chữ/giây | Chừa thời gian cho hơi thở, ngừng nghỉ và phản ứng |
+| Thì thầm, yếu ớt | Khoảng 2 chữ/giây hoặc chậm hơn theo thực tế | Không được dựa vào nén tốc độ nói để triệt tiêu diễn xuất |
 
-默认 SOP 采用旧执行层的 4 字/秒及审核层的停顿、首尾余量；上表 3/2 字/秒来自旧通用技法，是针对表演的选项。需要采用慢速方案时，沿用用户已有要求，或先说明对时长和片段数量的影响并确认。不能把通用技法自动覆盖执行层默认值，再宣称与旧 SOP 数量完全一致。
+SOP mặc định chọn dùng 4 chữ/giây của tầng thực thi cũ cùng ngừng nghỉ và khoảng dư đầu cuối của tầng kiểm duyệt; 3/2 chữ/giây trong bảng trên đến từ kỹ pháp chung cũ, là lựa chọn dành cho diễn xuất. Khi cần chọn dùng phương án tốc độ chậm, tiếp tục theo yêu cầu sẵn có của người dùng, hoặc trước tiên nói rõ ảnh hưởng đến thời lượng và số đoạn rồi xác nhận. Không được để kỹ pháp chung tự động ghi đè giá trị mặc định của tầng thực thi, rồi lại tuyên bố số lượng hoàn toàn khớp với SOP cũ.
 
-最小规划时长可按“台词字数÷已采用语速向上取整 + 需要的标点停顿（每处约 0.3～0.5 秒）+ 首尾安全余量合计约 1 秒”核算；采用情绪表演方案时再计必要转折余量（约 0.5 秒）。相同停顿不重复累计；实际语言、语速与用户表演要求优先。对白粗估不同于剧本阶段约 150 字/分钟的整集估时，也不等于已生成视频实际时长。
+Thời lượng quy hoạch tối thiểu có thể tính theo "số chữ lời thoại ÷ tốc độ nói đã chọn dùng làm tròn lên + ngừng nghỉ dấu câu cần thiết (mỗi chỗ khoảng 0,3-0,5 giây) + khoảng dư an toàn đầu cuối tổng cộng khoảng 1 giây"; khi chọn dùng phương án diễn xuất cảm xúc thì tính thêm khoảng dư chuyển ý cần thiết (khoảng 0,5 giây). Cùng một ngừng nghỉ không cộng dồn lặp lại; ngôn ngữ thực tế, tốc độ nói và yêu cầu diễn xuất của người dùng được ưu tiên. Ước lượng lời thoại khác với ước tính thời gian cả tập khoảng 150 chữ/phút ở giai đoạn kịch bản, cũng không bằng thời lượng thực tế của video đã tạo.
 
-例如 24 字对白按默认 4 字/秒基础约 6 秒，两处明显停顿合计约 0.8 秒，再留约 1 秒收放，规划约 8 秒；确认采用 3 字/秒时约为 10 秒。两种方案都不能只给基础念词时间并截词。若真实表演或模型能力不能满足已定时长，按语义重划片段并回到分镜确认。
+Ví dụ lời thoại 24 chữ theo mặc định 4 chữ/giây cơ bản khoảng 6 giây, hai chỗ ngừng rõ ràng tổng cộng khoảng 0,8 giây, chừa thêm khoảng 1 giây để vào ra, quy hoạch khoảng 8 giây; khi xác nhận chọn dùng 3 chữ/giây thì khoảng 10 giây. Cả hai phương án đều không được chỉ cho thời gian đọc cơ bản rồi cắt chữ. Nếu diễn xuất thật hoặc năng lực mô hình không đáp ứng được thời lượng đã định, thì chia lại đoạn theo ngữ nghĩa và quay lại phân cảnh để xác nhận.
 
-- 超过 20 字的连续台词/VO 优先在语义停顿处拆连续镜头，改变景别或切听者反应镜，声音仍归原说话者。台词可完整记在首行并明确后续镜的声音延续范围，不能让模型每镜重复念整句。
-- 不可割断的语义可保留一镜，用剧本已有的表情变化、肢体演进或合理运镜承载；不为“必须动”添加无依据动作，也不删字硬压时长。
-- 无新信息的静态镜头约 6 秒就应检查是否拖沓；这是旧版注意力启发式，不是所有无台词镜超过 6 秒都不可用。
-- 动作密度参考：2～3 秒约容纳 1 拍，4～6 秒约 2 拍，7 秒以上约 3 拍。一拍可是一项物理动作、一次主要运镜或一句短台词；复杂接触动作需要更多时间，不能机械同时塞满。
-- 首尾各约 0.5 秒避免关键台词刚起就被切断。总片段仍遵守本流程 15 秒与当前模型上限较小者，并核实离散可选时长；旧通用表的单镜 8 秒、长镜 12 秒仅用于发现拥挤或拖沓。
+- Lời thoại/VO liên tục quá 20 chữ ưu tiên tách shot liên tục tại chỗ ngừng ngữ nghĩa, đổi cỡ cảnh hoặc cắt sang shot phản ứng của người nghe, âm thanh vẫn thuộc người nói gốc. Lời thoại có thể ghi đầy đủ ở dòng đầu và nêu rõ phạm vi tiếp diễn âm thanh của các shot sau, không được để mô hình đọc lặp lại cả câu ở mỗi shot.
+- Ngữ nghĩa không thể cắt rời thì có thể giữ một shot, dùng biến đổi biểu cảm, diễn tiến cơ thể đã có trong kịch bản hoặc chuyển động máy hợp lý để gánh; không vì "phải chuyển động" mà thêm động tác vô căn cứ, cũng không xóa chữ để ép thời lượng.
+- Shot tĩnh không có thông tin mới khoảng 6 giây là nên kiểm tra xem có lê thê không; đây là heuristic về sự chú ý của bản cũ, không phải mọi shot không lời thoại quá 6 giây đều không dùng được.
+- Tham khảo mật độ động tác: 2-3 giây chứa khoảng 1 nhịp, 4-6 giây khoảng 2 nhịp, từ 7 giây trở lên khoảng 3 nhịp. Một nhịp có thể là một động tác vật lý, một chuyển động máy chính hoặc một câu thoại ngắn; động tác tiếp xúc phức tạp cần nhiều thời gian hơn, không được máy móc nhồi đầy cùng lúc.
+- Đầu và cuối mỗi bên khoảng 0,5 giây để tránh lời thoại then chốt vừa bắt đầu đã bị cắt. Tổng đoạn vẫn tuân theo giá trị nhỏ hơn giữa 15 giây của quy trình này và giới hạn trên của mô hình hiện tại, đồng thời xác minh các thời lượng rời rạc có thể chọn; 8 giây cho shot đơn, 12 giây cho shot dài của bảng chung cũ chỉ dùng để phát hiện chật chội hoặc lê thê.
 
-声音分环境声源与动作声源，例如“风穿窗缝、杯底触桌”。不要用“悲伤音乐、宏大氛围”代替具体声音。默认不增加配乐；剧本或用户明确要求的音乐保留为单独待执行要求，不能为了沿用旧禁词删除正式剧情或真实乐器演奏。
+Âm thanh chia thành nguồn âm môi trường và nguồn âm động tác, ví dụ "gió lùa qua khe cửa sổ, đáy cốc chạm bàn". Đừng dùng "nhạc buồn, bầu không khí hoành tráng" thay cho âm thanh cụ thể. Mặc định không thêm nhạc nền; âm nhạc mà kịch bản hoặc người dùng yêu cầu rõ ràng được giữ lại thành yêu cầu riêng chờ thực thi, không được vì tiếp tục dùng từ cấm cũ mà xóa cốt truyện chính thức hay tiết mục nhạc cụ thật.
 
-## 审阅方法与本集落点
+## Phương pháp duyệt xét và điểm đặt trong tập này
 
-每次回读画布中实际剧本、分镜、资产和已确认版本，按四条核心原则检查：
+Mỗi lần đọc lại kịch bản, phân cảnh, tài sản thực tế và phiên bản đã xác nhận trên canvas, kiểm tra theo bốn nguyên tắc cốt lõi:
 
-| 核心原则 | 核验方法 | 需定位的问题 |
+| Nguyên tắc cốt lõi | Phương pháp kiểm chứng | Vấn đề cần định vị |
 |---|---|---|
-| R1 真实引用 | 将片段引用与资产画布真实节点、采用文件逐项对应 | 虚构 ID、引用顺序错位、可见关键角色/场景未绑定 |
-| R2 忠实剧本 | 逐条比对台词、事件及顺序 | 漏词、改词、漏场、新增事件、把建议写成定稿 |
-| R3 可见可听 | 对照画面动作、声源、表演细节 | 只有“很悲伤/烘托气氛”等不可执行描述 |
-| R4 状态正确 | 对照父资产、当前剧情状态和采用版本 | 应用衍生态却用基础态、把同一人的两态当两个人 |
+| R1 Tham chiếu thật | Đối chiếu từng mục tham chiếu của đoạn với node thật và file đã chọn dùng trên canvas tài sản | ID hư cấu, lệch thứ tự tham chiếu, nhân vật/bối cảnh then chốt nhìn thấy được chưa được gắn |
+| R2 Trung thành kịch bản | So sánh từng mục lời thoại, sự kiện và thứ tự | Sót chữ, sửa chữ, sót cảnh, thêm sự kiện, viết đề xuất thành bản chốt |
+| R3 Nhìn thấy được, nghe thấy được | Đối chiếu động tác khung hình, nguồn âm, chi tiết diễn xuất | Chỉ có mô tả không thể thực thi như "rất buồn/tô đậm bầu không khí" |
+| R4 Trạng thái đúng | Đối chiếu tài sản cha, trạng thái cốt truyện hiện tại và phiên bản đã chọn dùng | Lẽ ra dùng trạng thái phái sinh lại dùng trạng thái cơ bản, coi hai trạng thái của cùng một người là hai người |
 
-再核对：场头人物、片段引用、每镜七列表结构；镜头和片段时长合计；语音容量；长台词连续声音；场内存在与动作进度；景别/角度是否服务信息；图像提示词是否遗漏关键元素；有没有新添与场景图冲突的光影、无依据配乐或外观。
+Kiểm tra thêm: nhân vật đầu cảnh, tham chiếu đoạn, cấu trúc bảng bảy cột của mỗi shot; tổng thời lượng shot và đoạn; dung lượng lời nói; âm thanh liên tục của lời thoại dài; sự hiện diện trong cảnh và tiến độ động tác; cỡ cảnh/góc máy có phục vụ thông tin không; prompt ảnh có bỏ sót yếu tố then chốt không; có thêm ánh sáng xung đột với ảnh bối cảnh, nhạc nền hoặc ngoại hình vô căn cứ không.
 
-旧监督文档不审基础资产缺失与视轴，是旧流程权限与字段的限制。本技能已经包含基础资产和空间知识：缺失应登记为制作依赖并返回对应阶段，不能编造；已明确空间发生矛盾则照常指出。不能用检索到“光/影”单字就删改“目光”、固有名词、原台词或关键剧情光源。
+Tài liệu giám sát cũ không duyệt việc thiếu tài sản cơ bản và trục nhìn, đó là hạn chế về quyền hạn và trường của quy trình cũ. Skill này đã bao gồm kiến thức tài sản cơ bản và không gian: thiếu sót phải được ghi nhận là phụ thuộc sản xuất và quay lại giai đoạn tương ứng, không được bịa; không gian đã rõ ràng mà xảy ra mâu thuẫn thì chỉ ra như thường. Không được vì tìm thấy một chữ đơn lẻ liên quan đến "ánh sáng/bóng" mà xóa sửa "ánh mắt", danh từ riêng, lời thoại gốc hay nguồn sáng cốt truyện then chốt.
 
-问题报告写回本集画布，最少包含“严重程度、场/片段/镜号、实际原文或引用、影响、可选修订”。只列问题，同类轻微问题合并；检查无问题不等于用户已确认。
+Báo cáo vấn đề ghi lại vào canvas của tập này, tối thiểu gồm "mức độ nghiêm trọng, cảnh/đoạn/số shot, nguyên văn hoặc tham chiếu thực tế, ảnh hưởng, phương án sửa có thể chọn". Chỉ liệt kê vấn đề, các vấn đề nhẹ cùng loại thì gộp lại; kiểm tra không có vấn đề không có nghĩa là người dùng đã xác nhận.
 
-- 严重：忠实性破坏、真实引用错误、已确定的能力不兼容、明显无法执行的台词容量或动作关系。
-- 中等：表演、长台词切分、节奏或已确认空间关系影响理解，需要局部修正。
-- 轻微：有可用方案，但重复景别、措辞或局部格式可改善。
+- Nghiêm trọng: phá vỡ tính trung thành, lỗi tham chiếu thật, không tương thích năng lực đã xác định, dung lượng lời thoại hoặc quan hệ động tác rõ ràng không thể thực thi.
+- Trung bình: diễn xuất, cách chia lời thoại dài, nhịp điệu hoặc quan hệ không gian đã xác nhận ảnh hưởng đến việc hiểu, cần sửa cục bộ.
+- Nhẹ: đã có phương án khả dụng, nhưng có thể cải thiện cỡ cảnh lặp lại, cách dùng từ hoặc định dạng cục bộ.
 
-需要沿用旧 A/B/C/D 概览时，A 为无严重且至多 2 项中等，B 为无严重且至多 5 项中等，C 为 1～2 项严重，D 为至少 3 项严重；无严重但超过 5 项中等是旧表未覆盖情形，直接报告需处理范围，不硬凑等级。评分不代替问题证据或用户决定。
+Khi cần tiếp tục dùng tổng quan A/B/C/D cũ, A là không có nghiêm trọng và tối đa 2 mục trung bình, B là không có nghiêm trọng và tối đa 5 mục trung bình, C là 1-2 mục nghiêm trọng, D là ít nhất 3 mục nghiêm trọng; không có nghiêm trọng nhưng quá 5 mục trung bình là tình huống bảng cũ không bao phủ, báo cáo trực tiếp phạm vi cần xử lý, không ép gán cấp. Điểm đánh giá không thay thế bằng chứng vấn đề hay quyết định của người dùng.
 
-导演阶段把情绪依据、空间锚点和拟过渡写进“导演规划”；分镜阶段把景别/角度、计时、连续性与问题结论写进“分镜表/审阅记录”。无需新增固定数量的知识节点，更新本集已有对应说明即可。
+Giai đoạn đạo diễn viết căn cứ cảm xúc, mốc neo không gian và chuyển cảnh dự kiến vào "Quy hoạch đạo diễn"; giai đoạn phân cảnh viết cỡ cảnh/góc máy, tính thời gian, tính liên tục và kết luận vấn đề vào "Bảng phân cảnh/Ghi chép duyệt xét". Không cần thêm số lượng cố định node kiến thức, chỉ cần cập nhật mô tả tương ứng đã có của tập này.
 
-## 旧版依据与迁移
+## Căn cứ bản cũ và chuyển đổi
 
-依据 v1.1.8（cd3e7c4）：production_skills/storyboard_table_techniques.md、production_skills/storyboard_prompt_techniques.md、production_execution_director_plan.md、production_execution_storyboard_table.md、production_execution_storyboard_panel.md、production_agent_supervision.md。保留其可执行技法，采用后期“场→片段→镜”结构；一次读取、禁止复读、XML 输出和监督权限例外不迁移到当前画布流程。
+Căn cứ vào v1.1.8 (cd3e7c4): production_skills/storyboard_table_techniques.md, production_skills/storyboard_prompt_techniques.md, production_execution_director_plan.md, production_execution_storyboard_table.md, production_execution_storyboard_panel.md, production_agent_supervision.md. Giữ lại các kỹ pháp có thể thực thi, chọn dùng cấu trúc "cảnh→đoạn→shot" của giai đoạn sau; đọc một lần, cấm đọc lại, đầu ra XML và ngoại lệ quyền giám sát không được chuyển sang quy trình canvas hiện tại.

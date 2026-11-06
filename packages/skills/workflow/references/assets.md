@@ -1,91 +1,91 @@
-# 角色、场景与道具资产
+# Tài sản nhân vật, bối cảnh và đạo cụ
 
-> **Seedance 使用边界：** 本文件不是 Seedance 分段/提示词规则。进入主 `SKILL.md` PART A 后，只有 A1.2/A4 明确需要补真实参考资产或必要设计提案时才按需读取本文件；只用于资产外观/结构/空间/材质，不得从本文件派生第二套时长、镜头、表演、运镜、连续性或模板规则。
+> **Ranh giới sử dụng với Seedance:** File này không phải quy tắc chia đoạn/prompt của Seedance. Sau khi vào PART A của `SKILL.md` chính, chỉ khi A1.2/A4 nêu rõ cần bổ sung tài sản tham chiếu thực hoặc đề xuất thiết kế cần thiết mới đọc file này theo nhu cầu; chỉ dùng cho ngoại hình/cấu trúc/không gian/chất liệu của tài sản, không được phái sinh từ file này một bộ quy tắc thứ hai về thời lượng, shot, diễn xuất, chuyển động máy, tính liên tục hoặc mẫu.
 
-在盘点本次剧本所需资产、单独设计资产或准备可复用视觉素材时读取。用户已授权同轮交剧本与资产方案时，可从剧本草案提取清单和设计提案，标明待确认；剧情制作中的正式资产依据已确认版本。独立资产任务以用户确认的设计需求及已有素材为依据，不要求剧本或场次；下面的出处和状态只填写本次实际需要的内容。剧本范围与改编方法见[故事与剧本](sourceAndScript.md)，节点配置和生成执行见[画布执行](canvasExecution.md)。
-资产固定身份、空间和物件；表演、运镜与对白写入视频提示词。先复用符合当前设定的已确认素材，再补真实缺项。
+Đọc khi kiểm kê tài sản mà kịch bản lần này cần, thiết kế tài sản riêng lẻ hoặc chuẩn bị tư liệu hình ảnh có thể tái sử dụng. Khi người dùng đã ủy quyền giao kịch bản và phương án tài sản trong cùng lượt, có thể trích danh sách và đề xuất thiết kế từ bản nháp kịch bản, ghi rõ chờ xác nhận; tài sản chính thức trong sản xuất cốt truyện dựa trên phiên bản đã xác nhận. Tác vụ tài sản độc lập dựa trên nhu cầu thiết kế người dùng đã xác nhận và tư liệu sẵn có, không yêu cầu kịch bản hay cảnh; xuất xứ và trạng thái bên dưới chỉ điền nội dung lần này thực sự cần. Phạm vi kịch bản và phương pháp chuyển thể xem [câu chuyện và kịch bản](sourceAndScript.md), cấu hình node và thực thi tạo xem [thực thi canvas](canvasExecution.md).
+Tài sản cố định thân phận, không gian và vật; diễn xuất, chuyển động máy và lời thoại viết vào prompt video. Trước tiên tái sử dụng tư liệu đã xác nhận phù hợp với thiết lập hiện tại, rồi mới bổ sung các mục thực sự còn thiếu.
 
-需要设计或修订外观、空间、道具和变体时读取[视觉设计方法](methods/visualDesign.md)，按剧情事实、行动约束和识别需求推导，再写进资产条目与提示词。需要定画风、配色、材质或灯光时读取[色彩与用光](methods/colorAndLight.md)，区分资产本色、场景受光和片段调色；已有适用素材只复用，不重新展开设计。
+Khi cần thiết kế hoặc sửa ngoại hình, không gian, đạo cụ và biến thể, đọc [phương pháp thiết kế hình ảnh](methods/visualDesign.md), suy luận theo sự thật cốt truyện, ràng buộc hành động và nhu cầu nhận diện, rồi viết vào mục tài sản và prompt. Khi cần định phong cách vẽ, phối màu, chất liệu hoặc ánh sáng, đọc [màu sắc và ánh sáng](methods/colorAndLight.md), phân biệt màu bản thân tài sản, ánh sáng chiếu lên bối cảnh và chỉnh màu của đoạn; tư liệu phù hợp đã có thì chỉ tái sử dụng, không triển khai thiết kế lại.
 
-## 按制作范围提取需求
+## Trích xuất nhu cầu theo phạm vi sản xuất
 
-- 剧情制作完整读取本次约定的一集、一场或其他范围，以及理解连续性必需的上下文；独立设计读取本次设计需求。不要求先另写策划、大纲或完整人物小传。
-- 按场次盘点角色、场景、关键道具和持续状态，合并同一身份的别名，记录出处及适用范围；不能只为首个视频准备资产便称全片齐备。
-- 剧情制作中的独立资产应实际入画或参与可见行动，并需要复用或单独引用。对白提及的人物、偶发装饰、纯声音角色不自动生成肖像或道具图。
-- 角色记录物种、年龄或生长阶段、轮廓、识别特征与必要服装；场景记录空间锚点、通道、时间和环境状态；道具记录形制、材质、尺寸关系、持有者与状态。
-- 换装、变身、持续伤势、道具破损等影响跨段识别的变化建立必要变体；瞬时表情、转身、局部特写不单独建资产。
-- 未提供的外观可作为设计提案，不能说成原文或参考图已有事实。关键身份、数量或剧情功能有冲突时，只澄清受影响项。
-- 真实可读且适用的旧图直接复用，不为统一版式重做。名称、提示词、占位路径和风格参考均不能冒充已存在的具体资产。
+- Sản xuất cốt truyện đọc trọn một tập, một cảnh hoặc phạm vi khác đã thỏa thuận lần này, cùng ngữ cảnh cần thiết để hiểu tính liên tục; thiết kế độc lập đọc nhu cầu thiết kế lần này. Không yêu cầu viết thêm trước kế hoạch, dàn ý hay tiểu sử nhân vật hoàn chỉnh.
+- Kiểm kê nhân vật, bối cảnh, đạo cụ then chốt và trạng thái kéo dài theo cảnh, gộp các biệt danh của cùng một thân phận, ghi xuất xứ và phạm vi áp dụng; không được chỉ chuẩn bị tài sản cho video đầu tiên mà tuyên bố cả phim đã đủ.
+- Tài sản độc lập trong sản xuất cốt truyện phải thực sự vào khung hình hoặc tham gia hành động nhìn thấy được, và cần tái sử dụng hoặc tham chiếu riêng. Nhân vật được nhắc trong lời thoại, đồ trang trí ngẫu nhiên, nhân vật chỉ có giọng thì không tự động tạo chân dung hay ảnh đạo cụ.
+- Nhân vật ghi loài, tuổi hoặc giai đoạn phát triển, đường nét, đặc điểm nhận diện và trang phục cần thiết; bối cảnh ghi mốc không gian, lối đi, thời gian và trạng thái môi trường; đạo cụ ghi hình dáng, chất liệu, quan hệ kích thước, người nắm giữ và trạng thái.
+- Thay đồ, biến hình, vết thương kéo dài, đạo cụ hư hỏng và các thay đổi ảnh hưởng nhận diện xuyên đoạn thì lập biến thể cần thiết; biểu cảm tức thời, quay người, cận cảnh cục bộ không lập tài sản riêng.
+- Ngoại hình chưa được cung cấp có thể làm đề xuất thiết kế, không được nói là sự thật đã có trong nguyên văn hoặc ảnh tham chiếu. Khi thân phận then chốt, số lượng hoặc chức năng cốt truyện xung đột, chỉ làm rõ các mục bị ảnh hưởng.
+- Ảnh cũ thực sự đọc được và phù hợp thì dùng lại trực tiếp, không làm lại để thống nhất bố cục. Tên, prompt, đường dẫn giữ chỗ và tham chiếu phong cách đều không thể giả làm tài sản cụ thể đã tồn tại.
 
-资产表可并入现有制作文档，不另造一套重复正文：
+Bảng tài sản có thể gộp vào tài liệu sản xuất hiện có, không tạo thêm một bộ nội dung trùng lặp:
 
-| 资产标识与名称 | 类型与状态 | 剧本或设计需求出处及使用范围 | 外观或结构锚点 | 已有节点与真实文件 | 本次处理 | 状态 |
+| Định danh và tên tài sản | Loại và trạng thái | Xuất xứ kịch bản hoặc nhu cầu thiết kế và phạm vi sử dụng | Mốc ngoại hình hoặc cấu trúc | Node đã có và file thực | Xử lý lần này | Trạng thái |
 | --- | --- | --- | --- | --- | --- | --- |
-| {稳定标识、名称} | {角色／场景／道具，基础态或变体} | {场次、事件、片段或指定设计用途} | {保持项及允许变化} | {实际位置；缺失写缺失} | {复用／补图／变体} | {待设计／待生成／生成中／待验收／已采用} |
+| {định danh ổn định, tên} | {nhân vật / bối cảnh / đạo cụ, trạng thái cơ sở hoặc biến thể} | {cảnh, sự kiện, đoạn hoặc mục đích thiết kế được chỉ định} | {mục giữ nguyên và thay đổi được phép} | {vị trí thực tế; thiếu thì ghi thiếu} | {tái sử dụng / bổ sung ảnh / biến thể} | {chờ thiết kế / chờ tạo / đang tạo / chờ nghiệm thu / đã chọn dùng} |
 
-## 角色：特写与完整三视图
+## Nhân vật: cận cảnh và ba góc nhìn hoàn chỉnh
 
-新建角色默认用一张参考板，横向排列**头部特写、正面全身、右侧 90° 全身、背面全身**。四个视角描述同一身份、同一状态，不是四个角色。
+Nhân vật mới mặc định dùng một bảng tham chiếu, xếp ngang **cận cảnh đầu, toàn thân chính diện, toàn thân nghiêng phải 90°, toàn thân sau lưng**. Bốn góc nhìn mô tả cùng một thân phận, cùng một trạng thái, không phải bốn nhân vật.
 
-- 特写保留完整头部至锁骨附近；三个全身视角保留头顶、身体、四肢及脚部，不能裁头、截身或切脚。
-- 全身视角比例一致，特写可放大；身份、体型、发型、服装、配色和携带物一致，视图互不遮挡。
-- 使用自然静态姿态、中性表情与符合画风的简洁背景；不混入剧情场景、动作过程、其他角色或标注。
-- 动物按其既定身体结构和自然姿态适配；无腿、无翼或特殊生长阶段不因套模板长出额外器官。群体的外观样本数量与剧情出场数量分别记录。
-- 用户指定的版式及适用旧图继续保留。变体使用实际基础图，只改变有依据的部位、服装或物件，保留未变项。
-
-```text
-{已确认风格}角色参考板，同一角色为{名称、身份或物种、年龄或生长阶段}。
-外观锚点：{轮廓、体型、头部特征、表皮或毛发、配色、服装及必要识别物}。
-同一画面横向排列：头部特写、正面完整全身、右侧90°完整全身、背面完整全身。
-各视角身份与状态一致，全身尺度一致，完整保留{适用身体结构}，不裁切、不重叠。
-{自然静态姿态}，中性表情，{符合风格的简洁背景与光照或平涂方式}。
-{有真实参考才填写：使用 {{ref N}} 的某身份与状态，仅改变哪些已确认内容，保留哪些部分。}
-保留已确认服装、徽记等必要文字或图案；无剧情场景、额外角色、动作过程、无关说明字、水印或尺寸标注。
-```
-
-## 场景：可复用的空间主视图
-
-- 默认一张能说明场地的主视图，交代前中后层次、主要出入口、通道及稳定建筑或地形；保留人物行动所需空间。
-- 同一地点内，只有结构不同且独立承载剧情的空间才另拆资产。时间、天气或破坏状态改变时按实际需要补变体，不穷举方向。
-- 独立场景图不夹带人物、人影或故事动物；后续视频用角色参考加入主体，不把场景做成灰底物件展示。
-- 空间表达服从画风；扁平色块不必强加写实景深和复杂阴影。需要环视板时再采用用户确认的布局。
+- Cận cảnh giữ trọn phần đầu đến gần xương quai xanh; ba góc toàn thân giữ đỉnh đầu, thân, tứ chi và bàn chân, không được cắt đầu, cắt thân hay cắt chân.
+- Tỉ lệ các góc toàn thân nhất quán, cận cảnh có thể phóng to; thân phận, vóc dáng, kiểu tóc, trang phục, phối màu và vật mang theo nhất quán, các góc nhìn không che khuất nhau.
+- Dùng tư thế tĩnh tự nhiên, biểu cảm trung tính và nền đơn giản hợp phong cách vẽ; không trộn bối cảnh cốt truyện, quá trình hành động, nhân vật khác hay chú thích.
+- Động vật thích ứng theo cấu trúc cơ thể đã định và tư thế tự nhiên của nó; không chân, không cánh hoặc giai đoạn phát triển đặc biệt thì không vì áp mẫu mà mọc thêm cơ quan. Số mẫu ngoại hình của nhóm và số lượng xuất hiện trong cốt truyện ghi riêng.
+- Bố cục người dùng chỉ định và ảnh cũ phù hợp tiếp tục giữ. Biến thể dùng ảnh cơ sở thực tế, chỉ thay đổi bộ phận, trang phục hoặc vật có căn cứ, giữ các mục không đổi.
 
 ```text
-{已确认风格}场景主视图：{场景名、室内外、地理或建筑类型、时段与天气}。
-前景{进入空间的元素}；中景{主要活动区与固定物件}；后景{边界及远处结构}。
-空间关系：{出入口、通道、稳定地标及必要的相对位置}，保留{剧情所需活动空间}。
-材质与视觉：{材质、配色及符合风格的光照或平涂方式}。
-单画面主视图，{观察高度和方向}，结构清楚；无人物、人影、故事动物、剧情动作或标注。
-{有真实参考才填写：使用 {{ref N}} 保持哪些布局和材质，仅改变哪个时段、状态或视角。}
+Bảng tham chiếu nhân vật {phong cách đã xác nhận}, cùng một nhân vật là {tên, thân phận hoặc loài, tuổi hoặc giai đoạn phát triển}.
+Mốc ngoại hình: {đường nét, vóc dáng, đặc điểm đầu, da hoặc lông, phối màu, trang phục và vật nhận diện cần thiết}.
+Trong cùng khung hình xếp ngang: cận cảnh đầu, toàn thân chính diện hoàn chỉnh, toàn thân nghiêng phải 90° hoàn chỉnh, toàn thân sau lưng hoàn chỉnh.
+Thân phận và trạng thái các góc nhìn nhất quán, tỉ lệ toàn thân nhất quán, giữ trọn {cấu trúc cơ thể áp dụng}, không cắt, không chồng lấn.
+{tư thế tĩnh tự nhiên}, biểu cảm trung tính, {nền đơn giản hợp phong cách và cách chiếu sáng hoặc tô phẳng}.
+{Chỉ điền khi có tham chiếu thực: dùng thân phận và trạng thái nào của {{ref N}}, chỉ thay đổi những nội dung đã xác nhận nào, giữ những phần nào.}
+Giữ trang phục, huy hiệu và các chữ hoặc họa tiết cần thiết đã xác nhận; không có bối cảnh cốt truyện, nhân vật thừa, quá trình hành động, chữ chú thích không liên quan, watermark hoặc chú thích kích thước.
 ```
 
-## 道具：按识别需要展示结构
+## Bối cảnh: khung nhìn chính không gian có thể tái sử dụng
 
-- 只为剧情关键且现有资产无法完整覆盖的物件补图；普通装饰不逐件拆出，衣饰优先作为角色外观的一部分处理。
-- 新建道具默认采用当前 Toonflow 的一张 2×2 参考板：正面、右侧90°、背面、局部细节。已确认且能覆盖本次用途的独立静物图可直接复用；用户选择单图时沿用，不为版式补无用途图片。
-- 多视图始终为同一个物件，各视角结构、材质、尺寸关系和状态一致；局部特写只放大真实存在的结构。
-- 道具独立摆放，不附带人物、手臂或握持姿态。已有文字、符号或图案按剧情保留，不添加无关说明字或水印。
+- Mặc định một khung nhìn chính có thể giải thích địa điểm, thể hiện các lớp tiền - trung - hậu cảnh, lối ra vào chính, lối đi và kiến trúc hoặc địa hình ổn định; chừa không gian cần cho hành động của nhân vật.
+- Trong cùng một địa điểm, chỉ những không gian có cấu trúc khác và độc lập gánh cốt truyện mới tách thành tài sản riêng. Khi thời gian, thời tiết hoặc trạng thái phá hủy thay đổi, bổ sung biến thể theo nhu cầu thực tế, không liệt kê hết các hướng.
+- Ảnh bối cảnh độc lập không kèm nhân vật, bóng người hay động vật trong truyện; video về sau dùng tham chiếu nhân vật để đưa chủ thể vào, không biến bối cảnh thành ảnh trưng bày vật trên nền xám.
+- Cách thể hiện không gian tuân theo phong cách vẽ; mảng màu phẳng không cần ép độ sâu trường ảnh tả thực và bóng đổ phức tạp. Khi cần bảng nhìn vòng quanh mới dùng bố cục người dùng đã xác nhận.
 
 ```text
-{已确认风格}道具资产，唯一物件为{名称、形制、用途、材质、配色、尺寸关系与状态}。
-关键结构：{功能部件、装饰、影响剧情识别的细节}。
-展示方式：{默认2×2：左上正面、右上右侧90°、左下背面、右下局部细节；用户另有已确认版式时替换本项}。
-各视角同一结构和状态，完整展示、不裁切，{符合画风的简洁背景与光照}。
-{有真实参考才填写：使用 {{ref N}} 保持哪些结构，仅改变哪个已确认状态。}
-无人物、手部、额外物件和剧情背景；{需要保留的实际文字或图案}，无无关标注或水印。
+Khung nhìn chính bối cảnh {phong cách đã xác nhận}: {tên bối cảnh, trong nhà hay ngoài trời, loại địa lý hoặc kiến trúc, thời đoạn và thời tiết}.
+Tiền cảnh {yếu tố dẫn vào không gian}; trung cảnh {khu hoạt động chính và vật cố định}; hậu cảnh {ranh giới và cấu trúc ở xa}.
+Quan hệ không gian: {lối ra vào, lối đi, mốc ổn định và vị trí tương đối cần thiết}, chừa {không gian hoạt động cốt truyện cần}.
+Chất liệu và hình ảnh: {chất liệu, phối màu và cách chiếu sáng hoặc tô phẳng hợp phong cách}.
+Khung nhìn chính một khung hình, {độ cao và hướng quan sát}, cấu trúc rõ ràng; không có nhân vật, bóng người, động vật trong truyện, hành động cốt truyện hay chú thích.
+{Chỉ điền khi có tham chiếu thực: dùng {{ref N}} giữ những bố cục và chất liệu nào, chỉ thay đổi thời đoạn, trạng thái hoặc góc nhìn nào.}
 ```
 
-## 声音角色与视觉状态
+## Đạo cụ: thể hiện cấu trúc theo nhu cầu nhận diện
 
-仅以 OS、VO 或画外对白出现的角色保留声音身份、台词出处与声线描述，不为其生成无用途肖像。声线可用音区、音色、语速、口音和表达习惯描述，跨段沿用。
-当前视频模型支持原生声音时，可直接使用已确认的文字声线；真实音频只在确有素材且能力支持时作为声音参考，不假造引用，也不把取得外部音色样本设为前置。
-视觉资产变化不自动改变声音身份。持续变体记录“原状态 → 触发事件 → 新状态 → 适用场次”，保留旧状态供此前片段使用。
+- Chỉ bổ sung ảnh cho vật then chốt trong cốt truyện mà tài sản hiện có không bao phủ đầy đủ; đồ trang trí thông thường không tách từng món, trang sức quần áo ưu tiên xử lý như một phần ngoại hình nhân vật.
+- Đạo cụ mới mặc định dùng một bảng tham chiếu 2×2 của Toonflow hiện tại: chính diện, nghiêng phải 90°, sau lưng, chi tiết cục bộ. Ảnh tĩnh vật độc lập đã xác nhận và bao phủ được mục đích lần này thì dùng lại trực tiếp; người dùng chọn ảnh đơn thì dùng tiếp, không vì bố cục mà bổ sung ảnh vô dụng.
+- Nhiều góc nhìn luôn là cùng một vật, cấu trúc, chất liệu, quan hệ kích thước và trạng thái ở các góc nhất quán; cận cảnh cục bộ chỉ phóng to cấu trúc thực sự tồn tại.
+- Đạo cụ đặt độc lập, không kèm nhân vật, cánh tay hay tư thế cầm nắm. Chữ, ký hiệu hoặc họa tiết đã có thì giữ theo cốt truyện, không thêm chữ chú thích không liên quan hoặc watermark.
 
-## 准备生成与验收
+```text
+Tài sản đạo cụ {phong cách đã xác nhận}, vật duy nhất là {tên, hình dáng, công dụng, chất liệu, phối màu, quan hệ kích thước và trạng thái}.
+Cấu trúc then chốt: {bộ phận chức năng, trang trí, chi tiết ảnh hưởng nhận diện cốt truyện}.
+Cách trình bày: {mặc định 2×2: trên trái chính diện, trên phải nghiêng phải 90°, dưới trái sau lưng, dưới phải chi tiết cục bộ; khi người dùng có bố cục khác đã xác nhận thì thay mục này}.
+Các góc nhìn cùng cấu trúc và trạng thái, trình bày đầy đủ, không cắt, {nền đơn giản và ánh sáng hợp phong cách vẽ}.
+{Chỉ điền khi có tham chiếu thực: dùng {{ref N}} giữ những cấu trúc nào, chỉ thay đổi trạng thái đã xác nhận nào.}
+Không có nhân vật, bàn tay, vật thừa và nền cốt truyện; {chữ hoặc họa tiết thực tế cần giữ}, không có chú thích không liên quan hoặc watermark.
+```
 
-- 先交可查看的全量清单与设计，按用户授权制作缺项；提示词准备完成与实际生成分开登记，生成授权依[画布执行](canvasExecution.md)统一处理。
-- 由实际 `node:getConfig` 能力选择模型、比例、分辨率和参考模式；横排参考板要能容纳完整身体，参数与文字布局一致，不绑定某个型号或固定画幅。
-- 真实素材接入后核对引用编号与用途。变体缺少所需基础图时标明待补参考，不假装完成图生图；可继续已授权的文字工作。
-- 检查身份、结构、完整身体、视图顺序、持续状态、空间布局、是否夹带主体及文件可读性；展示实际图和问题，按用户结果决定登记采用。
-- 视频只引用资产的身份、空间和结构，不复现参考板背景、网格或视图数量；剧情人数与物件数量由剧本决定。
-- 已采用素材与候选分开，变更只影响实际使用它的片段，版本和交付按[状态与交付](stateAndDelivery.md)记录。
+## Nhân vật giọng nói và trạng thái hình ảnh
+
+Nhân vật chỉ xuất hiện qua OS, VO hoặc lời thoại ngoài khung hình thì giữ thân phận giọng nói, xuất xứ lời thoại và mô tả chất giọng, không tạo chân dung vô dụng cho họ. Chất giọng có thể mô tả bằng âm vực, âm sắc, tốc độ nói, khẩu âm và thói quen diễn đạt, dùng xuyên suốt các đoạn.
+Khi mô hình video hiện tại hỗ trợ âm thanh gốc, có thể dùng trực tiếp chất giọng dạng chữ đã xác nhận; âm thanh thực chỉ làm tham chiếu giọng khi thực sự có tư liệu và năng lực hỗ trợ, không giả tạo tham chiếu, cũng không đặt việc lấy mẫu giọng bên ngoài làm điều kiện tiên quyết.
+Thay đổi tài sản hình ảnh không tự động thay đổi thân phận giọng nói. Biến thể kéo dài ghi "trạng thái cũ → sự kiện kích hoạt → trạng thái mới → cảnh áp dụng", giữ trạng thái cũ cho các đoạn trước đó dùng.
+
+## Chuẩn bị tạo và nghiệm thu
+
+- Trước tiên giao danh sách và thiết kế đầy đủ có thể xem được, làm các mục thiếu theo ủy quyền của người dùng; việc chuẩn bị xong prompt và việc tạo thực tế ghi nhận riêng, ủy quyền tạo xử lý thống nhất theo [thực thi canvas](canvasExecution.md).
+- Chọn mô hình, tỉ lệ khung, độ phân giải và chế độ tham chiếu theo năng lực `node:getConfig` thực tế; bảng tham chiếu xếp ngang phải chứa được toàn thân, tham số và bố cục chữ nhất quán, không gắn với một model hay tỉ lệ khung cố định nào.
+- Sau khi tư liệu thực được nối vào, đối chiếu số tham chiếu và mục đích. Biến thể thiếu ảnh cơ sở cần thiết thì ghi rõ chờ bổ sung tham chiếu, không giả vờ đã hoàn thành ảnh-sang-ảnh; có thể tiếp tục công việc văn bản đã được ủy quyền.
+- Kiểm tra thân phận, cấu trúc, toàn thân đầy đủ, thứ tự góc nhìn, trạng thái kéo dài, bố cục không gian, có kèm chủ thể không và khả năng đọc file; trình bày ảnh thực tế và vấn đề, theo kết quả của người dùng quyết định ghi nhận chọn dùng.
+- Video chỉ tham chiếu thân phận, không gian và cấu trúc của tài sản, không tái hiện nền, lưới hay số góc nhìn của bảng tham chiếu; số người và số vật trong cốt truyện do kịch bản quyết định.
+- Tư liệu đã chọn dùng và ứng viên tách riêng, thay đổi chỉ ảnh hưởng các đoạn thực sự dùng nó, phiên bản và giao nộp ghi theo [trạng thái và giao nộp](stateAndDelivery.md).

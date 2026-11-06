@@ -1,60 +1,60 @@
-# 故事骨架与分集大纲
+# Khung xương câu chuyện và đại cương theo tập
 
-本阶段确定故事线、人物弧和分集方案；旧版将它们统一放在故事骨架中。
+Giai đoạn này xác định tuyến truyện, cung nhân vật và phương án chia tập; bản cũ đặt chung chúng trong khung xương câu chuyện.
 
-## 输入
+## Đầu vào
 
-- 已确认的项目配置：总集数、单集时长、来源范围、画幅、风格及改编限制。
-- 已确认的原文索引和章节事件表，以及剧本画布已有的骨架与确认记录。
-- 用户明确要求的重点人物、保留情节、结局方向及适用的发行安排。
+- Cấu hình dự án đã xác nhận: tổng số tập, thời lượng mỗi tập, phạm vi nguồn, tỉ lệ khung, phong cách và giới hạn chuyển thể.
+- Chỉ mục nguyên văn và bảng sự kiện chương đã xác nhận, cùng khung xương và bản ghi xác nhận đã có trên canvas kịch bản.
+- Các nhân vật trọng điểm, tình tiết cần giữ, hướng kết cục và lịch phát hành áp dụng mà người dùng yêu cầu rõ.
 
-## 执行前必读
+## Bắt buộc đọc trước khi thực hiện
 
-- 必须读取 [编剧方法](knowledge/scriptCraft.md) 的密度、故事核、人物、信息差与反转、成果模板及审核章节；采用商业短剧节奏时再读其量化参考。
-- 必须读取 [叙事类型](knowledge/narrativeGenres.md) 的通用规则和已确认主类型；确有类型融合再读辅助类型。按对应节拍组织骨架，不把单线、反转数量或快节奏套给所有题材。
+- Phải đọc các chương về mật độ, lõi câu chuyện, nhân vật, chênh lệch thông tin và cú lật, mẫu thành phẩm và thẩm định trong [Phương pháp biên kịch](knowledge/scriptCraft.md); khi chọn dùng nhịp phim ngắn thương mại thì đọc thêm phần tham chiếu định lượng của nó.
+- Phải đọc quy tắc chung và thể loại chính đã xác nhận trong [Thể loại tự sự](knowledge/narrativeGenres.md); khi thực sự có pha trộn thể loại thì đọc thêm thể loại phụ trợ. Tổ chức khung xương theo nhịp tương ứng, không áp tuyến đơn, số lượng cú lật hoặc nhịp nhanh cho mọi đề tài.
 
-## 执行方法
+## Phương pháp thực hiện
 
-1. 按 [画布操作](canvasOperations.md) 回读真实节点；已有骨架先理解再局部修改。
-2. 用一句话确定故事核：主角的目标、核心阻碍及故事最有吸引力的矛盾。
-3. 写出主角从初始状态，经关键变故，到最终变化的人物弧；核心人物写身份、特征、境遇、行动、结局方向。
-4. 组织建立、发展、高潮与收束的三幕结构，说明每幕功能、覆盖来源、对应集数及幕末转折。
-5. 按已确认总集数逐集编排；每集明确因果承接、冲突/关系/情绪变化、新信息与结束点。普通集建立下一集期待；终集兑现已确认结局，只有用户要求开放结局或续季时才保留后续悬念。
-6. 对每一处保留、压缩、合并或删除说明依据，避免只把章节平均分配到集数。
-7. 为关键反转登记预埋信息与兑现位置；揭晓必须有前置依据，不能改写未获允许的人设。
-8. 项目确有付费或发行卡点要求时按已确认配置设计；未要求时不强加营销节奏。
+1. Theo [Thao tác canvas](canvasOperations.md) đọc lại node thật; khung xương đã có thì hiểu trước rồi sửa cục bộ.
+2. Dùng một câu xác định lõi câu chuyện: mục tiêu của nhân vật chính, trở ngại cốt lõi và mâu thuẫn hấp dẫn nhất của câu chuyện.
+3. Viết cung nhân vật của nhân vật chính từ trạng thái ban đầu, qua biến cố then chốt, đến thay đổi cuối cùng; nhân vật cốt lõi viết thân phận, đặc điểm, hoàn cảnh, hành động, hướng kết cục.
+4. Tổ chức cấu trúc ba hồi gồm thiết lập, phát triển, cao trào và khép lại, nói rõ chức năng mỗi hồi, nguồn bao phủ, số tập tương ứng và bước ngoặt cuối hồi.
+5. Sắp xếp từng tập theo tổng số tập đã xác nhận; mỗi tập nêu rõ sự tiếp nối nhân quả, thay đổi xung đột/quan hệ/cảm xúc, thông tin mới và điểm kết thúc. Tập thường tạo kỳ vọng cho tập sau; tập cuối thực hiện kết cục đã xác nhận, chỉ khi người dùng yêu cầu kết mở hoặc phần tiếp theo mới giữ lại hồi hộp về sau.
+6. Với mỗi chỗ giữ lại, nén, gộp hoặc xóa đều nói rõ căn cứ, tránh chỉ chia đều các chương vào số tập.
+7. Đăng ký thông tin cài cắm và vị trí thực hiện cho các cú lật then chốt; việc hé lộ phải có căn cứ trước đó, không được sửa thiết lập nhân vật khi chưa được phép.
+8. Khi dự án thực sự có yêu cầu điểm chặn trả phí hoặc phát hành thì thiết kế theo cấu hình đã xác nhận; không yêu cầu thì không áp đặt nhịp marketing.
 
-## 写入剧本画布
+## Ghi vào canvas kịch bản
 
-默认位置为工作区 `画布/剧本.json`；所有骨架与全部集数的大纲都在这一总画布。
+Vị trí mặc định là `Canvas/Kịch bản.json` trong workspace; toàn bộ khung xương và đại cương của tất cả các tập đều ở canvas tổng này.
 
-- “故事骨架”节点：故事核、欲望与阻碍、人物弧的关键事件、五要素小传、能力边界/代价、说话方式、出场设计、三幕结构。
-- “分集大纲”节点或按集分组的节点：来源处理、目标/阻碍/选择/结果、情绪变化、新信息及观众与角色的知情差、结尾期待。
-- “改编决策记录”节点：全局删减依据、伏笔来源与预埋/揭晓位置、适用的发行卡点。
-- “叙事方法决策”节点：主/辅助类型、选用的段落节拍、关系或权力变化、具体表演动作、声音意图及放弃的模板与原因；不能只写类型标签。
-- 更新对应的已有节点，并按 [画布操作](canvasOperations.md) 保留真实节点定位。
+- Node "Khung xương câu chuyện": lõi câu chuyện, khát vọng và trở ngại, sự kiện then chốt của cung nhân vật, tiểu sử năm yếu tố, ranh giới năng lực/cái giá, cách nói chuyện, thiết kế xuất hiện, cấu trúc ba hồi.
+- Node "Đại cương theo tập" hoặc các node nhóm theo tập: cách xử lý nguồn, mục tiêu/trở ngại/lựa chọn/kết quả, thay đổi cảm xúc, thông tin mới và chênh lệch hiểu biết giữa khán giả và nhân vật, kỳ vọng ở cuối.
+- Node "Nhật ký quyết định chuyển thể": căn cứ cắt giảm toàn cục, nguồn phục bút và vị trí cài cắm/hé lộ, điểm chặn phát hành áp dụng.
+- Node "Quyết định phương pháp tự sự": thể loại chính/phụ trợ, nhịp đoạn được chọn, thay đổi quan hệ hoặc quyền lực, động tác diễn xuất cụ thể, ý đồ âm thanh và các mẫu bị loại bỏ cùng lý do; không được chỉ ghi nhãn thể loại.
+- Cập nhật node tương ứng đã có, và theo [Thao tác canvas](canvasOperations.md) giữ định vị node thật.
 
-逐集大纲最少包含：
+Đại cương từng tập tối thiểu gồm:
 
-| 集号 | 集标题 | 来源范围 | 戏剧功能 | 场景核心 | 来源处理及理由 | 结束点与期待/收束 |
+| Số tập | Tiêu đề tập | Phạm vi nguồn | Chức năng kịch tính | Lõi cảnh | Xử lý nguồn và lý do | Điểm kết thúc và kỳ vọng/khép lại |
 |---|---|---|---|---|---|---|
-| 单个整数 | 本集标题 | 真实章/段 | 本集作用 | 主要冲突与变化 | 保留/压缩/合并/删除 | 下一步期待或终集兑现 |
+| Một số nguyên | Tiêu đề tập này | Chương/đoạn thật | Vai trò của tập này | Xung đột và thay đổi chính | Giữ/Nén/Gộp/Xóa | Kỳ vọng bước tiếp hoặc thực hiện ở tập cuối |
 
-总集数较多时先写总览，再展开首集、幕末转折集、高潮集及用户指定集；总览仍须一行一集，不用范围行代替多个集数。
+Khi tổng số tập nhiều thì viết tổng quan trước, rồi triển khai tập đầu, tập bước ngoặt cuối hồi, tập cao trào và các tập người dùng chỉ định; tổng quan vẫn phải một dòng một tập, không dùng dòng phạm vi thay cho nhiều tập.
 
-## 质量门与确认
+## Cổng chất lượng và xác nhận
 
-- 分集数量恰好等于配置，不跳号、不重复；一章拆成多集时注明各集使用片段。
-- 全部来源均有明确去向，包括被删内容；无不存在的章节或未经允许的新情节。
-- 人物动机和变化成立；三幕因果连贯；每集有实质推进和适合本项目的结束点。
-- 预计篇幅适合目标时长；删减记录与分集内容一致；反转能追溯到预埋依据。
-- 按编剧方法的审核维度定位问题：欲望与阻碍是否成立、人物选择是否带来后果、各集是否新增信息/情绪/关系，类型节拍是否实际落到集数和场景。
-- 写入后回读成果，独立检查上述问题，向用户展示方案摘要、具体问题与建议。
-- 等待用户明确通过、指定修改或重做；评分、内部自检通过均不能代替用户确认。
-- 局部修改只更新受影响的集、人物或决策，同时检查上下集和主线连贯性。
+- Số tập đúng bằng cấu hình, không nhảy số, không trùng lặp; một chương tách thành nhiều tập thì ghi rõ đoạn mỗi tập sử dụng.
+- Toàn bộ nguồn đều có đích đến rõ ràng, kể cả nội dung bị xóa; không có chương không tồn tại hoặc tình tiết mới chưa được phép.
+- Động cơ và thay đổi của nhân vật hợp lý; nhân quả ba hồi liền mạch; mỗi tập có tiến triển thực chất và điểm kết thúc phù hợp với dự án này.
+- Độ dài dự kiến phù hợp thời lượng mục tiêu; nhật ký cắt giảm khớp với nội dung các tập; cú lật truy ngược được về căn cứ cài cắm.
+- Định vị vấn đề theo các chiều thẩm định của phương pháp biên kịch: khát vọng và trở ngại có thành lập không, lựa chọn của nhân vật có mang lại hệ quả không, các tập có thêm thông tin/cảm xúc/quan hệ không, nhịp thể loại có thực sự rơi vào tập và cảnh không.
+- Sau khi ghi, đọc lại thành phẩm, kiểm tra độc lập các vấn đề trên, trình bày cho người dùng tóm tắt phương án, vấn đề cụ thể và đề xuất.
+- Chờ người dùng thông qua rõ ràng, chỉ định sửa hoặc làm lại; chấm điểm hay tự kiểm nội bộ đạt đều không thay được xác nhận của người dùng.
+- Sửa cục bộ chỉ cập nhật tập, nhân vật hoặc quyết định bị ảnh hưởng, đồng thời kiểm tra tập trước sau và tính liền mạch của tuyến chính.
 
-确认后进入 [改编策略](adaptationStrategy.md)。
+Sau khi xác nhận vào [Chiến lược chuyển thể](adaptationStrategy.md).
 
-## 旧版依据
+## Căn cứ bản cũ
 
-`data/skills/script_execution_skeleton.md`、`data/skills/script_agent_supervision.md`、`data/skills/script_agent_decision.md`。
+`data/skills/script_execution_skeleton.md`, `data/skills/script_agent_supervision.md`, `data/skills/script_agent_decision.md`.
