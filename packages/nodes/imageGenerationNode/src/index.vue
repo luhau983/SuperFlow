@@ -11,17 +11,17 @@
     :style="{ width: (previewUrl || inpaintGuideUrl) && imageWidth ? `${imageWidth + 18}px` : undefined }">
     <template v-if="editor?.mode" #top><div ref="paintToolbar" /></template>
     <template #topActions>
-      <el-button class="panoramaButton" :icon="IconPanoramaHorizontal" :disabled="generating || deleting || uploading || editor?.busy || lighting?.generating || multiAngle?.generating || gridSplit?.splitting || panorama?.busy || !previewUrl" text title="全景图" aria-label="全景图" @click.stop="panorama?.open($event)">全景图<icon-chevron-down class="menuChevron" :size="14" /></el-button>
-      <el-button :icon="IconBrush" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="局部重绘" aria-label="局部重绘" @click.stop="startEditor('inpaint')">局部重绘</el-button>
-      <el-button :icon="IconSun" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="打光" aria-label="打光" @click.stop="openLighting">打光</el-button>
-      <el-button :icon="IconCameraRotate" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="多角度" aria-label="多角度" @click.stop="openMultiAngle">多角度</el-button>
-      <el-button :icon="IconLayoutGrid" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl" :loading="gridSplit?.splitting" text title="宫格切分" aria-label="宫格切分" @click.stop="gridSplit?.open($event)">宫格切分</el-button>
+      <el-button class="panoramaButton" :icon="IconPanoramaHorizontal" :disabled="generating || deleting || uploading || editor?.busy || lighting?.generating || multiAngle?.generating || gridSplit?.splitting || panorama?.busy || !previewUrl" text title="Ảnh toàn cảnh" aria-label="Ảnh toàn cảnh" @click.stop="panorama?.open($event)">Ảnh toàn cảnh<icon-chevron-down class="menuChevron" :size="14" /></el-button>
+      <el-button :icon="IconBrush" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Vẽ lại vùng chọn" aria-label="Vẽ lại vùng chọn" @click.stop="startEditor('inpaint')">Vẽ lại vùng chọn</el-button>
+      <el-button :icon="IconSun" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Chiếu sáng" aria-label="Chiếu sáng" @click.stop="openLighting">Chiếu sáng</el-button>
+      <el-button :icon="IconCameraRotate" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Nhiều góc nhìn" aria-label="Nhiều góc nhìn" @click.stop="openMultiAngle">Nhiều góc nhìn</el-button>
+      <el-button :icon="IconLayoutGrid" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl" :loading="gridSplit?.splitting" text title="Chia theo lưới" aria-label="Chia theo lưới" @click.stop="gridSplit?.open($event)">Chia theo lưới</el-button>
       <mediaHistory mediaType="image" :current="outputFile" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy" @select="outputs.image = { dataType: 'IMAGE', value: $event }" />
-      <el-button :icon="IconTransfer" :loading="uploading" :disabled="generating || deleting || lighting?.generating || multiAngle?.generating || panorama?.busy" text title="替换图片" aria-label="替换图片" @click.stop="fileInput?.click()">替换图片</el-button>
-      <input ref="fileInput" type="file" accept="image/*" hidden aria-label="选择替换图片" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy" @change="replaceOutput" />
+      <el-button :icon="IconTransfer" :loading="uploading" :disabled="generating || deleting || lighting?.generating || multiAngle?.generating || panorama?.busy" text title="Thay hình ảnh" aria-label="Thay hình ảnh" @click.stop="fileInput?.click()">Thay hình ảnh</el-button>
+      <input ref="fileInput" type="file" accept="image/*" hidden aria-label="Chọn hình ảnh thay thế" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy" @change="replaceOutput" />
     </template>
     <template #topRightActions>
-      <el-button :icon="IconPencil" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="标记" aria-label="标记" @click.stop="startEditor('mark')" />
+      <el-button :icon="IconPencil" :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy || !previewUrl || gridSplit?.splitting" text title="Đánh dấu" aria-label="Đánh dấu" @click.stop="startEditor('mark')" />
     </template>
     <div v-loading="generating || uploading" class="imageContent nopan" :aria-busy="generating || uploading">
       <imageEditor
@@ -30,14 +30,14 @@
         :src="previewUrl"
         :toolbarTarget="paintToolbar"
         :disabled="generating || deleting || uploading || lighting?.generating || multiAngle?.generating || panorama?.busy"
-        alt="生成图片"
+        alt="Tạo hình ảnh"
         @load="resizeImage"
-        @error="showNodeError('无法预览该图片', '图片预览失败')" />
+        @error="showNodeError('Không thể xem trước hình ảnh này', 'Xem trước hình ảnh thất bại')" />
       <div v-else-if="inpaintGuideUrl" class="inpaintGuide">
-        <img :src="inpaintGuideUrl" alt="局部重绘标注图" draggable="false" @load="resizeImage" @error="showNodeError('无法读取重绘标注图', '重绘标注读取失败')" />
-        <span>红色标注为重绘区域</span>
+        <img :src="inpaintGuideUrl" alt="Ảnh đánh dấu vùng vẽ lại" draggable="false" @load="resizeImage" @error="showNodeError('Không thể đọc ảnh đánh dấu vùng vẽ lại', 'Không thể đọc đánh dấu vùng vẽ lại')" />
+        <span>Vùng đánh dấu đỏ là vùng cần vẽ lại</span>
       </div>
-      <div v-else class="imageEmpty" role="img" aria-label="暂无生成图片">
+      <div v-else class="imageEmpty" role="img" aria-label="Chưa có hình ảnh được tạo">
         <icon-photo-ai :size="48" stroke="1.25" aria-hidden="true" />
       </div>
     </div>
@@ -45,7 +45,7 @@
       <div v-if="lightingVisible" ref="lightingTarget" />
       <div v-else-if="multiAngleVisible" ref="multiAngleTarget" />
       <el-card v-else class="promptCard" shadow="never" :bodyStyle="{ padding: '14px 16px 12px' }">
-        <el-button v-if="inpaintGuideUrl && editor?.mode !== 'inpaint'" class="inpaintInfo" text :icon="IconBrush" @click="inpaintPreviewVisible = true">查看重绘标注</el-button>
+        <el-button v-if="inpaintGuideUrl && editor?.mode !== 'inpaint'" class="inpaintInfo" text :icon="IconBrush" @click="inpaintPreviewVisible = true">Xem vùng vẽ lại</el-button>
         <referenceItem
           v-if="refList.length"
           v-model="refList"
@@ -61,12 +61,12 @@
             filterable
             :loading="modelsLoading"
             :disabled="generating || deleting"
-            placeholder="选择模型"
-            aria-label="生成模型"
-            noDataText="请先在设置中添加图片模型"
+            placeholder="Chọn mô hình"
+            aria-label="Mô hình tạo nội dung"
+            noDataText="Vui lòng thêm mô hình hình ảnh trong cài đặt"
             placement="top-start"
             @update:modelValue="data.model = $event"
-            @visible-change="(visible) => visible && loadModels().catch((error) => showNodeError(error, '模型读取失败'))">
+            @visible-change="(visible) => visible && loadModels().catch((error) => showNodeError(error, 'Không thể tải mô hình'))">
             <template v-if="!selectedModel" #prefix><icon-sparkles :size="17" /></template>
             <template #label="{ label }"><modelLabel :label="label" :providerId="selectedModel?.providerId" :modelId="selectedModel?.modelId" /></template>
             <el-option-group v-for="provider in modelGroups" :key="provider.id" :label="provider.label">
@@ -88,17 +88,17 @@
             :sizes="sizeOptions"
             :ratios="ratioOptions"
             :disabled="generating || deleting || !selectedModel" />
-          <el-button v-if="editor?.mode === 'inpaint'" class="confirmButton" type="primary" :icon="IconCheck" :loading="editor.busy" :disabled="deleting || uploading || !generationPrompt" @click="confirmInpaint().catch(error => showNodeError(error, '重绘节点创建失败'))">确认</el-button>
+          <el-button v-if="editor?.mode === 'inpaint'" class="confirmButton" type="primary" :icon="IconCheck" :loading="editor.busy" :disabled="deleting || uploading || !generationPrompt" @click="confirmInpaint().catch(error => showNodeError(error, 'Tạo nút vẽ lại thất bại'))">Xác nhận</el-button>
           <div v-else class="generationActions">
             <mediaPrice v-if="priceInput" :input="{ ...priceInput, mediaType: 'image' }" :supported="selectedModel?.supportsPrice === true" />
-            <el-button v-if="pendingRecovery" class="sendButton" :icon="IconPlayerStop" :loading="cancelling" :disabled="deleting || uploading" title="放弃任务" aria-label="放弃任务" @click="generationState.cancel().catch(error => showNodeError(error, '停止生成失败'))" />
+            <el-button v-if="pendingRecovery" class="sendButton" :icon="IconPlayerStop" :loading="cancelling" :disabled="deleting || uploading" title="Bỏ tác vụ" aria-label="Bỏ tác vụ" @click="generationState.cancel().catch(error => showNodeError(error, 'Không thể dừng tạo'))" />
             <el-button
               class="sendButton"
               :icon="generating ? IconPlayerStop : IconArrowUp"
               :disabled="cancelling || deleting || uploading || (!generating && (editor?.busy || (!pendingRecovery && (!generationPrompt || !selectedModel))))"
-              :title="generating ? '停止生成' : pendingRecovery ? '复查任务' : '生成图片'"
-              :aria-label="generating ? '停止生成' : pendingRecovery ? '复查任务' : '生成图片'"
-              @click="generating ? generationState.cancel().catch(error => showNodeError(error, '停止生成失败')) : startGeneration().catch((error) => showNodeError(error, '图片生成失败'))" />
+              :title="generating ? 'Dừng tạo' : pendingRecovery ? 'Kiểm tra lại tác vụ' : 'Tạo hình ảnh'"
+              :aria-label="generating ? 'Dừng tạo' : pendingRecovery ? 'Kiểm tra lại tác vụ' : 'Tạo hình ảnh'"
+              @click="generating ? generationState.cancel().catch(error => showNodeError(error, 'Không thể dừng tạo')) : startGeneration().catch((error) => showNodeError(error, 'Tạo hình ảnh thất bại'))" />
           </div>
         </div>
       </el-card>
@@ -144,13 +144,13 @@ defineOptions({
   inheritAttrs: false,
   icon: IconPhotoAi,
   handles: [
-    { id: "in", type: "target", dataType: ["IMAGE", "STRING"], label: "图片、文本输入" },
-    { id: "image", type: "source", dataType: "IMAGE", label: "图片输出" },
+    { id: "in", type: "target", dataType: ["IMAGE", "STRING"], label: "Đầu vào hình ảnh, văn bản" },
+    { id: "image", type: "source", dataType: "IMAGE", label: "Đầu ra hình ảnh" },
   ] satisfies NodeHandle[],
 });
 const vLoading = ElLoading.directive;
 const { id, node, nodeProps, nodeEvent, outputs, files, ai, updateNodeInternals } = useNode({
-  label: "图片生成",
+  label: "Tạo hình ảnh",
   onModelsChanged: () => void refreshProviderModels(),
 });
 type PromptModel = NonNullable<InstanceType<typeof promptInput>["$props"]["modelValue"]>;
@@ -190,21 +190,21 @@ const generationState = useNodeGeneration(outputs, () => generationController?.a
   async recover(results, task, signal) {
     if (!task.recoveryData) return results;
     const recovery = task.recoveryData as { input: NodeImageRequest; inpaint: ImageInpaint };
-    if (!recovery.input || !recovery.inpaint) throw new Error("局部重绘任务缺少恢复素材");
+    if (!recovery.input || !recovery.inpaint) throw new Error("Tác vụ vẽ lại thiếu tài nguyên khôi phục");
     return generateInpaint(recovery.input, recovery.inpaint, signal, results.filter(result => result.mediaType === "image"));
   },
 });
 const { generating, pendingRecovery, cancelling } = generationState;
 let generation: Promise<void> | undefined;
 let modelsRequest: Promise<void> | undefined;
-watch(generating, value => { if (!value && !disposed && !deleting.value && !models.value.length) void loadModels().catch(error => showNodeError(error, "模型读取失败")); });
+watch(generating, value => { if (!value && !disposed && !deleting.value && !models.value.length) void loadModels().catch(error => showNodeError(error, "Không thể tải mô hình")); });
 const selectedModel = useNodeModelSelection(models, computed({ get: () => data.value.model, set: value => { data.value.model = value; } }));
 const { sizeOptions, ratioOptions } = useImageModelForm(data, selectedModel);
 const modelGroups = computed(() => groupNodeModels(models.value));
 const generationPrompt = computed(() =>
   [
     (editor.value?.mode === "inpaint" ? data.value.inpaintPrompt : data.value.prompt).trim(),
-    ...refList.value.flatMap((item, index) => (item.dataType === "STRING" && item.value?.trim() ? [`参考 ${index + 1}：\n${item.value.trim()}`] : [])),
+    ...refList.value.flatMap((item, index) => (item.dataType === "STRING" && item.value?.trim() ? [`Tham chiếu ${index + 1}：\n${item.value.trim()}`] : [])),
   ]
     .filter(Boolean)
     .join("\n\n")
@@ -226,8 +226,8 @@ const generationInput = computed<Omit<NodeImageRequest, "directory"> | undefined
   if (inpaint) {
     let imageIndex = 3 + (inpaint.images?.length ?? 0);
     const mapping = refList.value.flatMap((item, index) => item.dataType === "IMAGE" && item.value
-      ? [`参考 ${index + 1} / {{ref ${index + 1}}} 对应第 ${item.value.url === inpaint.source ? 1 : imageIndex++} 张图`] : []);
-    if (mapping.length) input.prompt += `\n当前节点参考编号对应关系：${mapping.join("；")}。`;
+      ? [`Tham chiếu ${index + 1} / {{ref ${index + 1}}} tương ứng ảnh số ${item.value.url === inpaint.source ? 1 : imageIndex++} ảnh`] : []);
+    if (mapping.length) input.prompt += `\nSố thứ tự tham chiếu của nút hiện tại:${mapping.join("；")}。`;
   }
   return input;
 });
@@ -240,18 +240,18 @@ const priceInput = computed(() => {
 const outputFile = computed(() => outputs.value.image?.dataType === "IMAGE" ? outputs.value.image.value : undefined);
 const inpaintGuideUrl = files.useFileUrl(
   () => data.value.inpaint?.guide ? { url: data.value.inpaint.guide, mimeType: "image/png" } : undefined,
-  error => showNodeError(error, "重绘标注读取失败")
+  error => showNodeError(error, "Không thể đọc đánh dấu vùng vẽ lại")
 );
 const previewUrl = files.useFileUrl(
   outputFile,
-  (error) => showNodeError(error, "图片读取失败")
+  (error) => showNodeError(error, "Không thể đọc ảnh")
 );
 const imagePreviewUrl = computed(() => editor.value?.previewSrc || previewUrl.value);
 
 onMounted(() => {
   window.addEventListener("toonflow:plugin-installed", refreshProviderModels);
   window.addEventListener("toonflow:provider-config-changed", refreshProviderModels);
-  void loadModels().catch(error => { if (!disposed) showNodeError(error, "模型读取失败"); });
+  void loadModels().catch(error => { if (!disposed) showNodeError(error, "Không thể tải mô hình"); });
 });
 onScopeDispose(() => {
   disposed = true;
@@ -266,7 +266,7 @@ async function refreshProviderModels(event?: Event) {
     await generation;
     if (!disposed && !deleting.value) await loadModels();
   } catch (error) {
-    if (!disposed) showNodeError(error, "模型读取失败");
+    if (!disposed) showNodeError(error, "Không thể tải mô hình");
   }
 }
 
@@ -276,8 +276,8 @@ async function replaceOutput(event: Event) {
   input.value = "";
   if (!file || generating.value || deleting.value || uploading.value || lighting.value?.generating || multiAngle.value?.generating || panorama.value?.busy || disposed) return;
   const mimeType = getMediaMimeType(file);
-  if (!mimeType.startsWith("image/")) return void showNodeError("请选择图片文件", "图片替换失败");
-  if (!file.size || file.size > 100 * 1024 * 1024) return void showNodeError("图片不能为空且不能超过 100 MB", "图片替换失败");
+  if (!mimeType.startsWith("image/")) return void showNodeError("Vui lòng chọn tệp hình ảnh", "Thay hình ảnh thất bại");
+  if (!file.size || file.size > 100 * 1024 * 1024) return void showNodeError("Hình ảnh không được rỗng hoặc vượt quá 100 MB", "Thay hình ảnh thất bại");
   uploading.value = true;
   try {
     const workspace = files.getWorkspaceFiles();
@@ -289,7 +289,7 @@ async function replaceOutput(event: Event) {
     // ACT: 保留历史输出文件，避免破坏撤销记录和复制节点的引用。
     outputs.value.image = { dataType: "IMAGE", value: { url, mimeType } };
   } catch (error) {
-    showNodeError(error, "图片替换失败");
+    showNodeError(error, "Thay hình ảnh thất bại");
   } finally {
     uploading.value = false;
   }
@@ -315,36 +315,36 @@ function loadModels() {
 
 async function confirmInpaint() {
   const inpaintEditor = editor.value;
-  if (!inpaintEditor || inpaintEditor.mode !== "inpaint") throw new Error("请先进入局部重绘");
+  if (!inpaintEditor || inpaintEditor.mode !== "inpaint") throw new Error("Vui lòng vào chế độ vẽ lại vùng chọn trước");
   if (inpaintEditor.busy || generating.value || deleting.value || uploading.value) return;
-  if (!generationPrompt.value) throw new Error("请输入重绘提示词");
-  if (refList.value.some(item => item.value === undefined)) throw new Error("引用节点暂无内容，请先补充引用内容");
-  let prompt = generationPrompt.value.replace(/\{\{ref (\d+)\}\}/g, "重绘参考 $1").replace(/^参考 (\d+)：/gm, "重绘参考 $1：");
+  if (!generationPrompt.value) throw new Error("Vui lòng nhập câu lệnh vẽ lại");
+  if (refList.value.some(item => item.value === undefined)) throw new Error("Nút tham chiếu chưa có nội dung, vui lòng bổ sung trước");
+  let prompt = generationPrompt.value.replace(/\{\{ref (\d+)\}\}/g, "Tham chiếu vẽ lại $1").replace(/^Tham chiếu (\d+)：/gm, "Tham chiếu vẽ lại $1：");
   const images = refList.value.flatMap(item => item.dataType === "IMAGE" && item.value ? [{ path: item.value.url, mimeType: item.value.mimeType }] : []);
   const imageReferences = refList.value.flatMap((item, index) => item.dataType === "IMAGE" && item.value ? [index + 1] : []);
-  if (imageReferences.length) prompt += `\n重绘参考编号对应关系（前两张为原图和区域引导图）：${imageReferences.map((reference, index) => `重绘参考 ${reference} 对应第 ${index + 3} 张图`).join("；")}。`;
+  if (imageReferences.length) prompt += `\nSố thứ tự tham chiếu vẽ lại (hai ảnh đầu là ảnh gốc và ảnh hướng dẫn vùng chọn):${imageReferences.map((reference, index) => `Tham chiếu vẽ lại ${reference} tương ứng ảnh số ${index + 3} ảnh`).join("；")}。`;
   await inpaintEditor.createInpaint({ prompt, images }, new AbortController().signal);
 }
 
 async function startGeneration() {
-  if (cancelling.value) throw new Error("任务正在取消，请稍后重试");
-  if (generating.value) throw new Error("图片正在生成，请等待完成");
-  if (panorama.value?.visible) throw new Error("请先关闭全景图，再启动图片生成");
-  if (uploading.value) throw new Error("图片正在替换，请等待完成");
-  if (deleting.value) throw new Error("节点正在删除");
-  if (lightingVisible.value) throw new Error("请先退出打光，再启动图片生成");
-  if (multiAngleVisible.value) throw new Error("请先退出多角度，再启动图片生成");
-  if (editor.value?.busy || editor.value?.mode === "mark") throw new Error("请先完成图片标记");
-  if (editor.value?.mode === "inpaint") throw new Error("请先确认局部重绘，再到子节点生成");
+  if (cancelling.value) throw new Error("Đang hủy tác vụ, vui lòng thử lại sau");
+  if (generating.value) throw new Error("Đang tạo hình ảnh, vui lòng chờ hoàn tất");
+  if (panorama.value?.visible) throw new Error("Vui lòng đóng ảnh toàn cảnh trước khi tạo hình ảnh");
+  if (uploading.value) throw new Error("Đang thay hình ảnh, vui lòng chờ hoàn tất");
+  if (deleting.value) throw new Error("Nút đang bị xóa");
+  if (lightingVisible.value) throw new Error("Vui lòng thoát chiếu sáng trước khi tạo hình ảnh");
+  if (multiAngleVisible.value) throw new Error("Vui lòng thoát nhiều góc nhìn trước khi tạo hình ảnh");
+  if (editor.value?.busy || editor.value?.mode === "mark") throw new Error("Vui lòng hoàn thành đánh dấu hình ảnh trước");
+  if (editor.value?.mode === "inpaint") throw new Error("Xác nhận vùng vẽ lại trước, rồi tạo nội dung trong nút con");
   if (pendingRecovery.value) {
-    generation = generationState.resume().catch(error => showNodeError(error, "图片任务复查失败"));
+    generation = generationState.resume().catch(error => showNodeError(error, "Không thể kiểm tra lại tác vụ hình ảnh"));
     return { status: "generating" };
   }
   const input = generationInput.value;
-  if (!generationPrompt.value) throw new Error("请输入生成提示词");
+  if (!generationPrompt.value) throw new Error("Nhập lời nhắc để tạo nội dung");
   const references = refList.value.filter(item => !data.value.inpaint || item.dataType !== "IMAGE" || item.value?.url !== data.value.inpaint.source);
-  if (references.some(item => item.value === undefined)) throw new Error("引用节点暂无内容，请先补充引用内容");
-  if (!input) throw new Error("请先选择图片模型");
+  if (references.some(item => item.value === undefined)) throw new Error("Nút tham chiếu chưa có nội dung, vui lòng bổ sung trước");
+  if (!input) throw new Error("Vui lòng chọn mô hình hình ảnh");
   const workspace = files.getWorkspaceFiles();
   const controller = new AbortController();
   const inpaintData = data.value.inpaint;
@@ -359,10 +359,10 @@ async function startGeneration() {
     })
     .then(([result]) => {
       controller.signal.throwIfAborted();
-      if (!result) throw new Error("供应商未返回图片");
+      if (!result) throw new Error("Nhà cung cấp không trả về hình ảnh");
       outputs.value.image = { dataType: "IMAGE", value: { url: result.path, mimeType: result.mimeType } };
     }))
-    .catch((error) => showNodeError(error, "图片生成失败"))
+    .catch((error) => showNodeError(error, "Tạo hình ảnh thất bại"))
     .finally(() => {
       generationController = undefined;
     });
@@ -370,10 +370,10 @@ async function startGeneration() {
 }
 
 nodeEvent.on("save", (reason) => {
-  if (reason === "reload" && (generating.value || uploading.value || deleting.value || editor.value?.busy || lighting.value?.generating || multiAngle.value?.generating || panorama.value?.busy)) throw new Error("图片处理中，请完成后再刷新节点");
+  if (reason === "reload" && (generating.value || uploading.value || deleting.value || editor.value?.busy || lighting.value?.generating || multiAngle.value?.generating || panorama.value?.busy)) throw new Error("Hình ảnh đang xử lý, hãy hoàn thành trước khi làm mới nút");
 });
 nodeEvent.on("delete", async () => {
-  if (uploading.value || lighting.value?.generating || multiAngle.value?.generating || panorama.value?.busy || (editor.value?.busy && !generating.value)) throw new Error("图片处理中，请稍后删除节点");
+  if (uploading.value || lighting.value?.generating || multiAngle.value?.generating || panorama.value?.busy || (editor.value?.busy && !generating.value)) throw new Error("Hình ảnh đang xử lý, vui lòng xóa nút sau");
   deleting.value = true;
   try {
     await generationState.cancel(false);
@@ -453,20 +453,20 @@ nodeTools.register({
     size: z.string().min(1).optional(),
     ratio: z.string().min(1).optional(),
     other: z.record(z.string(), z.json()).optional(),
-  }).refine((args) => (args.providerId === undefined) === (args.modelId === undefined), "providerId 与 modelId 必须同时提供"),
+  }).refine((args) => (args.providerId === undefined) === (args.modelId === undefined), "providerId và modelId phải được cung cấp cùng nhau"),
   async execute(args, { signal }) {
     signal?.throwIfAborted();
-    if (generating.value || deleting.value) throw new Error("节点正在生成或删除，请稍后修改配置");
+    if (generating.value || deleting.value) throw new Error("Nút đang tạo hoặc bị xóa, vui lòng sửa cấu hình sau");
     await loadModels();
     signal?.throwIfAborted();
-    if (generating.value || deleting.value) throw new Error("节点正在生成或删除，请稍后修改配置");
+    if (generating.value || deleting.value) throw new Error("Nút đang tạo hoặc bị xóa, vui lòng sửa cấu hình sau");
     const choice = args.modelId === undefined ? selectedModel.value
       : findNodeModel(models.value, { providerId: args.providerId ?? "", modelId: args.modelId });
-    if (!choice) throw new Error("请选择 getConfig 返回的有效图片模型");
+    if (!choice) throw new Error("Chọn mô hình hình ảnh hợp lệ do getConfig trả về");
     const sizes = choice.imageSizes?.length ? choice.imageSizes : ["2K"];
     const ratios = choice.imageRatios?.length ? choice.imageRatios : ["16:9"];
-    if (args.size !== undefined && !sizes.includes(args.size)) throw new Error(`当前模型不支持分辨率 ${args.size}，可选：${sizes.join("、")}`);
-    if (args.ratio !== undefined && !ratios.includes(args.ratio)) throw new Error(`当前模型不支持比例 ${args.ratio}，可选：${ratios.join("、")}`);
+    if (args.size !== undefined && !sizes.includes(args.size)) throw new Error(`Mô hình hiện tại không hỗ trợ độ phân giải ${args.size}，Các lựa chọn:${sizes.join("、")}`);
+    if (args.ratio !== undefined && !ratios.includes(args.ratio)) throw new Error(`Mô hình hiện tại không hỗ trợ tỷ lệ ${args.ratio}，Các lựa chọn:${ratios.join("、")}`);
     const other = getModelFormValues(choice, choice === selectedModel.value ? data.value.other : {}, args.other);
     data.value.model = getNodeModelKey(choice);
     if (args.size !== undefined) data.value.size = args.size;
@@ -481,7 +481,7 @@ nodeTools.register({
   description: "修改此节点的普通图片生成提示词，仅接收 prompt，支持 {{ref 1}} 等参考标记；分辨率 size、比例 ratio 等配置须先用 node:getConfig 查询能力，再单独调用 node:setConfig；不修改局部重绘提示词，不启动生成",
   parameters: z.strictObject({ prompt: z.string() }),
   execute({ prompt: value }) {
-    if (deleting.value) throw new Error("节点正在删除，请稍后修改");
+    if (deleting.value) throw new Error("Nút đang bị xóa, vui lòng sửa sau");
     data.value.prompt = value;
     data.value.promptModel = value.split("\n").map((text) => [{ type: "Write", text }]);
     return { prompt: value };

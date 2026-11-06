@@ -1,15 +1,15 @@
 export type PcmFormat = "u8" | "s16le" | "s24le" | "s32le" | "f32le" | "s16be" | "s24be" | "s32be" | "f32be";
 
 export const pcmFormats: { value: PcmFormat; label: string }[] = [
-  { value: "u8", label: "8 位无符号" },
-  { value: "s16le", label: "16 位整数（小端）" },
-  { value: "s24le", label: "24 位整数（小端）" },
-  { value: "s32le", label: "32 位整数（小端）" },
-  { value: "f32le", label: "32 位浮点（小端）" },
-  { value: "s16be", label: "16 位整数（大端）" },
-  { value: "s24be", label: "24 位整数（大端）" },
-  { value: "s32be", label: "32 位整数（大端）" },
-  { value: "f32be", label: "32 位浮点（大端）" },
+  { value: "u8", label: "8 bit không dấu" },
+  { value: "s16le", label: "16 bit số nguyên (little-endian)" },
+  { value: "s24le", label: "24 bit số nguyên (little-endian)" },
+  { value: "s32le", label: "32 bit số nguyên (little-endian)" },
+  { value: "f32le", label: "32 bit số thực (little-endian)" },
+  { value: "s16be", label: "16 bit số nguyên (big-endian)" },
+  { value: "s24be", label: "24 bit số nguyên (big-endian)" },
+  { value: "s32be", label: "32 bit số nguyên (big-endian)" },
+  { value: "f32be", label: "32 bit số thực (big-endian)" },
 ];
 
 export interface PcmOptions {
@@ -35,17 +35,17 @@ const sampleBytes: Record<PcmFormat, number> = { u8: 1, s16le: 2, s24le: 3, s32l
 export function pcmToWav(buffer: ArrayBuffer, options: PcmOptions): Blob {
   const { sampleRate, channels, format } = options;
   const bytesPerSample = sampleBytes[format];
-  if (typeof format !== "string" || !Number.isInteger(bytesPerSample)) throw new RangeError("不支持的 PCM 采样格式");
-  if (!Number.isInteger(sampleRate) || sampleRate < 1 || sampleRate > 0xffffffff) throw new RangeError("PCM 采样率必须为正整数");
+  if (typeof format !== "string" || !Number.isInteger(bytesPerSample)) throw new RangeError("Định dạng mẫu PCM không được hỗ trợ");
+  if (!Number.isInteger(sampleRate) || sampleRate < 1 || sampleRate > 0xffffffff) throw new RangeError("PCM Tần số lấy mẫu phải là số nguyên dương");
   const outputBits = format === "u8" ? 8 : 16;
   const blockAlign = channels * outputBits / 8;
-  if (!Number.isInteger(channels) || channels < 1 || blockAlign > 0xffff) throw new RangeError("PCM 声道数超出 WAV 范围");
+  if (!Number.isInteger(channels) || channels < 1 || blockAlign > 0xffff) throw new RangeError("PCM Số kênh vượt giới hạn WAV");
   const byteRate = sampleRate * blockAlign;
-  if (byteRate > 0xffffffff) throw new RangeError("PCM 字节率超出 WAV 范围");
-  if (!(buffer instanceof ArrayBuffer) || !buffer.byteLength || buffer.byteLength % (channels * bytesPerSample)) throw new RangeError("PCM 数据为空或包含不完整采样帧");
+  if (byteRate > 0xffffffff) throw new RangeError("PCM Tốc độ byte vượt giới hạn WAV");
+  if (!(buffer instanceof ArrayBuffer) || !buffer.byteLength || buffer.byteLength % (channels * bytesPerSample)) throw new RangeError("PCM Dữ liệu rỗng hoặc chứa khung mẫu không đầy đủ");
   const dataSize = buffer.byteLength / bytesPerSample * outputBits / 8;
   const padding = dataSize % 2;
-  if (36 + dataSize + padding > 0xffffffff) throw new RangeError("PCM 数据超出 RIFF 4 GiB 范围");
+  if (36 + dataSize + padding > 0xffffffff) throw new RangeError("PCM Dữ liệu vượt giới hạn RIFF 4 GiB");
 
   // ACT: u8/s16le 直接封装，其他格式降为 16 位；整文件内存转换，大文件需改为流式转码。
   const wave = new ArrayBuffer(44 + dataSize + padding);

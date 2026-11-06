@@ -5,18 +5,18 @@
     :topVisible="node.selected"
     topWidth="max-content"
     :downloadUrl="downloadUrl"
-    :downloadName="`${nodeProps.label || '文本'}.md`"
+    :downloadName="`${nodeProps.label || 'Văn bản'}.md`"
     :bottomWidth="660"
     @fullscreen="fullscreen = true; editing = true">
     <div class="textContent" :class="{ empty: !outputs.text.value.trim(), resized }">
       <el-alert v-if="documentState.error" :title="documentState.error" type="error" :closable="false" showIcon>
-        <el-button text size="small" :disabled="generating || textReloading" @click="editing = true">查看并复制当前正文</el-button>
-        <el-button text size="small" :disabled="generating" :loading="textReloading" @click="reloadText">重新读取磁盘</el-button>
+        <el-button text size="small" :disabled="generating || textReloading" @click="editing = true">Xem và sao chép nội dung hiện tại</el-button>
+        <el-button text size="small" :disabled="generating" :loading="textReloading" @click="reloadText">Đọc lại từ ổ đĩa</el-button>
       </el-alert>
-      <div v-if="outputs.text.value.trim() && previewReady" class="textPreview nopan nowheel" aria-label="文本内容">
+      <div v-if="outputs.text.value.trim() && previewReady" class="textPreview nopan nowheel" aria-label="Nội dung văn bản">
         <markdownPreview :modelValue="outputs.text.value" :files="textReady ? textFiles : undefined" :path="textPath" :active="previewReady" />
       </div>
-      <el-button class="editButton nodrag nopan" :icon="IconEdit" :disabled="generating || !textReady" text @dblclick.stop @click.stop="editing = true">编辑</el-button>
+      <el-button class="editButton nodrag nopan" :icon="IconEdit" :disabled="generating || !textReady" text @dblclick.stop @click.stop="editing = true">Chỉnh sửa</el-button>
     </div>
     <template #bottom>
       <el-card class="promptCard" shadow="never" :bodyStyle="{ padding: '14px 16px 12px' }">
@@ -28,7 +28,7 @@
         </div>
         <promptInput v-model="promptModel" v-model:text="prompt" :references="referenceMentions" />
         <div class="promptFooter">
-          <el-select :modelValue="selectedModel ? model : ''" class="modelSelect" filterable :loading="modelsLoading" :disabled="generating" placeholder="选择模型" aria-label="生成模型" noDataText="请先在设置中添加模型" placement="top-start" @update:modelValue="model = $event" @visible-change="visible => visible && loadModels()">
+          <el-select :modelValue="selectedModel ? model : ''" class="modelSelect" filterable :loading="modelsLoading" :disabled="generating" placeholder="Chọn mô hình" aria-label="Mô hình tạo nội dung" noDataText="Vui lòng thêm mô hình trong cài đặt trước" placement="top-start" @update:modelValue="model = $event" @visible-change="visible => visible && loadModels()">
             <template v-if="!selectedModel" #prefix><icon-sparkles :size="17" /></template>
             <template #label="{ label }"><modelLabel :label="label" :providerId="selectedModel?.providerId" :modelId="selectedModel?.modelId" /></template>
             <el-option-group v-for="provider in modelGroups" :key="provider.id" :label="provider.label">
@@ -38,15 +38,15 @@
             </el-option-group>
           </el-select>
           <div class="promptActions">
-            <el-button class="sendButton" :icon="IconArrowUp" :loading="generating" :disabled="!prompt.trim() || !selectedModel || generating || !textReady" title="生成" aria-label="生成" @click="generateText" />
+            <el-button class="sendButton" :icon="IconArrowUp" :loading="generating" :disabled="!prompt.trim() || !selectedModel || generating || !textReady" title="Tạo" aria-label="Tạo" @click="generateText" />
           </div>
         </div>
       </el-card>
     </template>
   </nodeSkeleton>
-  <el-dialog v-model="editing" title="编辑文本" width="min(860px, calc(100vw - 32px))" :fullscreen="fullscreen" alignCenter appendToBody @closed="fullscreen = false">
+  <el-dialog v-model="editing" title="Chỉnh sửa văn bản" width="min(860px, calc(100vw - 32px))" :fullscreen="fullscreen" alignCenter appendToBody @closed="fullscreen = false">
     <div class="textEditor" :class="{ fullscreen }">
-      <markdownEditor v-model="outputs.text.value" :files="textReady ? textFiles : undefined" :path="textPath" :active="editing" :disabled="generating || textReloading" :readonly="!!documentState.error" ariaLabel="编辑文本内容" />
+      <markdownEditor v-model="outputs.text.value" :files="textReady ? textFiles : undefined" :path="textPath" :active="editing" :disabled="generating || textReloading" :readonly="!!documentState.error" ariaLabel="Chỉnh sửa nội dung văn bản" />
     </div>
   </el-dialog>
 </template>
@@ -71,12 +71,12 @@ defineOptions({
   inheritAttrs: false,
   icon: IconFileText,
   handles: [
-    { id: "in", type: "target", dataType: ["VIDEO", "IMAGE", "STRING", "FILE"], label: "视频、图片、文本、文件输入" },
-    { id: "text", type: "source", dataType: "STRING", label: "文本输出" },
+    { id: "in", type: "target", dataType: ["VIDEO", "IMAGE", "STRING", "FILE"], label: "Đầu vào video, hình ảnh, văn bản, tệp" },
+    { id: "text", type: "source", dataType: "STRING", label: "Xuất văn bản" },
   ] satisfies NodeHandle[],
 });
 const { node, nodeProps, outputs, ai, files, nodeEvent, previewReady } = useNode({
-  label: "文本",
+  label: "Văn bản",
   onModelsChanged: () => void loadModels(),
   outputs: { text: { dataType: "STRING", value: "" } },
 });
@@ -114,7 +114,7 @@ function saveText(value: string) {
   const revision = ++textRevision;
   documentState.dirty = true;
   textSaving = textSaving.catch(() => {}).then(async () => {
-    if (!textSnapshot) throw new Error("文本尚未加载，无法保存");
+    if (!textSnapshot) throw new Error("Văn bản chưa tải, không thể lưu");
     textSnapshot.revision = await textFiles.writeTextSnapshot(textPath, value, textSnapshot);
     textSnapshot.text = value;
     if (revision === textRevision && outputs.value.text.value === value) {
@@ -123,15 +123,15 @@ function saveText(value: string) {
     }
   }).catch(error => {
     documentState.error = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
-      || (error instanceof Error ? error.message : "文本保存失败");
+      || (error instanceof Error ? error.message : "Lưu văn bản không thành công");
     throw error;
   });
   return textSaving;
 }
 nodeEvent.on("save", async (reason) => {
   await textLoading;
-  if (!textReady.value) throw new Error("文本尚未加载，无法保存");
-  if (reason === "reload" && generating.value) throw new Error("文本正在生成，请完成后再刷新节点");
+  if (!textReady.value) throw new Error("Văn bản chưa tải, không thể lưu");
+  if (reason === "reload" && generating.value) throw new Error("Đang tạo văn bản, hãy hoàn thành trước khi làm mới nút");
   // 普通编辑已由 watcher 入队；生成中补存当前片段，不因画布保存重复写未改动的文本。
   if (generating.value) saveText(outputs.value.text.value);
   let pending: Promise<void>;
@@ -140,19 +140,19 @@ nodeEvent.on("save", async (reason) => {
     try { await pending; }
     catch { await saveText(outputs.value.text.value); }
   } while (pending !== textSaving);
-  if (reason === "reload" && generating.value) throw new Error("文本正在生成，请完成后再刷新节点");
+  if (reason === "reload" && generating.value) throw new Error("Đang tạo văn bản, hãy hoàn thành trước khi làm mới nút");
 });
 onMounted(() => { textLoading = loadText(); });
 async function loadText(fromDisk = false) {
   textReloading.value = true;
   textReady.value = false;
   try {
-    if (!node.id || /[\\/]/.test(node.id) || node.id === "." || node.id === "..") throw new Error("节点 ID 不能作为文件夹名称");
-    if (data.value.textPath !== undefined && data.value.textPath !== textPath) throw new Error("文本文件路径无效");
+    if (!node.id || /[\\/]/.test(node.id) || node.id === "." || node.id === "..") throw new Error("Không thể dùng ID nút làm tên thư mục");
+    if (data.value.textPath !== undefined && data.value.textPath !== textPath) throw new Error("Đường dẫn tệp văn bản không hợp lệ");
     textFiles = files.getWorkspaceFiles();
     if (data.value.textPath || fromDisk) textSnapshot = await textFiles.readTextSnapshot(textPath);
     const value = fromDisk ? textSnapshot!.text : data.value.textSnapshot !== undefined ? data.value.textSnapshot : textSnapshot?.text ?? outputs.value.text.value;
-    if (typeof value !== "string") throw new Error("文本内容无效");
+    if (typeof value !== "string") throw new Error("Nội dung văn bản không hợp lệ");
     if (!data.value.textPath && !fromDisk) {
       for (const directory of ["assets", `assets/${node.id}`]) {
         await textFiles.mkdir(directory).catch((error: { response?: { data?: { data?: { code?: string } } } }) => {
@@ -163,7 +163,7 @@ async function loadText(fromDisk = false) {
         if (error.response?.data?.data?.code !== "EEXIST") throw error;
       });
       textSnapshot = await textFiles.readTextSnapshot(textPath);
-      if (textSnapshot.text !== value) throw new Error("文本文件已被其他编辑器修改，请重新加载节点");
+      if (textSnapshot.text !== value) throw new Error("Tệp văn bản đã được sửa bởi trình chỉnh sửa khác, vui lòng tải lại nút");
     } else if (textSnapshot && textSnapshot.text !== value) {
       textSnapshot.revision = await textFiles.writeTextSnapshot(textPath, value, textSnapshot);
       textSnapshot.text = value;
@@ -179,15 +179,15 @@ async function loadText(fromDisk = false) {
     documentState.error = "";
   } catch (error) {
     documentState.error = (error as { response?: { data?: { message?: string } } })?.response?.data?.message
-      || (error instanceof Error ? error.message : "文本加载失败");
+      || (error instanceof Error ? error.message : "Không thể tải văn bản");
     ElMessage.error(documentState.error);
   } finally { textReloading.value = false; }
 }
 
 async function reloadText() {
   if (generating.value || textReloading.value) return;
-  const confirmed = await ElMessageBox.confirm("重新读取将用磁盘内容替换当前正文。未保存的修改会被放弃，请先复制需要保留的内容。", "重新读取文本", {
-    confirmButtonText: "重新读取", cancelButtonText: "取消", type: "warning", closeOnClickModal: false,
+  const confirmed = await ElMessageBox.confirm("Đọc lại sẽ thay nội dung hiện tại bằng nội dung trên ổ đĩa. Thay đổi chưa lưu sẽ bị bỏ; hãy sao chép nội dung cần giữ trước.", "Đọc lại văn bản", {
+    confirmButtonText: "Tải lại", cancelButtonText: "Hủy", type: "warning", closeOnClickModal: false,
   }).then(() => true, () => false);
   if (!confirmed || generating.value || textReloading.value) return;
   const fromDisk = textReady.value || !!textSnapshot || !!data.value.textPath;
@@ -203,10 +203,10 @@ watch(() => outputs.value.text.value, async (value) => {
   documentState.dirty = true;
   if (generating.value) return;
   try { await saveText(value); }
-  catch (error) { ElMessage.error(error instanceof Error ? error.message : "文本保存失败"); }
+  catch (error) { ElMessage.error(error instanceof Error ? error.message : "Lưu văn bản không thành công"); }
 }, { flush: "sync" });
 nodeEvent.on("copy", () => {
-  if (!textReady.value) throw new Error("文本尚未加载");
+  if (!textReady.value) throw new Error("Văn bản chưa tải");
   return { textPath: undefined, textSnapshot: outputs.value.text.value };
 });
 
@@ -234,7 +234,7 @@ async function generateText() {
   generating.value = true;
   let text = "";
   try {
-    if (refList.value.some(item => item.value === undefined)) throw new Error("引用节点暂无内容，请先补充引用内容");
+    if (refList.value.some(item => item.value === undefined)) throw new Error("Nút tham chiếu chưa có nội dung, vui lòng bổ sung trước");
     const references = refList.value
       .filter(item => item.value !== undefined && (item.dataType === "STRING" || item.dataType === "IMAGE" || item.dataType === "VIDEO" || item.dataType === "FILE"))
       .map(item => item.dataType === "STRING" ? { dataType: item.dataType, value: item.value } : { dataType: item.dataType, value: { ...item.value } });
@@ -253,7 +253,7 @@ async function generateText() {
   } finally {
     // 卸载会取消请求并停止 watcher，生成收尾必须自行保存已收到的正文。
     try { await saveText(outputs.value.text.value); }
-    catch (error) { ElMessage.error(error instanceof Error ? error.message : "文本保存失败"); }
+    catch (error) { ElMessage.error(error instanceof Error ? error.message : "Lưu văn bản không thành công"); }
     generating.value = false;
   }
 }
@@ -264,8 +264,8 @@ nodeTools.register({
   description: "修改此节点的文本输出",
   parameters: z.strictObject({ text: z.string() }),
   async execute({ text }) {
-    if (!textReady.value) throw new Error("文本尚未加载");
-    if (generating.value) throw new Error("文本生成中，请稍后修改");
+    if (!textReady.value) throw new Error("Văn bản chưa tải");
+    if (generating.value) throw new Error("Đang tạo văn bản, vui lòng sửa sau");
     if (outputs.value.text.value === text) await saveText(text);
     else { outputs.value.text.value = text; await textSaving; }
     return { text };

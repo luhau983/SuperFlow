@@ -2,8 +2,8 @@ import { createToolConfig } from "@toonflow/tools-scaffold";
 
 await createToolConfig({
   name: "askUser",
-  displayName: "提问器",
-  description: "一次向用户提出一个或多个问题，支持回答或跳过本次提问。",
+  displayName: "Hỏi người dùng",
+  description: "Đặt một hoặc nhiều câu hỏi cho người dùng, hỗ trợ trả lời hoặc bỏ qua lượt hỏi.",
   author: "Toonflow",
   github: "https://github.com/HBAI-Ltd/Toonflow-app",
   prompt: `问题简短具体，相关问题合并提问。问题默认允许留空，不必把每项都设为 required。

@@ -2,8 +2,8 @@ import { createToolConfig } from "@toonflow/tools-scaffold";
 
 await createToolConfig({
   name: "canvas",
-  displayName: "画布操作",
-  description: "新增、切换、重命名和自动整理画布，操作节点、连线和视口，并调用节点注册的函数。",
+  displayName: "Thao tác bảng vẽ",
+  description: "Tạo, chuyển, đổi tên và tự sắp xếp bảng vẽ; thao tác với nút, kết nối, vùng nhìn và gọi hàm do nút cung cấp.",
   author: "Toonflow",
   github: "https://github.com/HBAI-Ltd/Toonflow-app",
   prompt: `getCanvas 默认只读画布概览，按需用 include 查询画布列表或可用节点类型。findCanvasNodes 按名称、ID、类型或选择状态定位节点；已知 ID 时直接用 getCanvasNodes 读取必要字段，用 getCanvasEdges 查询局部连线，用 getNodeTools 查询目标节点函数。用户可能同时编辑画布，状态变化后重新查询，不把旧快照当作当前状态。

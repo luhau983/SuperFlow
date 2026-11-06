@@ -30,7 +30,7 @@ export function useImageInpaint(generate?: (input: NodeImageRequest, signal: Abo
     signal.throwIfAborted();
     if (!inpaint || ![inpaint.original, inpaint.guide, inpaint.mask].every(path => typeof path === "string" && path.trim())
       || !Array.isArray(inpaint.images) || inpaint.images.some(image => !image || typeof image.path !== "string" || !image.path.trim() || typeof image.mimeType !== "string" || !image.mimeType.startsWith("image/"))) {
-      throw new Error("局部重绘素材无效，请重新创建重绘节点");
+      throw new Error("Tài nguyên vẽ lại không hợp lệ, vui lòng tạo lại nút vẽ lại");
     }
     const workspace = files.getWorkspaceFiles();
     const temporaryId = recovered?.[0]?.path.match(/^assets\/([^/]+)\/[^/]+$/)?.[1] ?? crypto.randomUUID();
@@ -66,14 +66,14 @@ export function useImageInpaint(generate?: (input: NodeImageRequest, signal: Abo
       const mask = await readImage(inpaint.mask);
       const guide = await readImage(inpaint.guide);
       if (!original.naturalWidth || !original.naturalHeight || [mask, guide].some(image => image.naturalWidth !== original.naturalWidth || image.naturalHeight !== original.naturalHeight)) {
-        throw new Error("局部重绘原图、引导图与蒙版尺寸不一致，请重新创建重绘节点");
+        throw new Error("Kích thước ảnh gốc, ảnh hướng dẫn và mặt nạ không khớp, vui lòng tạo lại nút vẽ lại");
       }
       canvas.width = original.naturalWidth;
       canvas.height = original.naturalHeight;
       const context = canvas.getContext("2d");
-      if (!context) throw new Error("无法创建绘画画布");
+      if (!context) throw new Error("Không thể tạo bảng vẽ");
       context.drawImage(mask, 0, 0);
-      if (!context.getImageData(0, 0, canvas.width, canvas.height).data.some((value, index) => index % 4 === 3 && value)) throw new Error("局部重绘蒙版为空，请重新涂抹区域");
+      if (!context.getImageData(0, 0, canvas.width, canvas.height).data.some((value, index) => index % 4 === 3 && value)) throw new Error("Mặt nạ vẽ lại trống, vui lòng tô lại vùng chọn");
       const { directory } = await workspace.list();
       signal.throwIfAborted();
       requested = true;
@@ -85,7 +85,7 @@ export function useImageInpaint(generate?: (input: NodeImageRequest, signal: Abo
       }, inpaint);
       const [result] = recovered ?? await (generate ? generate(request, signal, { input, inpaint }) : ai.generateImage(request, signal));
       signal.throwIfAborted();
-      if (!result) throw new Error("供应商未返回图片");
+      if (!result) throw new Error("Nhà cung cấp không trả về hình ảnh");
       const generated = await readImage(result.path, result.mimeType);
       context.clearRect(0, 0, canvas.width, canvas.height);
       context.drawImage(generated, 0, 0, canvas.width, canvas.height);
@@ -93,14 +93,14 @@ export function useImageInpaint(generate?: (input: NodeImageRequest, signal: Abo
       context.drawImage(mask, 0, 0);
       context.globalCompositeOperation = "destination-over";
       context.drawImage(original, 0, 0);
-      const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error("图片编码失败")), "image/png"));
+      const blob = await new Promise<Blob>((resolve, reject) => canvas.toBlob(value => value ? resolve(value) : reject(new Error("Mã hóa hình ảnh thất bại")), "image/png"));
       signal.throwIfAborted();
       outputPath = await uploadNodeFile(workspace, id, new File([blob], "image.png", { type: "image/png" }));
       signal.throwIfAborted();
-      if (findNode(id) !== node) throw new Error("重绘节点已移除");
+      if (findNode(id) !== node) throw new Error("Nút vẽ lại đã bị xóa");
       // ACT: 可恢复任务原图保留在节点的 generation 子目录，关闭后仍可合成，并随节点素材统一清理。
       if (!generate) await workspace.remove(`assets/${temporaryId}`, true).catch(error => {
-        if (error?.response?.data?.data?.code !== "ENOENT") showNodeError(error, "重绘临时文件清理失败");
+        if (error?.response?.data?.data?.code !== "ENOENT") showNodeError(error, "Không thể dọn dẹp tệp vẽ lại tạm");
       });
       requested = false;
       signal.throwIfAborted();
@@ -109,9 +109,9 @@ export function useImageInpaint(generate?: (input: NodeImageRequest, signal: Abo
     } finally {
       urls.forEach(url => URL.revokeObjectURL(url));
       canvas.width = canvas.height = 0;
-      if (outputPath && !committed) await workspace.remove(outputPath).catch(error => showNodeError(error, "重绘临时文件清理失败"));
+      if (outputPath && !committed) await workspace.remove(outputPath).catch(error => showNodeError(error, "Không thể dọn dẹp tệp vẽ lại tạm"));
       if (requested && !generate) await workspace.remove(`assets/${temporaryId}`, true).catch(error => {
-        if (error?.response?.data?.data?.code !== "ENOENT") showNodeError(error, "重绘临时文件清理失败");
+        if (error?.response?.data?.data?.code !== "ENOENT") showNodeError(error, "Không thể dọn dẹp tệp vẽ lại tạm");
       });
     }
   };

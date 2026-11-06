@@ -45,7 +45,7 @@ const plugin: ToolPlugin = {
       }, event => {
         if (event.event === "error") {
           const failure = event.args[0] as { message?: string };
-          error = Object.assign(new Error(failure.message ?? "FFmpeg 执行失败"), failure);
+          error = Object.assign(new Error(failure.message ?? "FFmpeg Thực thi thất bại"), failure);
         } else if (event.event === "result") details = event.args[0];
         else if (event.event === "filenames") filenames = event.args[0];
         else if (event.event === "end") details = { stdout: event.args[0], stderr: event.args[1], ...(filenames ? { filenames } : {}) };
@@ -57,7 +57,7 @@ const plugin: ToolPlugin = {
 
     return [{
       name: "ffprobe",
-      label: "查询媒体信息",
+      label: "Tra thông tin phương tiện",
       description: "使用本机 FFprobe 读取工作区媒体的格式、时长、尺寸、帧率和音轨等信息，支持原生探测选项。",
       parameters: z.toJSONSchema(probeSchema, { io: "input", target: "draft-07" }),
       execute(_id, params, signal) {
@@ -66,7 +66,7 @@ const plugin: ToolPlugin = {
       },
     }, {
       name: "ffmpeg",
-      label: "处理媒体",
+      label: "Xử lý phương tiện",
       description: "通过宿主 fluent-ffmpeg 处理工作区媒体。steps 原样传入链式方法及 args，支持全部宿主配置方法和别名、原始 inputOptions/outputOptions、复杂滤镜、多输入、多输出、文件序列及分片。operation 默认 run，也支持 save、screenshots、concat 和能力查询。不自动重命名输出、不限制执行时长；输出目录需已存在，文件覆盖遵循原生规则。",
       promptSnippet: "使用 ffmpeg 处理本地媒体，ffprobe 查询媒体信息；按用户要求选择输出位置。",
       promptGuidelines: [

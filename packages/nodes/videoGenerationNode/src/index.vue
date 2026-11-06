@@ -10,22 +10,22 @@
     :bottomWidth="660"
     :style="{ width: previewUrl && videoWidth ? `${videoWidth + 18}px` : undefined }">
     <template #topActions>
-      <el-button :icon="IconMusic" text :disabled="!outputFile || generating || deleting || uploading || actions?.processing" @click.stop="actions?.open('extractAudio')">提取音轨</el-button>
-      <el-button :icon="IconLayersSubtract" text :disabled="!outputFile || generating || deleting || uploading || actions?.processing" @click.stop="actions?.open('separate')">分离音视频</el-button>
-      <el-button :icon="IconScissors" text :disabled="!outputFile || generating || deleting || uploading || actions?.processing" @click.stop="actions?.open('trim')">截取片段</el-button>
-      <el-button :icon="IconMovie" text :loading="actions?.creatingAnalysis" :disabled="!outputFile || generating || deleting || uploading || actions?.processing || actions?.creatingAnalysis" @click.stop="actions?.createFrameAnalysis()">逐帧拉片</el-button>
+      <el-button :icon="IconMusic" text :disabled="!outputFile || generating || deleting || uploading || actions?.processing" @click.stop="actions?.open('extractAudio')">Trích xuất âm thanh</el-button>
+      <el-button :icon="IconLayersSubtract" text :disabled="!outputFile || generating || deleting || uploading || actions?.processing" @click.stop="actions?.open('separate')">Tách âm thanh và video</el-button>
+      <el-button :icon="IconScissors" text :disabled="!outputFile || generating || deleting || uploading || actions?.processing" @click.stop="actions?.open('trim')">Cắt đoạn</el-button>
+      <el-button :icon="IconMovie" text :loading="actions?.creatingAnalysis" :disabled="!outputFile || generating || deleting || uploading || actions?.processing || actions?.creatingAnalysis" @click.stop="actions?.createFrameAnalysis()">Phân tích từng khung hình</el-button>
       <mediaHistory mediaType="video" :current="outputFile" :disabled="generating || deleting || uploading" @select="outputs.video = { dataType: 'VIDEO', value: $event }" />
-      <el-button :icon="IconTransfer" :loading="uploading" :disabled="generating || deleting" text title="替换视频" aria-label="替换视频" @click.stop="fileInput?.click()">替换视频</el-button>
-      <input ref="fileInput" type="file" accept="video/*" hidden aria-label="选择替换视频" :disabled="generating || deleting || uploading" @change="replaceOutput" />
+      <el-button :icon="IconTransfer" :loading="uploading" :disabled="generating || deleting" text title="Thay video" aria-label="Thay video" @click.stop="fileInput?.click()">Thay video</el-button>
+      <input ref="fileInput" type="file" accept="video/*" hidden aria-label="Chọn video thay thế" :disabled="generating || deleting || uploading" @change="replaceOutput" />
     </template>
     <template #topRightActions>
       <el-dropdown trigger="click" placement="bottom-end" :disabled="!player?.ready || player?.capturing || generating || deleting || uploading" @command="player?.captureFrame($event)">
-        <el-button :icon="IconPhotoScan" :loading="player?.capturing" :disabled="!player?.ready || player?.capturing || generating || deleting || uploading" text title="截取视频帧" aria-label="截取视频帧" />
+        <el-button :icon="IconPhotoScan" :loading="player?.capturing" :disabled="!player?.ready || player?.capturing || generating || deleting || uploading" text title="Chụp khung hình video" aria-label="Chụp khung hình video" />
         <template #dropdown>
           <el-dropdown-menu>
-            <el-dropdown-item command="current" :icon="IconPhotoScan">截取当前帧</el-dropdown-item>
-            <el-dropdown-item command="first" :icon="IconPlayerSkipBack">截取首帧</el-dropdown-item>
-            <el-dropdown-item command="last" :icon="IconPlayerSkipForward">截取尾帧</el-dropdown-item>
+            <el-dropdown-item command="current" :icon="IconPhotoScan">Chụp khung hình hiện tại</el-dropdown-item>
+            <el-dropdown-item command="first" :icon="IconPlayerSkipBack">Chụp khung hình đầu</el-dropdown-item>
+            <el-dropdown-item command="last" :icon="IconPlayerSkipForward">Chụp khung hình cuối</el-dropdown-item>
           </el-dropdown-menu>
         </template>
       </el-dropdown>
@@ -35,9 +35,9 @@
         v-if="previewUrl"
         ref="player"
         :src="previewUrl"
-        label="生成视频"
+        label="Tạo video"
         @loadedmetadata="resizeVideo" />
-      <div v-else class="videoEmpty" role="img" aria-label="暂无生成视频">
+      <div v-else class="videoEmpty" role="img" aria-label="Chưa có video được tạo">
         <icon-camera-ai :size="48" stroke="1.25" aria-hidden="true" />
       </div>
     </div>
@@ -49,7 +49,7 @@
           @preview="setReferencePreview"
           @remove="removeReference" />
         <div v-if="frameMode" class="referenceHint">
-          {{ selectedMode === "startFrameOptional" ? "仅一张图片时作为尾帧；两张图片按顺序作为首帧、尾帧" : "图片引用按顺序作为首帧、尾帧" }}
+          {{ selectedMode === "startFrameOptional" ? "Một ảnh được dùng làm khung hình cuối; hai ảnh lần lượt là khung hình đầu và cuối" : "Ảnh tham chiếu lần lượt là khung hình đầu và cuối" }}
         </div>
         <promptInput v-model="data.promptModel" v-model:text="data.prompt" :references="referenceMentions" :materials="materialMentions" :selectMaterial="selectMaterialReference" :selectAsset="selectAssetReference" expandable />
         <div class="promptFooter">
@@ -59,12 +59,12 @@
             filterable
             :loading="modelsLoading"
             :disabled="generating || deleting"
-            placeholder="选择模型"
-            aria-label="生成模型"
-            noDataText="请先在设置中添加视频模型"
+            placeholder="Chọn mô hình"
+            aria-label="Mô hình tạo nội dung"
+            noDataText="Vui lòng thêm mô hình video trong cài đặt"
             placement="top-start"
             @update:modelValue="data.model = $event"
-            @visible-change="(visible) => visible && loadModels().catch((error) => showNodeError(error, '模型读取失败'))">
+            @visible-change="(visible) => visible && loadModels().catch((error) => showNodeError(error, 'Không thể tải mô hình'))">
             <template v-if="!selectedModel" #prefix><icon-sparkles :size="17" /></template>
             <template #label="{ label }"><modelLabel :label="label" :providerId="selectedModel?.providerId" :modelId="selectedModel?.modelId" /></template>
             <el-option-group v-for="provider in modelGroups" :key="provider.id" :label="provider.label">
@@ -89,14 +89,14 @@
             :disabled="generating || deleting || !selectedModel" />
           <div class="generationActions">
             <mediaPrice v-if="generationInput" :input="{ ...generationInput, mediaType: 'video' }" :supported="selectedModel?.supportsPrice === true" />
-            <el-button v-if="pendingRecovery" class="sendButton" :icon="IconPlayerStop" :loading="cancelling" :disabled="deleting || uploading" title="放弃任务" aria-label="放弃任务" @click="generationState.cancel().catch(error => showNodeError(error, '停止生成失败'))" />
+            <el-button v-if="pendingRecovery" class="sendButton" :icon="IconPlayerStop" :loading="cancelling" :disabled="deleting || uploading" title="Bỏ tác vụ" aria-label="Bỏ tác vụ" @click="generationState.cancel().catch(error => showNodeError(error, 'Không thể dừng tạo'))" />
             <el-button
               class="sendButton"
               :icon="generating ? IconPlayerStop : IconArrowUp"
               :disabled="cancelling || deleting || uploading || (!generating && !pendingRecovery && (!generationPrompt || !selectedModel))"
-              :title="generating ? '停止生成' : pendingRecovery ? '复查任务' : '生成视频'"
-              :aria-label="generating ? '停止生成' : pendingRecovery ? '复查任务' : '生成视频'"
-              @click="generating ? generationState.cancel().catch(error => showNodeError(error, '停止生成失败')) : startGeneration().catch((error) => showNodeError(error, '视频生成失败'))" />
+              :title="generating ? 'Dừng tạo' : pendingRecovery ? 'Kiểm tra lại tác vụ' : 'Tạo video'"
+              :aria-label="generating ? 'Dừng tạo' : pendingRecovery ? 'Kiểm tra lại tác vụ' : 'Tạo video'"
+              @click="generating ? generationState.cancel().catch(error => showNodeError(error, 'Không thể dừng tạo')) : startGeneration().catch((error) => showNodeError(error, 'Tạo video thất bại'))" />
           </div>
         </div>
       </el-card>
@@ -130,13 +130,13 @@ defineOptions({
   inheritAttrs: false,
   icon: IconCameraAi,
   handles: [
-    { id: "in", type: "target", dataType: ["IMAGE", "VIDEO", "AUDIO", "STRING"], label: "图片、视频、音频、文本输入" },
-    { id: "video", type: "source", dataType: "VIDEO", label: "视频输出" },
+    { id: "in", type: "target", dataType: ["IMAGE", "VIDEO", "AUDIO", "STRING"], label: "Đầu vào hình ảnh, video, âm thanh, văn bản" },
+    { id: "video", type: "source", dataType: "VIDEO", label: "Đầu ra video" },
   ] satisfies NodeHandle[],
 });
 const vLoading = ElLoading.directive;
 const { id, node, nodeProps, nodeEvent, outputs, files, ai, updateNodeInternals } = useNode({
-  label: "视频生成",
+  label: "Tạo video",
   onModelsChanged: () => void refreshProviderModels(),
 });
 type PromptModel = NonNullable<InstanceType<typeof promptInput>["$props"]["modelValue"]>;
@@ -164,7 +164,7 @@ const generationState = useNodeGeneration(outputs, () => generationController?.a
 const { generating, pendingRecovery, cancelling } = generationState;
 let generation: Promise<void> | undefined;
 let modelsRequest: Promise<void> | undefined;
-watch(generating, value => { if (!value && !disposed && !deleting.value && !models.value.length) void loadModels().catch(error => showNodeError(error, "模型读取失败")); });
+watch(generating, value => { if (!value && !disposed && !deleting.value && !models.value.length) void loadModels().catch(error => showNodeError(error, "Không thể tải mô hình")); });
 // ACT: 供应商未声明视频比例范围，沿用界面的通用比例，具体支持范围由供应商校验。
 const ratioOptions = ["16:9", "9:16", "1:1", "4:3", "3:4"];
 const selectedModel = useNodeModelSelection(models, computed({ get: () => data.value.model, set: value => { data.value.model = value; } }));
@@ -224,7 +224,7 @@ const modelGroups = computed(() => groupNodeModels(models.value));
 function getGenerationPrompt(prompt: string, references = refList.value) {
   return [
     prompt.trim(),
-    ...references.flatMap((item, index) => (item.dataType === "STRING" && item.value?.trim() ? [`参考 ${index + 1}：\n${item.value.trim()}`] : [])),
+    ...references.flatMap((item, index) => (item.dataType === "STRING" && item.value?.trim() ? [`Tham chiếu ${index + 1}：\n${item.value.trim()}`] : [])),
   ]
     .filter(Boolean)
     .join("\n\n");
@@ -278,13 +278,13 @@ function getGenerationInput(prompt: string): Omit<NodeVideoRequest, "directory">
 const outputFile = computed(() => outputs.value.video?.dataType === "VIDEO" ? outputs.value.video.value : undefined);
 const previewUrl = files.useFileUrl(
   outputFile,
-  (error) => showNodeError(error, "视频读取失败")
+  (error) => showNodeError(error, "Không thể đọc video")
 );
 
 onMounted(() => {
   window.addEventListener("toonflow:plugin-installed", refreshProviderModels);
   window.addEventListener("toonflow:provider-config-changed", refreshProviderModels);
-  void loadModels().catch(error => { if (!disposed) showNodeError(error, "模型读取失败"); });
+  void loadModels().catch(error => { if (!disposed) showNodeError(error, "Không thể tải mô hình"); });
 });
 onScopeDispose(() => {
   disposed = true;
@@ -299,7 +299,7 @@ async function refreshProviderModels(event?: Event) {
     await generation;
     if (!disposed && !deleting.value) await loadModels();
   } catch (error) {
-    if (!disposed) showNodeError(error, "模型读取失败");
+    if (!disposed) showNodeError(error, "Không thể tải mô hình");
   }
 }
 
@@ -309,8 +309,8 @@ async function replaceOutput(event: Event) {
   input.value = "";
   if (!file || generating.value || deleting.value || uploading.value || disposed) return;
   const mimeType = getMediaMimeType(file);
-  if (!mimeType.startsWith("video/")) return void showNodeError("请选择视频文件", "视频替换失败");
-  if (!file.size || file.size > 100 * 1024 * 1024) return void showNodeError("视频不能为空且不能超过 100 MB", "视频替换失败");
+  if (!mimeType.startsWith("video/")) return void showNodeError("Vui lòng chọn tệp video", "Thay video thất bại");
+  if (!file.size || file.size > 100 * 1024 * 1024) return void showNodeError("Video không được rỗng hoặc vượt quá 100 MB", "Thay video thất bại");
   uploading.value = true;
   try {
     const workspace = files.getWorkspaceFiles();
@@ -322,7 +322,7 @@ async function replaceOutput(event: Event) {
     // ACT: 保留历史输出文件，避免破坏撤销记录和复制节点的引用。
     outputs.value.video = { dataType: "VIDEO", value: { url, mimeType } };
   } catch (error) {
-    showNodeError(error, "视频替换失败");
+    showNodeError(error, "Thay video thất bại");
   } finally {
     uploading.value = false;
   }
@@ -347,12 +347,12 @@ function loadModels() {
 }
 
 async function startGeneration() {
-  if (cancelling.value) throw new Error("任务正在取消，请稍后重试");
-  if (generating.value) throw new Error("视频正在生成，请等待完成");
-  if (uploading.value) throw new Error("视频正在替换，请等待完成");
-  if (deleting.value) throw new Error("节点正在删除");
+  if (cancelling.value) throw new Error("Đang hủy tác vụ, vui lòng thử lại sau");
+  if (generating.value) throw new Error("Đang tạo video, vui lòng chờ hoàn tất");
+  if (uploading.value) throw new Error("Đang thay video, vui lòng chờ hoàn tất");
+  if (deleting.value) throw new Error("Nút đang bị xóa");
   if (pendingRecovery.value) {
-    generation = generationState.resume().catch(error => showNodeError(error, "视频任务复查失败"));
+    generation = generationState.resume().catch(error => showNodeError(error, "Không thể kiểm tra lại tác vụ video"));
     return { status: "generating" };
   }
   const choice = selectedModel.value;
@@ -360,18 +360,18 @@ async function startGeneration() {
   const references = referenceMentions.value;
   const prompt = data.value.promptModel.length ? getPromptText(data.value.promptModel, referenceId => {
     const value = references.find(reference => reference.id === referenceId)?.value;
-    if (value === undefined) throw new Error("提示词引用的素材已失效，请重新选择引用");
+    if (value === undefined) throw new Error("Tài nguyên tham chiếu trong câu lệnh không còn hợp lệ, vui lòng chọn lại");
     return value;
   }) : data.value.prompt;
   const input = getGenerationInput(prompt);
-  if (!choice || !input) throw new Error("请先选择视频模型");
-  if (!input.prompt) throw new Error("请输入生成提示词");
-  if (refList.value.some(item => item.value === undefined)) throw new Error("引用节点暂无内容，请先补充引用内容");
+  if (!choice || !input) throw new Error("Vui lòng chọn mô hình video");
+  if (!input.prompt) throw new Error("Nhập lời nhắc để tạo nội dung");
+  if (refList.value.some(item => item.value === undefined)) throw new Error("Nút tham chiếu chưa có nội dung, vui lòng bổ sung trước");
   for (const match of input.prompt.matchAll(/\{\{ref (\d+)\}\}/g)) {
     const reference = refList.value[Number(match[1]) - 1];
-    if (reference?.dataType === "STRING" && !reference.value?.trim()) throw new Error(`参考 ${match[1]} 的文本为空，请补充内容或移除提示词中的引用`);
+    if (reference?.dataType === "STRING" && !reference.value?.trim()) throw new Error(`Tham chiếu ${match[1]} có văn bản trống, hãy bổ sung hoặc bỏ tham chiếu trong câu lệnh`);
   }
-  if (choice.mode?.length && !matchingModes.value.length) throw new Error("当前模型没有适合这些参考素材的生成模式，请更换模型或调整引用");
+  if (choice.mode?.length && !matchingModes.value.length) throw new Error("Mô hình không có chế độ phù hợp tài nguyên tham chiếu này, hãy đổi mô hình hoặc điều chỉnh tham chiếu");
   const workspace = files.getWorkspaceFiles();
   const controller = new AbortController();
   generationController = controller;
@@ -384,10 +384,10 @@ async function startGeneration() {
     })
     .then(([result]) => {
       controller.signal.throwIfAborted();
-      if (!result) throw new Error("供应商未返回视频");
+      if (!result) throw new Error("Nhà cung cấp không trả về video");
       outputs.value.video = { dataType: "VIDEO", value: { url: result.path, mimeType: result.mimeType } };
     }))
-    .catch((error) => showNodeError(error, "视频生成失败"))
+    .catch((error) => showNodeError(error, "Tạo video thất bại"))
     .finally(() => {
       generationController = undefined;
     });
@@ -395,10 +395,10 @@ async function startGeneration() {
 }
 
 nodeEvent.on("save", (reason) => {
-  if (reason === "reload" && (generating.value || uploading.value || deleting.value)) throw new Error("视频处理中，请完成后再刷新节点");
+  if (reason === "reload" && (generating.value || uploading.value || deleting.value)) throw new Error("Video đang xử lý, hãy hoàn thành trước khi làm mới nút");
 });
 nodeEvent.on("delete", async () => {
-  if (uploading.value) throw new Error("视频正在替换，请稍后删除节点");
+  if (uploading.value) throw new Error("Đang thay video, vui lòng xóa nút sau");
   deleting.value = true;
   try {
     await generationState.cancel(false);
@@ -459,24 +459,24 @@ nodeTools.register({
     mode: z.union([z.string().min(1), z.array(z.string().min(1)).min(1)]).optional(),
     generateAudio: z.boolean().optional(),
     other: z.record(z.string(), z.json()).optional(),
-  }).refine((args) => (args.providerId === undefined) === (args.modelId === undefined), "providerId 与 modelId 必须同时提供"),
+  }).refine((args) => (args.providerId === undefined) === (args.modelId === undefined), "providerId và modelId phải được cung cấp cùng nhau"),
   async execute(args, { signal }) {
     signal?.throwIfAborted();
-    if (generating.value || deleting.value) throw new Error("节点正在生成或删除，请稍后修改配置");
+    if (generating.value || deleting.value) throw new Error("Nút đang tạo hoặc bị xóa, vui lòng sửa cấu hình sau");
     await loadModels();
     signal?.throwIfAborted();
-    if (generating.value || deleting.value) throw new Error("节点正在生成或删除，请稍后修改配置");
+    if (generating.value || deleting.value) throw new Error("Nút đang tạo hoặc bị xóa, vui lòng sửa cấu hình sau");
     const choice = args.modelId === undefined ? selectedModel.value
       : findNodeModel(models.value, { providerId: args.providerId ?? "", modelId: args.modelId });
-    if (!choice) throw new Error("请选择 getConfig 返回的有效视频模型");
+    if (!choice) throw new Error("Chọn mô hình video hợp lệ do getConfig trả về");
     const durations = getDurations(choice);
-    if (args.duration !== undefined && !durations.includes(args.duration)) throw new Error(`当前模型不支持时长 ${args.duration}，可选：${durations.join("、")}`);
+    if (args.duration !== undefined && !durations.includes(args.duration)) throw new Error(`Mô hình hiện tại không hỗ trợ thời lượng ${args.duration}，Các lựa chọn:${durations.join("、")}`);
     const duration = args.duration ?? (durations.includes(data.value.duration!) ? data.value.duration : durations[0]);
     const resolutions = getResolutions(choice, duration);
-    if (args.resolution !== undefined && !resolutions.includes(args.resolution)) throw new Error(`当前时长不支持分辨率 ${args.resolution}，可选：${resolutions.join("、")}`);
+    if (args.resolution !== undefined && !resolutions.includes(args.resolution)) throw new Error(`Thời lượng hiện tại không hỗ trợ độ phân giải ${args.resolution}，Các lựa chọn:${resolutions.join("、")}`);
     const resolution = args.resolution ?? (resolutions.includes(data.value.resolution) ? data.value.resolution : resolutions[0] ?? "");
-    if (args.mode !== undefined && !getMatchingModes(choice).some((item) => JSON.stringify(item) === JSON.stringify(args.mode))) throw new Error("所选模式不受当前模型支持或不适用于当前引用，请根据模型能力及已连接素材选择");
-    if (args.generateAudio !== undefined && choice.audio !== "optional" && args.generateAudio !== (choice.audio === true)) throw new Error("当前模型不支持切换声音，请查看 getConfig 返回的 audio 能力");
+    if (args.mode !== undefined && !getMatchingModes(choice).some((item) => JSON.stringify(item) === JSON.stringify(args.mode))) throw new Error("Chế độ không được mô hình hỗ trợ hoặc không phù hợp tham chiếu; hãy chọn theo khả năng mô hình và tài nguyên đã kết nối");
+    if (args.generateAudio !== undefined && choice.audio !== "optional" && args.generateAudio !== (choice.audio === true)) throw new Error("Mô hình không hỗ trợ bật/tắt âm thanh, hãy xem khả năng audio do getConfig trả về");
     const other = getModelFormValues(choice, choice === selectedModel.value ? data.value.other : {}, args.other);
     data.value.model = getNodeModelKey(choice);
     data.value.duration = duration;
@@ -494,7 +494,7 @@ nodeTools.register({
   description: "修改此节点的视频生成提示词，仅接收 prompt，支持 {{ref 1}} 等参考标记；时长 duration、分辨率等配置须先用 node:getConfig 查询能力，再单独调用 node:setConfig；不启动生成",
   parameters: z.strictObject({ prompt: z.string() }),
   execute({ prompt: value }) {
-    if (deleting.value) throw new Error("节点正在删除，请稍后修改");
+    if (deleting.value) throw new Error("Nút đang bị xóa, vui lòng sửa sau");
     data.value.prompt = value;
     data.value.promptModel = value.split("\n").map((text) => [{ type: "Write", text }]);
     return { prompt: value };

@@ -61,9 +61,9 @@ function frameDistance(before: Frame, after: Frame): number {
 
 export function createSceneDetector(options: SceneDetectorOptions) {
   const { method, threshold, minSceneSeconds } = options;
-  if (method !== "adaptive" && method !== "content") throw new Error("不支持的分镜检测模式");
-  if (!Number.isFinite(threshold) || threshold <= 0) throw new Error("分镜检测阈值必须大于 0");
-  if (!Number.isFinite(minSceneSeconds) || minSceneSeconds < 0) throw new Error("最短镜头时长不能小于 0");
+  if (method !== "adaptive" && method !== "content") throw new Error("Chế độ phát hiện cảnh không được hỗ trợ");
+  if (!Number.isFinite(threshold) || threshold <= 0) throw new Error("Ngưỡng phát hiện cảnh phải lớn hơn 0");
+  if (!Number.isFinite(minSceneSeconds) || minSceneSeconds < 0) throw new Error("Thời lượng cảnh tối thiểu không được nhỏ hơn 0");
 
   const recentScores: { time: number; score: number }[] = [];
   const flashWindowSeconds = 0.12;
@@ -113,11 +113,11 @@ export function createSceneDetector(options: SceneDetectorOptions) {
 
   return {
     processFrame(rgb: Uint8Array, time: number): number[] {
-      if (finished) throw new Error("分镜检测已经结束");
-      if (!rgb.length || rgb.length % 3 !== 0) throw new Error("分镜检测需要完整的 RGB24 帧");
-      if (!Number.isFinite(time) || time < 0) throw new Error("视频帧时间必须是非负数");
-      if (previousFrame && rgb.length !== previousFrame.rgb.length) throw new Error("分镜检测帧尺寸必须一致");
-      if (previousFrame && time <= previousFrame.time) throw new Error("视频帧时间必须严格递增");
+      if (finished) throw new Error("Đã kết thúc phát hiện cảnh");
+      if (!rgb.length || rgb.length % 3 !== 0) throw new Error("Phát hiện cảnh cần khung hình RGB24 đầy đủ");
+      if (!Number.isFinite(time) || time < 0) throw new Error("Thời gian khung hình video phải không âm");
+      if (previousFrame && rgb.length !== previousFrame.rgb.length) throw new Error("Kích thước khung hình phát hiện cảnh phải đồng nhất");
+      if (previousFrame && time <= previousFrame.time) throw new Error("Thời gian khung hình video phải tăng nghiêm ngặt");
 
       const frame = describeFrame(rgb, time);
       if (!previousFrame) {

@@ -25,14 +25,14 @@ const plugin: ToolPlugin = {
     }).strict();
     return [{
       name: "skillOperator",
-      label: "Skill 操作器",
+      label: "Quản lý kỹ năng",
       description: `统一管理技能。当前允许的操作：${actions.join("、")}。list 实时返回技能目录，可用 scope 查询被同名工作区技能覆盖的全局版本；read 读取正文或资料；create 新建技能或资料且不覆盖；update 用完整内容修改已有文件。除 list 外必填 name，写入还需 content。新建技能先创建 SKILL.md。`,
       promptSnippet: "按需查询技能目录，读取并维护技能及其附带资料。",
       promptGuidelines: allowRead ? [
         "每次接到任务，先用 skillOperator(action=list) 检查技能名称和描述。任务匹配技能时，先用 action=read 读取 SKILL.md 再开始实质工作；disableModelInvocation=true 的技能仅在用户明确指定时读取使用。普通聊天或没有匹配项时不强行套用技能。",
         "按当前阶段读取所需 references。相对链接以当前文档目录解析，再换算成相对于该技能根目录的 path，去掉章节锚点。跨技能引用先 list 确认目标名称及 scope，不能假定全局与工作区技能同级。",
         "已在当前上下文完整读取且适用的技能可以复用。简短说明采用的技能，遵循其阶段和用户要求；只有目录或旧对话摘要不算读取正文，文件不可读时说明缺项，不假称已读取。",
-      ] : ["Skill 操作器的正文读取权限已关闭；list 仅提供目录，不代表已经读取或采用技能。"],
+      ] : ["Skill Quyền đọc nội dung đã tắt; list chỉ cung cấp danh mục, không có nghĩa là đã đọc hay áp dụng kỹ năng."],
       parameters: z.toJSONSchema(requestSchema, { io: "input", target: "draft-07" }),
       executionMode: "sequential",
       async execute(_id, params, signal) {
@@ -42,11 +42,11 @@ const plugin: ToolPlugin = {
         if (action === "list") {
           result = { skills: skills.list(scope) };
         } else {
-          if (!name) throw new Error("请提供技能名称 name");
+          if (!name) throw new Error("Vui lòng cung cấp tên kỹ năng name");
           const location = { name, scope, path };
           if (action === "read") result = await skills.read(location, signal);
           else {
-            if (content === undefined) throw new Error("请提供文件完整内容 content");
+            if (content === undefined) throw new Error("Vui lòng cung cấp toàn bộ nội dung tệp content");
             result = await skills[action]({ ...location, content }, signal);
           }
         }

@@ -69,9 +69,9 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
 
   function checkTask(task: NodeGenerationTask, context: NodePersistenceContext) {
     lifetime.signal.throwIfAborted();
-    if (task.state === "cancelled") throw new DOMException("生成已取消", "AbortError");
+    if (task.state === "cancelled") throw new DOMException("Đã hủy tạo", "AbortError");
     if (findNode(id) !== node || savedData.value.mediaTask?.taskId !== task.taskId || task.directory !== context.directory || getPersistence?.()?.directory !== context.directory) {
-      throw new Error("节点或工作区已变化，本次任务结果不再应用");
+      throw new Error("Nút hoặc không gian làm việc đã thay đổi, kết quả tác vụ này sẽ không được áp dụng");
     }
   }
 
@@ -81,29 +81,29 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
       isCancelled: () => task.state === "cancelled",
       async onStatus(value: NodeMediaTaskStatus) {
         checkTask(task, context);
-        if (value.nodeId && value.nodeId !== id) throw new Error("生成任务不属于当前节点");
-        if (value.canvasPath && value.canvasPath !== task.canvasPath) throw new Error("生成任务的原画布归属不一致");
+        if (value.nodeId && value.nodeId !== id) throw new Error("Tác vụ tạo không thuộc nút hiện tại");
+        if (value.canvasPath && value.canvasPath !== task.canvasPath) throw new Error("Bảng vẽ gốc của tác vụ tạo không khớp");
         const before = JSON.stringify([task.state, task.resumable, task.providerData]);
         if (value.state) task.state = value.state;
         if (value.resumable !== undefined) task.resumable = value.resumable;
         if (value.providerData !== undefined) task.providerData = value.providerData;
         if (before !== JSON.stringify([task.state, task.resumable, task.providerData])) {
           const current = getPersistence?.();
-          if (!current) throw new Error("画布已关闭，无法保存任务状态");
+          if (!current) throw new Error("Bảng vẽ đã đóng, không thể lưu trạng thái tác vụ");
           await current.save(signal);
         }
         if (task.state === "interrupted" && task.resumable === false) {
-          throw new Error([value.result?.message, "上次生成结果未知，可能已接单或扣费。请先核对供应商任务；如需重新生成，请点击“放弃任务”。"].filter(Boolean).join("\n"));
+          throw new Error([value.result?.message, "Chưa rõ kết quả lần tạo trước, yêu cầu có thể đã được nhận hoặc tính phí. Hãy kiểm tra tác vụ phía nhà cung cấp; để tạo lại, nhấp “Bỏ tác vụ”."].filter(Boolean).join("\n"));
         }
       },
     };
   }
 
   async function generate<T extends "image" | "video" | "audio">(mediaType: T, input: NodeImageRequest | NodeVideoRequest | NodeAudioRequest, signal: AbortSignal, recoveryData?: unknown) {
-    if (!options) throw new Error("节点未提供媒体生成能力");
-    if (needsRecovery()) throw new Error("当前节点仍有未确认的生成任务，请先复查或明确放弃此任务后再生成");
+    if (!options) throw new Error("Nút không cung cấp khả năng tạo phương tiện");
+    if (needsRecovery()) throw new Error("Nút còn tác vụ tạo chưa xác nhận; hãy kiểm tra lại hoặc chủ động bỏ tác vụ trước khi tạo tiếp");
     const context = getPersistence?.();
-    if (!context || context.directory !== input.directory) throw new Error("画布尚未就绪，无法保存生成任务");
+    if (!context || context.directory !== input.directory) throw new Error("Bảng vẽ chưa sẵn sàng, không thể lưu tác vụ tạo");
     let task: NodeGenerationTask = {
       taskId: crypto.randomUUID(), directory: context.directory, canvasPath: context.canvasPath, nodeId: id,
       mediaType, providerId: input.providerId, modelId: input.modelId, state: "submitting",
@@ -140,7 +140,7 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
     const task = savedData.value.mediaTask;
     if (!options || !task) return;
     const context = getPersistence?.();
-    if (!context) throw new Error("画布已关闭，生成结果将在重新打开后恢复");
+    if (!context) throw new Error("Bảng vẽ đã đóng, kết quả tạo sẽ được khôi phục khi mở lại");
     checkTask(task, context);
     const applied = task.applied;
     task.applied = true;
@@ -149,8 +149,8 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
   }
 
   async function execute<T>(action: () => Promise<T>): Promise<T> {
-    if (cancelling.value) throw new Error("任务正在取消，请稍后重试");
-    if (generating.value) throw new Error("节点正在生成，请等待完成");
+    if (cancelling.value) throw new Error("Đang hủy tác vụ, vui lòng thử lại sau");
+    if (generating.value) throw new Error("Nút đang tạo nội dung, vui lòng chờ hoàn tất");
     const controller = executionController = new AbortController();
     status.value = "running";
     error.value = "";
@@ -162,8 +162,8 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
     } catch (failure) {
       status.value = "failed";
       const message = (failure as { response?: { data?: { message?: string } } })?.response?.data?.message;
-      error.value = failure instanceof Error && failure.name === "AbortError" ? "生成已取消"
-        : message || (failure instanceof Error ? failure.message : "生成失败");
+      error.value = failure instanceof Error && failure.name === "AbortError" ? "Đã hủy tạo"
+        : message || (failure instanceof Error ? failure.message : "Tạo thất bại");
       throw failure;
     } finally {
       if (executionController === controller) executionController = undefined;
@@ -176,7 +176,7 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
     const context = getPersistence?.();
     if (!options || !task || !context || !needsRecovery()) return Promise.resolve();
     if (task.nodeId !== id || task.directory !== context.directory || !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(task.taskId)
-      || !["image", "video", "audio"].includes(task.mediaType)) return Promise.reject(new Error("保存的生成任务归属无效，请放弃此任务后重新生成"));
+      || !["image", "video", "audio"].includes(task.mediaType)) return Promise.reject(new Error("Thông tin sở hữu tác vụ đã lưu không hợp lệ; hãy bỏ tác vụ này rồi tạo lại"));
     recoveryController = new AbortController();
     const signal = AbortSignal.any([lifetime.signal, recoveryController.signal]);
     recovering = execute(async () => {
@@ -187,7 +187,7 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
       signal.throwIfAborted();
       checkTask(task, context);
       const result = results[0];
-      if (!result || result.mediaType !== task.mediaType) throw new Error("生成任务未返回对应的媒体结果");
+      if (!result || result.mediaType !== task.mediaType) throw new Error("Tác vụ tạo không trả về kết quả phương tiện tương ứng");
       if (result.mediaType === "image") outputs.value.image = { dataType: "IMAGE", value: { url: result.path, mimeType: result.mimeType } };
       else if (result.mediaType === "video") outputs.value.video = { dataType: "VIDEO", value: { url: result.path, mimeType: result.mimeType } };
       else outputs.value.audio = { dataType: "AUDIO", value: { url: result.path, mimeType: result.mimeType } };
@@ -201,13 +201,13 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
   }
 
   async function cancelGeneration(persist = true) {
-    if (cancelling.value) throw new Error("任务正在取消，请稍后重试");
+    if (cancelling.value) throw new Error("Đang hủy tác vụ, vui lòng thử lại sau");
     cancelling.value = true;
     try {
       const task = savedData.value.mediaTask;
       const context = getPersistence?.();
       if (options && task && needsRecovery()) {
-        if (!context) throw new Error("工作区已变化，无法取消此节点任务");
+        if (!context) throw new Error("Không gian làm việc đã thay đổi, không thể hủy tác vụ của nút này");
         // ACT: 项目移动后的旧任务仅在当前节点放弃，不请求原目录的后台任务。
         if (task.directory === context.directory) await options.ai.cancelMedia(task.directory, task.taskId);
         const current = getPersistence?.();
@@ -232,7 +232,7 @@ export function useNodeGeneration(outputs: Readonly<Ref<NodeOutputs>>, cancel: (
     const task = savedData.value.mediaTask;
     if (!path || !options || !task || generating.value || !needsRecovery() || attemptedTaskId === task.taskId) return;
     attemptedTaskId = task.taskId;
-    void resume().catch(error => { if (!lifetime.signal.aborted) showNodeError(error, "生成任务恢复失败"); });
+    void resume().catch(error => { if (!lifetime.signal.aborted) showNodeError(error, "Khôi phục tác vụ tạo thất bại"); });
   }, { immediate: true, flush: "post" });
   watch(outputs, () => {
     // 保留用户替换或编辑的输出；未决任务仍须复查完成或明确放弃，不能借此重新提交。

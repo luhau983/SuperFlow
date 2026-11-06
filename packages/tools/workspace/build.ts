@@ -2,8 +2,8 @@ import { createToolConfig } from "@toonflow/tools-scaffold";
 
 await createToolConfig({
   name: "workspace",
-  displayName: "工作区文件",
-  description: "读取、列出和编辑当前工作区内的文件，搜索文件内容、查找文件，下载远程图片到工作区。",
+  displayName: "Tệp không gian làm việc",
+  description: "Đọc, liệt kê và sửa tệp trong không gian làm việc, tìm nội dung và tệp, tải ảnh từ xa vào không gian làm việc.",
   prompt: `路径相对于当前工作区解析。文件修改不得越出工作区；全局技能目录只允许读取技能及其附带资料。
 grep 搜索文件内容、find 查找文件，范围严格限定在当前工作区，不搜索全局技能目录。
 修改已有文件前先读取相关内容，避免覆盖用户已有修改。
@@ -11,6 +11,6 @@ grep 搜索文件内容、find 查找文件，范围严格限定在当前工作�
   author: "Toonflow",
   github: "https://github.com/HBAI-Ltd/Toonflow-app",
   configRules: [
-    { type: "switch", field: "readOnly", title: "只读模式", value: false, info: "开启后只允许读取文件、列出目录和搜索工作区。" },
+    { type: "switch", field: "readOnly", title: "Chế độ chỉ đọc", value: false, info: "Khi bật, chỉ được đọc tệp, liệt kê thư mục và tìm kiếm trong không gian làm việc." },
   ],
 }, import.meta.url);

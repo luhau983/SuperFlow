@@ -5,7 +5,7 @@ import type { ToolContext, ToolDefinition } from "@toonflow/tools-scaffold/runti
 
 const pathSchema = z.string().min(1).max(4096).optional().describe("当前工作区内的搜索路径，默认工作区根目录");
 const globSchema = z.string().min(1).max(512)
-  .refine(pattern => !/[{}\[\]]|[@+?!*]\(/.test(pattern), "glob 仅支持 *、**、?，不支持花括号、字符集合或 extglob")
+  .refine(pattern => !/[{}\[\]]|[@+?!*]\(/.test(pattern), "glob Chỉ hỗ trợ *、**、?，Không hỗ trợ dấu ngoặc nhọn, tập ký tự hoặc extglob")
   .describe("文件 glob，例如 *.ts、**/*.json 或 src/**/*.ts；支持 *、**、?，不支持 {}、[] 或 extglob");
 const findSchema = z.object({
   pattern: globSchema,
@@ -44,11 +44,11 @@ function createGlobMatcher(pattern: string) {
 export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext, "cwd" | "files" | "resolvePath">): ToolDefinition[] {
   return ["grep", "find"].map(name => ({
     name,
-    label: name === "grep" ? "搜索文件内容" : "查找文件",
+    label: name === "grep" ? "Tìm nội dung tệp" : "Tìm tệp",
     description: name === "grep"
       ? "搜索当前工作区内的文本，返回工作区相对路径、行号和匹配内容。支持 RE2 正则、普通文本、大小写和上下文选项。跳过 .git、node_modules、符号链接、二进制及超过 8 MiB 的文件；搜索总量最多 64 MiB。正则工作量超限会提示跳过或停止，可用 literal 搜索长行。"
       : "按 glob 查找当前工作区内的文件，返回工作区相对路径。跳过 .git、node_modules 和符号链接。不会查询工作区以外的目录。",
-    promptSnippet: name === "grep" ? "搜索工作区文本内容。" : "按 glob 查找工作区文件。",
+    promptSnippet: name === "grep" ? "Tìm nội dung văn bản trong không gian làm việc." : "Tìm tệp trong không gian làm việc theo glob.",
     promptGuidelines: ["grep/find 仅搜索当前工作区，不读取全局技能目录；达到结果、遍历或容量限制会明确提示，必要时缩小 path 或 glob。"],
     parameters: z.toJSONSchema(name === "grep" ? grepSchema : findSchema, { io: "input", target: "draft-07" }),
     async execute(_id, params, signal) {
@@ -59,10 +59,10 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
       signal?.throwIfAborted();
       const root = await resolvePath(request.path ?? ".");
       const info = await files.stat(root);
-      if (!info.isDirectory() && !(grep && info.isFile())) throw new Error("请指定工作区内的普通文件夹，grep 也可指定普通文件");
+      if (!info.isDirectory() && !(grep && info.isFile())) throw new Error("Chỉ định thư mục thường trong không gian làm việc; grep cũng nhận tệp thường");
       const matcher = grep && !grep.literal ? RE2JS.compile(grep.pattern, grep.ignoreCase ? RE2JS.CASE_INSENSITIVE : 0) : undefined;
       const regexSize = matcher?.programSize() ?? 0;
-      if (regexSize > 10000) throw new Error("正则表达式过于复杂，请简化 pattern 或使用 literal");
+      if (regexSize > 10000) throw new Error("Biểu thức chính quy quá phức tạp, hãy đơn giản hóa pattern hoặc dùng literal");
       const literal = grep?.ignoreCase ? grep.pattern.toLowerCase() : grep?.pattern;
       const pattern = (grep ? grep.glob : request.pattern)?.replaceAll("\\", "/");
       const globMatcher = pattern ? createGlobMatcher(pattern) : undefined;
@@ -79,10 +79,10 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
       let notice = "";
       const deadline = Date.now() + 30000;
       const append = (line: string) => {
-        const text = line.length > 2000 ? `${line.slice(0, 2000)}…（此行已截断）` : line;
+        const text = line.length > 2000 ? `${line.slice(0, 2000)}…（dòng này đã được rút gọn)` : line;
         outputBytes += Buffer.byteLength(text) + 1;
         if (outputBytes > 50 * 1024) {
-          notice = "结果达到 50 KiB 上限，请缩小搜索范围";
+          notice = "Kết quả đạt giới hạn 50 KiB, hãy thu hẹp phạm vi tìm kiếm";
           return false;
         }
         output.push(text);
@@ -92,7 +92,7 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
       while (pending.length && !notice) {
         signal?.throwIfAborted();
         if (++visited > 20000 || Date.now() >= deadline) {
-          notice = "搜索达到遍历或时间上限，请缩小 path";
+          notice = "Tìm kiếm đạt giới hạn duyệt hoặc thời gian, hãy thu hẹp path";
           break;
         }
         const path = pending.pop()!;
@@ -107,7 +107,7 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
         if (entry.isDirectory()) {
           const entries = (await files.readdir(path, false, signal)).filter(item => item !== ".git" && item !== "node_modules").sort();
           if (visited + pending.length + entries.length > 20000) {
-            notice = "搜索目录包含过多项目，请缩小 path";
+            notice = "Thư mục tìm kiếm có quá nhiều mục, hãy thu hẹp path";
             break;
           }
           for (const entry of entries.reverse()) pending.push(join(path, entry));
@@ -123,7 +123,7 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
         } else {
           if (entry.size > 8 * 1024 * 1024) { skipped++; continue; }
           if (inputBytes + entry.size > 64 * 1024 * 1024) {
-            notice = "搜索达到 64 MiB 读取上限，请缩小 path 或 glob";
+            notice = "Tìm kiếm đạt giới hạn đọc 64 MiB, hãy thu hẹp path hoặc glob";
             break;
           }
           // readOnly=false 仅允许工作区；流读取防止 stat 后文件增长突破容量上限。
@@ -134,7 +134,7 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
             if ((error as NodeJS.ErrnoException).code !== "EFBIG") throw error;
             inputBytes += maxBytes + 1;
             if (inputBytes >= 64 * 1024 * 1024) {
-              notice = "搜索达到 64 MiB 读取上限，请缩小 path 或 glob";
+              notice = "Tìm kiếm đạt giới hạn đọc 64 MiB, hãy thu hẹp path hoặc glob";
               break;
             }
             skipped++;
@@ -142,7 +142,7 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
           }
           inputBytes += content.byteLength;
           if (inputBytes > 64 * 1024 * 1024) {
-            notice = "搜索达到 64 MiB 读取上限，请缩小 path 或 glob";
+            notice = "Tìm kiếm đạt giới hạn đọc 64 MiB, hãy thu hẹp path hoặc glob";
             break;
           }
           if (content.byteLength > 8 * 1024 * 1024 || content.subarray(0, 8192).includes(0)) { skipped++; continue; }
@@ -153,7 +153,7 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
               await new Promise<void>(resolve => setImmediate(resolve));
               batchWork = 0;
               signal?.throwIfAborted();
-              if (Date.now() >= deadline) { notice = "搜索达到时间上限，请缩小范围"; break; }
+              if (Date.now() >= deadline) { notice = "Tìm kiếm đạt giới hạn thời gian, hãy thu hẹp phạm vi"; break; }
             }
             const line = lines[index]!;
             // ACT: RE2 的工作量仍与状态数×行长相关；限制单行/累计成本，更大搜索需可终止的 worker。
@@ -161,7 +161,7 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
             if (work > 2000000) { skippedLines++; continue; }
             regexWork += work;
             batchWork += work;
-            if (regexWork > 50000000) { notice = "搜索达到正则工作量上限，请缩小范围或使用 literal"; break; }
+            if (regexWork > 50000000) { notice = "Tìm kiếm đạt giới hạn xử lý biểu thức chính quy, hãy thu hẹp phạm vi hoặc dùng literal"; break; }
             if (!(matcher ? matcher.test(line) : (grep.ignoreCase ? line.toLowerCase() : line).includes(literal!))) continue;
             count++;
             for (let row = Math.max(lastOutput + 1, index - grep.context); row <= Math.min(lines.length - 1, index + grep.context); row++) {
@@ -171,12 +171,12 @@ export function createSearchTools({ cwd, files, resolvePath }: Pick<ToolContext,
             if (notice || count >= request.limit) break;
           }
         }
-        if (count >= request.limit) notice = `结果达到 ${request.limit} 条上限，可缩小范围或提高 limit`;
+        if (count >= request.limit) notice = `Kết quả đạt ${request.limit} mục tối đa, có thể thu hẹp phạm vi hoặc tăng limit`;
       }
       signal?.throwIfAborted();
-      const text = output.length ? output.join("\n") : "未找到匹配项";
-      const notes = [notice, skipped ? `跳过 ${skipped} 项符号链接、特殊文件、二进制、过大或已删除的文件` : "",
-        skippedLines ? `跳过 ${skippedLines} 行超出正则工作量上限的内容，可使用 literal 或简化 pattern` : ""].filter(Boolean);
+      const text = output.length ? output.join("\n") : "Không tìm thấy kết quả phù hợp";
+      const notes = [notice, skipped ? `Bỏ qua ${skipped} mục liên kết tượng trưng, tệp đặc biệt, nhị phân, quá lớn hoặc đã xóa` : "",
+        skippedLines ? `Bỏ qua ${skippedLines} dòng vượt giới hạn xử lý biểu thức chính quy; dùng literal hoặc đơn giản hóa pattern` : ""].filter(Boolean);
       return {
         content: [{ type: "text", text: `${text}${notes.length ? `\n\n[${notes.join("；")}]` : ""}` }],
         details: { count, visited, skipped, skippedLines, truncated: !!notice || skippedLines > 0 },

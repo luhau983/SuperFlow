@@ -2,7 +2,7 @@ import { z } from "zod";
 
 const relativePathSchema = z.string().min(1).max(4096).regex(
   /^(?!\.{1,2}(?:\/|$))(?!.*\/\.{1,2}(?:\/|$))[^/\\:\u0000-\u001f\u007f]+(?:\/[^/\\:\u0000-\u001f\u007f]+)*$/,
-  "请使用以 / 分隔的相对路径，不能包含空路径段、.、..、盘符或控制字符",
+  "Dùng đường dẫn tương đối phân cách bằng /, không chứa đoạn trống,.、..、ký tự ổ đĩa hoặc ký tự điều khiển",
 );
 
 export const sandboxRequestSchema = z.object({

@@ -6,8 +6,8 @@
       :target="() => root?.querySelector<HTMLElement>(step.target) ?? null"
       :title="step.title"
       :description="step.description"
-      :prevButtonProps="{ children: '上一步' }"
-      :nextButtonProps="{ children: index === steps.length - 1 ? '开始使用' : '下一步' }" />
+      :prevButtonProps="{ children: 'Bước trước' }"
+      :nextButtonProps="{ children: index === steps.length - 1 ? 'Bắt đầu sử dụng' : 'Bước tiếp' }" />
     <template #indicators="{ current, total }">{{ current + 1 }} / {{ total }}</template>
   </el-tour>
 </template>
@@ -22,33 +22,33 @@ const open = ref(localStorage.getItem(storageKey) !== "true");
 const steps = [
   {
     target: ".chatFooter",
-    title: "生成场景与方案",
-    description: "描述场景模型、人物动作和镜头要求，再点击“生成方案”。画布上如果有链接的文本、图片和视频，可以通过 @ 引用。",
+    title: "Tạo cảnh và phương án",
+    description: "Mô tả mô hình cảnh, chuyển động nhân vật và yêu cầu góc máy, rồi nhấp “Tạo phương án”. Dùng @ để tham chiếu văn bản, hình ảnh và video đã kết nối trên bảng vẽ.",
   },
   {
     target: ".planContent",
-    title: "查看与切换方案",
-    description: "生成的方案会出现在这里。点击方案从头预览对应动画，并查看生成时的输入提示词；也可以继续输入要求生成新方案。多个方案共用基础场景和模型。",
+    title: "Xem và chuyển phương án",
+    description: "Các phương án đã tạo xuất hiện ở đây. Nhấp để xem hoạt ảnh từ đầu và câu lệnh đã dùng. Bạn có thể nhập yêu cầu để tạo phương án mới. Các phương án dùng chung cảnh và mô hình nền.",
   },
   {
     target: ".viewport",
-    title: "第一人称取景",
-    description: "点击三维画面后，用鼠标调整朝向。WASD 移动，空格上升，Shift 下降，滚轮调焦；左键或 Esc 退出取景。",
+    title: "Góc nhìn thứ nhất",
+    description: "Nhấp vào cảnh 3D rồi dùng chuột đổi hướng nhìn. WASD để di chuyển, Space để lên, Shift để xuống, cuộn chuột để chỉnh tiêu cự; chuột trái hoặc Esc để thoát.",
   },
   {
     target: ".stagePanel .referenceList",
-    title: "记录关键帧",
-    description: "取景时按右键，或点击“添加关键帧”记录当前镜头。这里的关键帧可以拖动排序、点击回看或删除。再次生成方案时，AI 会参考这些取景及其顺序设计运镜。点击导出按钮可以导出关键帧图片。",
+    title: "Ghi khung hình chính",
+    description: "Nhấn chuột phải khi chọn góc máy hoặc nhấp “Thêm khung hình chính” để ghi góc máy hiện tại. Kéo để sắp xếp, nhấp để xem lại hoặc xóa. Khi tạo phương án mới, AI dùng các góc máy và thứ tự này để thiết kế chuyển động. Nút xuất cho phép xuất ảnh khung hình chính.",
   },
   {
     target: ".playbackBar",
-    title: "播放与画面设置",
-    description: "用播放按钮和进度条检查动画；在这里调整画面比例、网格、天空与光照，让预演画面更符合你的想法。",
+    title: "Phát và cài đặt hình ảnh",
+    description: "Dùng nút phát và thanh tiến trình để xem hoạt ảnh. Điều chỉnh tỷ lệ hình ảnh, lưới, bầu trời và ánh sáng để cảnh xem trước phù hợp với ý tưởng của bạn.",
   },
   {
-    target: '[aria-label="导出视频节点"]',
-    title: "导出到画布",
-    description: "选中方案后，点击这里导出视频节点。关键帧缩略图上的导出按钮可以生成图片节点。视频导出期间请保持窗口可见，完成后回到画布查看结果。",
+    target: '[aria-label="Xuất nút video"]',
+    title: "Xuất ra bảng vẽ",
+    description: "Chọn phương án rồi nhấp đây để xuất nút video. Nút xuất trên ảnh thu nhỏ khung hình chính tạo nút hình ảnh. Giữ cửa sổ hiển thị trong lúc xuất video, rồi quay lại bảng vẽ để xem kết quả.",
   },
 ];
 

@@ -21,7 +21,7 @@ export function getModelFormValues(model: NodeMediaModel, values: Record<string,
   const fields = new Map<string, unknown>();
   collectFields(formCreate.copyRules(model.rules ?? []), fields);
   for (const field of Object.keys(updates)) {
-    if (!fields.has(field)) throw new Error(`当前模型不支持自定义配置 ${field}，请查看 getConfig 返回的模型 rules`);
+    if (!fields.has(field)) throw new Error(`Mô hình hiện tại không hỗ trợ cấu hình tùy chỉnh ${field}，Hãy xem rules của mô hình do getConfig trả về`);
   }
   const nextValues = { ...values, ...updates };
   return Object.fromEntries([...fields].map(([field, value]) => [field, Object.hasOwn(nextValues, field) ? nextValues[field] : value]));

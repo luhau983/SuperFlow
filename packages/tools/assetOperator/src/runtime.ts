@@ -27,23 +27,23 @@ const actionFields: Record<z.infer<typeof requestSchema>["action"], readonly str
 export const assetRequestSchema = requestSchema.superRefine((request, context) => {
   for (const [field, value] of Object.entries(request)) {
     if (field !== "action" && value !== undefined && !actionFields[request.action].includes(field)) {
-      context.addIssue({ code: "custom", path: [field], message: `${request.action} 不接受 ${field}` });
+      context.addIssue({ code: "custom", path: [field], message: `${request.action} Không chấp nhận ${field}` });
     }
   }
   if (request.action !== "list" && !request.path?.trim()) {
-    context.addIssue({ code: "custom", path: ["path"], message: `${request.action} 必须提供素材路径 path` });
+    context.addIssue({ code: "custom", path: ["path"], message: `${request.action} Phải cung cấp đường dẫn tài nguyên path` });
   }
   if (request.action === "list" && request.limit !== undefined && request.limit > 50) {
-    context.addIssue({ code: "custom", path: ["limit"], message: "list 每页最多 50 项" });
+    context.addIssue({ code: "custom", path: ["limit"], message: "list Mỗi trang tối đa 50 mục" });
   }
   if ((request.action === "create" || request.action === "update") && (request.content !== undefined) === (request.sourcePath !== undefined)) {
-    context.addIssue({ code: "custom", path: ["content"], message: "content 和 sourcePath 必须且只能提供一个" });
+    context.addIssue({ code: "custom", path: ["content"], message: "content và sourcePath phải cung cấp đúng một trường" });
   }
   if (request.action === "update" && !request.revision) {
-    context.addIssue({ code: "custom", path: ["revision"], message: "修改前必须先 read，并提供返回的 revision" });
+    context.addIssue({ code: "custom", path: ["revision"], message: "Phải gọi read trước khi sửa và cung cấp revision được trả về" });
   }
   if (request.action === "move" && !request.target?.trim()) {
-    context.addIssue({ code: "custom", path: ["target"], message: "move 必须提供目标路径 target" });
+    context.addIssue({ code: "custom", path: ["target"], message: "move Phải cung cấp đường dẫn đích target" });
   }
 });
 

@@ -1,22 +1,22 @@
 <template>
   <section class="textDocument" @keydown="onKeydown">
     <header class="textToolbar">
-      <el-button text size="small" @click="openSearch(false)">查找</el-button>
-      <el-button text size="small" @click="openSearch(true)">替换</el-button>
+      <el-button text size="small" @click="openSearch(false)">Tìm kiếm</el-button>
+      <el-button text size="small" @click="openSearch(true)">Thay thế</el-button>
     </header>
     <div v-if="searchVisible" class="searchPanel">
       <div class="searchRow">
-        <el-input ref="searchInput" v-model="query" size="small" placeholder="查找文本" aria-label="查找文本" @keydown.enter.prevent="findNext(($event as KeyboardEvent).shiftKey ? -1 : 1)" />
-        <el-checkbox v-model="caseSensitive" size="small">区分大小写</el-checkbox>
-        <span class="searchStatus" aria-live="polite">{{ matches.length ? `${selectedIndex + 1} / ${matches.length}` : '无匹配' }}</span>
-        <el-button text size="small" :disabled="!matches.length" @click="findNext(-1)">上一个</el-button>
-        <el-button text size="small" :disabled="!matches.length" @click="findNext(1)">下一个</el-button>
-        <el-button text size="small" aria-label="关闭查找" @click="searchVisible = false">关闭</el-button>
+        <el-input ref="searchInput" v-model="query" size="small" placeholder="Tìm văn bản" aria-label="Tìm văn bản" @keydown.enter.prevent="findNext(($event as KeyboardEvent).shiftKey ? -1 : 1)" />
+        <el-checkbox v-model="caseSensitive" size="small">Phân biệt chữ hoa, chữ thường</el-checkbox>
+        <span class="searchStatus" aria-live="polite">{{ matches.length ? `${selectedIndex + 1} / ${matches.length}` : 'Không có kết quả' }}</span>
+        <el-button text size="small" :disabled="!matches.length" @click="findNext(-1)">Trước đó</el-button>
+        <el-button text size="small" :disabled="!matches.length" @click="findNext(1)">Tiếp theo</el-button>
+        <el-button text size="small" aria-label="Đóng tìm kiếm" @click="searchVisible = false">Đóng</el-button>
       </div>
       <div v-if="replaceVisible" class="searchRow">
-        <el-input v-model="replacement" size="small" placeholder="替换为" aria-label="替换为" @keydown.enter.prevent="replaceCurrent" />
-        <el-button size="small" :disabled="context.loading || !matches.length" @click="replaceCurrent">替换</el-button>
-        <el-button size="small" :disabled="context.loading || !matches.length" @click="replaceAll">全部替换</el-button>
+        <el-input v-model="replacement" size="small" placeholder="Thay bằng" aria-label="Thay bằng" @keydown.enter.prevent="replaceCurrent" />
+        <el-button size="small" :disabled="context.loading || !matches.length" @click="replaceCurrent">Thay thế</el-button>
+        <el-button size="small" :disabled="context.loading || !matches.length" @click="replaceAll">Thay thế tất cả</el-button>
       </div>
     </div>
     <textarea ref="textarea" class="textEditor" :value="context.text" :disabled="context.loading" :aria-label="context.resource.label" :spellcheck="false"

@@ -1,16 +1,16 @@
 import { z } from "@toonflow/nodes-scaffold/runtime";
 
 export const multiAnglePresets = [
-  { id: "front", label: "正面", settings: { azimuth: 0, elevation: 0 } },
-  { id: "back", label: "背面", settings: { azimuth: -180, elevation: 0 } },
-  { id: "leftFront", label: "左前", settings: { azimuth: -45, elevation: 0 } },
-  { id: "rightFront", label: "右前", settings: { azimuth: 45, elevation: 0 } },
-  { id: "left", label: "左侧", settings: { azimuth: -90, elevation: 0 } },
-  { id: "right", label: "右侧", settings: { azimuth: 90, elevation: 0 } },
-  { id: "leftBack", label: "左后", settings: { azimuth: -135, elevation: 0 } },
-  { id: "rightBack", label: "右后", settings: { azimuth: 135, elevation: 0 } },
-  { id: "high", label: "俯拍", settings: { azimuth: 0, elevation: 60 } },
-  { id: "low", label: "仰拍", settings: { azimuth: 0, elevation: -60 } },
+  { id: "front", label: "Chính diện", settings: { azimuth: 0, elevation: 0 } },
+  { id: "back", label: "Mặt sau", settings: { azimuth: -180, elevation: 0 } },
+  { id: "leftFront", label: "Trước trái", settings: { azimuth: -45, elevation: 0 } },
+  { id: "rightFront", label: "Trước phải", settings: { azimuth: 45, elevation: 0 } },
+  { id: "left", label: "Bên trái", settings: { azimuth: -90, elevation: 0 } },
+  { id: "right", label: "Bên phải", settings: { azimuth: 90, elevation: 0 } },
+  { id: "leftBack", label: "Sau trái", settings: { azimuth: -135, elevation: 0 } },
+  { id: "rightBack", label: "Sau phải", settings: { azimuth: 135, elevation: 0 } },
+  { id: "high", label: "Góc cao", settings: { azimuth: 0, elevation: 60 } },
+  { id: "low", label: "Góc thấp", settings: { azimuth: 0, elevation: -60 } },
 ] as const;
 
 export const multiAngleFocalLengths = { standard: 50, wide: 24 } as const;
@@ -33,7 +33,7 @@ export function readMultiAngleSettings(value: unknown): MultiAngleSettings {
 }
 
 export function getMultiAngleShot(distance: number) {
-  return distance <= 3.5 ? "近景" : distance >= 7 ? "远景" : "中景";
+  return distance <= 3.5 ? "Cận cảnh" : distance >= 7 ? "Toàn cảnh" : "Trung cảnh";
 }
 
 export function getMultiAngleCameraPosition(value: Pick<MultiAngleSettings, "azimuth" | "elevation" | "distance">) {

@@ -11,7 +11,7 @@ const plugin: ToolPlugin = {
     if (!sandbox) return [];
     return [{
       name: "sandbox",
-      label: "代码沙盒",
+      label: "Môi trường chạy mã cách ly",
       description: "在独立的内存文件系统中执行 Bash、JavaScript（js-exec）和 Python（python3）。工作目录为 /workspace，通过 files 创建文本文件或 imports 导入指定文件；仅成功执行后按 exports 写回工作区，默认不覆盖。返回退出码和输出。环境禁网，JavaScript 不提供完整 Node.js API，Python 不支持 pip 或本机程序。",
       promptSnippet: "在隔离的内存环境中运行技能的 JS/Python 脚本，并显式导入和导出文件。",
       promptGuidelines: [

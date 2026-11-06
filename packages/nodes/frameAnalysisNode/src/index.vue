@@ -8,61 +8,61 @@
     :style="{ width: `${nodeWidth}px` }">
     <template #top>
       <el-card class="mediaToolbar" shadow="never" :bodyStyle="{ padding: '6px', display: 'flex', alignItems: 'center' }">
-        <el-button :icon="IconTransfer" text :disabled="busy || connected" @click="fileInput?.click()">替换视频</el-button>
-        <el-button :icon="IconMaximize" text :disabled="!player?.ready" @click="player?.enterFullscreen()">全屏</el-button>
-        <el-button :icon="IconFileText" text :disabled="!lastResultMatches" @click="openReport">查看结果</el-button>
+        <el-button :icon="IconTransfer" text :disabled="busy || connected" @click="fileInput?.click()">Thay video</el-button>
+        <el-button :icon="IconMaximize" text :disabled="!player?.ready" @click="player?.enterFullscreen()">Toàn màn hình</el-button>
+        <el-button :icon="IconFileText" text :disabled="!lastResultMatches" @click="openReport">Xem kết quả</el-button>
       </el-card>
     </template>
     <div class="analysisContent">
       <div class="videoArea nodrag nopan nowheel" @pointerdown.stop @dblclick.stop>
-        <videoPlayer v-if="previewUrl" ref="player" :src="previewUrl" label="拉片视频" @loadedmetadata="readMetadata" />
+        <videoPlayer v-if="previewUrl" ref="player" :src="previewUrl" label="Video cần phân tích" @loadedmetadata="readMetadata" />
         <el-button v-else class="uploadButton" text :loading="uploading" :disabled="busy || connected" @click="fileInput?.click()">
           <icon-upload :size="40" stroke="1.5" aria-hidden="true" />
-          <span>{{ connected ? '等待上游视频' : '选择视频' }}</span>
+          <span>{{ connected ? 'Đang chờ video đầu vào' : 'Chọn video' }}</span>
         </el-button>
-        <input ref="fileInput" class="fileInput" type="file" accept="video/*,.mkv,.mov,.avi,.m4v,.ts" aria-label="选择视频" :disabled="busy || connected" @change="uploadVideo" />
+        <input ref="fileInput" class="fileInput" type="file" accept="video/*,.mkv,.mov,.avi,.m4v,.ts" aria-label="Chọn video" :disabled="busy || connected" @change="uploadVideo" />
       </div>
       <div v-if="metadata.width" class="sourceInfo">
         <span>{{ formatDuration(metadata.duration) }}</span>
         <span>{{ metadata.width }} × {{ metadata.height }}</span>
       </div>
-      <p v-if="previewFailed" class="statusText">当前格式无法预览，仍可尝试本地处理</p>
+      <p v-if="previewFailed" class="statusText">Không thể xem trước định dạng này; vẫn có thể xử lý cục bộ</p>
       <div v-if="processing" class="progressArea" role="status" aria-live="polite">
         <el-progress :percentage="progress" :strokeWidth="4" :showText="false" />
-        <p class="statusText">{{ cancelling ? '正在取消…' : progressLabel }} · {{ progress }}%</p>
+        <p class="statusText">{{ cancelling ? 'Đang hủy…' : progressLabel }} · {{ progress }}%</p>
       </div>
       <div v-else-if="lastResultMatches" class="resultSummary">
-        <span>{{ lastResult!.scenes.length }} 个镜头<span v-if="lastResult!.audio"> · 原音轨</span></span>
+        <span>{{ lastResult!.scenes.length }} cảnh quay<span v-if="lastResult!.audio"> · Âm thanh gốc</span></span>
       </div>
       <p v-if="errorMessage" class="errorMessage nodrag nopan nowheel" role="alert">{{ errorMessage }}</p>
-      <p v-else-if="lastResultMatches && lastResult?.ai?.overviewError" class="warningMessage">逐镜头分析已保存，整段归纳未完成：{{ lastResult.ai.overviewError }}</p>
+      <p v-else-if="lastResultMatches && lastResult?.ai?.overviewError" class="warningMessage">Đã lưu phân tích từng cảnh, chưa hoàn thành tổng hợp toàn bộ: {{ lastResult.ai.overviewError }}</p>
       <p v-else-if="lastResultMatches && lastResult?.warning" class="warningMessage">{{ lastResult.warning }}</p>
     </div>
     <template #bottom>
       <el-card class="promptCard nodrag nopan nowheel" shadow="never" :bodyStyle="{ padding: '14px 16px 12px' }" @pointerdown.stop @dblclick.stop>
         <div class="promptHeader">
           <div class="dimensionOptions">
-            <el-checkbox v-model="settings.frames" :disabled="busy" title="每个镜头提取一张关键帧"><icon-photo :size="15" />分镜</el-checkbox>
-            <el-checkbox v-model="settings.clips" :disabled="busy" title="按镜头边界切割视频片段"><icon-movie :size="15" />动态</el-checkbox>
-            <el-checkbox v-model="settings.audio" :disabled="busy" title="保留完整原声，包含人声、音乐和环境声"><icon-wave-sine :size="15" />原音轨</el-checkbox>
+            <el-checkbox v-model="settings.frames" :disabled="busy" title="Trích xuất một khung hình chính cho mỗi cảnh"><icon-photo :size="15" />Phân cảnh</el-checkbox>
+            <el-checkbox v-model="settings.clips" :disabled="busy" title="Cắt video theo ranh giới cảnh quay"><icon-movie :size="15" />Chuyển động</el-checkbox>
+            <el-checkbox v-model="settings.audio" :disabled="busy" title="Giữ toàn bộ âm thanh gốc, gồm giọng nói, nhạc và âm thanh môi trường"><icon-wave-sine :size="15" />Âm thanh gốc</el-checkbox>
           </div>
           <el-popover placement="top-end" :width="300" trigger="click">
-            <template #reference><el-button :icon="IconAdjustmentsHorizontal" text size="small">检测设置</el-button></template>
+            <template #reference><el-button :icon="IconAdjustmentsHorizontal" text size="small">Cài đặt phát hiện</el-button></template>
             <div class="settingsFields nodrag nopan nowheel" @pointerdown.stop @dblclick.stop>
-              <label class="settingRow"><span>检测算法</span><el-select v-model="settings.method" :disabled="busy" aria-label="检测算法"><el-option value="adaptive" label="自适应变化" /><el-option value="content" label="固定变化阈值" /></el-select></label>
-              <label class="settingRow"><span>切镜阈值</span><el-input-number v-model="settings.threshold" :min="0.1" :max="255" :step="settings.method === 'adaptive' ? 0.1 : 1" controlsPosition="right" :disabled="busy" aria-label="切镜阈值" /></label>
-              <label class="settingRow"><span>最短镜头（秒）</span><el-input-number v-model="settings.minSceneSeconds" :min="0" :max="60" :step="0.1" controlsPosition="right" :disabled="busy" aria-label="最短镜头秒数" /></label>
-              <p class="settingHint">阈值越低，检测越敏感。分镜提取关键帧，动态导出视频片段。</p>
+              <label class="settingRow"><span>Thuật toán phát hiện</span><el-select v-model="settings.method" :disabled="busy" aria-label="Thuật toán phát hiện"><el-option value="adaptive" label="Thay đổi thích ứng" /><el-option value="content" label="Ngưỡng thay đổi cố định" /></el-select></label>
+              <label class="settingRow"><span>Ngưỡng chuyển cảnh</span><el-input-number v-model="settings.threshold" :min="0.1" :max="255" :step="settings.method === 'adaptive' ? 0.1 : 1" controlsPosition="right" :disabled="busy" aria-label="Ngưỡng chuyển cảnh" /></label>
+              <label class="settingRow"><span>Cảnh ngắn nhất (giây)</span><el-input-number v-model="settings.minSceneSeconds" :min="0" :max="60" :step="0.1" controlsPosition="right" :disabled="busy" aria-label="Thời lượng cảnh tối thiểu (giây)" /></label>
+              <p class="settingHint">Ngưỡng càng thấp, phát hiện càng nhạy. Phân cảnh trích xuất khung hình chính; chuyển động xuất các đoạn video.</p>
             </div>
           </el-popover>
         </div>
         <template v-if="settings.aiEnabled">
-          <promptInput v-model="focusModel" v-model:text="settings.focus" :references="[]" placeholder="填写分析重点，例如：镜头如何推动叙事、节奏如何变化…" />
-          <div class="promptHint"><span>逐镜头观察，再归纳叙事、节奏与剪辑 · 模型需支持图片理解</span><span :class="{ overLimit: settings.focus.length > 2000 }">{{ settings.focus.length }}/2000</span></div>
+          <promptInput v-model="focusModel" v-model:text="settings.focus" :references="[]" placeholder="Nhập trọng tâm phân tích, ví dụ: góc máy dẫn dắt câu chuyện và nhịp độ thay đổi thế nào…" />
+          <div class="promptHint"><span>Quan sát từng cảnh, rồi tổng hợp cách kể chuyện, nhịp độ và dựng phim · Mô hình cần hỗ trợ hiểu hình ảnh</span><span :class="{ overLimit: settings.focus.length > 2000 }">{{ settings.focus.length }}/2000</span></div>
         </template>
-        <p v-else class="localHint">本地检测分镜、提取关键帧与原音轨，结果直接生成到画布。</p>
+        <p v-else class="localHint">Phát hiện cảnh, trích khung hình chính và âm thanh gốc cục bộ; đưa kết quả trực tiếp lên bảng vẽ.</p>
         <div class="promptFooter">
-          <el-select v-if="settings.aiEnabled" :modelValue="selectedModel ? settings.aiModel : ''" class="modelSelect" :loading="modelsLoading" :disabled="busy" filterable placeholder="选择语言模型" aria-label="拉片语言模型" noDataText="请先在设置中添加模型" placement="top-start" @update:modelValue="settings.aiModel = $event" @visible-change="visible => visible && loadModels()">
+          <el-select v-if="settings.aiEnabled" :modelValue="selectedModel ? settings.aiModel : ''" class="modelSelect" :loading="modelsLoading" :disabled="busy" filterable placeholder="Chọn mô hình ngôn ngữ" aria-label="Mô hình ngôn ngữ phân tích video" noDataText="Vui lòng thêm mô hình trong cài đặt trước" placement="top-start" @update:modelValue="settings.aiModel = $event" @visible-change="visible => visible && loadModels()">
             <template v-if="!selectedModel" #prefix><icon-sparkles :size="17" /></template>
             <template #label="{ label }"><modelLabel :label="label" :providerId="selectedModel?.providerId" :modelId="selectedModel?.modelId" /></template>
             <el-option-group v-for="provider in modelGroups" :key="provider.id" :label="provider.label">
@@ -71,13 +71,13 @@
               </el-option>
             </el-option-group>
           </el-select>
-          <span v-else class="localLabel"><icon-scissors :size="17" />本地分析</span>
+          <span v-else class="localLabel"><icon-scissors :size="17" />Phân tích cục bộ</span>
           <div class="promptActions">
-            <el-switch v-model="settings.aiEnabled" :disabled="busy" activeText="AI 辅助" aria-label="AI 辅助拉片" />
-            <el-button v-if="processing" :icon="IconPlayerStop" :disabled="cancelling" @click="cancel">{{ cancelling ? '正在取消' : '取消' }}</el-button>
+            <el-switch v-model="settings.aiEnabled" :disabled="busy" activeText="AI Hỗ trợ" aria-label="AI Hỗ trợ phân tích video" />
+            <el-button v-if="processing" :icon="IconPlayerStop" :disabled="cancelling" @click="cancel">{{ cancelling ? 'Đang hủy' : 'Hủy' }}</el-button>
             <template v-else>
-              <el-button v-if="settings.aiEnabled && lastResultMatches" :icon="IconSparkles" text :disabled="busy || !selectedModel || settings.focus.length > 2000" @click="runAi">{{ retryOverview ? '重试归纳' : lastResult?.ai ? '重新分析' : '补充分析' }}</el-button>
-              <el-button class="sendButton" :icon="IconArrowUp" :disabled="busy || !source || !hasDimensions || (settings.aiEnabled && (!selectedModel || settings.focus.length > 2000))" @click="run">{{ lastResultMatches ? '重新拉片' : '开始拉片' }}</el-button>
+              <el-button v-if="settings.aiEnabled && lastResultMatches" :icon="IconSparkles" text :disabled="busy || !selectedModel || settings.focus.length > 2000" @click="runAi">{{ retryOverview ? 'Thử tổng hợp lại' : lastResult?.ai ? 'Phân tích lại' : 'Phân tích bổ sung' }}</el-button>
+              <el-button class="sendButton" :icon="IconArrowUp" :disabled="busy || !source || !hasDimensions || (settings.aiEnabled && (!selectedModel || settings.focus.length > 2000))" @click="run">{{ lastResultMatches ? 'Phân tích lại video' : 'Bắt đầu phân tích video' }}</el-button>
             </template>
           </div>
         </div>
@@ -109,7 +109,7 @@ defineOptions({
   inheritAttrs: false,
   icon: IconMovie,
   handles: [
-    { id: "in", type: "target", dataType: "VIDEO", label: "视频素材" },
+    { id: "in", type: "target", dataType: "VIDEO", label: "Tài nguyên video" },
   ] satisfies NodeHandle[],
 });
 
@@ -127,7 +127,7 @@ type AnalysisSettings = {
 type PromptModel = NonNullable<InstanceType<typeof promptInput>["$props"]["modelValue"]>;
 type AnalysisState = AnalysisSettings & { source?: NodeMediaValue; lastResult?: AnalysisResult; resultSource?: string };
 
-const { id, node, nodeProps, outputs, ai, nodeEvent, files, ffmpeg: loadFfmpeg, updateNodeInternals } = useNode({ label: "逐帧拉片", onModelsChanged: () => void loadModels() });
+const { id, node, nodeProps, outputs, ai, nodeEvent, files, ffmpeg: loadFfmpeg, updateNodeInternals } = useNode({ label: "Phân tích từng khung hình", onModelsChanged: () => void loadModels() });
 // ACT: 拉片结果由独立素材节点承载，本节点仅保留视频输入；迁移旧版遗留输出。
 outputs.value = {};
 node.data.outputs = outputs.value;
@@ -167,7 +167,7 @@ const cancelling = ref(false);
 const progress = ref(0);
 const progressLabel = ref("");
 const errorMessage = ref("");
-const previewUrl = files.useFileUrl(source, error => { previewFailed.value = true; errorMessage.value = readError(error, "视频读取失败"); });
+const previewUrl = files.useFileUrl(source, error => { previewFailed.value = true; errorMessage.value = readError(error, "Không thể đọc video"); });
 const busy = computed(() => processing.value || uploading.value || !!player.value?.capturing);
 const hasDimensions = computed(() => settings.frames || settings.clips || settings.audio);
 const lastResultMatches = computed(() => !!lastResult.value && resultSource.value === source.value?.url);
@@ -218,9 +218,9 @@ nodeEvent.on("canConnect", (connection, context) => {
   return getTargetValues(id, "in", context.nodes, [...edges, connection]).length <= 1;
 });
 nodeEvent.on("save", reason => {
-  if (reason === "reload" && busy.value) throw new Error("拉片处理中，请完成或取消后再刷新节点");
-  if (uploading.value) throw new Error("视频上传中，请稍后切换画布或删除节点");
-  if (player.value?.capturing) throw new Error("截图保存中，请稍后切换画布或删除节点");
+  if (reason === "reload" && busy.value) throw new Error("Đang phân tích video, hãy hoàn thành hoặc hủy trước khi làm mới nút");
+  if (uploading.value) throw new Error("Video đang tải lên, vui lòng chuyển bảng vẽ hoặc xóa nút sau");
+  if (player.value?.capturing) throw new Error("Đang lưu ảnh chụp, vui lòng chuyển bảng vẽ hoặc xóa nút sau");
 });
 // ACT: 结果文件由多个生成节点及撤销历史引用，删除本节点仅停止任务，保留已提交素材。
 nodeEvent.on("delete", cancelAndWait);
@@ -247,7 +247,7 @@ async function loadModels() {
       if (!settings.aiModel && first) settings.aiModel = getNodeModelKey(first);
     }
   } catch (error) {
-    if (!disposed) modelError.value = readError(error, "模型列表加载失败");
+    if (!disposed) modelError.value = readError(error, "Không thể tải danh sách mô hình");
   } finally {
     modelsLoading.value = false;
   }
@@ -276,8 +276,8 @@ function uploadVideo(event: Event) {
   const file = input.files?.[0];
   input.value = "";
   if (!file || busy.value || connected.value) return;
-  if (!file.size) return void ElMessage.error("视频文件不能为空");
-  if (!file.type.startsWith("video/") && !/\.(mp4|m4v|mov|mkv|webm|avi|ts)$/i.test(file.name)) return void ElMessage.error("请选择视频文件");
+  if (!file.size) return void ElMessage.error("Tệp video không được để trống");
+  if (!file.type.startsWith("video/") && !/\.(mp4|m4v|mov|mkv|webm|avi|ts)$/i.test(file.name)) return void ElMessage.error("Vui lòng chọn tệp video");
   uploadJob = importVideo(file);
 }
 
@@ -298,10 +298,10 @@ async function importVideo(file: File) {
     uploadedSource.value = { url: path, mimeType: file.type || types[extension ?? ""] || "video/mp4" };
     committed = true;
   } catch (error) {
-    if (!disposed) errorMessage.value = readError(error, "视频导入失败");
+    if (!disposed) errorMessage.value = readError(error, "Nhập video thất bại");
   } finally {
     if (!committed && workspace && path) {
-      try { await workspace.remove(path); } catch (error) { ElMessage.error(readError(error, "未完成的视频导入清理失败")); }
+      try { await workspace.remove(path); } catch (error) { ElMessage.error(readError(error, "Không thể dọn dẹp video nhập chưa hoàn tất")); }
     }
     uploading.value = false;
     uploadJob = undefined;
@@ -364,17 +364,17 @@ async function processAi() {
   processing.value = true;
   cancelling.value = false;
   progress.value = 0;
-  progressLabel.value = "准备 AI 辅助分析";
+  progressLabel.value = "Chuẩn bị phân tích với AI";
   errorMessage.value = "";
   try {
     const workspace = files.getWorkspaceFiles();
     const ffmpeg = await loadFfmpeg(current.signal);
     await enhanceResult(result, workspace, ffmpeg, current.signal, model, focus);
     progress.value = 100;
-    if (lastResult.value?.ai?.overviewError) ElMessage.warning("逐镜头分析已保存，整段归纳未完成，可重试归纳");
-    else ElMessage.success("AI 拉片报告已生成");
+    if (lastResult.value?.ai?.overviewError) ElMessage.warning("Đã lưu phân tích từng cảnh, tổng hợp toàn bộ chưa hoàn tất; có thể thử tổng hợp lại");
+    else ElMessage.success("AI Đã tạo báo cáo phân tích video");
   } catch (error) {
-    if (!current.signal.aborted) errorMessage.value = `本地结果已保留；${readError(error, "AI 分析失败")}`;
+    if (!current.signal.aborted) errorMessage.value = `Đã giữ kết quả cục bộ; ${readError(error, "Phân tích bằng AI thất bại")}`;
   } finally {
     processing.value = false;
     cancelling.value = false;
@@ -389,23 +389,23 @@ async function processVideo() {
   const options = { ...settings };
   const model = selectedModel.value;
   if (options.aiEnabled && (!model || (!options.frames && !options.clips))) {
-    errorMessage.value = !model ? "请选择支持图片理解的模型" : "AI 辅助拉片需要开启分镜或动态";
+    errorMessage.value = !model ? "Vui lòng chọn mô hình hỗ trợ hiểu hình ảnh" : "AI Phân tích hỗ trợ cần bật phân cảnh hoặc chuyển động";
     return;
   }
   if (options.aiEnabled && options.focus.trim().length > 2000) {
-    errorMessage.value = "分析重点最多填写 2000 字";
+    errorMessage.value = "Trọng tâm phân tích tối đa 2000 ký tự";
     return;
   }
   if (!Number.isFinite(options.threshold) || options.threshold <= 0 || options.threshold > 255
     || !Number.isFinite(options.minSceneSeconds) || options.minSceneSeconds < 0 || options.minSceneSeconds > 60) {
-    errorMessage.value = "请填写有效的切镜阈值和最短镜头时长";
+    errorMessage.value = "Nhập ngưỡng chuyển cảnh và thời lượng cảnh tối thiểu hợp lệ";
     return;
   }
   const current = controller = new AbortController();
   processing.value = true;
   cancelling.value = false;
   progress.value = 0;
-  progressLabel.value = "准备本地分析";
+  progressLabel.value = "Chuẩn bị phân tích cục bộ";
   errorMessage.value = "";
   preview?.pause();
   const directory = `assets/${id}/analysis${crypto.randomUUID().replaceAll("-", "")}`;
@@ -456,20 +456,20 @@ async function processVideo() {
     metadata.height = result.height;
     if (options.aiEnabled && model) {
       progress.value = 0;
-      progressLabel.value = "本地分镜已保存，开始 AI 分析";
+      progressLabel.value = "Đã lưu phân cảnh cục bộ, bắt đầu phân tích bằng AI";
       await enhanceResult(result, workspace, ffmpeg, current.signal, model, options.focus);
     }
     progress.value = 100;
-    if (lastResult.value?.ai?.overviewError) ElMessage.warning("本地拉片及逐镜头分析已完成，整段归纳未完成");
-    else ElMessage.success(`拉片完成，已识别 ${result.scenes.length} 个镜头`);
+    if (lastResult.value?.ai?.overviewError) ElMessage.warning("Đã hoàn thành phân tích cục bộ và từng cảnh; tổng hợp toàn bộ chưa hoàn tất");
+    else ElMessage.success(`Phân tích hoàn tất, đã nhận diện ${result.scenes.length} cảnh quay`);
   } catch (error) {
-    if (!current.signal.aborted) errorMessage.value = `${committed ? "本地结果已保留；" : ""}${readError(error, "逐帧拉片失败")}`;
+    if (!current.signal.aborted) errorMessage.value = `${committed ? "Đã giữ kết quả cục bộ; " : ""}${readError(error, "Phân tích từng khung hình thất bại")}`;
   } finally {
     if (!committed && workspace && directoryCreated) {
       try { await workspace.remove(directory, true); }
       catch (error) {
         if ((error as { response?: { data?: { data?: { code?: string } } } })?.response?.data?.data?.code !== "ENOENT") {
-          const cleanupError = readError(error, "临时文件清理失败");
+          const cleanupError = readError(error, "Không thể dọn dẹp tệp tạm");
           errorMessage.value = `${errorMessage.value ? `${errorMessage.value}；` : ""}${cleanupError}`;
         }
       }

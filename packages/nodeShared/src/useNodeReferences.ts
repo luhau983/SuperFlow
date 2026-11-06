@@ -47,8 +47,8 @@ export function useNodeReferences(handleId = "in") {
           label: findNode<NodeData>(item.source)?.data.label?.trim() || item.source,
           dataType: item.dataType,
           name: item.dataType === "AUDIO"
-            ? `参考 ${index + 1}：${findNode<NodeData>(item.source)?.data.label?.trim() || item.value?.url.split(/[\\/]/).pop() || "音频"}`
-            : `参考 ${index + 1}`,
+            ? `Tham chiếu ${index + 1}：${findNode<NodeData>(item.source)?.data.label?.trim() || item.value?.url.split(/[\\/]/).pop() || "Âm thanh"}`
+            : `Tham chiếu ${index + 1}`,
           value: `{{ref ${index + 1}}}`,
           avatar: item.dataType === "AUDIO" ? audioAvatar : previews.value.get(referenceKey(item)) || undefined,
           previewable: item.dataType === "IMAGE" || item.dataType === "VIDEO",
@@ -96,7 +96,7 @@ export function useNodeReferences(handleId = "in") {
 
   async function selectAssetReference() {
     if (disposed || findNode(id) !== node) return;
-    if (!selectNodeAsset) throw new Error("当前画布未提供全局素材库选择能力");
+    if (!selectNodeAsset) throw new Error("Bảng vẽ hiện tại không hỗ trợ chọn từ thư viện tài nguyên chung");
     const source = await selectNodeAsset(id, handleId);
     await nextTick();
     if (!disposed && source) return referenceMentions.value.find(item => item.id === referenceKey(source));

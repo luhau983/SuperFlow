@@ -10,7 +10,7 @@ const plugin: ToolPlugin = {
     const { readOnly } = configSchema.parse(config);
     return [{
       name: "assetOperator",
-      label: "全局资产管理",
+      label: "Quản lý tài nguyên chung",
       description: `统一管理全局素材库：list 分页查询；read 读取文本、支持的图片和文档（Office、OpenDocument、RTF、EPUB、CSV、PDF 转为 Markdown，offset/limit 对应解析后的行，扫描 PDF 需先 OCR），其他格式返回文件信息，均返回 revision；create 新建文件且不覆盖；update 用完整文本或工作区文件替换已有素材；mkdir 新建文件夹；move 移动或重命名且不覆盖；delete 删除文件或空文件夹；import 将素材复制到当前工作区且不覆盖。path 始终为全局素材库内的相对路径，sourcePath 为当前工作区内的相对路径，文件最多 100 MB。${readOnly ? "当前为只读模式，仅允许 list、read、import，import 只写工作区副本。" : "修改文件须先 read 并使用其 revision。"}`,
       promptSnippet: "查询和维护全局素材，将生成结果归档，或将已有素材导入当前工作区。",
       promptGuidelines: [
@@ -25,8 +25,8 @@ const plugin: ToolPlugin = {
       executionMode: "sequential",
       async execute(id, params, signal, onUpdate, executionContext) {
         const request = assetRequestSchema.parse(params);
-        if (readOnly && !["list", "read", "import"].includes(request.action)) throw new Error("全局资产管理处于只读模式，仅允许查询、读取或导入工作区副本");
-        if (!assets) throw new Error("当前宿主不支持全局资产管理工具，请升级 Toonflow");
+        if (readOnly && !["list", "read", "import"].includes(request.action)) throw new Error("Thư viện chung đang ở chế độ chỉ đọc, chỉ được tìm, đọc hoặc nhập bản sao vào không gian làm việc");
+        if (!assets) throw new Error("Ứng dụng không hỗ trợ quản lý tài nguyên chung, vui lòng nâng cấp Toonflow");
         signal?.throwIfAborted();
         return assets.execute(id, request, signal, onUpdate, executionContext);
       },

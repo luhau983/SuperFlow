@@ -2,8 +2,8 @@ import { createToolConfig } from "@toonflow/tools-scaffold";
 
 await createToolConfig({
   name: "ffmpeg",
-  displayName: "FFmpeg 媒体处理",
-  description: "使用本机 FFmpeg 处理工作区音视频、图片，并通过 FFprobe 查询媒体信息。",
+  displayName: "Xử lý phương tiện FFmpeg",
+  description: "Dùng FFmpeg trên máy để xử lý âm thanh, video và hình ảnh trong không gian làm việc; tra thông tin phương tiện bằng FFprobe.",
   author: "Toonflow",
   github: "https://github.com/HBAI-Ltd/Toonflow-app",
   prompt: `处理前按需使用 ffprobe 查询实际媒体信息，再通过 ffmpeg 的 steps 顺序调用 fluent 方法，operation 选择执行或能力查询。

@@ -4,7 +4,7 @@ import { canvasOperations } from "./runtime";
 
 const plugin: ToolPlugin = {
   validateConfig(config) {
-    if (Object.keys(config).length) throw new Error("画布操作工具没有配置项");
+    if (Object.keys(config).length) throw new Error("Công cụ bảng vẽ không có cấu hình");
     return {};
   },
   createTools({ canvas }) {
