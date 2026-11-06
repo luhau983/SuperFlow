@@ -1,7 +1,0 @@
-export { default as uiBreadcrumb } from "./uiBreadcrumb.vue"
-export { default as uiBreadcrumbEllipsis } from "./uiBreadcrumbEllipsis.vue"
-export { default as uiBreadcrumbItem } from "./uiBreadcrumbItem.vue"
-export { default as uiBreadcrumbLink } from "./uiBreadcrumbLink.vue"
-export { default as uiBreadcrumbList } from "./uiBreadcrumbList.vue"
-export { default as uiBreadcrumbPage } from "./uiBreadcrumbPage.vue"
-export { default as uiBreadcrumbSeparator } from "./uiBreadcrumbSeparator.vue"

@@ -1,35 +1,15 @@
 <template>
-  <div
-    class="editorTab"
-    :class="{ previewTab: params.params.view.preview }"
-    :title="session.context.resource.path"
-    @dblclick.stop="params.params.action('keepOpen')"
-    @contextmenu.stop.prevent="openMenu"
-    @mousedown.middle.stop.prevent="close"
-    @auxclick.middle.stop.prevent>
+  <div class="editorTab" :class="{ previewTab: params.params.view.preview }" :title="session.context.resource.path" @dblclick.stop="params.params.action('keepOpen')" @contextmenu.stop.prevent="openMenu" @mousedown.middle.stop.prevent="close" @auxclick.middle.stop.prevent>
     <img v-if="session.extension.icon" class="fileIcon" :src="session.extension.icon" alt="" />
     <icon-file-text v-else :size="14" />
     <span class="tabLabel">{{ session.context.resource.label }}</span>
     <span v-if="params.params.view.description" class="tabDescription">{{ params.params.view.description }}</span>
     <span v-if="session.context.dirty" class="dirtyMark" aria-label="尚未保存">●</span>
-    <button
-      class="closeTab"
-      :disabled="session.closing"
-      :aria-label="`关闭 ${session.context.resource.label}`"
-      @pointerdown.stop
-      @mousedown.stop
-      @click.stop="close">
+    <button class="closeTab" :disabled="session.closing" :aria-label="`关闭 ${session.context.resource.label}`" @pointerdown.stop @mousedown.stop @click.stop="close">
       <icon-x :size="13" />
     </button>
   </div>
-  <el-dropdown
-    ref="menu"
-    trigger="contextmenu"
-    virtualTriggering
-    :virtualRef="menuAnchor"
-    placement="bottom-start"
-    :showArrow="false"
-    @command="params.params.action">
+  <el-dropdown ref="menu" trigger="contextmenu" virtualTriggering :virtualRef="menuAnchor" placement="bottom-start" :showArrow="false" @command="params.params.action">
     <template #dropdown>
       <el-dropdown-menu>
         <el-dropdown-item v-if="params.params.view.preview" command="keepOpen">保留打开</el-dropdown-item>
@@ -81,7 +61,7 @@ async function openMenu(event: MouseEvent) {
   .fileIcon { width: 14px; height: 14px; flex-shrink: 0; object-fit: contain; }
   .tabLabel { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
   &.previewTab .tabLabel { font-style: italic; }
-  .tabDescription { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted-foreground); font-size: 10px; }
+  .tabDescription { max-width: 90px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--el-text-color-secondary); font-size: 10px; }
   .dirtyMark { flex-shrink: 0; font-size: 9px; }
   .closeTab {
     flex-shrink: 0;
@@ -96,8 +76,8 @@ async function openMenu(event: MouseEvent) {
     color: inherit;
     background: transparent;
     cursor: pointer;
-    &:hover { background: var(--accent); }
-    &:focus-visible { outline: 1px solid var(--primary); }
+    &:hover { background: var(--el-fill-color-dark); }
+    &:focus-visible { outline: 1px solid var(--el-color-primary); }
   }
 }
 </style>

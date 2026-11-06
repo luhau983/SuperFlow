@@ -1,87 +1,73 @@
 <template>
-  <uiDialog :open="visible" @update:open="(open: boolean) => open || close()">
-    <uiDialogContent class="sm:max-w-[1080px]" :aria-describedby="undefined" @closeAutoFocus="emit('closed')">
-      <uiDialogHeader>
-        <uiDialogTitle>编辑技能 ·{{ skill.displayName }}</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="skillEditor" :aria-busy="filesLoading || fileLoading">
-        <uiAlert v-if="filesError" variant="destructive">
-          <icon-alert-circle aria-hidden="true" />
-          <uiAlertTitle class="line-clamp-none">{{ filesError }}</uiAlertTitle>
-        </uiAlert>
-        <template v-else>
-          <div class="fileTree">
-            <uiButton
-              v-if="isDirectorySkill"
-              class="newFileButton"
-              variant="outline"
-              size="sm"
-              :disabled="creating || saving || moving"
-              @click="createFile"><icon-loader-2 v-if="creating" class="animate-spin" aria-hidden="true" /><icon-file-plus v-else aria-hidden="true" />新建文件</uiButton>
-            <el-tree
-              :key="treeVersion"
-              class="tree"
-              :data="[treeRoot]"
-              :icon="IconChevronRight"
-              nodeKey="key"
-              :props="{ label: 'label', children: 'children' }"
-              defaultExpandAll
-              highlightCurrent
-              :currentNodeKey="selectedPath"
-              :draggable="isDirectorySkill"
-              :allowDrag="allowDrag"
-              :allowDrop="allowDrop"
-              @nodeClick="handleNodeClick"
-              @nodeDrop="handleNodeDrop">
-              <template #default="{ data, node }">
-                <span class="treeItem">
-                  <component
-                    v-if="data.type === 'directory'"
-                    :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder"
-                    :size="18"
-                    aria-hidden="true" />
-                  <icon-file v-else :size="18" aria-hidden="true" />
-                  <span class="treeLabel">{{ data.label }}</span>
-                  <span v-if="dirtyPaths.has(data.key)" class="dirtyMark" aria-hidden="true">●</span>
-                </span>
-              </template>
-            </el-tree>
-          </div>
-          <div class="fileEditor">
-            <uiAlert v-if="fileError" variant="destructive">
-              <icon-alert-circle aria-hidden="true" />
-              <uiAlertTitle class="line-clamp-none">{{ fileError }}</uiAlertTitle>
-            </uiAlert>
-            <template v-else>
-              <p v-if="selectedPath === mainPath" class="fileHint">name 为技能标识，不可修改</p>
-              <uiTextarea
-                v-model="draft"
-                class="sourceInput"
-                :disabled="fileLoading || saving"
-                :aria-label="`${selectedPath} 源码`"
-                :spellcheck="false" />
+  <el-dialog v-model="visible" :title="`编辑技能 · ${skill.displayName}`" width="min(1080px, calc(100vw - 32px))" alignCenter appendToBody :beforeClose="close" @closed="emit('closed')">
+    <div class="skillEditor" :aria-busy="filesLoading || fileLoading">
+      <el-alert v-if="filesError" :title="filesError" type="error" :closable="false" showIcon />
+      <template v-else>
+        <div class="fileTree">
+          <el-button
+            v-if="isDirectorySkill"
+            class="newFileButton"
+            size="small"
+            :icon="IconFilePlus"
+            :loading="creating"
+            :disabled="saving || moving"
+            @click="createFile">
+            新建文件
+          </el-button>
+          <el-tree
+            :key="treeVersion"
+            class="tree"
+            :data="[treeRoot]"
+            :icon="IconChevronRight"
+            nodeKey="key"
+            :props="{ label: 'label', children: 'children' }"
+            defaultExpandAll
+            highlightCurrent
+            :currentNodeKey="selectedPath"
+            :draggable="isDirectorySkill"
+            :allowDrag="allowDrag"
+            :allowDrop="allowDrop"
+            @nodeClick="handleNodeClick"
+            @nodeDrop="handleNodeDrop">
+            <template #default="{ data, node }">
+              <span class="treeItem">
+                <component v-if="data.type === 'directory'" :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder" :size="18" aria-hidden="true" />
+                <icon-file v-else :size="18" aria-hidden="true" />
+                <span class="treeLabel">{{ data.label }}</span>
+                <span v-if="dirtyPaths.has(data.key)" class="dirtyMark" aria-hidden="true">●</span>
+              </span>
             </template>
-          </div>
-        </template>
-      </div>
-      <uiDialogFooter>
-        <uiButton variant="outline" :disabled="saving || moving || confirming" @click="close()">关闭</uiButton>
-        <uiButton :disabled="saving || fileLoading || !!fileError || draft === original || confirming" @click="save"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
-      </uiDialogFooter>
-    </uiDialogContent>
-  </uiDialog>
+          </el-tree>
+        </div>
+        <div class="fileEditor">
+          <el-alert v-if="fileError" :title="fileError" type="error" :closable="false" showIcon />
+          <template v-else>
+            <el-text v-if="selectedPath === mainPath" size="small" type="info">name 为技能标识，不可修改</el-text>
+            <el-input
+              v-model="draft"
+              class="sourceInput"
+              type="textarea"
+              :rows="20"
+              resize="none"
+              :disabled="fileLoading || saving"
+              :aria-label="`${selectedPath} 源码`"
+              :spellcheck="false" />
+          </template>
+        </div>
+      </template>
+    </div>
+    <template #footer>
+      <el-button :disabled="saving || moving || confirming" @click="close()">关闭</el-button>
+      <el-button type="primary" :loading="saving" :disabled="fileLoading || !!fileError || draft === original || confirming" @click="save">保存</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { toast } from "vue-sonner";
-import messageBox from "@/lib/messageBox";
-import { IconChevronRight, IconFolder, IconFolderOpen } from "@tabler/icons-vue";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
-import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
-import { uiTextarea } from "@/components/ui/textarea";
+import { ElMessage, ElMessageBox } from "element-plus";
+import { IconChevronRight, IconFile, IconFilePlus, IconFolder, IconFolderOpen } from "@tabler/icons-vue";
 import type { Plugin } from "./types";
 
 interface TreeNode {
@@ -240,7 +226,7 @@ async function handleNodeDrop(draggingNode: { data: Record<string, unknown> }, d
       if (selectedPath.value === sourcePath) selectedPath.value = targetPath;
       await loadFiles();
     } catch (error) {
-      toast.error(errorMessage(error, "移动文件失败，请重试"));
+      ElMessage.error(errorMessage(error, "移动文件失败，请重试"));
       treeVersion.value++;
     } finally {
       moving.value = false;
@@ -258,7 +244,7 @@ async function handleNodeDrop(draggingNode: { data: Record<string, unknown> }, d
     if (data.code !== 200) throw new Error(data.message || "保存顺序失败");
     await loadFiles();
   } catch (error) {
-    toast.error(errorMessage(error, "保存顺序失败，请重试"));
+    ElMessage.error(errorMessage(error, "保存顺序失败，请重试"));
     treeVersion.value++;
   } finally {
     moving.value = false;
@@ -270,7 +256,7 @@ async function createFile() {
   const directory = selectedPath.value.includes("/") ? selectedPath.value.slice(0, selectedPath.value.lastIndexOf("/")) : "";
   let fileName: string;
   try {
-    const { value } = await messageBox.prompt(directory ? `新文件将创建在“${directory}”目录` : "新文件将创建在技能根目录", "新建文件", {
+    const { value } = await ElMessageBox.prompt(directory ? `新文件将创建在“${directory}”目录` : "新文件将创建在技能根目录", "新建文件", {
       inputPattern: /^[^\\/]+$/,
       inputValidator: value => !!value?.trim() || "请输入文件名称",
       inputErrorMessage: "名称不能包含斜杠",
@@ -287,23 +273,23 @@ async function createFile() {
     await loadFiles();
     await selectFile(path);
   } catch (error) {
-    toast.error(errorMessage(error, "创建文件失败，请重试"));
+    ElMessage.error(errorMessage(error, "创建文件失败，请重试"));
   } finally {
     creating.value = false;
   }
 }
 
-// 关闭入口（关闭按钮、右上角、遮罩、Esc）都经过此守卫，有未保存修改时须确认后才关闭。
-async function close() {
+async function close(done?: () => void) {
   if (saving.value || confirming.value) return;
   if (draft.value !== original.value || dirtyPaths.value.size) {
     confirming.value = true;
     try {
-      await messageBox.confirm("修改尚未保存，确定放弃修改并关闭吗？", "未保存的修改", { confirmButtonText: "放弃修改", cancelButtonText: "继续编辑", type: "warning" });
+      await ElMessageBox.confirm("修改尚未保存，确定放弃修改并关闭吗？", "未保存的修改", { confirmButtonText: "放弃修改", cancelButtonText: "继续编辑", type: "warning" });
     } catch { return; }
     finally { confirming.value = false; }
   }
-  visible.value = false;
+  if (done) done();
+  else visible.value = false;
 }
 
 async function save() {
@@ -318,9 +304,9 @@ async function save() {
     drafts.delete(path);
     dirtyPaths.value.delete(path);
     emit("saved");
-    toast.success("已保存");
+    ElMessage.success("已保存");
   } catch (error) {
-    toast.error(errorMessage(error, "保存文件失败，请重试"));
+    ElMessage.error(errorMessage(error, "保存文件失败，请重试"));
   } finally {
     saving.value = false;
   }
@@ -342,6 +328,7 @@ async function save() {
 
     .newFileButton {
       width: 100%;
+      margin-left: 0;
     }
 
     .tree {
@@ -358,7 +345,7 @@ async function save() {
 
       svg {
         flex-shrink: 0;
-        color: var(--muted-foreground);
+        color: var(--el-text-color-secondary);
       }
 
       .treeLabel {
@@ -380,18 +367,14 @@ async function save() {
     flex-direction: column;
     gap: 8px;
     min-width: 0;
+  }
 
-    .fileHint {
-      margin: 0;
-      color: var(--muted-foreground);
-      font-size: 12px;
-    }
+  .sourceInput {
+    flex: 1;
 
-    .sourceInput {
-      flex: 1;
+    :deep(textarea) {
+      height: 100%;
       min-height: min(56vh, 520px);
-      resize: none;
-      field-sizing: fixed;
       font-family: ui-monospace, Consolas, monospace;
       line-height: 1.6;
       tab-size: 2;

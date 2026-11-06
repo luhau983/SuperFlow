@@ -3,13 +3,13 @@
     <div class="menuHeader">
       <h3 id="nodeMenuTitle">节点菜单管理</h3>
       <div class="menuActions">
-        <uiButton @click="resetMenu" variant="ghost" type="button" :disabled="(loading || !!loadError)" size="sm"><component :is="IconRestore" aria-hidden="true" />恢复默认</uiButton>
+        <el-button text size="small" :icon="IconRestore" :disabled="loading || !!loadError" @click="resetMenu">恢复默认</el-button>
       </div>
     </div>
     <p class="description">像右键菜单一样整理节点。拖动调整顺序或移入子菜单，点击眼睛隐藏，修改后自动保存。</p>
     <div v-if="loadError" class="loadError" role="alert">
       <span>{{ loadError }}</span>
-      <uiButton @click="loadNodes" variant="outline" type="button" :disabled="(loading)" size="sm"><icon-loader-2 v-if="loading" class="animate-spin" aria-hidden="true" />重试</uiButton>
+      <el-button size="small" :loading="loading" @click="loadNodes">重试</el-button>
     </div>
     <p v-else-if="loading" class="description" role="status">正在读取节点列表…</p>
     <template v-else>
@@ -47,50 +47,44 @@
               @dragend="endDrag"
               @dragover.stop="previewDrop($event, column, item)"
               @drop.stop="dropItem($event, column, item)">
-              <button
-                class="itemSelect"
-                type="button"
-                :aria-label="`选择${item.label}`"
-                :aria-pressed="selectedId === item.id"
-                @click="selectItem(item)">
-                <component
-                  :is="item.children ? openGroups.includes(item.id) ? IconFolderOpen : IconFolder : nodeIcons[item.type ?? ''] ?? IconBox"
-                  class="itemIcon"
-                  :size="18"
-                  aria-hidden="true" />
+              <button class="itemSelect" type="button" :aria-label="`选择${item.label}`" :aria-pressed="selectedId === item.id" @click="selectItem(item)">
+                <component :is="item.children ? openGroups.includes(item.id) ? IconFolderOpen : IconFolder : nodeIcons[item.type ?? ''] ?? IconBox" class="itemIcon" :size="18" aria-hidden="true" />
                 <span class="itemLabel" :title="item.label">{{ item.label }}</span>
                 <span v-if="item.type && disabledTypes.has(item.type)" class="itemStatus" title="已停用">停用</span>
               </button>
               <div class="rowActions" @dragstart.stop.prevent>
-                <uiPopover :open="editingId === item.id" @update:open="visible => setEditingVisible(item.id, visible)">
-                  <uiPopoverTrigger asChild>
+                <el-popover
+                  :visible="editingId === item.id"
+                  trigger="click"
+                  placement="bottom-start"
+                  :width="260"
+                  :showArrow="false"
+                  :persistent="false"
+                  :hideAfter="0"
+                  :popperStyle="{ padding: '14px', borderRadius: '12px' }"
+                  @update:visible="visible => setEditingVisible(item.id, visible)"
+                  @afterEnter="focusName">
+                  <template #reference>
                     <button class="rowAction" type="button" :aria-label="`编辑${item.label}`" title="编辑" @click.stop>
                       <icon-edit :size="14" aria-hidden="true" />
                     </button>
-                  </uiPopoverTrigger>
-                  <uiPopoverContent
-                    class="hoverPanel "
-                    side="bottom"
-                    align="start"
-                    :sideOffset="8"
-                    :style="{ width: '260px', maxWidth: 'calc(100vw - 24px)' }"
-                    @openAutoFocus="() => { focusName(); }">
-                    <div v-if="editing?.item.id === item.id" class="menuItemEditor" @keydown.stop @keydown.esc="setEditingVisible(item.id, false)">
-                      <div class="editorHeader">{{ editing.item.children ? '编辑菜单' : '编辑节点' }}</div>
-                      <label class="editorField">
-                        <span>{{ editing.item.children ? '菜单名称' : '节点别名（留空恢复原名）' }}</span>
-                        <uiInput
-                          ref="nameInputs"
-                          v-model="itemName"
-                          maxlength="40"
-                          :placeholder="originalName"
-                          :aria-label="editing.item.children ? '分组名称' : '节点别名'"
-                          @blur="renameItem"
-                          @keydown.enter.prevent="renameItem"></uiInput>
-                      </label>
-                    </div>
-                  </uiPopoverContent>
-                </uiPopover>
+                  </template>
+                  <div v-if="editing?.item.id === item.id" class="menuItemEditor" @keydown.stop @keydown.esc="setEditingVisible(item.id, false)">
+                    <div class="editorHeader">{{ editing.item.children ? '编辑菜单' : '编辑节点' }}</div>
+                    <label class="editorField">
+                      <span>{{ editing.item.children ? '菜单名称' : '节点别名（留空恢复原名）' }}</span>
+                      <el-input
+                        ref="nameInputs"
+                        v-model="itemName"
+                        maxlength="40"
+                        size="small"
+                        :placeholder="originalName"
+                        :aria-label="editing.item.children ? '分组名称' : '节点别名'"
+                        @blur="renameItem"
+                        @keydown.enter.prevent="renameItem" />
+                    </label>
+                  </div>
+                </el-popover>
                 <button
                   class="rowAction visibilityButton"
                   :class="{ isHidden: item.hidden }"
@@ -103,13 +97,7 @@
                   <icon-eye-off v-if="item.hidden" :size="14" aria-hidden="true" />
                   <icon-eye v-else :size="14" aria-hidden="true" />
                 </button>
-                <button
-                  v-if="item.children"
-                  class="rowAction deleteButton"
-                  type="button"
-                  :aria-label="`移除${item.label}菜单`"
-                  title="移除菜单，保留子项"
-                  @click.stop="removeGroup(item.id)">
+                <button v-if="item.children" class="rowAction deleteButton" type="button" :aria-label="`移除${item.label}菜单`" title="移除菜单，保留子项" @click.stop="removeGroup(item.id)">
                   <icon-folder-minus :size="14" aria-hidden="true" />
                 </button>
               </div>
@@ -120,7 +108,10 @@
               <span>拖入节点{{ column.depth < 3 ? "或子菜单" : "" }}</span>
             </div>
           </div>
-          <button v-if="column.depth < 3" class="newGroupButton" type="button" @click="addGroup(column.id)"><icon-plus :size="15" aria-hidden="true" />新建{{ levelNames[column.depth] }}菜单</button>
+          <button v-if="column.depth < 3" class="newGroupButton" type="button" @click="addGroup(column.id)">
+            <icon-plus :size="15" aria-hidden="true" />
+            新建{{ levelNames[column.depth] }}菜单
+          </button>
         </section>
       </div>
     </template>
@@ -128,13 +119,10 @@
 </template>
 
 <script setup lang="ts">
-import { uiInput } from "@/components/ui/input";
-import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
-import { uiButton } from "@/components/ui/button";
 import axios from "axios";
 import { translate } from "@toonflow/i18n/vue";
 import { computed, onBeforeUnmount, onMounted, ref, watch, type Component } from "vue";
-import { toast } from "vue-sonner";
+import { ElMessage, type InputInstance } from "element-plus";
 import { IconBox, IconFolder, IconFolderOpen, IconFolderMinus, IconRestore, IconChevronRight, IconEdit, IconEye, IconEyeOff, IconPlus, IconDragDrop, IconFileText, IconPhoto, IconVideo, IconMusic, IconMusicBolt, IconCube3dSphere, IconPhotoAi, IconCameraAi } from "@tabler/icons-vue";
 import { normalizeNodeMenu, resolveNodeMenu, serializeNodeMenu, type NodeMenuItem } from "@toonflow/server/nodeMenu";
 import { generalSettings, updateGeneralSettings } from "@/stores/settings";
@@ -159,7 +147,7 @@ const disabledTypes = computed(() => new Set(installedNodes.value.filter(node =>
 const menuItems = ref<NodeMenuItem[]>([]);
 const selectedId = ref("");
 const editingId = ref("");
-const nameInputs = ref<{ $el: HTMLInputElement }[]>([]);
+const nameInputs = ref<InputInstance[]>([]);
 const openGroups = ref<string[]>([]);
 const draggedId = ref("");
 const dropTarget = ref<DropTarget>();
@@ -227,8 +215,8 @@ function setEditingVisible(id: string, visible: boolean) {
 }
 
 function focusName() {
-  nameInputs.value[0]?.$el.focus();
-  nameInputs.value[0]?.$el.select();
+  nameInputs.value[0]?.focus();
+  nameInputs.value[0]?.select();
 }
 
 function startDrag(event: DragEvent, item: NodeMenuItem) {
@@ -319,7 +307,7 @@ function renameItem() {
   if (!item) return;
   const label = itemName.value.trim();
   if (!item.type && !label) {
-    toast.warning("分组名称不能为空");
+    ElMessage.warning("分组名称不能为空");
     itemName.value = item.label;
     return;
   }
@@ -391,7 +379,6 @@ onBeforeUnmount(() => {
   loadRequest++;
   window.removeEventListener("toonflow:plugin-installed", refreshInstalled);
 });
-
 </script>
 
 <style lang="scss" scoped>
@@ -407,7 +394,7 @@ onBeforeUnmount(() => {
     .menuActions {
       display: flex;
       gap: 4px;
-      [data-slot="button"] { margin-left: 0; }
+      .el-button { margin-left: 0; }
     }
   }
   .description { margin: 8px 0 12px; font-size: 12px; line-height: 1.6; color: var(--el-text-color-secondary); }
@@ -593,7 +580,7 @@ onBeforeUnmount(() => {
     margin-top: 10px;
 
     > span { color: var(--el-text-color-secondary); font-size: 11px; }
-    :is(.el-input, [data-slot="input"], .inputGroup) { width: 100%; }
+    .el-input { width: 100%; }
   }
 }
 </style>

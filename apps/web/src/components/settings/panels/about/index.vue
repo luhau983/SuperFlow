@@ -1,18 +1,17 @@
 <template>
   <div class="about">
     <div class="brand">
-      <div class="brandMark">
-        <img class="brandLogo" :src="logoUrl" alt="SuperFlow Logo" />
-      </div>
+      <div class="brandMark"><img class="brandLogo" :src="logoUrl" alt="SuperFlow Logo" /></div>
       <div class="brandInfo">
         <h3>SuperFlow</h3>
         <div class="brandMeta">
           <span v-if="currentVersion">v{{ currentVersion }}</span>
-          <uiBadge v-if="clientBuild?.channel || snapshot?.channel" variant="secondary">{{ clientBuild?.channel || snapshot?.channel }}</uiBadge>
+          <el-tag v-if="clientBuild?.channel || snapshot?.channel" type="info" size="small" round>{{ clientBuild?.channel || snapshot?.channel }}</el-tag>
         </div>
       </div>
     </div>
-    <uiCard v-if="!publicWeb && (isMobile || !isRemoteConnection)" class="infoCard updateCard">
+
+    <el-card v-if="!publicWeb && (isMobile || !isRemoteConnection)" class="infoCard updateCard" shadow="never">
       <div class="cardHeader">
         <div class="updateCopy">
           <div class="cardLabel">
@@ -21,36 +20,30 @@
           </div>
         </div>
         <div class="updateActions">
-          <uiButton v-if="isMobile" asChild size="sm" variant="outline">
-            <a :href="`${repositoryUrl}/releases/latest`" target="_blank" rel="noopener noreferrer">前往 GitHub 更新</a>
-          </uiButton>
+          <el-button v-if="isMobile" tag="a" size="small" type="primary" plain :href="`${repositoryUrl}/releases/latest`" target="_blank" rel="noopener noreferrer">
+            前往 GitHub 更新
+          </el-button>
           <template v-else>
-            <uiSelect :modelValue="updateSource" :disabled="working || sourceSaving" @update:modelValue="(value) => saveUpdateSource(String(value))">
-              <uiSelectTrigger class="sourceSelect" size="sm" aria-label="更新源">
+            <el-select :modelValue="updateSource" aria-label="更新源" size="small" :disabled="working || sourceSaving" @change="saveUpdateSource">
+              <template #prefix>
                 <icon-brand-github v-if="updateSource === 'github'" :size="14" aria-hidden="true" />
                 <icon-world v-else :size="14" aria-hidden="true" />
-                <uiSelectValue />
-              </uiSelectTrigger>
-              <uiSelectContent>
-                <uiSelectItem value="official">官方源</uiSelectItem>
-                <uiSelectItem value="github">GitHub</uiSelectItem>
-                <uiSelectItem v-if="customUpdateUrl" value="custom">自定义源</uiSelectItem>
-              </uiSelectContent>
-            </uiSelect>
-            <span class="updateBadge">
-              <uiButton size="sm" variant="outline" :disabled="checking || sourceSaving" @click="openUpdate"><icon-loader-2 v-if="checking" class="animate-spin" aria-hidden="true" />{{ snapshot?.installFailure ? "查看更新失败原因" : snapshot?.updateReady ? "更新已就绪" : snapshot?.updating || action === "download" ? "查看更新进度" : "检查更新" }}</uiButton>
-              <span v-if="hasDesktopUpdate" class="updateDot" aria-hidden="true" />
-            </span>
+              </template>
+              <el-option label="官方源" value="official" />
+              <el-option label="GitHub" value="github" />
+              <el-option v-if="customUpdateUrl" label="自定义源" value="custom" />
+            </el-select>
+            <el-badge isDot :hidden="!hasDesktopUpdate">
+              <el-button size="small" type="primary" plain :loading="checking" :disabled="sourceSaving" @click="openUpdate">
+                {{ snapshot?.installFailure ? "查看更新失败原因" : snapshot?.updateReady ? "更新已就绪" : snapshot?.updating || action === "download" ? "查看更新进度" : "检查更新" }}
+              </el-button>
+            </el-badge>
           </template>
         </div>
       </div>
       <div v-if="isLocalDesktop" class="autoUpdateSetting">
         <span>自动更新</span>
-        <uiSwitch
-          :modelValue="desktopAutoUpdate"
-          :disabled="!actualPlatform.isLocalDesktop || autoUpdateSaving"
-          aria-label="自动更新"
-          @update:modelValue="(value) => saveAutoUpdate(value === true)" />
+        <el-switch :modelValue="desktopAutoUpdate" size="small" :loading="autoUpdateSaving" :disabled="!actualPlatform.isLocalDesktop" aria-label="自动更新" @change="(value) => saveAutoUpdate(value === true)" />
       </div>
       <div v-if="!isMobile && snapshot?.hash" class="buildInfo">
         <span>构建标识</span>
@@ -60,12 +53,11 @@
         <strong>上次更新未成功</strong>
         <p>{{ snapshot.installFailure.message }}</p>
         <p>请前往 GitHub 最新发布页，选择适合当前系统的完整安装包，关闭客户端后重新安装。</p>
-        <uiButton asChild size="sm">
-          <a :href="snapshot.installFailure.downloadUrl" target="_blank" rel="noopener noreferrer">前往下载页</a>
-        </uiButton>
+        <el-button tag="a" type="primary" size="small" :href="snapshot.installFailure.downloadUrl" target="_blank" rel="noopener noreferrer">前往下载页</el-button>
       </div>
-    </uiCard>
-    <uiCard class="infoCard repositoryCard">
+    </el-card>
+
+    <el-card class="infoCard repositoryCard" shadow="never">
       <a class="repositoryLink" :href="repositoryUrl" target="_blank" rel="noopener noreferrer" aria-label="GitHub 仓库：HBAI-Ltd/Toonflow-app">
         <icon-brand-github class="repositoryIcon" :size="22" aria-hidden="true" />
         <div class="repositoryInfo">
@@ -73,42 +65,44 @@
         </div>
         <icon-external-link class="externalIcon" :size="16" aria-hidden="true" />
       </a>
-    </uiCard>
-    <uiCard class="infoCard">
+    </el-card>
+
+    <el-card class="infoCard" shadow="never">
       <div class="cardHeader">
         <div class="cardLabel">
           <icon-brand-wechat :size="20" aria-hidden="true" />
           <span>微信交流群</span>
         </div>
-        <uiPopover>
-          <uiPopoverTrigger asChild>
-            <uiButton size="sm" variant="outline"><icon-qrcode aria-hidden="true" />展示二维码</uiButton>
-          </uiPopoverTrigger>
-          <uiPopoverContent class="w-[196px] p-3" side="top">
-            <div class="qrTitle">微信扫码加入交流群</div>
-            <q-r-code
-              :value="communityUrl"
-              :size="168"
-              type="svg"
-              color="#000000"
-              bgColor="#ffffff"
-              borderless
-              role="img"
-              aria-label="SuperFlow 交流群二维码" />
-            <div class="tips">SuperFlow 是为爱发电的开源项目。欢迎文明交流、友善反馈；回复可能需要一些时间，请避免责问或命令式沟通，感谢你的理解与尊重。</div>
-          </uiPopoverContent>
-        </uiPopover>
+        <el-popover trigger="click" placement="top" title="微信扫码加入交流群" :width="196">
+          <template #reference>
+            <el-button size="small" :icon="IconQrcode">展示二维码</el-button>
+          </template>
+          <q-r-code
+            :value="communityUrl"
+            :size="168"
+            type="svg"
+            color="#000000"
+            bgColor="#ffffff"
+            borderless
+            role="img"
+            aria-label="SuperFlow 交流群二维码" />
+          <div class="tips">
+            SuperFlow 是为爱发电的开源项目。欢迎文明交流、友善反馈；回复可能需要一些时间，请避免责问或命令式沟通，感谢你的理解与尊重。
+          </div>
+        </el-popover>
       </div>
-    </uiCard>
-    <uiCard class="infoCard">
+    </el-card>
+
+    <el-card class="infoCard" shadow="never">
       <div class="cardHeader">
         <div class="cardLabel">
           <icon-shield-lock :size="20" aria-hidden="true" />
           <span>隐私</span>
         </div>
-        <uiButton size="sm" variant="outline" aria-haspopup="dialog" @click="privacyVisible = true">查看</uiButton>
+        <el-button size="small" aria-haspopup="dialog" @click="privacyVisible = true">查看</el-button>
       </div>
-    </uiCard>
+    </el-card>
+
     <!-- 暂停 Toonflow 云赞助信息。
     <section class="sponsorPanel" aria-label="赞助商">
       <h3 class="sponsorTitle">
@@ -153,84 +147,72 @@
       </div>
     </section>
     -->
-    <uiDialog v-model:open="privacyVisible">
-      <uiDialogContent :aria-describedby="undefined" class="sm:max-w-[660px]">
-        <uiDialogHeader>
-          <uiDialogTitle>隐私</uiDialogTitle>
-        </uiDialogHeader>
-        <privacy />
-      </uiDialogContent>
-    </uiDialog>
-    <uiDialog v-model:open="resultVisible">
-      <uiDialogContent :aria-describedby="undefined" class="sm:max-w-[480px]">
-        <uiDialogHeader>
-          <uiDialogTitle>版本更新</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="updateResult" aria-live="polite" :aria-busy="working">
-          <div class="resultHeader">
-            <span class="resultIcon" :class="{ warning: !!updateError, success: !working && !updateError && !snapshot?.updateAvailable }">
-              <icon-refresh v-if="working" class="loadingIcon" :size="22" aria-hidden="true" />
-              <icon-alert-circle v-else-if="updateError" :size="22" aria-hidden="true" />
-              <icon-arrow-up-circle v-else-if="snapshot?.updateAvailable" :size="22" aria-hidden="true" />
-              <icon-circle-check v-else :size="22" aria-hidden="true" />
-            </span>
-            <div class="resultCopy">
-              <h3>{{ resultTitle }}</h3>
-              <p>{{ resultMessage }}</p>
-            </div>
-          </div>
-          <div
-            v-if="!updateError && !snapshot?.installFailure && (action === 'download' || updateProgress || (snapshot?.updateReady && !updateInProgress))"
-            class="updateProgress">
-            <div v-if="updateInProgress" class="progressHeader">
-              <span>{{ updateProgress?.phase === "preparing" ? "正在解压并校验更新包" : "下载进度" }}</span>
-              <span v-if="updateProgress && (updateProgress.received > 0 || updateProgress.total)">{{ formatBytes(updateProgress.received) }}<template v-if="updateProgress.total">/{{ formatBytes(updateProgress.total) }}</template></span>
-            </div>
-            <div
-              v-if="updateProgress?.total || (!updateInProgress && snapshot?.updateReady)"
-              class="progressRow"
-              :class="{ success: !updateInProgress && snapshot?.updateReady }">
-              <uiProgress class="progressBar" :modelValue="updatePercentage" />
-              <icon-circle-check v-if="!updateInProgress && snapshot?.updateReady" class="progressDone" :size="16" aria-hidden="true" />
-              <span v-else class="progressText">{{ updatePercentage }}%</span>
-            </div>
-          </div>
-          <div v-if="!checking && !updateError && snapshot?.updateAvailable" class="releaseInfo">
-            <div class="versionComparison">
-              <div class="versionItem">
-                <span>当前版本</span>
-                <strong>v{{ currentVersion }}</strong>
-              </div>
-              <icon-arrow-right class="versionArrow" :size="18" aria-hidden="true" />
-              <div class="versionItem latestVersion">
-                <span>最新版本</span>
-                <strong>v{{ snapshot.latestVersion }}</strong>
-              </div>
-            </div>
-            <div v-if="snapshot.channel || snapshot.latestHash" class="releaseMeta">
-              <uiBadge v-if="snapshot.channel" variant="secondary">{{ snapshot.channel }}</uiBadge>
-              <code v-if="snapshot.latestHash" :title="snapshot.latestHash">{{ snapshot.latestHash }}</code>
-            </div>
+
+    <el-dialog v-model="privacyVisible" title="隐私" width="min(660px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
+      <privacy />
+    </el-dialog>
+
+    <el-dialog v-model="resultVisible" title="版本更新" width="min(480px, 92vw)" alignCenter appendToBody>
+      <div class="updateResult" aria-live="polite" :aria-busy="working">
+        <div class="resultHeader">
+          <span class="resultIcon" :class="{ warning: !!updateError, success: !working && !updateError && !snapshot?.updateAvailable }">
+            <icon-refresh v-if="working" class="loadingIcon" :size="22" aria-hidden="true" />
+            <icon-alert-circle v-else-if="updateError" :size="22" aria-hidden="true" />
+            <icon-arrow-up-circle v-else-if="snapshot?.updateAvailable" :size="22" aria-hidden="true" />
+            <icon-circle-check v-else :size="22" aria-hidden="true" />
+          </span>
+          <div class="resultCopy">
+            <h3>{{ resultTitle }}</h3>
+            <p>{{ resultMessage }}</p>
           </div>
         </div>
-        <uiDialogFooter>
-          <uiButton size="sm" variant="outline" @click="resultVisible = false">关闭</uiButton>
-          <uiButton v-if="updateError && !snapshot?.installFailure && !updateInProgress" asChild size="sm" variant="outline">
-            <a :href="`${repositoryUrl}/releases/latest`" target="_blank" rel="noopener noreferrer">前往下载页</a>
-          </uiButton>
-          <uiButton v-if="snapshot?.installFailure" asChild size="sm">
-            <a :href="snapshot.installFailure.downloadUrl" target="_blank" rel="noopener noreferrer">前往下载页</a>
-          </uiButton>
-          <uiButton v-else-if="snapshot?.updating && !working" size="sm" @click="runUpdate('read')">重新读取状态</uiButton>
-          <uiButton
-            v-else-if="snapshot?.canUpdate && snapshot.updateAvailable"
-            size="sm"
-            :variant="snapshot.updateReady ? 'destructive' : 'default'"
-            :disabled="working"
-            @click="runUpdate(snapshot.updateReady ? 'apply' : 'download')"><icon-loader-2 v-if="working" class="animate-spin" aria-hidden="true" />{{ snapshot.updateReady ? "重启并更新" : "下载更新" }}</uiButton>
-        </uiDialogFooter>
-      </uiDialogContent>
-    </uiDialog>
+        <div
+          v-if="!updateError && !snapshot?.installFailure && (action === 'download' || updateProgress || (snapshot?.updateReady && !updateInProgress))"
+          class="updateProgress">
+          <div v-if="updateInProgress" class="progressHeader">
+            <span>{{ updateProgress?.phase === "preparing" ? "正在解压并校验更新包" : "下载进度" }}</span>
+            <span v-if="updateProgress && (updateProgress.received > 0 || updateProgress.total)">
+              {{ formatBytes(updateProgress.received) }}<template v-if="updateProgress.total"> / {{ formatBytes(updateProgress.total) }}</template>
+            </span>
+          </div>
+          <el-progress
+            v-if="updateProgress?.total || (!updateInProgress && snapshot?.updateReady)"
+            :percentage="updatePercentage"
+            :status="!updateInProgress && snapshot?.updateReady ? 'success' : undefined" />
+        </div>
+        <div v-if="!checking && !updateError && snapshot?.updateAvailable" class="releaseInfo">
+          <div class="versionComparison">
+            <div class="versionItem">
+              <span>当前版本</span>
+              <strong>v{{ currentVersion }}</strong>
+            </div>
+            <icon-arrow-right class="versionArrow" :size="18" aria-hidden="true" />
+            <div class="versionItem latestVersion">
+              <span>最新版本</span>
+              <strong>v{{ snapshot.latestVersion }}</strong>
+            </div>
+          </div>
+          <div v-if="snapshot.channel || snapshot.latestHash" class="releaseMeta">
+            <el-tag v-if="snapshot.channel" type="info" size="small" round>{{ snapshot.channel }}</el-tag>
+            <code v-if="snapshot.latestHash" :title="snapshot.latestHash">{{ snapshot.latestHash }}</code>
+          </div>
+        </div>
+      </div>
+      <template #footer>
+        <el-button size="small" @click="resultVisible = false">关闭</el-button>
+        <el-button v-if="updateError && !snapshot?.installFailure && !updateInProgress" tag="a" size="small" :href="`${repositoryUrl}/releases/latest`" target="_blank" rel="noopener noreferrer">前往下载页</el-button>
+        <el-button v-if="snapshot?.installFailure" tag="a" type="primary" size="small" :href="snapshot.installFailure.downloadUrl" target="_blank" rel="noopener noreferrer">前往下载页</el-button>
+        <el-button v-else-if="snapshot?.updating && !working" size="small" type="primary" @click="runUpdate('read')">重新读取状态</el-button>
+        <el-button
+          v-else-if="snapshot?.canUpdate && snapshot.updateAvailable"
+          size="small"
+          :type="snapshot.updateReady ? 'danger' : 'primary'"
+          :loading="working"
+          @click="runUpdate(snapshot.updateReady ? 'apply' : 'download')">
+          {{ snapshot.updateReady ? "重启并更新" : "下载更新" }}
+        </el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
@@ -240,7 +222,7 @@ import { translate, t } from "@toonflow/i18n/vue";
 import { computed, defineAsyncComponent, onMounted, onBeforeUnmount, ref } from "vue";
 import { publicWeb } from "@/stores/multiTenant";
 import axios from "axios";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { actualPlatform, isMobile, isLocalDesktop, isRemoteConnection } from "@/lib/platform";
 import { QRCode } from "tdesign-vue-next";
 import {
@@ -253,18 +235,11 @@ import {
   IconArrowRight,
   IconGift,
   IconBrandWechat,
+  IconQrcode,
 } from "@tabler/icons-vue";
 import logoUrl from "@toonflow/assets/logo.svg";
 import type { Sponsor } from "@toonflow/server/channel";
 import http from "@/lib/http";
-import { uiBadge } from "@/components/ui/badge";
-import { uiButton } from "@/components/ui/button";
-import { uiCard } from "@/components/ui/card";
-import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
-import { uiPopover, uiPopoverContent, uiPopoverTrigger } from "@/components/ui/popover";
-import { uiProgress } from "@/components/ui/progress";
-import { uiSelect, uiSelectContent, uiSelectItem, uiSelectTrigger, uiSelectValue } from "@/components/ui/select";
-import { uiSwitch } from "@/components/ui/switch";
 import { saveSettings } from "@/stores/settings";
 import {
   desktopAutoUpdate,
@@ -327,7 +302,7 @@ const sponsors = ref<Sponsor[]>([]);
 //   try {
 //     sponsors.value = await http<Sponsor[]>({ method: "GET", url: "/api/channel/community/getSponsorList", signal: controller.signal });
 //   } catch (error) {
-//     if (!controller.signal.aborted) toast.error(getUpdateError(error));
+//     if (!controller.signal.aborted) ElMessage.error(getUpdateError(error));
 //   }
 // });
 
@@ -370,7 +345,7 @@ async function saveUpdateSource(source: string) {
   try {
     await saveSettings(() => ({ desktopUpdateSource: source }));
   } catch (error) {
-    toast.error(getUpdateError(error));
+    ElMessage.error(getUpdateError(error));
   } finally {
     sourceSaving.value = false;
   }
@@ -383,7 +358,7 @@ async function saveAutoUpdate(enabled: boolean) {
     await saveSettings(() => ({ desktopAutoUpdate: enabled }));
     if (enabled) void startDesktopUpdate().catch(() => {});
   } catch (error) {
-    toast.error(getUpdateError(error));
+    ElMessage.error(getUpdateError(error));
   } finally {
     autoUpdateSaving.value = false;
   }
@@ -460,10 +435,11 @@ async function runUpdate(nextAction: "read" | "check" | "download" | "apply") {
 
   .infoCard {
     min-width: 0;
-    gap: 0;
-    padding: 14px;
     border-radius: calc(var(--ui-radius) * 1);
-    box-shadow: none;
+
+    :deep(.el-card__body) {
+      padding: 14px;
+    }
 
     .cardHeader {
       display: flex;
@@ -512,24 +488,8 @@ async function runUpdate(nextAction: "read" | "check" | "download" | "apply") {
             text-decoration: none;
           }
 
-          .sourceSelect {
+          :deep(.el-select) {
             width: 120px;
-          }
-
-          .updateBadge {
-            position: relative;
-            display: inline-flex;
-
-            .updateDot {
-              position: absolute;
-              top: -3px;
-              inset-inline-end: -3px;
-              width: 8px;
-              height: 8px;
-              border: 1px solid var(--background);
-              border-radius: 50%;
-              background: var(--destructive);
-            }
           }
         }
       }
@@ -560,9 +520,11 @@ async function runUpdate(nextAction: "read" | "check" | "download" | "apply") {
     }
 
     &.repositoryCard {
-      padding: 0;
       transition: border-color 0.2s;
 
+      :deep(.el-card__body) {
+        padding: 0;
+      }
       &:hover {
         border-color: var(--el-border-color-darker);
       }
@@ -693,13 +655,6 @@ async function runUpdate(nextAction: "read" | "check" | "download" | "apply") {
   }
 }
 
-.qrTitle {
-  margin-bottom: 8px;
-  color: var(--foreground);
-  font-size: 14px;
-  font-weight: 600;
-}
-
 .tips {
   margin: 0;
   color: var(--el-text-color-secondary);
@@ -774,25 +729,6 @@ async function runUpdate(nextAction: "read" | "check" | "download" | "apply") {
       margin-bottom: 8px;
       color: var(--el-text-color-secondary);
       font-size: 12px;
-    }
-
-    .progressRow {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-
-      .progressBar { flex: 1; }
-
-      .progressText {
-        min-width: 36px;
-        color: var(--muted-foreground);
-        font-size: 12px;
-        text-align: end;
-      }
-
-      .progressDone { flex-shrink: 0; color: var(--el-color-success); }
-
-      &.success :deep([data-slot="progress-indicator"]) { background: var(--el-color-success); }
     }
   }
 

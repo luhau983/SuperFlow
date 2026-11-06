@@ -63,19 +63,15 @@
           :loading="nodeLoads.has(type) || (nodeListLoading && !nodeTypes[type] && !nodeErrors[type])" />
       </template>
       <background v-if="canvasId" :gap="16" patternColor="var(--el-border-color)" />
-      <div v-if="!canvasId" class="canvasOverlay" role="status" @contextmenu.prevent @dragover.prevent @drop.prevent>从左上角打开一个画布，就可以开始创作啦</div>
+      <div v-if="!canvasId" class="canvasOverlay" role="status" @contextmenu.prevent @dragover.prevent @drop.prevent>
+        从左上角打开一个画布，就可以开始创作啦
+      </div>
       <canvasEmpty
         v-if="active && !settingsVisible && project?.directory && canvasReady && !flow.getNodes.value.length"
         :availableNodes="availableNodes"
         @create="createEmptyNode" />
       <canvasViewportHint v-if="active && !settingsVisible && project?.directory && canvasReady" :key="canvasId" />
-      <canvasMenu
-        ref="canvasMenuRef"
-        v-model:canvasId="canvasId"
-        :directory="project?.directory"
-        :initialCanvasId="initialCanvasId"
-        :activateCanvas="activateCanvas"
-        :flushSave="flushCanvases ?? flushCanvasSave">
+      <canvasMenu ref="canvasMenuRef" v-model:canvasId="canvasId" :directory="project?.directory" :initialCanvasId="initialCanvasId" :activateCanvas="activateCanvas" :flushSave="flushCanvases ?? flushCanvasSave">
         <assetLibrary v-if="currentUser?.role !== 'user'" ref="assetLibraryRef" v-model="assetsVisible" :directory="project?.directory" />
       </canvasMenu>
       <canvasControls
@@ -111,23 +107,15 @@
         :disabled="!canvasId || !project?.directory" />
       <nodeSearch ref="nodeSearchRef" :disabled="!active || settingsVisible || !canvasId || !project?.directory" />
     </vue-flow>
-    <uiDialog v-if="currentUser?.role !== 'user'" :open="!!assetSelection" @update:open="open => { if (!open) { finishAssetSelection(); } }">
-      <uiDialogContent
-        :aria-describedby="undefined"
-        class="referenceAssetDialog uiDialogPanel"
-        :style="{ width: 'min(1200px, 88vw)', maxWidth: 'calc(100vw - 32px)' }">
-        <uiDialogHeader class="dialogHeader">
-          <uiDialogTitle>全局素材库</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="dialogBody">
-          <assetLibrary :modelValue="!!assetSelection" expanded :canSelect="canSelectAsset" :selecting="assetSelecting" @select="selectAsset" />
-        </div>
-      </uiDialogContent>
-    </uiDialog>
+    <el-dialog v-if="currentUser?.role !== 'user'" :modelValue="!!assetSelection" class="referenceAssetDialog" title="全局素材库" width="min(1200px, 88vw)" alignCenter appendToBody destroyOnClose @update:modelValue="finishAssetSelection()">
+      <assetLibrary :modelValue="!!assetSelection" expanded :canSelect="canSelectAsset" :selecting="assetSelecting" @select="selectAsset" />
+    </el-dialog>
     <teleport to="body">
-      <uiButton
+      <el-button
         v-if="edgeDisconnect && findEdge(edgeDisconnect.id)"
         class="edgeDisconnect"
+        type="danger"
+        circle
         aria-label="断开连接"
         title="断开连接"
         :style="{ left: `${edgeDisconnect.x}px`, top: `${edgeDisconnect.y}px` }"
@@ -135,25 +123,19 @@
           removeEdges(edgeDisconnect.id);
           edgeDisconnect = undefined;
         "
-        @mouseleave="edgeDisconnect = undefined"
-        variant="destructive"
-        type="button"
-        size="icon"
-        style="border-radius: 9999px">
+        @mouseleave="edgeDisconnect = undefined">
         <icon-unlink :size="16" />
-      </uiButton>
+      </el-button>
     </teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiButton } from "@/components/ui/button";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 import { t, translate } from "@toonflow/i18n/vue";
 import { computed, markRaw, nextTick, onBeforeUnmount, onMounted, onScopeDispose, provide, ref, shallowReactive, shallowRef, watch } from "vue";
 import axios from "axios";
 import { debounce } from "lodash-es";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { actualPlatform, isMobile } from "@/lib/platform";
 import { storeToRefs } from "pinia";
 import { IconUnlink } from "@tabler/icons-vue";
@@ -389,13 +371,13 @@ async function selectAsset(entry: { name: string; path: string; type: string }) 
         if (importedId && !connected) {
           if (created && findNode(importedId) === created) flow.removeNodes(importedId, true);
           await useWorkspaceFiles(selection.directory).remove(`assets/${importedId}`, true).catch(cleanupError => {
-            if (cleanupError?.response?.data?.data?.code !== "ENOENT") toast.error(cleanupError?.response?.data?.message || cleanupError.message);
+            if (cleanupError?.response?.data?.data?.code !== "ENOENT") ElMessage.error(cleanupError?.response?.data?.message || cleanupError.message);
           });
         }
       }
     });
   } catch (error) {
-    if (!selection.signal.aborted) toast.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message);
+    if (!selection.signal.aborted) ElMessage.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message);
   } finally {
     if (assetSelection.value === selection) assetSelecting.value = false;
   }
@@ -649,7 +631,7 @@ async function dropFiles(event: DragEvent) {
   try {
     await canvasHistory.batch(() => dropCanvasFiles(event, { directory, availableNodes: availableNodes.value, signal: canvasController.signal, flow }));
   } catch (error) {
-    toast.error(error instanceof Error ? error.message : "文件导入失败");
+    ElMessage.error(error instanceof Error ? error.message : "文件导入失败");
   }
 }
 
@@ -666,7 +648,7 @@ function selectFiles(position: { x: number; y: number }) {
     try {
       await canvasHistory.batch(async () => { await importCanvasFiles(files, position, context); });
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "文件导入失败");
+      ElMessage.error(error instanceof Error ? error.message : "文件导入失败");
     }
   };
   input.click();
@@ -697,7 +679,7 @@ async function changeHistory(direction: "undo" | "redo") {
     await canvasHistory[direction]();
     edgeDisconnect.value = undefined;
   } catch (error) {
-    toast.error(
+    ElMessage.error(
       axios.isAxiosError<{ message?: string }>(error)
         ? error.response?.data.message || "恢复画布失败"
         : error instanceof Error
@@ -727,7 +709,7 @@ const saveCanvas = debounce((directory: string, fileName: string) => {
     } catch (err) {
       saveError = err;
       canvasSaveError.value = axios.isAxiosError<{ message?: string }>(err) ? err.response?.data.message || err.message : err instanceof Error ? err.message : "画布保存失败";
-      toast.error(
+      ElMessage.error(
         axios.isAxiosError<{ message?: string }>(err)
           ? err.response?.data.message || "画布保存失败"
           : err instanceof Error
@@ -969,7 +951,7 @@ async function copySelectedNodes() {
   copyingNodes = true;
   try {
     if (nodes.length === 1 && await copyImageNodeToClipboard(directory, { data: nodes[0]!.data ?? {} })) {
-      toast.success("已复制图片");
+      ElMessage.success("已复制图片");
       return;
     }
     const ids = new Set(nodes.map(node => node.id));
@@ -988,7 +970,7 @@ async function copySelectedNodes() {
     const edges = snapshot.edges.filter(edge => ids.has(edge.source) && ids.has(edge.target));
     await copyNodesToClipboard(copies, edges, directory);
   } catch (error) {
-    if (!signal.aborted) toast.error(error instanceof Error ? error.message : "节点复制失败");
+    if (!signal.aborted) ElMessage.error(error instanceof Error ? error.message : "节点复制失败");
   } finally {
     copyingNodes = false;
   }
@@ -1037,7 +1019,7 @@ async function importCanvasContent(files: File[], position: { x: number; y: numb
     await canvasHistory.batch(async () => { await importCanvasFiles(files, position, { directory, availableNodes: availableNodes.value, signal: canvasSignal, flow }); });
     return true;
   } catch (error) {
-    if (!canvasSignal.aborted) toast.error(error instanceof Error ? error.message : "剪贴板内容导入失败");
+    if (!canvasSignal.aborted) ElMessage.error(error instanceof Error ? error.message : "剪贴板内容导入失败");
     return false;
   }
 }
@@ -1083,7 +1065,7 @@ async function pasteClipboardNode(position: { x: number; y: number }, command?: 
       ? t`无法读取剪贴板，请在画布上按 ${shortcutLabel(pasteShortcut)} 粘贴`
       : translate("无法读取剪贴板，请允许浏览器访问剪贴板");
     if (!canvasSignal.aborted)
-      toast.error(
+      ElMessage.error(
         error instanceof DOMException && error.name === "NotAllowedError" ? clipboardMessage : error instanceof Error ? error.message : "剪贴板内容粘贴失败"
       );
     return false;
@@ -1190,7 +1172,7 @@ function updateCanvasKeys(event: KeyboardEvent) {
     void canvasHistory
       .batch(() => menu.deleteSelection(nodes))
       .catch((error) => {
-        toast.error(error instanceof Error ? error.message : "节点删除失败");
+        ElMessage.error(error instanceof Error ? error.message : "节点删除失败");
       });
     return;
   }
@@ -1354,7 +1336,7 @@ async function loadRemoteNodes(reloadName?: string, requireReload = false) {
           console.error("加载远端节点失败", node, error);
           // 保存拒绝时旧组件仍可用，不从节点菜单中移除；脚本加载错误仍排除。
           if (nodeTypes.value[nodeType] && !nodeErrors.value[nodeType]) {
-            if (reloadNames.has(node.name) && !signal.aborted) toast.warning({
+            if (reloadNames.has(node.name) && !signal.aborted) ElMessage.warning({
               message: `${node.displayName}已安装，但当前节点无法刷新。请等待任务结束后，点击节点右上角的刷新按钮。`,
               grouping: true,
             });
@@ -1394,7 +1376,7 @@ const defaultEdgeOptions = markRaw({
   overflow: hidden;
 }
 
-:global(.referenceAssetDialog .dialogBody) {
+:global(.referenceAssetDialog .el-dialog__body) {
   display: flex;
   flex: 1;
   min-height: 0;

@@ -1,14 +1,15 @@
 <template>
   <div class="keyInput">
-    <uiInput
+    <el-input
       v-if="mode === 'input'"
       v-model="draft"
+      size="small"
       :disabled="disabled"
       :aria-label="label"
       placeholder="留空即不绑定"
       @keydown.stop
       @blur="commitInput"
-      @keyup.enter="commitInput"></uiInput>
+      @keyup.enter="commitInput" />
     <template v-else>
       <button
         class="recorder"
@@ -34,39 +35,30 @@
           </span>
         </span>
       </button>
-      <uiButton
+      <el-button
         v-if="draft"
         class="clearButton"
+        text
+        size="small"
+        :icon="IconX"
+        :disabled="disabled"
         :aria-label="`清除${label}`"
         title="取消绑定"
-        @click="setBinding('')"
-        variant="ghost"
-        type="button"
-        :disabled="(disabled)"
-        size="sm">
-        <component :is="IconX" aria-hidden="true" />
-      </uiButton>
+        @click="setBinding('')" />
     </template>
-    <div v-if="allowNone" class="bindingOptions">
-      <uiDropdownMenu @update:open="optionsVisible = $event">
-        <uiDropdownMenuTrigger asChild>
-          <uiButton :aria-label="`设置${label}`" title="无需按键或取消绑定" variant="ghost" type="button" :disabled="(disabled)" size="sm">
-            <component :is="optionsVisible ? IconChevronUp : IconChevronDown" aria-hidden="true" />
-          </uiButton>
-        </uiDropdownMenuTrigger>
-        <uiDropdownMenuContent align="end">
-          <uiDropdownMenuItem @select="setBinding('None')">无需按键</uiDropdownMenuItem>
-          <uiDropdownMenuItem @select="setBinding('')">取消绑定</uiDropdownMenuItem>
-        </uiDropdownMenuContent>
-      </uiDropdownMenu>
-    </div>
+    <el-dropdown v-if="allowNone" class="bindingOptions" :disabled="disabled" trigger="click" @command="setBinding" @visibleChange="optionsVisible = $event">
+      <el-button text size="small" :icon="optionsVisible ? IconChevronUp : IconChevronDown" :disabled="disabled" :aria-label="`设置${label}`" title="无需按键或取消绑定" />
+      <template #dropdown>
+        <el-dropdown-menu>
+          <el-dropdown-item command="None">无需按键</el-dropdown-item>
+          <el-dropdown-item command="">取消绑定</el-dropdown-item>
+        </el-dropdown-menu>
+      </template>
+    </el-dropdown>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiDropdownMenu, uiDropdownMenuTrigger, uiDropdownMenuContent, uiDropdownMenuItem } from "@/components/ui/dropdownMenu";
-import { uiButton } from "@/components/ui/button";
-import { uiInput } from "@/components/ui/input";
 import { ref, watch } from "vue";
 import { IconX, IconChevronDown, IconChevronUp } from "@tabler/icons-vue";
 import { getShortcutBindings, isModifierShortcut, shortcutFromEvent, shortcutLabel } from "@/lib/canvasShortcuts";
@@ -181,7 +173,7 @@ function setBinding(value: string) {
   .bindingOptions {
     flex-shrink: 0;
 
-    [data-slot="button"] { width: 20px; padding: 0; }
+    .el-button { width: 20px; padding: 0; }
   }
   &:hover .clearButton, &:focus-within .clearButton { opacity: 1; }
 }

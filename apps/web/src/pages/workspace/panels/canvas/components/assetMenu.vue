@@ -1,73 +1,34 @@
 <template>
-  <el-dropdown
-    ref="menu"
-    trigger="contextmenu"
-    virtualTriggering
-    :virtualRef="menuAnchor"
-    placement="bottom-start"
-    :showArrow="false"
-    :hideOnClick="false"
-    popperClass="assetActionMenu"
-    @command="handleCommand"
-    @visibleChange="(opened: boolean) => { if (!opened) moveVisible = false; }">
+  <el-dropdown ref="menu" trigger="contextmenu" virtualTriggering :virtualRef="menuAnchor" placement="bottom-start" :showArrow="false" :hideOnClick="false" popperClass="assetActionMenu" @command="handleCommand" @visibleChange="(opened: boolean) => { if (!opened) moveVisible = false; }">
     <template #dropdown>
       <el-dropdown-menu v-if="activeEntry">
         <el-dropdown-item command="move" :disabled="busy">
-          <hover-card-root v-model:open="moveVisible" :openDelay="0" :closeDelay="150">
-            <hover-card-trigger asChild>
-              <span class="moveTrigger">
-                <span class="moveLabel">移动到</span>
-                <icon-chevron-right :size="14" />
-              </span>
-            </hover-card-trigger>
-            <hover-card-portal :to="'.assetActionMenu'">
-              <hover-card-content
-                class="hoverPanel "
-                side="right"
-                align="start"
-                :sideOffset="0"
-                :style="{ width: '220px', maxWidth: 'calc(100vw - 24px)', zIndex: hoverZIndex }">
-                <div class="moveDestinations" role="menu" aria-label="移动到目录" @click.stop @keydown.stop>
-                  <uiButton role="menuitem" @click="createMoveFolder" variant="ghost" type="button" :disabled="(busy)"><component :is="IconFolderPlus" aria-hidden="true" />新建文件夹</uiButton>
-                  <div style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: '260px', height: undefined }">
-                    <uiButton
-                      v-for="item in moveFolders"
-                      :key="item.path"
-                      role="menuitem"
-                      :title="item.label"
-                      @click="moveTo(item.path)"
-                      variant="ghost"
-                      type="button"
-                      :disabled="(busy || destinationDisabled(item.path))"><component :is="IconFolder" aria-hidden="true" />{{ item.label }}</uiButton>
-                  </div>
-                </div>
-              </hover-card-content>
-            </hover-card-portal>
-          </hover-card-root>
+          <el-popover v-model:visible="moveVisible" trigger="hover" placement="right-start" :width="220" :offset="0" :showArrow="false" :showAfter="0" :hideAfter="150" appendTo=".assetActionMenu">
+            <template #reference>
+              <span class="moveTrigger"><span class="moveLabel">移动到</span><icon-chevron-right :size="14" /></span>
+            </template>
+            <div class="moveDestinations" role="menu" aria-label="移动到目录" @click.stop @keydown.stop>
+              <el-button text :icon="IconFolderPlus" :disabled="busy" role="menuitem" @click="createMoveFolder">新建文件夹</el-button>
+              <el-scrollbar maxHeight="260px">
+                <el-button v-for="item in moveFolders" :key="item.path" text :icon="IconFolder" :disabled="busy || destinationDisabled(item.path)" role="menuitem" :title="item.label" @click="moveTo(item.path)">{{ item.label }}</el-button>
+              </el-scrollbar>
+            </div>
+          </el-popover>
         </el-dropdown-item>
         <el-dropdown-item v-if="activeEntry.type === 'file'" command="download" divided>下载</el-dropdown-item>
         <el-dropdown-item command="rename" :disabled="busy">重命名</el-dropdown-item>
-        <el-dropdown-item
-          class="deleteAction"
-          command="delete"
-          :disabled="busy || !!activeEntry.children?.length"
-          :title="activeEntry.children?.length ? '请先删除文件夹内的素材' : undefined">删除</el-dropdown-item>
+        <el-dropdown-item class="deleteAction" command="delete" :disabled="busy || !!activeEntry.children?.length" :title="activeEntry.children?.length ? '请先删除文件夹内的素材' : undefined">删除</el-dropdown-item>
       </el-dropdown-menu>
     </template>
   </el-dropdown>
 </template>
 
 <script setup lang="ts">
-import { useLayerZIndex } from "@/lib/layerZIndex";
-import { HoverCardRoot, HoverCardTrigger, HoverCardPortal, HoverCardContent } from "reka-ui";
-import { uiButton } from "@/components/ui/button";
 import { translate } from "@toonflow/i18n/vue";
-import { computed, nextTick, ref, shallowRef, watch } from "vue";
+import { computed, nextTick, ref, shallowRef } from "vue";
 import axios from "axios";
 import saveFile from "@/lib/saveFile";
-import { type DropdownInstance } from "element-plus";
-import { toast } from "vue-sonner";
-import messageBox from "@/lib/messageBox";
+import { ElMessage, ElMessageBox, type DropdownInstance } from "element-plus";
 import { IconChevronRight, IconFolder, IconFolderPlus } from "@tabler/icons-vue";
 
 type AssetEntry = { name: string; path: string; type: "file" | "directory"; children?: AssetEntry[] };
@@ -112,7 +73,7 @@ function closeMenu() {
 
 function showError(error: unknown) {
   if (error === "cancel" || error === "close") return;
-  toast.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message);
+  ElMessage.error(axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message);
 }
 
 async function relocate(entry: AssetEntry, target: string) {
@@ -139,7 +100,7 @@ async function createMoveFolder() {
   const entry = activeEntry.value!;
   closeMenu();
   try {
-    const { value } = await messageBox.prompt("新文件夹将创建在素材库根目录", "新建文件夹", {
+    const { value } = await ElMessageBox.prompt("新文件夹将创建在素材库根目录", "新建文件夹", {
       inputValue: "新建文件夹",
       inputPattern: /^[^\\/]+$/,
       inputValidator: value => !!value?.trim() || "请输入文件夹名称",
@@ -169,7 +130,7 @@ async function handleCommand(command: string) {
       await saveFile(() => axios.get<Blob>("/api/assets/read", { params: { path: entry.path, download: true }, responseType: "blob" }).then(({ data }) => data), entry.name);
     }
     if (command === "rename") {
-      const { value } = await messageBox.prompt("名称", "重命名", {
+      const { value } = await ElMessageBox.prompt("名称", "重命名", {
         inputValue: entry.name,
         inputPattern: /^[^\\/]+$/,
         inputValidator: value => !!value?.trim() || "请输入名称",
@@ -180,7 +141,7 @@ async function handleCommand(command: string) {
       await relocate(entry, parent === "." ? value.trim() : parent + "/" + value.trim());
     }
     if (command === "delete") {
-      await messageBox.confirm("确定删除“" + entry.name + "”？", "删除素材", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消" });
+      await ElMessageBox.confirm("确定删除“" + entry.name + "”？", "删除素材", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消" });
       busy.value = true;
       try {
         await axios.delete("/api/assets/remove", { data: { path: entry.path } });
@@ -195,9 +156,6 @@ async function handleCommand(command: string) {
 }
 
 defineExpose({ openMenu });
-
-const hoverZIndex = ref(useLayerZIndex());
-watch(moveVisible, open => { if (open) hoverZIndex.value = useLayerZIndex(); });
 </script>
 
 <style lang="scss" scoped>
@@ -217,7 +175,7 @@ watch(moveVisible, open => { if (open) hoverZIndex.value = useLayerZIndex(); });
 }
 
 .moveDestinations {
-  [data-slot="button"] {
+  .el-button {
     display: flex;
     justify-content: flex-start;
     width: 100%;

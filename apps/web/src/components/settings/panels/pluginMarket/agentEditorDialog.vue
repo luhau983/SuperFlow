@@ -1,66 +1,33 @@
 <template>
-  <uiDialog :open="visible" @update:open="(open: boolean) => open || close()">
-    <uiDialogContent class="sm:max-w-[1080px]" :aria-describedby="undefined" @closeAutoFocus="emit('closed')">
-      <uiDialogHeader>
-        <uiDialogTitle>Agent ·{{ agent.displayName }}</uiDialogTitle>
-      </uiDialogHeader>
-      <uiAlert v-if="error" variant="destructive">
-        <icon-alert-circle aria-hidden="true" />
-        <uiAlertTitle class="line-clamp-none">{{ error }}</uiAlertTitle>
-      </uiAlert>
-      <div class="agentEditor" :aria-busy="loading">
-        <nav class="fileList" aria-label="Agent 文件">
-          <uiButton v-if="readme" class="fileButton" :class="{ active: selectedPath === '' }" variant="ghost" size="sm" @click="selectFile('')"><icon-book :size="18" aria-hidden="true" />说明</uiButton>
-          <uiButton
-            v-for="file in files"
-            :key="file.path"
-            class="fileButton"
-            :class="{ active: selectedPath === file.path }"
-            variant="ghost"
-            size="sm"
-            :disabled="saving"
-            @click="selectFile(file.path)">
-            <icon-file :size="18" aria-hidden="true" />
-            <span class="fileName">{{ file.path }}</span>
-            <span v-if="file.content !== file.original" class="dirtyMark">●</span>
-          </uiButton>
-        </nav>
-        <div class="fileContent">
-          <messageMarkdown v-if="!selectedPath" :content="readme" />
-          <uiTextarea
-            v-else-if="selectedFile"
-            v-model="selectedFile.content"
-            class="sourceInput"
-            :readonly="!canManage"
-            :disabled="saving"
-            :spellcheck="false"
-            :aria-label="selectedPath" />
-        </div>
-        <div v-if="loading" class="loadingMask" aria-hidden="true">
-          <icon-loader-2 class="animate-spin" />
-        </div>
+  <el-dialog v-model="visible" :title="`Agent · ${agent.displayName}`" width="min(1080px, calc(100vw - 32px))" alignCenter appendToBody :beforeClose="close" @closed="emit('closed')">
+    <el-alert v-if="error" :title="error" type="error" :closable="false" showIcon />
+    <div v-loading="loading" class="agentEditor">
+      <nav class="fileList" aria-label="Agent 文件">
+        <el-button v-if="readme" text :type="selectedPath === '' ? 'primary' : undefined" @click="selectFile('')"><icon-book :size="18" aria-hidden="true" />说明</el-button>
+        <el-button v-for="file in files" :key="file.path" text :type="selectedPath === file.path ? 'primary' : undefined" :disabled="saving" @click="selectFile(file.path)">
+          <icon-file :size="18" aria-hidden="true" /><span class="fileName">{{ file.path }}</span><span v-if="file.content !== file.original" class="dirtyMark">●</span>
+        </el-button>
+      </nav>
+      <div class="fileContent">
+        <messageMarkdown v-if="!selectedPath" :content="readme" />
+        <el-input v-else-if="selectedFile" v-model="selectedFile.content" class="sourceInput" type="textarea" :rows="20" resize="none" :readonly="!canManage" :disabled="saving" :spellcheck="false" :aria-label="selectedPath" />
       </div>
-      <uiDialogFooter>
-        <uiButton variant="outline" :disabled="saving || confirming" @click="close()">关闭</uiButton>
-        <uiButton v-if="canManage" :disabled="saving || loading || !selectedFile || selectedFile.content === selectedFile.original" @click="save"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存当前文件</uiButton>
-      </uiDialogFooter>
-    </uiDialogContent>
-  </uiDialog>
+    </div>
+    <template #footer>
+      <el-button :disabled="saving || confirming" @click="close()">关闭</el-button>
+      <el-button v-if="canManage" type="primary" :loading="saving" :disabled="loading || !selectedFile || selectedFile.content === selectedFile.original" @click="save">保存当前文件</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { toast } from "vue-sonner";
-import messageBox from "@/lib/messageBox";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { IconBook, IconFile } from "@tabler/icons-vue";
 import messageMarkdown from "@/components/messageMarkdown.vue";
 import type { Plugin } from "./types";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
-import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
-import { uiTextarea } from "@/components/ui/textarea";
 
 const { agent, canManage } = defineProps<{ agent: Plugin; canManage: boolean }>();
 const emit = defineEmits<{ saved: []; closed: [] }>();
@@ -98,16 +65,16 @@ function selectFile(path: string) {
   if (!saving.value) selectedPath.value = path;
 }
 
-// 关闭入口（关闭按钮、右上角、遮罩、Esc）都经过此守卫，有未保存修改时须确认后才关闭。
-async function close() {
+async function close(done?: () => void) {
   if (saving.value || confirming.value) return;
   if (files.value.some(file => file.content !== file.original)) {
     confirming.value = true;
-    try { await messageBox.confirm("修改尚未保存，确定放弃修改并关闭吗？", "未保存的修改", { confirmButtonText: "放弃修改", cancelButtonText: "继续编辑", type: "warning" }); }
+    try { await ElMessageBox.confirm("修改尚未保存，确定放弃修改并关闭吗？", "未保存的修改", { confirmButtonText: "放弃修改", cancelButtonText: "继续编辑", type: "warning" }); }
     catch { return; }
     finally { confirming.value = false; }
   }
-  visible.value = false;
+  if (done) done();
+  else visible.value = false;
 }
 
 async function save() {
@@ -121,7 +88,7 @@ async function save() {
     if (data.code !== 200) throw new Error(data.message || "保存失败");
     file.original = content;
     emit("saved");
-    toast.success("已保存");
+    ElMessage.success("已保存");
   } catch (cause) { error.value = errorMessage(cause); }
   finally { saving.value = false; }
 }
@@ -129,10 +96,8 @@ async function save() {
 
 <style scoped lang="scss">
 .agentEditor {
-  position: relative;
   display: flex;
   gap: 16px;
-  min-width: 0;
   height: min(60vh, 560px);
   min-height: 220px;
 
@@ -142,12 +107,12 @@ async function save() {
     flex: 0 0 min(220px, 30%);
     overflow-y: auto;
 
-    .fileButton {
+    .el-button {
       justify-content: flex-start;
-      min-width: 0;
+      margin: 0;
       min-height: 32px;
       flex-shrink: 0;
-      &.active { color: var(--primary); }
+      :deep(> span) { min-width: 0; gap: 6px; }
       .fileName { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
       .dirtyMark { color: var(--el-color-warning); }
       svg { flex-shrink: 0; }
@@ -160,22 +125,8 @@ async function save() {
     overflow-y: auto;
     .sourceInput {
       height: 100%;
-      resize: none;
-      field-sizing: fixed;
-      font-family: ui-monospace, Consolas, monospace;
-      line-height: 1.6;
-      tab-size: 2;
+      :deep(textarea) { height: 100%; font-family: ui-monospace, Consolas, monospace; line-height: 1.6; tab-size: 2; }
     }
-  }
-
-  .loadingMask {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: color-mix(in oklab, var(--background) 60%, transparent);
-    color: var(--muted-foreground);
   }
 }
 </style>

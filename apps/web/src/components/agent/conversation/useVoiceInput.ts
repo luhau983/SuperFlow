@@ -1,5 +1,5 @@
 import { computed, onScopeDispose, ref, watch } from "vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { locale, translate } from "@toonflow/i18n/vue";
 import { createBrowserAsr, isBrowserAsrSupported, type BrowserAsrState } from "@toonflow/asr";
 import type xSender from "x-sender";
@@ -106,7 +106,7 @@ export default function useVoiceInput(options: {
       voiceAsr?.stop();
     } catch (error) {
       cancelVoiceInput();
-      toast.warning(error instanceof Error ? error.message : "无法结束语音识别");
+      ElMessage.warning(error instanceof Error ? error.message : "无法结束语音识别");
     }
   }
 
@@ -137,7 +137,7 @@ export default function useVoiceInput(options: {
     if (!instance || options.locked() || !options.active() || instance.chatEditor.isComposition) return;
     if (!voiceSupported) {
       clearVoicePress();
-      toast.warning("当前浏览器或 WebView 不支持原生语音识别，无法使用语音输入，请改用文字输入。");
+      ElMessage.warning("当前浏览器或 WebView 不支持原生语音识别，无法使用语音输入，请改用文字输入。");
       return;
     }
     try {
@@ -177,7 +177,7 @@ export default function useVoiceInput(options: {
             "language-not-supported": translate("当前语音识别服务不支持中文"),
           };
           cancelVoiceInput();
-          toast.warning(errors[code] ?? `语音识别失败：${message}`);
+          ElMessage.warning(errors[code] ?? `语音识别失败：${message}`);
         },
       });
       voiceAsr = asr;
@@ -188,7 +188,7 @@ export default function useVoiceInput(options: {
       void startVoiceMeter(asr);
     } catch (error) {
       cancelVoiceInput();
-      toast.warning(error instanceof Error ? error.message : "无法启动语音识别");
+      ElMessage.warning(error instanceof Error ? error.message : "无法启动语音识别");
     }
   }
 
@@ -205,7 +205,7 @@ export default function useVoiceInput(options: {
       else instance.focus("last");
       await instance.setText(text);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "语音文字回填失败，未能将识别结果填入输入框。");
+      ElMessage.error(error instanceof Error ? error.message : "语音文字回填失败，未能将识别结果填入输入框。");
     } finally {
       if (voiceAsr === asr) {
         voiceAsr = undefined;

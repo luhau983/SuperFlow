@@ -1,310 +1,185 @@
 <template>
   <div class="mcpServers">
     <div class="mcpToolbar">
-      <span data-ui-text="info">{{ localSupported ? "连接本地或远程 MCP 服务，供 Agent 调用工具。" : "连接远程 MCP 服务，供 Agent 调用工具。" }}</span>
-      <uiButton v-if="canManage" @click="openEditor()" variant="default" type="button" :disabled="(loading)" size="sm"><component :is="IconPlus" aria-hidden="true" />添加 MCP</uiButton>
+      <el-text size="small" type="info">{{ localSupported ? "连接本地或远程 MCP 服务，供 Agent 调用工具。" : "连接远程 MCP 服务，供 Agent 调用工具。" }}</el-text>
+      <el-button v-if="canManage" size="small" type="primary" :icon="IconPlus" :disabled="loading" @click="openEditor()">添加 MCP</el-button>
     </div>
-    <uiAlert v-if="listError" class="listError" variant="destructive">
-      <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ listError }}</uiAlertTitle>
-      <uiButton @click="refreshKey++" variant="outline" type="button" size="sm">重试</uiButton>
-    </uiAlert>
-    <div class="serverList portLoading" :aria-busy="loading">
-      <uiCard v-for="server in servers" :key="server.id" class="serverCard" style="gap:0; padding:0">
-        <div class="cardBody" :style="{ padding: '20px' }">
-          <div class="serverHeader">
-            <h3 class="serverName">{{ server.name }}</h3>
-            <uiBadge variant="secondary">{{ transportLabels[server.transport] }}</uiBadge>
-          </div>
-          <p v-if="canManage" class="serverAddress">{{ server.transport === "stdio" ? server.command : server.url }}</p>
-          <span v-if="server.transport === 'stdio' && !localSupported" data-ui-text="warning">当前平台不支持本地 MCP。</span>
-          <span v-else-if="server.loadError" data-ui-text="danger">{{ server.loadError }}</span>
-          <div class="serverFooter">
-            <label v-if="canManage" class="serverToggle">
-              <span>{{ server.enabled ? "已启用" : "已禁用" }}</span>
-              <uiSwitch
-                :modelValue="server.enabled"
-                :aria-label="`启用 ${server.name}`"
-                :disabled="(loading || pendingServers.has(server.id) || (server.transport === 'stdio' && !localSupported)) || (pendingServers.has(server.id))"
-                @update:modelValue="setEnabled(server, $event === true)"></uiSwitch>
-            </label>
-            <span v-else data-ui-text="info">{{ server.enabled ? "已启用" : "已禁用" }}</span>
-            <div v-if="canManage" class="serverActions">
-              <uiButton @click="openEditor(server)" variant="outline" type="button" :disabled="(loading || pendingServers.has(server.id))" size="sm">编辑</uiButton>
-              <uiPopover v-model:open="confirmVisible1[String(server.id)]">
-                <uiPopoverTrigger asChild>
-                  <uiButton
-                    variant="outline"
-                    type="button"
-                    :disabled="(loading || pendingServers.has(server.id)) || (pendingServers.has(server.id))"
-                    size="sm"><icon-loader-2 v-if="pendingServers.has(server.id)" class="animate-spin" aria-hidden="true" />删除</uiButton>
-                </uiPopoverTrigger>
-                <uiPopoverContent class="w-[280px]">
-                  <p>{{ `确定删除“${server.name}”吗？` }}</p>
-                  <div class="confirmActions">
-                    <uiButton type="button" variant="outline" size="sm" @click="confirmVisible1[String(server.id)] = false; ">取消</uiButton>
-                    <uiButton type="button" size="sm" @click="confirmVisible1[String(server.id)] = false; removeServer(server)">删除</uiButton>
-                  </div>
-                </uiPopoverContent>
-              </uiPopover>
-            </div>
+    <el-alert v-if="listError" class="listError" :title="listError" type="error" :closable="false" showIcon>
+      <el-button size="small" @click="refreshKey++">重试</el-button>
+    </el-alert>
+    <div v-loading="loading" class="serverList" :aria-busy="loading">
+      <el-card v-for="server in servers" :key="server.id" class="serverCard" shadow="never">
+        <div class="serverHeader">
+          <h3 class="serverName">{{ server.name }}</h3>
+          <el-tag size="small" type="info">{{ transportLabels[server.transport] }}</el-tag>
+        </div>
+        <p v-if="canManage" class="serverAddress">{{ server.transport === "stdio" ? server.command : server.url }}</p>
+        <el-text v-if="server.transport === 'stdio' && !localSupported" type="warning" size="small">当前平台不支持本地 MCP。</el-text>
+        <el-text v-else-if="server.loadError" type="danger" size="small">{{ server.loadError }}</el-text>
+        <div class="serverFooter">
+          <label v-if="canManage" class="serverToggle">
+            <span>{{ server.enabled ? "已启用" : "已禁用" }}</span>
+            <el-switch
+              :modelValue="server.enabled"
+              size="small"
+              :loading="pendingServers.has(server.id)"
+              :disabled="loading || pendingServers.has(server.id) || (server.transport === 'stdio' && !localSupported)"
+              :aria-label="`启用 ${server.name}`"
+              @change="setEnabled(server, $event === true)" />
+          </label>
+          <el-text v-else size="small" type="info">{{ server.enabled ? "已启用" : "已禁用" }}</el-text>
+          <div v-if="canManage" class="serverActions">
+            <el-button size="small" :disabled="loading || pendingServers.has(server.id)" @click="openEditor(server)">编辑</el-button>
+            <el-popconfirm
+              :title="`确定删除“${server.name}”吗？`"
+              width="240"
+              confirmButtonText="删除"
+              cancelButtonText="取消"
+              confirmButtonType="danger"
+              hideIcon
+              @confirm="removeServer(server)">
+              <template #reference>
+                <el-button size="small" :loading="pendingServers.has(server.id)" :disabled="loading || pendingServers.has(server.id)">删除</el-button>
+              </template>
+            </el-popconfirm>
           </div>
         </div>
-      </uiCard>
-      <div v-if="loading" class="portLoadingMask" aria-hidden="true">
-        <icon-loader-2 class="animate-spin" />
-      </div>
+      </el-card>
     </div>
-    <uiDialog :open="editorVisible" @update:open="open => { if (!open) { editorVisible = false; } }">
-      <uiDialogContent
-        :aria-describedby="undefined"
-        class="uiDialogPanel"
-        :style="{ width: 'min(680px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
-        :showCloseButton="!saving"
-        @interactOutside="event => { if (!(false)) event.preventDefault(); }"
-        @escapeKeyDown="event => { if (!(!saving)) event.preventDefault(); }">
-        <uiDialogHeader class="dialogHeader">
-          <uiDialogTitle>{{ form.id ? '编辑 MCP' : '添加 MCP' }}</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="dialogBody">
-          <div style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: 'min(62dvh, calc(100dvh - 240px))', height: undefined }">
-            <div class="dialogContent">
-              <form v-if="!form.id" @submit.prevent class="uiForm">
-                <fieldset class="formFields" :disabled="saving">
-                  <div class="methodField formField">
-                    <uiLabel>添加方式</uiLabel>
-                    <uiTabs :modelValue="creationMode" @update:modelValue="value => { creationMode = value as typeof creationMode; }">
-                      <uiTabsList :aria-label="'添加 MCP 的方式'">
-                        <uiTabsTrigger
-                          v-for="option in creationMethods"
-                          :key="typeof option === 'object' ? option.value : option"
-                          :value="typeof option === 'object' ? option.value : option"
-                          :disabled="(saving) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)"><component :is="option.icon" :size="16" aria-hidden="true" />{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
-                      </uiTabsList>
-                    </uiTabs>
-                  </div>
-                </fieldset>
-              </form>
-              <form v-if="creationMode === 'quick'" class="serverForm uiForm" @submit.prevent="saveServer">
-                <fieldset class="formFields" :disabled="saving || testing">
-                  <div class="connectionFields">
-                    <div class="formField">
-                      <uiLabel :for="portFieldId + '-1'">名称</uiLabel>
-                      <uiInput
-                        :id="portFieldId + '-1'"
-                        v-model="form.name"
-                        autocomplete="off"
-                        :maxlength="100"
-                        :disabled="(saving || testing) || (false)"></uiInput>
-                    </div>
-                    <div class="formField">
-                      <uiLabel :for="portFieldId + '-2'">连接方式</uiLabel>
-                      <uiSelect
-                        :modelValue="String(form.transport) === '' ? '__empty__' : (form.transport)"
-                        @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; form.transport = value as typeof form.transport; }">
-                        <uiSelectTrigger :id="portFieldId + '-2'" aria-label="MCP 连接方式">
-                          <uiSelectValue />
-                        </uiSelectTrigger>
-                        <uiSelectContent>
-                          <uiSelectItem
-                            v-for="(label, transport) in transportLabels"
-                            :key="transport"
-                            :value="transport"
-                            :disabled="transport === 'stdio' && !localSupported">{{ undefined }}</uiSelectItem>
-                        </uiSelectContent>
-                      </uiSelect>
-                    </div>
-                  </div>
-                  <template v-if="form.transport === 'stdio'">
-                    <div class="formField">
-                      <uiLabel :for="portFieldId + '-3'">启动命令</uiLabel>
-                      <uiInput
-                        :id="portFieldId + '-3'"
-                        v-model="form.command"
-                        class="codeInput"
-                        autocomplete="off"
-                        dir="ltr"
-                        :disabled="(saving || testing) || (false)"></uiInput>
-                      <span class="fieldHint" data-ui-text="info">{{ localSupported ? "命令在运行 SuperFlow 的电脑或服务端执行。" : "当前平台不支持本地 MCP，请改用远程连接。" }}</span>
-                    </div>
-                    <div class="formField">
-                      <uiLabel :for="portFieldId + '-4'">参数（每行一个）</uiLabel>
-                      <uiTextarea
-                        :id="portFieldId + '-4'"
-                        v-model="form.args"
-                        class="codeInput"
-                        autocomplete="off"
-                        dir="ltr"
-                        :disabled="(saving || testing) || (false)"
-                        :rows="3"
-                        style="field-sizing:fixed; resize:none"></uiTextarea>
-                      <span class="fieldHint" data-ui-text="info">每行作为一个完整参数，路径含空格时无需加引号。</span>
-                    </div>
-                  </template>
-                  <div v-else class="formField">
-                    <uiLabel :for="portFieldId + '-5'">服务地址</uiLabel>
-                    <uiInput
-                      :id="portFieldId + '-5'"
-                      v-model="form.url"
-                      class="codeInput"
-                      autocomplete="off"
-                      dir="ltr"
-                      :disabled="(saving || testing) || (false)"></uiInput>
-                  </div>
-                  <div class="moreSettings">
-                    <uiCollapsible
-                      :open="expandedSettings.includes('advanced')"
-                      @update:open="open => { expandedSettings = open ? [...expandedSettings, 'advanced'] : expandedSettings.filter(item => item !== 'advanced'); }">
-                      <uiCollapsibleTrigger class="collapseTrigger">
-                        <span>更多设置</span>
-                        <span v-if="settingsSummary" class="settingsSummary" data-ui-text="info">{{ settingsSummary }}</span>
-                        <icon-chevron-down />
-                      </uiCollapsibleTrigger>
-                      <uiCollapsibleContent>
-                        <template v-if="form.transport === 'stdio'">
-                          <div class="formField">
-                            <uiLabel :for="portFieldId + '-6'">工作目录（可选）</uiLabel>
-                            <uiInput
-                              :id="portFieldId + '-6'"
-                              v-model="form.cwd"
-                              class="codeInput"
-                              autocomplete="off"
-                              dir="ltr"
-                              :disabled="(saving || testing) || (false)"></uiInput>
-                          </div>
-                          <div class="formField">
-                            <uiLabel :for="portFieldId + '-7'">环境变量（JSON，可选）</uiLabel>
-                            <uiTextarea
-                              :id="portFieldId + '-7'"
-                              v-model="form.env"
-                              class="codeInput"
-                              autocomplete="off"
-                              spellcheck="false"
-                              dir="ltr"
-                              :disabled="(saving || testing) || (false)"
-                              :rows="4"
-                              style="field-sizing:fixed; resize:none"></uiTextarea>
-                          </div>
-                        </template>
-                        <div v-else class="formField">
-                          <uiLabel :for="portFieldId + '-8'">请求头（JSON，可选）</uiLabel>
-                          <uiTextarea
-                            :id="portFieldId + '-8'"
-                            v-model="form.headers"
-                            class="codeInput"
-                            autocomplete="off"
-                            spellcheck="false"
-                            dir="ltr"
-                            :disabled="(saving || testing) || (false)"
-                            :rows="4"
-                            style="field-sizing:fixed; resize:none"></uiTextarea>
-                        </div>
-                      </uiCollapsibleContent>
-                    </uiCollapsible>
-                  </div>
-                  <div class="enabledRow">
-                    <label class="enabledControl">
-                      <uiSwitch v-model="form.enabled" aria-label="启用 MCP 服务" :disabled="(saving || testing)"></uiSwitch>
-                      <span>启用此 MCP</span>
-                    </label>
-                    <span data-ui-text="info">保存后在下一轮 Agent 对话生效</span>
-                  </div>
-                </fieldset>
-              </form>
-              <mcpImportForm
-                v-else-if="editorVisible"
-                :key="creationMode"
-                ref="importForm"
-                :mode="creationMode"
-                :localSupported
-                @busy="saving = $event"
-                @saved="finishImport" />
+
+    <el-dialog
+      v-model="editorVisible"
+      :title="form.id ? '编辑 MCP' : '添加 MCP'"
+      width="min(680px, calc(100vw - 32px))"
+      alignCenter
+      appendToBody
+      destroyOnClose
+      :closeOnClickModal="false"
+      :closeOnPressEscape="!saving"
+      :showClose="!saving"
+      @close="testController?.abort()">
+      <el-scrollbar maxHeight="min(62dvh, calc(100dvh - 240px))">
+        <div class="dialogContent">
+          <el-form v-if="!form.id" labelPosition="top" :disabled="saving" @submit.prevent>
+            <el-form-item class="methodField" label="添加方式">
+              <el-segmented v-model="creationMode" :options="creationMethods" block ariaLabel="添加 MCP 的方式">
+                <template #default="{ item }">
+                  <span class="methodOption">
+                    <component :is="item.icon" :size="16" aria-hidden="true" />
+                    {{ item.label }}
+                  </span>
+                </template>
+              </el-segmented>
+            </el-form-item>
+          </el-form>
+          <el-form v-if="creationMode === 'quick'" class="serverForm" labelPosition="top" :disabled="saving || testing" @submit.prevent="saveServer">
+            <div class="connectionFields">
+              <el-form-item label="名称" required>
+                <el-input v-model="form.name" autocomplete="off" :maxlength="100" />
+              </el-form-item>
+              <el-form-item label="连接方式">
+                <el-select v-model="form.transport" aria-label="MCP 连接方式">
+                  <el-option v-for="(label, transport) in transportLabels" :key="transport" :value="transport" :label :disabled="transport === 'stdio' && !localSupported" />
+                </el-select>
+              </el-form-item>
             </div>
-          </div>
-          <uiDialogFooter class="dialogFooter">
-            <div class="editorFooter">
-              <div
-                v-if="feedbackVisible"
-                class="connectionStatus"
-                :class="{ hasError: !!editorError && !testing }"
-                role="status"
-                aria-live="polite"
-                :aria-busy="testing">
-                <template v-if="testing">
-                  <icon-loader-2 class="loadingIcon" :size="16" aria-hidden="true" />
-                  <span>正在连接并读取工具…</span>
+            <template v-if="form.transport === 'stdio'">
+              <el-form-item label="启动命令" required>
+                <el-input v-model="form.command" class="codeInput" autocomplete="off" dir="ltr" />
+                <el-text class="fieldHint" size="small" type="info">{{ localSupported ? "命令在运行 SuperFlow 的电脑或服务端执行。" : "当前平台不支持本地 MCP，请改用远程连接。" }}</el-text>
+              </el-form-item>
+              <el-form-item label="参数（每行一个）">
+                <el-input v-model="form.args" class="codeInput" type="textarea" :rows="3" resize="vertical" autocomplete="off" dir="ltr" />
+                <el-text class="fieldHint" size="small" type="info">每行作为一个完整参数，路径含空格时无需加引号。</el-text>
+              </el-form-item>
+            </template>
+            <el-form-item v-else label="服务地址" required>
+              <el-input v-model="form.url" class="codeInput" autocomplete="off" dir="ltr" />
+            </el-form-item>
+            <el-collapse v-model="expandedSettings" class="moreSettings">
+              <el-collapse-item name="advanced">
+                <template #title>
+                  <span>更多设置</span>
+                  <el-text v-if="settingsSummary" class="settingsSummary" size="small" type="info">{{ settingsSummary }}</el-text>
                 </template>
-                <template v-else-if="editorError">
-                  <icon-alert-circle class="errorIcon" :size="16" aria-hidden="true" />
-                  <span class="errorText">{{ editorError }}</span>
+                <template v-if="form.transport === 'stdio'">
+                  <el-form-item label="工作目录（可选）">
+                    <el-input v-model="form.cwd" class="codeInput" autocomplete="off" dir="ltr" />
+                  </el-form-item>
+                  <el-form-item label="环境变量（JSON，可选）">
+                    <el-input v-model="form.env" class="codeInput" type="textarea" :rows="4" autocomplete="off" spellcheck="false" dir="ltr" />
+                  </el-form-item>
                 </template>
-                <template v-else-if="testResult">
-                  <icon-circle-check class="successIcon" :size="16" aria-hidden="true" />
-                  <span>连接成功</span>
-                  <span data-ui-text="info">{{ testResult.tools.length }}个工具</span>
-                  <uiPopover v-if="testResult.tools.length">
-                    <uiPopoverTrigger asChild>
-                      <uiButton variant="link" type="button" size="sm">查看工具</uiButton>
-                    </uiPopoverTrigger>
-                    <uiPopoverContent
-                      class="hoverPanel "
-                      side="top"
-                      align="start"
-                      :sideOffset="8"
-                      :style="{ width: 'min(420px, calc(100vw - 48px))px', maxWidth: 'calc(100vw - 24px)' }">
-                      <div style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: '300px', height: undefined }">
-                        <div class="toolList">
-                          <div v-for="tool in testResult.tools" :key="tool.name" class="toolItem">
-                            <div class="toolName">{{ tool.name }}</div>
-                            <p v-if="tool.description" class="toolDescription">{{ tool.description }}</p>
-                          </div>
-                        </div>
-                      </div>
-                    </uiPopoverContent>
-                  </uiPopover>
-                </template>
-              </div>
-              <div class="editorActions">
-                <uiButton @click="editorVisible = false" variant="outline" type="button" :disabled="(saving)">取消</uiButton>
-                <template v-if="creationMode === 'quick'">
-                  <uiButton
-                    @click="testConnection"
-                    variant="outline"
-                    type="button"
-                    :disabled="(saving || (form.transport === 'stdio' && !localSupported)) || (testing)"><icon-loader-2 v-if="testing" class="animate-spin" aria-hidden="true" />{{ testing ? "连接中…" : "测试连接" }}</uiButton>
-                  <uiButton
-                    @click="saveServer"
-                    variant="default"
-                    type="button"
-                    :disabled="(testing || (form.transport === 'stdio' && !localSupported)) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
-                </template>
-                <uiButton v-else @click="importForm?.importServers()" variant="default" type="button" :disabled="(!importForm?.ready) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />导入</uiButton>
-              </div>
+                <el-form-item v-else label="请求头（JSON，可选）">
+                  <el-input v-model="form.headers" class="codeInput" type="textarea" :rows="4" autocomplete="off" spellcheck="false" dir="ltr" />
+                </el-form-item>
+              </el-collapse-item>
+            </el-collapse>
+            <div class="enabledRow">
+              <label class="enabledControl">
+                <el-switch v-model="form.enabled" size="small" aria-label="启用 MCP 服务" />
+                <span>启用此 MCP</span>
+              </label>
+              <el-text size="small" type="info">保存后在下一轮 Agent 对话生效</el-text>
             </div>
-          </uiDialogFooter>
+          </el-form>
+          <mcpImportForm
+            v-else-if="editorVisible"
+            :key="creationMode"
+            ref="importForm"
+            :mode="creationMode"
+            :localSupported
+            @busy="saving = $event"
+            @saved="finishImport" />
         </div>
-      </uiDialogContent>
-    </uiDialog>
+      </el-scrollbar>
+      <template #footer>
+        <div class="editorFooter">
+          <div v-if="feedbackVisible" class="connectionStatus" :class="{ hasError: !!editorError && !testing }" role="status" aria-live="polite" :aria-busy="testing">
+            <template v-if="testing">
+              <icon-loader-2 class="loadingIcon" :size="16" aria-hidden="true" />
+              <span>正在连接并读取工具…</span>
+            </template>
+            <template v-else-if="editorError">
+              <icon-alert-circle class="errorIcon" :size="16" aria-hidden="true" />
+              <span class="errorText">{{ editorError }}</span>
+            </template>
+            <template v-else-if="testResult">
+              <icon-circle-check class="successIcon" :size="16" aria-hidden="true" />
+              <span>连接成功</span>
+              <el-text size="small" type="info">{{ testResult.tools.length }} 个工具</el-text>
+              <el-popover v-if="testResult.tools.length" placement="top-start" width="min(420px, calc(100vw - 48px))" trigger="click" :showArrow="false">
+                <template #reference><el-button size="small" type="primary" link>查看工具</el-button></template>
+                <el-scrollbar maxHeight="300px">
+                  <div class="toolList">
+                    <div v-for="tool in testResult.tools" :key="tool.name" class="toolItem">
+                      <div class="toolName">{{ tool.name }}</div>
+                      <p v-if="tool.description" class="toolDescription">{{ tool.description }}</p>
+                    </div>
+                  </div>
+                </el-scrollbar>
+              </el-popover>
+            </template>
+          </div>
+          <div class="editorActions">
+            <el-button :disabled="saving" @click="editorVisible = false">取消</el-button>
+            <template v-if="creationMode === 'quick'">
+              <el-button :loading="testing" :disabled="saving || (form.transport === 'stdio' && !localSupported)" @click="testConnection">{{ testing ? "连接中…" : "测试连接" }}</el-button>
+              <el-button type="primary" :loading="saving" :disabled="testing || (form.transport === 'stdio' && !localSupported)" @click="saveServer">保存</el-button>
+            </template>
+            <el-button v-else type="primary" :loading="saving" :disabled="!importForm?.ready" @click="importForm?.importServers()">导入</el-button>
+          </div>
+        </div>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
-import { uiCollapsible, uiCollapsibleTrigger, uiCollapsibleContent } from "@/components/ui/collapsible";
-import { uiTextarea } from "@/components/ui/textarea";
-import { uiSelect, uiSelectTrigger, uiSelectValue, uiSelectContent, uiSelectItem } from "@/components/ui/select";
-import { uiInput } from "@/components/ui/input";
-import { uiTabs, uiTabsList, uiTabsTrigger } from "@/components/ui/tabs";
-import { uiLabel } from "@/components/ui/label";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
-import { uiSwitch } from "@/components/ui/switch";
-import { uiBadge } from "@/components/ui/badge";
-import { uiCard } from "@/components/ui/card";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
 import axios from "axios";
 import { t, translate } from "@toonflow/i18n/vue";
-import { computed, onBeforeUnmount, ref, watch, useId } from "vue";
-import { toast } from "vue-sonner";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
+import { ElMessage } from "element-plus";
 import { IconPlus, IconFileCode, IconPackage, IconCircleCheck, IconAlertCircle, IconLoader2 } from "@tabler/icons-vue";
 import mcpImportForm from "./mcpImportForm.vue";
 
@@ -434,7 +309,7 @@ function openEditor(server?: McpServerConfig) {
 function finishImport(count: number) {
   editorVisible.value = false;
   refreshKey.value++;
-  toast.success(`已导入 ${count} 个 MCP 服务`);
+  ElMessage.success(`已导入 ${count} 个 MCP 服务`);
 }
 
 function parseRecord(value: string, label: string): Record<string, string> | undefined {
@@ -478,7 +353,7 @@ async function saveServer() {
     if (data.code !== 200) throw new Error(data.message || "保存 MCP 服务失败");
     editorVisible.value = false;
     refreshKey.value++;
-    toast.success("MCP 服务已保存");
+    ElMessage.success("MCP 服务已保存");
   } catch (cause) {
     if (!controller.signal.aborted) editorError.value = errorMessage(cause);
   } finally { saving.value = false; }
@@ -516,7 +391,7 @@ async function setEnabled(server: McpServerConfig, enabled: boolean) {
     if (data.code !== 200) throw new Error(data.message || "更新 MCP 状态失败");
     server.enabled = enabled;
   } catch (cause) {
-    if (!controller.signal.aborted) toast.error(errorMessage(cause));
+    if (!controller.signal.aborted) ElMessage.error(errorMessage(cause));
   } finally { pendingServers.value.delete(server.id); }
 }
 
@@ -528,19 +403,14 @@ async function removeServer(server: McpServerConfig) {
     if (controller.signal.aborted) return;
     if (data.code !== 200) throw new Error(data.message || "删除 MCP 服务失败");
     servers.value = servers.value.filter(item => item.id !== server.id);
-    toast.success("MCP 服务已删除");
+    ElMessage.success("MCP 服务已删除");
   } catch (cause) {
     if (!controller.signal.aborted) {
-      toast.error(errorMessage(cause));
+      ElMessage.error(errorMessage(cause));
       refreshKey.value++;
     }
   } finally { pendingServers.value.delete(server.id); }
 }
-
-watch(() => editorVisible.value, open => { if (!open) { testController?.abort(); } });
-
-const confirmVisible1 = ref<Record<string, boolean>>({});
-const portFieldId = useId();
 </script>
 
 <style scoped lang="scss">
@@ -561,7 +431,7 @@ const portFieldId = useId();
     min-height: 48px;
     .serverCard {
       min-width: 0;
-      :deep(.cardBody) { padding: 16px; }
+      :deep(.el-card__body) { padding: 16px; }
       .serverHeader {
         display: flex;
         align-items: flex-start;
@@ -585,7 +455,7 @@ const portFieldId = useId();
           font-size: 12px;
           color: var(--el-text-color-secondary);
         }
-        .serverActions { display: flex; gap: 8px; [data-slot="button"] { margin-left: 0; } }
+        .serverActions { display: flex; gap: 8px; .el-button { margin-left: 0; } }
       }
     }
   }
@@ -607,9 +477,9 @@ const portFieldId = useId();
       grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
       gap: 16px;
     }
-    :is(.el-select, [data-slot="select-trigger"]) { width: 100%; }
+    .el-select { width: 100%; }
     .codeInput {
-      :deep(input[data-slot="input"]), :deep(textarea[data-slot="textarea"]) {
+      :deep(.el-input__inner), :deep(.el-textarea__inner) {
         font-family: "Cascadia Code", "SFMono-Regular", Consolas, monospace;
         font-size: 13px;
         line-height: 1.6;
@@ -675,7 +545,7 @@ const portFieldId = useId();
     display: flex;
     justify-content: flex-end;
     gap: 8px;
-    [data-slot="button"] { margin-left: 0; }
+    .el-button { margin-left: 0; }
   }
 }
 .toolList {

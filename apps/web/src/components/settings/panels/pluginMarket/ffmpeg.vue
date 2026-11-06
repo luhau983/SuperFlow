@@ -1,125 +1,100 @@
 <template>
   <div class="ffmpegPanel">
-    <uiCard class="downloadCard" style="gap:0; padding:0">
-      <div class="cardBody" :style="{ padding: '20px' }">
-        <div class="componentHeader">
-          <div class="componentTitle">
-            <h3><icon-movie :size="18" aria-hidden="true" />FFmpeg</h3>
-            <uiBadge variant="secondary">{{ statusError ? '检测失败' : busy ? phaseLabels[download.phase] : loading ? '检测中' : ready ? '已就绪' : '待配置' }}</uiBadge>
-          </div>
-          <uiButton @click="refreshStatus" variant="outline" type="button" :disabled="(saving || submitting) || (loading)"><icon-loader-2 v-if="loading" class="animate-spin" aria-hidden="true" /><component :is="IconRefresh" aria-hidden="true" />重新检测</uiButton>
+    <el-card class="downloadCard" shadow="never">
+      <div class="componentHeader">
+        <div class="componentTitle">
+          <h3><icon-movie :size="18" aria-hidden="true" />FFmpeg</h3>
+          <el-tag :type="statusError ? 'danger' : busy || loading ? 'info' : ready ? 'success' : 'warning'" >
+            {{ statusError ? '检测失败' : busy ? phaseLabels[download.phase] : loading ? '检测中' : ready ? '已就绪' : '待配置' }}
+          </el-tag>
         </div>
-        <p class="introduction">Agent和部分节点插件、工具插件、供应商在处理音视频时可能需要 FFmpeg，按需安装即可。</p>
-        <uiAlert v-if="statusError" variant="destructive">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ statusError }}</uiAlertTitle>
-        </uiAlert>
-        <div class="downloadHeader">
-          <span>下载线路</span>
-          <span v-if="status" data-ui-text="info">{{ availableSourceCount }}条可用线路</span>
-        </div>
-        <div class="downloadActions">
-          <el-select
-            :modelValue="config.source"
-            :disabled="!status || loading || saving || busy || submitting"
-            filterable
-            placeholder="选择下载线路"
-            aria-label="FFmpeg 下载源"
-            @change="(source) => updateConfig({ source })">
-            <el-option-group v-for="group in sourceGroups" :key="group.label" :label="group.label">
-              <el-option v-for="source in group.sources" :key="source.id" class="sourceOption" :label="source.label" :value="source.id">
-                <span class="sourceLabel" :title="source.label">{{ source.label }}</span>
-                <span class="sourceDescription" :title="source.description">{{ source.description }}</span>
-              </el-option>
-            </el-option-group>
-          </el-select>
-          <uiButton @click="submitDownload('download')" variant="default" type="button" :disabled="(!canDownload) || (submitting || busy)"><icon-loader-2 v-if="submitting || busy" class="animate-spin" aria-hidden="true" /><component :is="IconDownload" aria-hidden="true" />{{ busy ? phaseLabels[download.phase] : download.phase === 'error' ? '重试安装' : downloaded || download.phase === 'completed' ? '重新安装' : '下载并安装' }}</uiButton>
-          <uiButton
-            v-if="busy && download.phase !== 'installing'"
-            @click="submitDownload('cancel')"
-            variant="outline"
-            type="button"
-            :disabled="(submitting)">取消</uiButton>
-        </div>
-        <div v-if="selectedSource" class="sourceHint">
-          <span>下载较慢时，可取消后切换线路。</span>
-          <a :href="selectedSource.homepage" target="_blank" rel="noopener noreferrer" class="uiLink">来源网站<icon-external-link :size="12" aria-hidden="true" /></a>
-        </div>
-        <p class="description">{{ ready ? '已检测到可用版本，无需重复安装。' : '下载后自动完成安装，无需手动解压或配置。' }}</p>
-        <uiAlert v-if="status && !status.supported">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ isLocalMobile ? '移动端暂不提供 FFmpeg 下载，未配置 FFmpeg 时无法执行依赖它的音视频处理。' : '当前平台暂不提供下载，请在高级设置中使用系统安装版。' }}</uiAlertTitle>
-        </uiAlert>
-        <uiAlert v-if="config.mode === 'system'">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">当前仅使用系统安装版。如需使用下载的版本，请在高级设置中切换运行方式。</uiAlertTitle>
-        </uiAlert>
-        <div v-if="download.phase !== 'idle'" class="downloadProgress" aria-live="polite">
-          <div class="progressHeader">
-            <span>{{ phaseLabels[download.phase] }}<template v-if="busy && download.file && download.phase !== 'installing'">· 组件{{ download.file === 'ffprobe' ? '2' : '1' }}/2</template></span>
-            <span v-if="download.received || download.total">{{ formatBytes(download.received) }}{{ download.total ? ` / ${formatBytes(download.total)}` : '' }}</span>
-          </div>
-          <uiProgress :modelValue="busy && !download.total ? 50 : percentage"></uiProgress>
-        </div>
-        <uiAlert v-if="operationError || download.error" variant="destructive">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ operationError || download.error }}</uiAlertTitle>
-        </uiAlert>
+        <el-button  :icon="IconRefresh" :loading="loading" :disabled="saving || submitting" @click="refreshStatus">重新检测</el-button>
       </div>
-    </uiCard>
-    <div class="advancedSettings">
-      <uiCollapsible>
-        <uiCollapsibleTrigger class="collapseTrigger">高级设置<icon-chevron-down /></uiCollapsibleTrigger>
-        <uiCollapsibleContent>
-          <form class="uiForm">
-            <fieldset class="formFields">
-              <div class="formField">
-                <uiLabel :for="portFieldId + '-1'">运行方式</uiLabel>
-                <uiSelect
-                  :disabled="loading || saving || busy || submitting"
-                  :modelValue="String(config.mode) === '' ? '__empty__' : (config.mode)"
-                  @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; ((mode) => updateConfig({ mode: mode as 'auto' | 'system' | 'download' }))(value); }">
-                  <uiSelectTrigger :id="portFieldId + '-1'" aria-label="FFmpeg 运行方式">
-                    <uiSelectValue />
-                  </uiSelectTrigger>
-                  <uiSelectContent>
-                    <uiSelectItem value="auto">自动选择</uiSelectItem>
-                    <uiSelectItem value="download">使用下载版</uiSelectItem>
-                    <uiSelectItem value="system">使用系统安装版</uiSelectItem>
-                  </uiSelectContent>
-                </uiSelect>
-                <p class="description">{{ modeDescriptions[config.mode] }}</p>
-              </div>
-            </fieldset>
-          </form>
-          <template v-if="status">
-            <p class="description">运行环境：{{ status.platform }}/{{ status.arch }}</p>
-            <p class="description">下载版本：{{ status.version }}·{{ status.target }}</p>
-            <p class="description">保存在当前 SuperFlow 服务的数据目录，下载后自动复用。</p>
-            <code class="toolPath">{{ status.directory }}</code>
-            <div v-for="name in toolNames" :key="name" class="toolInfo">
-              <strong>{{ name }}</strong>
-              <uiBadge variant="outline">{{ status.tools[name].version ? (status.tools[name].origin === 'download' ? '下载版' : '系统安装版') : '不可用' }}</uiBadge>
-              <p v-if="status.tools[name].version" class="description">{{ status.tools[name].version }}</p>
-              <code v-if="status.tools[name].path" class="toolPath">{{ status.tools[name].path }}</code>
-              <p v-if="status.tools[name].error" class="description">{{ status.tools[name].error }}</p>
-            </div>
-          </template>
-        </uiCollapsibleContent>
-      </uiCollapsible>
-    </div>
+      <p class="introduction">Agent和部分节点插件、工具插件、供应商在处理音视频时可能需要 FFmpeg，按需安装即可。</p>
+      <el-alert v-if="statusError" :title="statusError" type="error" :closable="false" showIcon />
+      <div class="downloadHeader">
+        <span>下载线路</span>
+        <el-text v-if="status" type="info" >{{ availableSourceCount }} 条可用线路</el-text>
+      </div>
+      <div class="downloadActions">
+        <el-select
+          :modelValue="config.source"
+          :disabled="!status || loading || saving || busy || submitting"
+
+          filterable
+          placeholder="选择下载线路"
+          aria-label="FFmpeg 下载源"
+          @change="(source) => updateConfig({ source })">
+          <el-option-group v-for="group in sourceGroups" :key="group.label" :label="group.label">
+            <el-option v-for="source in group.sources" :key="source.id" class="sourceOption" :label="source.label" :value="source.id">
+              <span class="sourceLabel" :title="source.label">{{ source.label }}</span>
+              <span class="sourceDescription" :title="source.description">{{ source.description }}</span>
+            </el-option>
+          </el-option-group>
+        </el-select>
+        <el-button  type="primary" :icon="IconDownload" :loading="submitting || busy" :disabled="!canDownload" @click="submitDownload('download')">
+          {{ busy ? phaseLabels[download.phase] : download.phase === 'error' ? '重试安装' : downloaded || download.phase === 'completed' ? '重新安装' : '下载并安装' }}
+        </el-button>
+        <el-button v-if="busy && download.phase !== 'installing'"  :disabled="submitting" @click="submitDownload('cancel')">取消</el-button>
+      </div>
+      <div v-if="selectedSource" class="sourceHint">
+        <span>下载较慢时，可取消后切换线路。</span>
+        <el-link :href="selectedSource.homepage" target="_blank" rel="noopener noreferrer" :underline="false" type="primary">来源网站<icon-external-link :size="12" aria-hidden="true" /></el-link>
+      </div>
+      <p class="description">{{ ready ? '已检测到可用版本，无需重复安装。' : '下载后自动完成安装，无需手动解压或配置。' }}</p>
+      <el-alert v-if="status && !status.supported" :title="isLocalMobile ? '移动端暂不提供 FFmpeg 下载，未配置 FFmpeg 时无法执行依赖它的音视频处理。' : '当前平台暂不提供下载，请在高级设置中使用系统安装版。'" type="warning" :closable="false" showIcon />
+      <el-alert v-if="config.mode === 'system'" title="当前仅使用系统安装版。如需使用下载的版本，请在高级设置中切换运行方式。" type="info" :closable="false" showIcon />
+      <div v-if="download.phase !== 'idle'" class="downloadProgress" aria-live="polite">
+        <div class="progressHeader">
+          <span>{{ phaseLabels[download.phase] }}<template v-if="busy && download.file && download.phase !== 'installing'"> · 组件 {{ download.file === 'ffprobe' ? '2' : '1' }}/2</template></span>
+          <span v-if="download.received || download.total">{{ formatBytes(download.received) }}{{ download.total ? ` / ${formatBytes(download.total)}` : '' }}</span>
+        </div>
+        <el-progress
+          :percentage="busy && !download.total ? 50 : percentage"
+          :showText="!busy || !!download.total"
+          :indeterminate="busy && !download.total"
+          :status="download.phase === 'error' ? 'exception' : download.phase === 'completed' ? 'success' : undefined" />
+      </div>
+      <el-alert v-if="operationError || download.error" :title="operationError || download.error" type="error" :closable="false" showIcon />
+    </el-card>
+
+    <el-collapse class="advancedSettings">
+      <el-collapse-item title="高级设置" name="advanced">
+        <el-form labelPosition="top" >
+          <el-form-item label="运行方式">
+            <el-select :modelValue="config.mode" :disabled="loading || saving || busy || submitting" aria-label="FFmpeg 运行方式" @change="(mode) => updateConfig({ mode })">
+              <el-option label="自动选择" value="auto" />
+              <el-option label="使用下载版" value="download" />
+              <el-option label="使用系统安装版" value="system" />
+            </el-select>
+            <p class="description">{{ modeDescriptions[config.mode] }}</p>
+          </el-form-item>
+        </el-form>
+        <template v-if="status">
+          <p class="description">运行环境：{{ status.platform }} / {{ status.arch }}</p>
+          <p class="description">下载版本：{{ status.version }} · {{ status.target }}</p>
+          <p class="description">保存在当前 SuperFlow 服务的数据目录，下载后自动复用。</p>
+          <code class="toolPath">{{ status.directory }}</code>
+          <div v-for="name in toolNames" :key="name" class="toolInfo">
+            <strong>{{ name }}</strong>
+            <el-tag :type="status.tools[name].version ? 'success' : 'info'"  effect="plain">
+              {{ status.tools[name].version ? (status.tools[name].origin === 'download' ? '下载版' : '系统安装版') : '不可用' }}
+            </el-tag>
+            <p v-if="status.tools[name].version" class="description">{{ status.tools[name].version }}</p>
+            <code v-if="status.tools[name].path" class="toolPath">{{ status.tools[name].path }}</code>
+            <p v-if="status.tools[name].error" class="description">{{ status.tools[name].error }}</p>
+          </div>
+        </template>
+      </el-collapse-item>
+    </el-collapse>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiSelect, uiSelectTrigger, uiSelectValue, uiSelectContent, uiSelectItem } from "@/components/ui/select";
-import { uiLabel } from "@/components/ui/label";
-import { uiCollapsible, uiCollapsibleTrigger, uiCollapsibleContent } from "@/components/ui/collapsible";
-import { uiProgress } from "@/components/ui/progress";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
-import { uiBadge } from "@/components/ui/badge";
-import { uiCard } from "@/components/ui/card";
 import { translate } from "@toonflow/i18n/vue";
-import { computed, onBeforeUnmount, ref, watch, useId } from "vue";
+import { computed, onBeforeUnmount, ref, watch } from "vue";
 import axios from "axios";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { isLocalMobile } from "@/lib/platform";
 import { IconDownload, IconRefresh } from "@tabler/icons-vue";
 import { saveSettings, settings } from "@/stores/settings";
@@ -238,7 +213,7 @@ async function updateConfig(patch: Partial<FfmpegConfig>) {
     });
     return props.visible && !readController.signal.aborted ? await refreshStatus() : false;
   } catch (error) {
-    toast.error(errorMessage(error));
+    ElMessage.error(errorMessage(error));
     return false;
   } finally {
     saving.value = false;
@@ -275,7 +250,6 @@ watch(() => props.visible, async visible => {
   if (props.visible && !readController.signal.aborted && !status.value?.tools.ffmpeg.version && !busy.value) await submitDownload("download");
 }, { immediate: true });
 onBeforeUnmount(stopReading);
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -310,7 +284,7 @@ const portFieldId = useId();
   }
 
   .downloadCard {
-    :deep(.cardBody) { padding: 12px; }
+    :deep(.el-card__body) { padding: 12px; }
 
     .componentHeader, .downloadHeader, .progressHeader {
       display: flex;
@@ -359,8 +333,8 @@ const portFieldId = useId();
       gap: 8px;
       margin-top: 8px;
 
-      :is(.el-select, [data-slot="select-trigger"]) { flex: 1 1 200px; min-width: 0; }
-      [data-slot="button"] { margin-left: 0; }
+      .el-select { flex: 1 1 200px; min-width: 0; }
+      .el-button { margin-left: 0; }
     }
 
     .sourceHint {

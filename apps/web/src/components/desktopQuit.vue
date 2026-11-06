@@ -1,30 +1,31 @@
 <template>
-  <uiDialog :key="requestId" :open="visible" @update:open="open => { if (!open) { cancel(); } }" :unmountOnHide="false">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      v-if="dialogRendered1"
-      class="uiDialogPanel"
-      :style="{ width: 'min(420px, 92vw)', maxWidth: 'calc(100vw - 32px)' }"
-      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
-      @openAutoFocus="event => { event.preventDefault(); focusCancel(); }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>退出 SuperFlow</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">退出后，正在运行的任务将被中断。确定要退出吗？<uiDialogFooter class="dialogFooter"><uiButton ref="cancelButton" @click="cancel" variant="outline" type="button">取消</uiButton><uiButton @click="finish(true)" variant="default" type="button">退出</uiButton></uiDialogFooter></div>
-    </uiDialogContent>
-  </uiDialog>
+  <el-dialog
+    :key="requestId"
+    :modelValue="visible"
+    title="退出 SuperFlow"
+    width="min(420px, 92vw)"
+    alignCenter
+    appendToBody
+    :closeOnClickModal="false"
+    :beforeClose="cancel"
+    @opened="focusCancel">
+    退出后，正在运行的任务将被中断。确定要退出吗？
+    <template #footer>
+      <el-button ref="cancelButton" @click="cancel">取消</el-button>
+      <el-button type="primary" @click="finish(true)">退出</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { uiButton } from "@/components/ui/button";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
-import { onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { onBeforeUnmount, onMounted, ref } from "vue";
+import { ElButton, ElDialog, type ButtonInstance } from "element-plus";
 
 type QuitMessage = { type: "confirmQuit"; requestId: string; confirmed: boolean } | { type: "quitReady"; ready: boolean } | { type: "quitShown"; requestId: string };
 const hostWindow = window as Window & { __electrobunSendToHost?: (message: QuitMessage) => void };
 const visible = ref(false);
 const requestId = ref("");
-const cancelButton = ref<{ $el: HTMLButtonElement }>();
+const cancelButton = ref<ButtonInstance>();
 let pendingRequestId: string | undefined;
 
 function finish(confirmed: boolean) {
@@ -38,7 +39,7 @@ function finish(confirmed: boolean) {
 function cancel() { finish(false); }
 
 function focusCancel() {
-  if (visible.value) cancelButton.value?.$el.focus();
+  if (visible.value) cancelButton.value?.ref?.focus();
 }
 
 function confirmQuit(event: Event) {
@@ -69,6 +70,4 @@ onBeforeUnmount(() => {
   cancel();
   hostWindow.__electrobunSendToHost?.({ type: "quitReady", ready: false });
 });
-const dialogRendered1 = ref(visible.value);
-watch(visible, open => { if (open) dialogRendered1.value = true; });
 </script>

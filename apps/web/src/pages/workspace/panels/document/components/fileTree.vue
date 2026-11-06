@@ -1,178 +1,46 @@
 <template>
   <aside class="fileTree" aria-label="工作区文件">
-    <header
-      class="treeHeader"
-      :class="{ dropTarget: dropTargetKey === 'root' }"
-      @dragover.stop="dragOver($event, rootItem)"
-      @dragleave="dragLeave"
-      @drop.stop="dropFiles($event, rootItem)">
+    <header class="treeHeader" :class="{ dropTarget: dropTargetKey === 'root' }" @dragover.stop="dragOver($event, rootItem)" @dragleave="dragLeave" @drop.stop="dropFiles($event, rootItem)">
       <span class="treeTitle"><icon-folder :size="16" aria-hidden="true" />工作区文件</span>
       <span class="treeActions">
-        <uiButton
-          aria-label="新建文件"
-          title="在当前目录新建文件"
-          @click="createEntry(false)"
-          variant="ghost"
-          type="button"
-          :disabled="(!directory || creating || busy)"
-          size="icon-sm"
-          style="border-radius: 9999px">
+        <el-button text circle size="small" :disabled="!directory || creating || busy" aria-label="新建文件" title="在当前目录新建文件" @click="createEntry(false)">
           <icon-file-plus :size="15" aria-hidden="true" />
-        </uiButton>
-        <uiButton
-          aria-label="新建文件夹"
-          title="在当前目录新建文件夹"
-          @click="createEntry(true)"
-          variant="ghost"
-          type="button"
-          :disabled="(!directory || creating || busy)"
-          size="icon-sm"
-          style="border-radius: 9999px">
-          <icon-folder-plus :size="15" />
-        </uiButton>
-        <uiButton
-          aria-label="刷新文件树"
-          title="刷新文件树"
-          @click="refreshTree"
-          variant="ghost"
-          type="button"
-          :disabled="(!directory)"
-          size="icon-sm"
-          style="border-radius: 9999px">
+        </el-button>
+        <el-button text circle size="small" :disabled="!directory || creating || busy" aria-label="新建文件夹" title="在当前目录新建文件夹" @click="createEntry(true)"><icon-folder-plus :size="15" /></el-button>
+        <el-button text circle size="small" :disabled="!directory" aria-label="刷新文件树" title="刷新文件树" @click="refreshTree">
           <icon-refresh :size="15" aria-hidden="true" />
-        </uiButton>
+        </el-button>
       </span>
     </header>
     <div class="treeTools">
-      <div class="inputGroup">
-        <component :is="IconSearch" aria-hidden="true" />
-        <uiInput v-model="searchTerm" placeholder="搜索文件与节点" aria-label="搜索工作区文件与节点"></uiInput>
-        <uiButton
-          @mousedown.prevent
-          v-if="searchTerm"
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label="清除"
-          @click="searchTerm = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
-          <icon-x />
-        </uiButton>
-      </div>
-      <uiButton
-        aria-label="快速打开"
-        title="快速打开"
-        @click="emit('quickOpen'); props.params?.params.quickOpen?.()"
-        variant="ghost"
-        type="button"
-        :disabled="(!directory)"
-        size="icon-sm"
-        style="border-radius: 9999px">
-        <icon-file-search :size="15" />
-      </uiButton>
-      <uiButton
-        aria-label="全文搜索"
-        title="全文搜索"
-        @click="emit('search'); props.params?.params.search?.()"
-        variant="ghost"
-        type="button"
-        :disabled="(!directory)"
-        size="icon-sm"
-        style="border-radius: 9999px">
-        <icon-search :size="15" />
-      </uiButton>
-      <uiButton
-        aria-label="定位当前标签"
-        title="定位当前标签"
-        @click="locateCurrent"
-        variant="ghost"
-        type="button"
-        :disabled="(!activeSelection)"
-        size="icon-sm"
-        style="border-radius: 9999px">
-        <icon-focus-2 :size="15" />
-      </uiButton>
-      <uiButton
-        :aria-pressed="multiple"
-        aria-label="勾选多个文件"
-        title="多选"
-        @click="toggleMultiple"
-        variant="ghost"
-        type="button"
-        size="icon-sm"
-        style="border-radius: 9999px">
-        <icon-list-check :size="15" />
-      </uiButton>
+      <el-input v-model="searchTerm" size="small" clearable placeholder="搜索文件与节点" aria-label="搜索工作区文件与节点" :prefixIcon="IconSearch" />
+      <el-button text circle size="small" :disabled="!directory" aria-label="快速打开" title="快速打开" @click="emit('quickOpen'); props.params?.params.quickOpen?.()"><icon-file-search :size="15" /></el-button>
+      <el-button text circle size="small" :disabled="!directory" aria-label="全文搜索" title="全文搜索" @click="emit('search'); props.params?.params.search?.()"><icon-search :size="15" /></el-button>
+      <el-button text circle size="small" :disabled="!activeSelection" aria-label="定位当前标签" title="定位当前标签" @click="locateCurrent"><icon-focus-2 :size="15" /></el-button>
+      <el-button text circle size="small" :aria-pressed="multiple" aria-label="勾选多个文件" title="多选" @click="toggleMultiple"><icon-list-check :size="15" /></el-button>
     </div>
     <div v-if="multiple && checkedItems.length" class="batchActions">
-      <span>已选{{ checkedItems.length }}项</span>
-      <uiButton @click="runChecked('copy')" variant="ghost" type="button" :disabled="(busy)" size="sm">复制</uiButton>
-      <uiButton @click="runChecked('cut')" variant="ghost" type="button" :disabled="(busy)" size="sm">剪切</uiButton>
-      <uiButton @click="runChecked('delete')" variant="ghost" type="button" :disabled="(busy)" size="sm">删除</uiButton>
+      <span>已选 {{ checkedItems.length }} 项</span>
+      <el-button text size="small" :disabled="busy" @click="runChecked('copy')">复制</el-button>
+      <el-button text size="small" :disabled="busy" @click="runChecked('cut')">剪切</el-button>
+      <el-button text size="small" :disabled="busy" @click="runChecked('delete')">删除</el-button>
     </div>
-    <uiAlert v-if="loadError" class="loadError" variant="destructive">
-      <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ loadError }}</uiAlertTitle>
-    </uiAlert>
-    <div
-      ref="treeContent"
-      class="treeContent portLoading"
-      :class="{ dropTarget: dropTargetKey === 'root' }"
-      role="tree"
-      aria-label="工作区文件树"
-      :aria-multiselectable="multiple"
-      :aria-busy="searching || loadingKeys.size > 0"
-      :aria-activedescendant="activeRowId"
-      tabindex="0"
-      @contextmenu.prevent="openBackgroundMenu"
-      @keydown="onTreeKeydown"
-      @pointerdown="locatingKey = undefined"
-      @wheel.passive="locatingKey = undefined"
-      @touchstart.passive="locatingKey = undefined"
-      @dragover.stop="dragOver($event, rootItem)"
-      @dragleave="dragLeave"
-      @drop.stop="dropFiles($event, rootItem)">
+    <el-alert v-if="loadError" class="loadError" :title="loadError" type="error" :closable="false" showIcon />
+    <div ref="treeContent" v-loading="searching" class="treeContent" :class="{ dropTarget: dropTargetKey === 'root' }" role="tree" aria-label="工作区文件树" :aria-multiselectable="multiple" :aria-busy="searching || loadingKeys.size > 0" :aria-activedescendant="activeRowId" tabindex="0" @contextmenu.prevent="openBackgroundMenu" @keydown="onTreeKeydown" @pointerdown="locatingKey = undefined" @wheel.passive="locatingKey = undefined" @touchstart.passive="locatingKey = undefined"
+      @dragover.stop="dragOver($event, rootItem)" @dragleave="dragLeave" @drop.stop="dropFiles($event, rootItem)">
       <div v-if="directory && !treeRows.length && !loadingKeys.size && !searching" class="emptyTree">{{ searchTerm.trim() ? '没有匹配的文件或节点' : '暂无文件' }}</div>
       <div class="treeRows" :style="{ height: `${treeVirtualizer.getTotalSize()}px` }">
-        <div
-          v-for="{ row, data, index, start } in visibleRows"
-          :id="`${treeId}-${index}`"
-          :key="row.item.key"
-          class="treeRow"
-          :class="{ current: currentKey === row.item.key, focused: focusedItem?.key === row.item.key, dropTarget: dropTargetKey === row.item.key }"
-          :data-key="row.item.key"
-          :style="{ transform: `translateY(${start}px)`, paddingLeft: `${(row.level - 1) * 16}px` }"
-          role="treeitem"
-          :aria-label="row.item.displayLabel || row.item.name"
-          :aria-level="row.level"
-          :aria-posinset="row.position"
-          :aria-setsize="row.size"
-          :aria-expanded="!row.item.isLeaf ? expandedSet.has(row.item.key) : undefined"
-          :aria-selected="currentKey === row.item.key"
-          :aria-checked="multiple && row.item.type !== 'node' ? checkedKeys.has(row.item.key) : undefined"
+        <div v-for="{ row, data, index, start } in visibleRows" :id="`${treeId}-${index}`" :key="row.item.key" class="treeRow" :class="{ current: currentKey === row.item.key, focused: focusedItem?.key === row.item.key, dropTarget: dropTargetKey === row.item.key }" :data-key="row.item.key"
+          :style="{ transform: `translateY(${start}px)`, paddingLeft: `${(row.level - 1) * 16}px` }" role="treeitem" :aria-label="row.item.displayLabel || row.item.name" :aria-level="row.level" :aria-posinset="row.position" :aria-setsize="row.size"
+          :aria-expanded="!row.item.isLeaf ? expandedSet.has(row.item.key) : undefined" :aria-selected="currentKey === row.item.key" :aria-checked="multiple && row.item.type !== 'node' ? checkedKeys.has(row.item.key) : undefined"
           :draggable="!busy && !creating && row.item.type !== 'node'"
-          @dragstart.stop="startDrag($event, row.item)"
-          @dragend.stop="clearDrag"
-          @dragover.stop="dragOver($event, row.item)"
-          @dragleave.stop="dragLeave"
-          @drop.stop="dropFiles($event, row.item)"
-          @click="clickRow(row.item)"
-          @dblclick.stop="selectNode(row.item, false)"
-          @contextmenu.stop.prevent="openMenu($event, row.item)">
-          <span
-            class="expandIcon"
-            :class="{ expanded: expandedSet.has(row.item.key), loading: loadingKeys.has(row.item.key) }"
-            aria-hidden="true"
-            @click.stop="focusRow(row.item); toggleExpanded(row.item)">
+          @dragstart.stop="startDrag($event, row.item)" @dragend.stop="clearDrag" @dragover.stop="dragOver($event, row.item)" @dragleave.stop="dragLeave" @drop.stop="dropFiles($event, row.item)"
+          @click="clickRow(row.item)" @dblclick.stop="selectNode(row.item, false)" @contextmenu.stop.prevent="openMenu($event, row.item)">
+          <span class="expandIcon" :class="{ expanded: expandedSet.has(row.item.key), loading: loadingKeys.has(row.item.key) }" aria-hidden="true" @click.stop="focusRow(row.item); toggleExpanded(row.item)">
             <icon-loader-2 v-if="loadingKeys.has(row.item.key)" :size="13" />
             <icon-chevron-right v-else-if="!row.item.isLeaf" :size="13" />
           </span>
-          <uiCheckbox
-            v-if="multiple"
-            :modelValue="checkedKeys.has(row.item.key)"
-            :disabled="row.item.type === 'node'"
-            :aria-label="`选择 ${row.item.displayLabel || row.item.name}`"
-            :tabindex="-1"
-            @click.stop
-            @update:modelValue="toggleChecked(row.item)"></uiCheckbox>
+          <el-checkbox v-if="multiple" :modelValue="checkedKeys.has(row.item.key)" :disabled="row.item.type === 'node'" :aria-label="`选择 ${row.item.displayLabel || row.item.name}`" :tabindex="-1" @click.stop @change="toggleChecked(row.item)" />
           <span class="fileItem" :class="{ cutItem: isCut(data) }" :title="itemTitle(data)" @dblclick.stop="selectNode(data, false)">
             <icon-folder-open v-if="data.nodeType === 'canvasGroup' && expandedSet.has(data.key)" :size="16" aria-hidden="true" />
             <icon-folder v-else-if="data.nodeType === 'canvasGroup'" :size="16" aria-hidden="true" />
@@ -187,18 +55,8 @@
           </span>
         </div>
       </div>
-      <div v-if="searching" class="portLoadingMask" aria-hidden="true">
-        <icon-loader-2 class="animate-spin" />
-      </div>
     </div>
-    <el-dropdown
-      ref="menu"
-      trigger="contextmenu"
-      virtualTriggering
-      :virtualRef="menuAnchor"
-      placement="bottom-start"
-      :showArrow="false"
-      @command="command => handleCommand(command)">
+    <el-dropdown ref="menu" trigger="contextmenu" virtualTriggering :virtualRef="menuAnchor" placement="bottom-start" :showArrow="false" @command="command => handleCommand(command)">
       <template #dropdown>
         <el-dropdown-menu v-if="menuItem" class="fileActionMenu" :aria-label="menuItem.name">
           <el-dropdown-item v-if="menuItem.type === 'node'" command="focusNode" :disabled="busy">在画布上聚焦</el-dropdown-item>
@@ -214,12 +72,7 @@
           <el-dropdown-item command="copyPath" :divided="menuItem.type !== 'node'">{{ menuItem.type === 'node' ? "复制画布相对路径" : "复制路径（相对）" }}</el-dropdown-item>
           <el-dropdown-item command="copyAbsolutePath">{{ menuItem.type === 'node' ? "复制画布绝对路径" : "复制绝对路径" }}</el-dropdown-item>
           <el-dropdown-item v-if="menuItem.type !== 'node' && menuItem.path" command="rename" :disabled="busy" divided>重命名</el-dropdown-item>
-          <el-dropdown-item
-            v-if="menuItem.path && menuItem.nodeType !== 'canvasGroup'"
-            command="delete"
-            :disabled="busy"
-            :divided="menuItem.type === 'node'"
-            class="deleteAction">删除</el-dropdown-item>
+          <el-dropdown-item v-if="menuItem.path && menuItem.nodeType !== 'canvasGroup'" command="delete" :disabled="busy" :divided="menuItem.type === 'node'" class="deleteAction">删除</el-dropdown-item>
         </el-dropdown-menu>
       </template>
     </el-dropdown>
@@ -227,16 +80,11 @@
 </template>
 
 <script setup lang="ts">
-import { uiCheckbox } from "@/components/ui/checkbox";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiInput } from "@/components/ui/input";
-import { uiButton } from "@/components/ui/button";
 import { computed, nextTick, onBeforeUnmount, onMounted, ref, shallowReactive, shallowRef, useId, watch, type ShallowRef } from "vue";
 import axios from "axios";
 import type { IDockviewPanelProps } from "dockview-vue";
 import type { DropdownInstance } from "element-plus";
-import { toast } from "vue-sonner";
-import messageBox from "@/lib/messageBox";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { defaultRangeExtractor, useVirtualizer } from "@tanstack/vue-virtual";
 import { IconBox, IconChevronRight, IconFile, IconFilePlus, IconFileSearch, IconFocus2, IconFolder, IconFolderOpen, IconFolderPlus, IconVector, IconListCheck, IconLoader2, IconRefresh, IconSearch } from "@tabler/icons-vue";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
@@ -365,7 +213,7 @@ function storageKey(workspaceDirectory = directory.value ?? "") {
 function persistTreeState(workspaceDirectory = directory.value) {
   if (!workspaceDirectory) return;
   try { settingsStorage.setItem(storageKey(workspaceDirectory), JSON.stringify({ expandedKeys: expandedKeys.value })); }
-  catch { toast.warning("无法保存文件树展开状态"); }
+  catch { ElMessage.warning("无法保存文件树展开状态"); }
 }
 function loadTreeState() {
   expandedKeys.value = [];
@@ -570,7 +418,7 @@ async function executeFileAction(action: FileAction, item: FileTreeItem, target?
 function showActionError(error: unknown) {
   if (error === "cancel" || error === "close") return;
   const message = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : undefined;
-  toast.error(message || (error instanceof Error ? error.message : "文件操作失败"));
+  ElMessage.error(message || (error instanceof Error ? error.message : "文件操作失败"));
 }
 
 async function handleCommand(command: string, item = menuItem.value, source = clipboard.value) {
@@ -635,7 +483,7 @@ async function handleCommand(command: string, item = menuItem.value, source = cl
       }
       if (source.cut && usingClipboard) clipboard.value = undefined;
     } else if (command === "rename" && item.path) {
-      const { value } = await messageBox.prompt("名称", "重命名", {
+      const { value } = await ElMessageBox.prompt("名称", "重命名", {
         inputValue: item.name,
         inputValidator: value => !!value?.trim() && !/[\\/\0]/.test(value) && ![".", ".."].includes(value.trim()) || "请输入有效名称，不能包含斜杠",
         confirmButtonText: "保存", cancelButtonText: "取消",
@@ -652,7 +500,7 @@ async function handleCommand(command: string, item = menuItem.value, source = cl
       if (!items.length) return;
       total = items.length;
       const detail = item.type === "node" ? t`该节点会从画布中删除。` : items.some(item => item.type === "directory" || item.type === "canvas") ? t`所选文件夹的全部内容、画布的全部节点会一并删除。` : "";
-      await messageBox.confirm(`删除${items.length === 1 ? `“${items[0]!.name}”` : `这 ${items.length} 项`}？${detail}此操作不可恢复。`, item.type === "node" ? "删除节点" : "删除文件", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消", closeOnClickModal: false });
+      await ElMessageBox.confirm(`删除${items.length === 1 ? `“${items[0]!.name}”` : `这 ${items.length} 项`}？${detail}此操作不可恢复。`, item.type === "node" ? "删除节点" : "删除文件", { type: "warning", confirmButtonText: "删除", cancelButtonText: "取消", closeOnClickModal: false });
       if (currentDirectory !== directory.value) return;
       for (const entry of items) {
         if (currentDirectory !== directory.value) throw new Error("工作目录已切换");
@@ -666,11 +514,11 @@ async function handleCommand(command: string, item = menuItem.value, source = cl
       await executeFileAction(command, item);
       return;
     } else return;
-    if (total > 1) toast.success(`已完成 ${completed} / ${total} 项`);
+    if (total > 1) ElMessage.success(`已完成 ${completed} / ${total} 项`);
   } catch (error) {
     if (total > 1 && error !== "cancel" && error !== "close") {
       const message = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : error instanceof Error ? error.message : translate("文件操作失败");
-      toast.error(`已完成 ${completed} / ${total} 项，剩余未执行：${message}`);
+      ElMessage.error(`已完成 ${completed} / ${total} 项，剩余未执行：${message}`);
     } else showActionError(error);
   } finally { busy.value = false; if (changed && currentDirectory === directory.value) refreshTree(); }
 }
@@ -788,7 +636,7 @@ async function createEntry(folder: boolean, item = currentItem()) {
   const destination = item.type === "directory" ? item.path : parentPath(item.path);
   let value: string;
   try {
-    ({ value } = await messageBox.prompt(`在“${destination || "工作区根目录"}”中新建${folder ? "文件夹" : "文件"}`, folder ? "新建文件夹" : "新建文件", {
+    ({ value } = await ElMessageBox.prompt(`在“${destination || "工作区根目录"}”中新建${folder ? "文件夹" : "文件"}`, folder ? "新建文件夹" : "新建文件", {
       inputValue: folder ? "新建文件夹" : "文档.md",
       inputValidator: name => !!name?.trim() && !/[\\/\0]/.test(name) && ![".", ".."].includes(name.trim()) || "请输入有效名称，不能包含斜杠",
       confirmButtonText: "创建",
@@ -810,7 +658,7 @@ async function createEntry(folder: boolean, item = currentItem()) {
     }
   } catch (error) {
     const message = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message : undefined;
-    toast.error(message || (error instanceof Error ? error.message : "创建文件失败"));
+    ElMessage.error(message || (error instanceof Error ? error.message : "创建文件失败"));
   } finally {
     creating.value = false;
   }
@@ -1027,7 +875,7 @@ function loadChildren(item: FileTreeItem): Promise<void> {
       gap: 2px;
     }
 
-    [data-slot="button"] {
+    .el-button {
       width: 24px;
       height: 24px;
       padding: 0;
@@ -1045,8 +893,8 @@ function loadChildren(item: FileTreeItem): Promise<void> {
     align-items: center;
     gap: 2px;
     padding: 4px 8px 8px;
-    :deep(:is(.el-input, [data-slot="input"], .inputGroup)) { flex: 1 1 100%; min-width: 0; margin-bottom: 3px; }
-    :deep([data-slot="button"]) { margin-left: 0; flex-shrink: 0; }
+    :deep(.el-input) { flex: 1 1 100%; min-width: 0; margin-bottom: 3px; }
+    :deep(.el-button) { margin-left: 0; flex-shrink: 0; }
   }
   .batchActions {
     display: flex;
@@ -1055,7 +903,7 @@ function loadChildren(item: FileTreeItem): Promise<void> {
     padding: 0 8px 6px;
     font-size: 11px;
     > span { flex: 1; }
-    :deep([data-slot="button"]) { margin-left: 0; padding: 4px; }
+    :deep(.el-button) { margin-left: 0; padding: 4px; }
   }
 
   .treeContent {

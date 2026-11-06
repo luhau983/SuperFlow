@@ -1,20 +1,11 @@
 <template>
-  <div
-    class="messageInput"
-    :class="{ draggingAttachments, voiceActive }"
-    @dragenter.capture="dragEnterAttachments"
-    @dragover.capture="dragOverAttachments"
-    @dragleave.capture="dragLeaveAttachments"
-    @drop.capture="dropAttachments">
+  <div class="messageInput" :class="{ draggingAttachments, voiceActive }" @dragenter.capture="dragEnterAttachments" @dragover.capture="dragOverAttachments" @dragleave.capture="dragLeaveAttachments" @drop.capture="dropAttachments">
     <div v-if="draggingAttachments" class="attachmentDropHint" role="status">
       <icon-paperclip :size="20" aria-hidden="true" />
       <span>松开添加附件</span>
       <small>图片、视频、文档、代码文件或 ZIP 压缩包</small>
     </div>
-    <div v-if="editingId" class="editingBanner">
-      <span>编辑消息</span>
-      <uiButton @click="cancelEdit" variant="ghost" type="button" :disabled="(running || submitting || voiceActive)" size="sm">取消</uiButton>
-    </div>
+    <div v-if="editingId" class="editingBanner"><span>编辑消息</span><el-button text size="small" :disabled="running || submitting || voiceActive" @click="cancelEdit">取消</el-button></div>
     <div
       class="senderResizeHandle"
       role="separator"
@@ -33,138 +24,38 @@
       @lostpointercapture="stopSenderResize"
       @keydown.up.prevent="setSenderHeight((sender?.chatElement.rollBox.clientHeight ?? 44) + 16)"
       @keydown.down.prevent="setSenderHeight((sender?.chatElement.rollBox.clientHeight ?? 44) - 16)" />
-    <attachmentList
-      v-if="draftAttachments.length"
-      class="draftAttachments"
-      :attachments="draftAttachments"
-      :directory="directory"
-      removable
-      restorable
-      :disabled="locked"
-      @remove="draftAttachments.splice($event, 1)"
-      @restore="restoreTextAttachment" />
-    <div
-      class="senderInput"
-      @pointerdown.capture="armVoiceInput"
-      @contextmenu="voiceActive && $event.preventDefault()"
-      @dragstart="voiceActive && $event.preventDefault()">
+    <attachmentList v-if="draftAttachments.length" class="draftAttachments" :attachments="draftAttachments" :directory="directory" removable restorable :disabled="locked" @remove="draftAttachments.splice($event, 1)" @restore="restoreTextAttachment" />
+    <div class="senderInput" @pointerdown.capture="armVoiceInput" @contextmenu="voiceActive && $event.preventDefault()" @dragstart="voiceActive && $event.preventDefault()">
       <div ref="senderElement" class="senderEditor" @keydown.capture="handleSenderKeydown"></div>
       <div v-if="voiceActive" class="voiceOverlay" role="status" aria-live="polite">
         <div class="voiceFeedback">
-          <span class="voiceWave" aria-hidden="true">
-            <span v-for="(level, index) in voiceBars" :key="index" :style="{ height: `${3 + level * 21}px` }" />
-          </span>
+          <span class="voiceWave" aria-hidden="true"><span v-for="(level, index) in voiceBars" :key="index" :style="{ height: `${3 + level * 21}px` }" /></span>
           <span>{{ voiceState === 'starting' ? '正在启动语音识别…' : voiceState === 'listening' ? '开始说话，松开结束' : '正在识别…' }}</span>
         </div>
         <div v-if="voiceText" class="voiceTranscript">{{ voiceText }}</div>
       </div>
     </div>
-    <teleport v-for="target in draftMentionTargets" :key="target.key" :to="target.element">
-      <mentionThumbnail v-bind="mentionThumbnailProps(target.mention)" :directory="directory">
-        <icon-photo :size="14" />
-      </mentionThumbnail>
-    </teleport>
+    <teleport v-for="target in draftMentionTargets" :key="target.key" :to="target.element"><mentionThumbnail v-bind="mentionThumbnailProps(target.mention)" :directory="directory"><icon-photo :size="14" /></mentionThumbnail></teleport>
     <mentionContent ref="draftMentionPreview" :mentions="draftMentions" :directory="directory" removable @remove="removeDraftMention" />
     <div class="senderActions">
-      <modelPopover
-        v-model="selectedModel"
-        v-model:reasoningEffort="reasoningEffort"
-        :active="active"
-        :disabled="disabled || running || submitting || voiceActive" />
-      <input
-        ref="attachmentInput"
-        type="file"
-        :accept="attachmentAccept"
-        multiple
-        hidden
-        :disabled="locked || running"
-        @change="selectAttachments" />
-      <uiButton
-        aria-label="添加附件"
-        :title="running ? '生成期间仅支持发送文字' : '添加附件'"
-        @click="attachmentInput?.click()"
-        variant="ghost"
-        type="button"
-        :disabled="(locked || running)"
-        size="icon"
-        style="border-radius: 9999px">
-        <icon-paperclip :size="16" />
-      </uiButton>
-      <mentionMenu
-        ref="mentionMenuRef"
-        :directory="directory"
-        :active="active"
-        :disabled="locked || running || !directory"
-        :query="mentionQuery"
-        :editor="senderElement"
-        :currentCanvasId="createCanvasContext?.()?.id"
-        @open="captureMentionPosition"
-        @select="insertMentions"
-        @dismiss="mentionQuery = undefined" />
-      <skillMenu
-        ref="skillMenuRef"
-        :directory="directory"
-        :active="active"
-        :disabled="locked || running || !directory"
-        :query="skillQuery"
-        :editor="senderElement"
-        @select="selectSkill"
-        @dismiss="skillQuery = undefined" />
-      <uiButton
-        class="voiceButton"
-        :class="{ voiceActive }"
-        :aria-label="voiceButtonLabel"
-        :aria-pressed="voiceActive"
-        :title="voiceButtonLabel"
-        @click="voiceActive ? cancelVoiceInput() : startVoiceInput()"
-        variant="ghost"
-        type="button"
-        :disabled="(!voiceSupported || (!voiceActive && locked))"
-        size="icon"
-        style="border-radius: 9999px">
-        <icon-microphone :size="18" />
-      </uiButton>
-      <contextUsagePopover
-        v-model:visible="contextMenuVisible"
-        :usage="contextUsage"
-        :stats="stats"
-        :contextWindow="contextWindow"
-        :disabled="voiceActive" />
-      <uiButton
-        v-if="running"
-        class="stopButton"
-        aria-label="停止生成"
-        title="停止生成"
-        @click="emit('stop')"
-        variant="ghost"
-        type="button"
-        :disabled="(stopping)"
-        size="icon"
-        style="border-radius: 9999px">
-        <icon-player-stop-filled :size="14" />
-      </uiButton>
-      <uiButton
-        class="sendButton"
-        :aria-label="sendLabel"
-        :title="sendTitle"
-        @click="submitDraft()"
-        variant="default"
-        type="button"
-        :disabled="(locked || (running && !!editingId))"
-        size="icon"
-        style="border-radius: 9999px">
-        <icon-arrow-up :size="16" />
-      </uiButton>
+      <modelPopover v-model="selectedModel" v-model:reasoningEffort="reasoningEffort" :active="active" :disabled="disabled || running || submitting || voiceActive" />
+      <input ref="attachmentInput" type="file" :accept="attachmentAccept" multiple hidden :disabled="locked || running" @change="selectAttachments" />
+      <el-button text circle :disabled="locked || running" aria-label="添加附件" :title="running ? '生成期间仅支持发送文字' : '添加附件'" @click="attachmentInput?.click()"><icon-paperclip :size="16" /></el-button>
+      <mentionMenu ref="mentionMenuRef" :directory="directory" :active="active" :disabled="locked || running || !directory" :query="mentionQuery" :editor="senderElement" :currentCanvasId="createCanvasContext?.()?.id" @open="captureMentionPosition" @select="insertMentions" @dismiss="mentionQuery = undefined" />
+      <skillMenu ref="skillMenuRef" :directory="directory" :active="active" :disabled="locked || running || !directory" :query="skillQuery" :editor="senderElement" @select="selectSkill" @dismiss="skillQuery = undefined" />
+      <el-button class="voiceButton" :class="{ voiceActive }" text circle :disabled="!voiceSupported || (!voiceActive && locked)" :aria-label="voiceButtonLabel" :aria-pressed="voiceActive" :title="voiceButtonLabel" @click="voiceActive ? cancelVoiceInput() : startVoiceInput()"><icon-microphone :size="18" /></el-button>
+      <contextUsagePopover v-model:visible="contextMenuVisible" :usage="contextUsage" :stats="stats" :contextWindow="contextWindow" :disabled="voiceActive" />
+      <el-button v-if="running" class="stopButton" text circle :disabled="stopping" aria-label="停止生成" title="停止生成" @click="emit('stop')"><icon-player-stop-filled :size="14" /></el-button>
+      <el-button class="sendButton" type="primary" circle :disabled="locked || (running && !!editingId)" :aria-label="sendLabel" :title="sendTitle" @click="submitDraft()"><icon-arrow-up :size="16" /></el-button>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiButton } from "@/components/ui/button";
 import { locale, t, translate } from "@toonflow/i18n/vue";
 import { computed, inject, ref, shallowRef, watch } from "vue";
 import { IconArrowUp, IconMicrophone, IconPaperclip, IconPhoto, IconPlayerStopFilled } from "@tabler/icons-vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { getReadableFileMimeType, readableFileAccept } from "@toonflow/server/documentFormats";
 import type { AgentContext, AgentMention, AgentStats } from "@toonflow/server/agent/types";
 import type { CanvasContext } from "@toonflow/tool-canvas/runtime";
@@ -258,7 +149,7 @@ watch(running, value => {
 function submitDraft(mode: "steer" | "followUp" = "followUp") {
   if (locked.value || !props.active || (running.value && editingId.value)) return;
   if (running.value && (draftAttachments.value.length || sender?.getTagData().mention.length)) {
-    toast.warning("生成期间仅支持发送文字，请先移除附件和提及；当前草稿已保留");
+    ElMessage.warning("生成期间仅支持发送文字，请先移除附件和提及；当前草稿已保留");
     return;
   }
   if (running.value) emit("submit", mode);
@@ -310,7 +201,7 @@ async function insertMentions(mentions: AgentMention[]) {
   const instance = sender;
   if (!instance || locked.value || running.value || !props.active) return;
   const currentIds = new Set(instance.getTagData().mention.map(item => item.id));
-  if (currentIds.size + mentions.length > 20) return toast.warning("每条消息最多提及 20 个输出或素材");
+  if (currentIds.size + mentions.length > 20) return ElMessage.warning("每条消息最多提及 20 个输出或素材");
   insertingMentions = true;
   try {
     if (mentionPosition?.node.instance.$el.isConnected) mentionPosition.node.instance.focus(mentionPosition.node.offset);
@@ -322,7 +213,7 @@ async function insertMentions(mentions: AgentMention[]) {
       await instance.setMention({ id: mention.id, name: mentionName(mention) });
     }
   } catch (error) {
-    toast.error(error instanceof Error ? error.message : "添加提及失败");
+    ElMessage.error(error instanceof Error ? error.message : "添加提及失败");
   } finally {
     mentionQuery.value = undefined;
     mentionPosition = undefined;
@@ -352,7 +243,7 @@ async function fillPrompt(prompt: string, attachments?: AgentAttachment[]) {
   const instance = sender;
   if (!instance || locked.value) return false;
   if (running.value && attachments?.length) {
-    toast.warning("生成期间仅支持发送文字，当前草稿已保留");
+    ElMessage.warning("生成期间仅支持发送文字，当前草稿已保留");
     return false;
   }
   draftMentions.value = [];
@@ -441,7 +332,7 @@ async function restoreTextAttachment(index: number) {
     await instance.setText(`${instance.isEmpty(false) ? "" : "\n"}${text}`);
     if (sender === instance) draftAttachments.value = draftAttachments.value.filter(item => item !== attachment);
   } catch (error) {
-    toast.error(error instanceof Error ? error.message : "还原文本附件失败，请重试");
+    ElMessage.error(error instanceof Error ? error.message : "还原文本附件失败，请重试");
   } finally {
     restoringAttachment.value = false;
   }
@@ -456,7 +347,7 @@ function pasteAttachments(event: ClipboardEvent) {
     } catch (error) {
       event.preventDefault();
       event.stopImmediatePropagation();
-      toast.warning(error instanceof Error ? error.message : "无法添加文本附件");
+      ElMessage.warning(error instanceof Error ? error.message : "无法添加文本附件");
       return;
     }
   }
@@ -509,26 +400,26 @@ function dropAttachments(event: DragEvent) {
 
 async function addAttachments(files: File[]) {
   if (locked.value) return;
-  if (running.value) return toast.warning("生成期间仅支持发送文字，请在本轮完成后添加附件");
+  if (running.value) return ElMessage.warning("生成期间仅支持发送文字，请在本轮完成后添加附件");
   files = await expandZipAttachments(files);
   if (locked.value) return;
   for (const file of files) {
     const readableMimeType = getReadableFileMimeType(file.name, file.type);
     const mimeType = readableMimeType ?? file.type.split(";")[0]!.trim().toLowerCase();
     if (!readableMimeType && !/^(image|video)\//.test(mimeType)) {
-      toast.warning("只支持图片、视频和受支持的文本或文档文件");
+      ElMessage.warning("只支持图片、视频和受支持的文本或文档文件");
       continue;
     }
     if (!file.size || file.size > 100 * 1024 * 1024) {
-      toast.warning("附件不能为空且不能超过 100 MB");
+      ElMessage.warning("附件不能为空且不能超过 100 MB");
       continue;
     }
     if (mimeType === "text/plain" && file.size > 400000) {
-      toast.warning("文本附件不能超过 400 KB（400000 字节），请缩减内容后重试。");
+      ElMessage.warning("文本附件不能超过 400 KB（400000 字节），请缩减内容后重试。");
       continue;
     }
     if (draftAttachments.value.length >= 20) {
-      toast.warning("每条消息最多添加 20 个附件");
+      ElMessage.warning("每条消息最多添加 20 个附件");
       break;
     }
     draftAttachments.value.push({ name: file.name, path: "", mimeType, file });
@@ -811,7 +702,7 @@ defineExpose({ getDraft, clearDraft, fillPrompt, fillQueuedMessage, editMessage,
       gap: 4px;
       padding: 2px 8px 6px;
 
-      > [data-slot="button"] {
+      > .el-button {
         margin-left: 0;
       }
 

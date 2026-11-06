@@ -38,7 +38,7 @@
 <script setup lang="ts">
 import { inject, nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
 import { useVueFlow, type GraphNode, type NodeProps } from "@vue-flow/core";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 
 const props = withDefaults(defineProps<NodeProps & { readOnly?: boolean }>(), { readOnly: false });
 const flow = useVueFlow();
@@ -103,7 +103,7 @@ function startResize(event: PointerEvent, corner: ResizeCorner) {
   });
   void (batchHistory ? batchHistory(action) : action()).catch(error => {
     finishResize();
-    toast.error(error instanceof Error ? error.message : "分组缩放失败");
+    ElMessage.error(error instanceof Error ? error.message : "分组缩放失败");
   });
 }
 

@@ -9,57 +9,46 @@
           <button class="navButton" type="button" :aria-pressed="activeTab === 'ffmpeg'" @click="activeTab = 'ffmpeg'">FFmpeg</button>
         </nav>
         <div class="marketLinks">
-          <uiButton variant="ghost" type="button" size="sm" asChild>
-            <a href="https://api.toonflow.net/console/plugIn" target="_blank" rel="noopener noreferrer"><component :is="IconExternalLink" aria-hidden="true" />网页版市场</a>
-          </uiButton>
-          <uiButton variant="ghost" type="button" size="sm" asChild>
-            <a href="https://qcn7xdsqgc4z.feishu.cn/docx/KNBNd9naqolsy6xjAOCcEAkqnRd" target="_blank" rel="noopener noreferrer"><component :is="IconBook" aria-hidden="true" />开发者文档</a>
-          </uiButton>
+          <el-button tag="a" href="https://api.toonflow.net/console/plugIn" target="_blank" rel="noopener noreferrer" size="small" text :icon="IconExternalLink">
+            网页版市场
+          </el-button>
+          <el-button tag="a" href="https://qcn7xdsqgc4z.feishu.cn/docx/KNBNd9naqolsy6xjAOCcEAkqnRd" target="_blank" rel="noopener noreferrer" size="small" text :icon="IconBook">
+            开发者文档
+          </el-button>
         </div>
       </div>
       <div v-if="isMarketTab || activeTab === 'installed'" class="marketControls">
         <form class="marketSearch" role="search" @submit.prevent="applySearch">
-          <div class="inputGroup">
-            <uiInput v-model="searchQuery" placeholder="搜索插件" aria-label="搜索插件" @clear="applySearch"></uiInput>
-            <uiButton
-              @mousedown.prevent
-              v-if="searchQuery"
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              aria-label="清除"
-              @click="searchQuery = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
-              <icon-x />
-            </uiButton>
-          </div>
-          <uiButton variant="outline" type="submit" size="sm">搜索</uiButton>
+          <el-input v-model="searchQuery" size="small" placeholder="搜索插件" aria-label="搜索插件" clearable @clear="applySearch" />
+          <el-button size="small" nativeType="submit">搜索</el-button>
         </form>
         <div class="marketActions">
-          <uiButton
-            variant="outline"
-            type="button"
-            size="sm"
+          <el-button
+            size="small"
+            type="primary"
+            plain
+            :icon="IconCloudUpload"
             :disabled="!accountToken"
             :title="accountToken ? '上传插件到市场' : '请先在账号与余额中登录'"
-            @click="openUpload()"><component :is="IconCloudUpload" aria-hidden="true" />上传插件</uiButton>
+            @click="openUpload()">上传插件</el-button>
           <template v-if="activeTab === 'installed'">
-            <uiButton aria-label="安装本地插件" @click="pluginFileInput?.click()" variant="default" type="button" :disabled="(installing)" size="sm"><icon-loader-2 v-if="installing" class="animate-spin" aria-hidden="true" /><component :is="IconUpload" aria-hidden="true" />安装插件</uiButton>
-            <input
-              ref="pluginFileInput"
-              type="file"
-              :accept="agentMarketEnabled ? '.umd.js,.tool.js,.agent.zip,.zip,.md,.tar,.tar.gz,.tgz' : '.umd.js,.tool.js,.zip,.md,.tar,.tar.gz,.tgz'"
-              hidden
-              @change="installFile" />
+            <el-button size="small" type="primary" :icon="IconUpload" :loading="installing" aria-label="安装本地插件" @click="pluginFileInput?.click()">
+              安装插件
+            </el-button>
+            <input ref="pluginFileInput" type="file" :accept="agentMarketEnabled ? '.umd.js,.tool.js,.agent.zip,.zip,.md,.tar,.tar.gz,.tgz' : '.umd.js,.tool.js,.zip,.md,.tar,.tar.gz,.tgz'" hidden @change="installFile" />
             <template v-if="agentMarketEnabled && selectedType === 'agent'">
-              <uiButton @click="agentConnectVisible = true" variant="outline" type="button" :disabled="(loading || !canManageAgents)" size="sm"><component :is="IconLink" aria-hidden="true" />连接远程 Agent</uiButton>
-              <uiButton @click="a2aSettingsVisible = true" variant="outline" type="button" :disabled="(loading || !canManageAgents)" size="sm"><component :is="IconSettings" aria-hidden="true" />A2A 服务</uiButton>
+              <el-button size="small" :icon="IconLink" :disabled="loading || !canManageAgents" @click="agentConnectVisible = true">连接远程 Agent</el-button>
+              <el-button size="small" :icon="IconSettings" :disabled="loading || !canManageAgents" @click="a2aSettingsVisible = true">A2A 服务</el-button>
             </template>
           </template>
         </div>
       </div>
       <div v-if="isMarketTab || activeTab === 'installed'" class="marketFilters">
         <div class="typeFilters" role="group" aria-label="插件类型">
-          <button class="filterButton" type="button" :aria-pressed="selectedType === 'all'" @click="selectedType = 'all'">全部<span v-if="activeTab === 'installed' && installedCounts.all !== undefined" class="filterCount">{{ installedCounts.all }}</span></button>
+          <button class="filterButton" type="button" :aria-pressed="selectedType === 'all'" @click="selectedType = 'all'">
+            全部
+            <span v-if="activeTab === 'installed' && installedCounts.all !== undefined" class="filterCount">{{ installedCounts.all }}</span>
+          </button>
           <button
             v-for="(category, type) in pluginTypes"
             :key="type"
@@ -68,253 +57,233 @@
             :disabled="type === 'agent' && !agentMarketEnabled"
             :title="type === 'agent' && !agentMarketEnabled ? '测试阶段，暂未开放' : undefined"
             :aria-pressed="selectedType === type"
-            @click="selectedType = type">{{ category.label }}<span v-if="activeTab === 'installed' && installedCounts[type] !== undefined" class="filterCount">{{ installedCounts[type] }}</span></button>
+            @click="selectedType = type">
+            {{ category.label }}
+            <span v-if="activeTab === 'installed' && installedCounts[type] !== undefined" class="filterCount">{{ installedCounts[type] }}</span>
+          </button>
         </div>
         <div class="filterOptions">
           <div class="personalFilters" role="group" aria-label="我的插件">
             <button class="filterButton" type="button" :aria-pressed="selectedType === 'collection'" @click="selectedType = 'collection'">收藏</button>
             <button class="filterButton" type="button" :aria-pressed="selectedType === 'my'" @click="selectedType = 'my'">我的</button>
           </div>
-          <uiLabel class="checkboxField"><uiCheckbox v-if="activeTab === 'installed'" v-model="hideBuiltin" class="builtinFilter"></uiCheckbox>隐藏内置插件</uiLabel>
+          <el-checkbox v-if="activeTab === 'installed'" v-model="hideBuiltin" class="builtinFilter" size="small">隐藏内置插件</el-checkbox>
         </div>
       </div>
     </div>
+
     <ffmpeg v-if="activeTab === 'ffmpeg'" :visible />
     <mcpServers v-else-if="activeTab === 'mcp'" :visible />
     <template v-else>
       <template v-if="activeTab === 'installed'">
-        <uiAlert v-for="message in visibleLoadErrors" :key="message" class="loadError" variant="destructive">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ message }}</uiAlertTitle>
-        </uiAlert>
-        <uiAlert v-if="pluginExistenceError" class="loadError">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ pluginExistenceError }}</uiAlertTitle>
-          <uiButton @click="pluginExistenceRefreshKey++" variant="outline" type="button" size="sm">重新检查</uiButton>
-        </uiAlert>
+        <el-alert v-for="message in visibleLoadErrors" :key="message" class="loadError" :title="message" type="error" :closable="false" showIcon />
+        <el-alert v-if="pluginExistenceError" class="loadError" :title="pluginExistenceError" type="warning" :closable="false" showIcon>
+          <el-button size="small" @click="pluginExistenceRefreshKey++">重新检查</el-button>
+        </el-alert>
         <p v-if="checkingPluginExistence" class="listStatus" role="status">正在检查插件是否已在市场中…</p>
       </template>
-      <uiAlert v-else-if="!accountToken" class="loadError">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">请先在账号与余额中登录 SuperFlow 账号，再浏览和收藏插件。</uiAlertTitle>
-      </uiAlert>
-      <uiAlert v-else-if="marketError" class="loadError" variant="destructive">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ marketError }}</uiAlertTitle>
-        <uiButton @click="marketRefreshKey++" variant="outline" type="button" size="sm">重试</uiButton>
-      </uiAlert>
+      <el-alert v-else-if="!accountToken" class="loadError" title="请先在账号与余额中登录 SuperFlow 账号，再浏览和收藏插件。" type="info" :closable="false" showIcon />
+      <el-alert v-else-if="marketError" class="loadError" :title="marketError" type="error" :closable="false" showIcon>
+        <el-button size="small" @click="marketRefreshKey++">重试</el-button>
+      </el-alert>
+
       <div
         class="pluginList"
         :aria-label="`${selectedType === 'collection' ? '收藏' : selectedType === 'my' ? '我的' : tabs[activeTab]}列表`"
         :aria-busy="activeTab === 'installed' ? loading : marketLoading">
-        <uiCard
+        <el-card
           v-for="plugin in visiblePlugins"
           :key="plugin.key"
           class="pluginCard"
           :class="{ viewable: canViewPlugin(plugin) }"
+          shadow="never"
           role="group"
           :aria-label="plugin.displayName"
           :aria-haspopup="canViewPlugin(plugin) ? 'dialog' : undefined"
           :tabindex="canViewPlugin(plugin) ? 0 : undefined"
           @click="openPlugin(plugin)"
           @keydown.enter.self.prevent="openPlugin(plugin)"
-          @keydown.space.self.prevent="openPlugin(plugin)"
-          style="gap:0; padding:0">
-          <div class="cardBody" :style="{ padding: '20px' }">
-            <img
-              v-if="plugin.type === 'node' && plugin.coverUrl"
-              class="pluginCover"
-              :src="plugin.coverUrl"
-              :alt="`${plugin.displayName} 节点截图`"
-              loading="lazy"
-              referrerpolicy="no-referrer" />
-            <div class="pluginHeader">
-              <div class="pluginHeading">
-                <h3 class="pluginName">
-                  <component :is="pluginTypes[plugin.type].icon" :size="18" aria-hidden="true" />
-                  <span class="pluginTitle">{{ plugin.displayName }}</span>
-                  <a
-                    v-if="plugin.github"
-                    class="repoLink"
-                    :href="plugin.github"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    :aria-label="`${plugin.displayName} 的 GitHub`"
-                    title="GitHub"
-                    @click.stop>
-                    <icon-external-link :size="14" aria-hidden="true" />
-                  </a>
-                </h3>
-                <span class="pluginId" :title="plugin.name">{{ plugin.name }}</span>
-              </div>
-              <div class="pluginTags">
-                <uiBadge v-if="plugin.demoVideoUrl" variant="outline">效果演示</uiBadge>
-                <uiBadge v-if="plugin.builtin || installedByKey.get(`${plugin.type}:${plugin.name}`)?.builtin" variant="outline">内置</uiBadge>
-                <uiBadge
-                  v-for="(tag, index) in plugin.tags"
-                  :key="index"
-                  class="pluginLabel"
-                  :style="getPluginTagStyle(tag.color)"
-                  variant="outline">{{ tag.text }}</uiBadge>
-                <uiBadge variant="secondary">{{ pluginTypes[plugin.type].label }}</uiBadge>
-              </div>
+          @keydown.space.self.prevent="openPlugin(plugin)">
+          <img v-if="plugin.type === 'node' && plugin.coverUrl" class="pluginCover" :src="plugin.coverUrl" :alt="`${plugin.displayName} 节点截图`" loading="lazy" referrerpolicy="no-referrer" />
+          <div class="pluginHeader">
+            <div class="pluginHeading">
+              <h3 class="pluginName">
+                <component :is="pluginTypes[plugin.type].icon" :size="18" aria-hidden="true" />
+                <span class="pluginTitle">{{ plugin.displayName }}</span>
+                <a
+                  v-if="plugin.github"
+                  class="repoLink"
+                  :href="plugin.github"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  :aria-label="`${plugin.displayName} 的 GitHub`"
+                  title="GitHub"
+                  @click.stop>
+                  <icon-external-link :size="14" aria-hidden="true" />
+                </a>
+              </h3>
+              <span class="pluginId" :title="plugin.name">{{ plugin.name }}</span>
             </div>
-            <p v-if="plugin.description" class="pluginDescription">{{ plugin.description }}</p>
-            <div v-if="isMarketTab && selectedType === 'my'" class="reviewStatus" :class="{ rejected: plugin.state === 2 }">
-              <uiBadge variant="outline">{{ plugin.state === 1 ? '已发布' : plugin.state === 2 ? '审核未通过' : '待审核' }}</uiBadge>
-              <p v-if="plugin.state === 2 && plugin.rejectReason" class="reviewReason"><span>审核意见</span>{{ plugin.rejectReason }}</p>
-            </div>
-            <span v-if="plugin.loadError" data-ui-text="danger">{{ plugin.loadError }}</span>
-            <div v-if="plugin.author || plugin.version" class="pluginMeta">
-              <span v-if="plugin.author" class="pluginAuthor">{{ plugin.author }}</span>
-              <span v-if="plugin.version" class="pluginVersion" type="info" size="small" effect="plain">v{{ plugin.version }}</span>
-            </div>
-            <div v-if="isMarketTab" class="pluginFooter" @click.stop>
-              <uiButton :aria-label="`查看 ${plugin.displayName} 的详情`" @click="openPlugin(plugin)" variant="outline" type="button" size="sm">查看详情</uiButton>
-              <uiButton
-                v-if="selectedType === 'my'"
-                :aria-label="`${plugin.state === 1 ? '更新版本' : plugin.state === 2 ? '修改后重新提交' : '等待审核'} ${plugin.displayName}`"
-                @click="openResubmit(plugin)"
-                variant="default"
-                type="button"
-                :disabled="(plugin.state === 0 || loading || deletingPlugins.has(plugin.key) || collectingPlugins.has(plugin.key) || pendingPlugins.has(plugin.key))"
-                size="sm">{{ plugin.state === 1 ? '更新版本' : plugin.state === 2 ? '修改后重新提交' : '等待审核' }}</uiButton>
-              <span v-if="installLabel(plugin) === '已安装'" data-ui-text="info">已安装</span>
-              <uiPopover
-                v-model:open="confirmVisible1[String(plugin.key)]"
-                v-else-if="pluginTypes[plugin.type].path && plugin.url && plugin.fileName">
-                <uiPopoverTrigger asChild>
-                  <uiButton
-                    :aria-label="`${translate(installLabel(plugin))} ${plugin.displayName}`"
-                    variant="default"
-                    type="button"
-                    :disabled="(loading || pendingPlugins.has(plugin.key) || deletingPlugins.has(plugin.key)) || (pendingPlugins.has(plugin.key))"
-                    size="sm"><icon-loader-2 v-if="pendingPlugins.has(plugin.key)" class="animate-spin" aria-hidden="true" />{{ translate(installLabel(plugin)) }}</uiButton>
-                </uiPopoverTrigger>
-                <uiPopoverContent class="w-[280px]">
-                  <p>{{ `${translate(installLabel(plugin))}${pluginTypes[plugin.type].label}“${plugin.displayName}”（${plugin.fileName}）？` }}</p>
-                  <div class="confirmActions">
-                    <uiButton type="button" variant="outline" size="sm" @click="confirmVisible1[String(plugin.key)] = false; ">取消</uiButton>
-                    <uiButton type="button" size="sm" @click="confirmVisible1[String(plugin.key)] = false; installMarketPlugin(plugin)">{{ translate(installLabel(plugin)) }}</uiButton>
-                  </div>
-                </uiPopoverContent>
-              </uiPopover>
-              <span v-else data-ui-text="info">{{ plugin.type === 'agent' && !agentMarketEnabled ? '测试阶段，暂未开放' : '暂不支持安装' }}</span>
-              <div v-if="plugin.state === 1 || selectedType === 'my'" class="pluginActions">
-                <component
-                  v-if="plugin.state === 1"
-                  :is="plugin.isCollected ? IconStarFilled : IconStar"
-                  class="collectionIcon"
-                  :size="18"
-                  role="button"
-                  tabindex="0"
-                  :aria-disabled="collectingPlugins.has(plugin.key) || deletingPlugins.has(plugin.key)"
-                  :aria-pressed="plugin.isCollected === true"
-                  :aria-label="`${plugin.isCollected ? '取消收藏' : '添加收藏'} ${plugin.displayName}`"
-                  :title="plugin.isCollected ? '取消收藏' : '添加收藏'"
-                  @click="toggleCollection(plugin)"
-                  @keydown.enter.prevent="toggleCollection(plugin)"
-                  @keydown.space.prevent="toggleCollection(plugin)" />
-                <uiPopover v-model:open="confirmVisible2[String(plugin.key)]" v-if="selectedType === 'my'">
-                  <uiPopoverTrigger asChild>
-                    <uiButton
-                      :aria-label="`从市场删除 ${plugin.displayName}`"
-                      variant="destructive"
-                      type="button"
-                      :disabled="(deletingPlugins.has(plugin.key) || collectingPlugins.has(plugin.key) || pendingPlugins.has(plugin.key)) || (deletingPlugins.has(plugin.key))"
-                      size="sm"><icon-loader-2 v-if="deletingPlugins.has(plugin.key)" class="animate-spin" aria-hidden="true" />删除</uiButton>
-                  </uiPopoverTrigger>
-                  <uiPopoverContent class="w-[280px]">
-                    <p>{{ `确定从市场删除“${plugin.displayName}”吗？` }}</p>
-                    <div class="confirmActions">
-                      <uiButton type="button" variant="outline" size="sm" @click="confirmVisible2[String(plugin.key)] = false; ">取消</uiButton>
-                      <uiButton type="button" size="sm" @click="confirmVisible2[String(plugin.key)] = false; deletePlugin(plugin)">删除</uiButton>
-                    </div>
-                  </uiPopoverContent>
-                </uiPopover>
-              </div>
-            </div>
-            <div v-else class="pluginFooter pluginControls" @click.stop>
-              <label class="pluginToggle">
-                <span>{{ plugin.enabled === false ? "已禁用" : "已启用" }}</span>
-                <uiSwitch
-                  :modelValue="plugin.enabled !== false"
-                  :aria-label="`启用 ${plugin.displayName}`"
-                  :disabled="(!canEditPlugin(plugin) || loading || pendingPlugins.has(plugin.key)) || (pendingPlugins.has(plugin.key))"
-                  @update:modelValue="updatePlugin(plugin, 'setEnabled', $event === true)"></uiSwitch>
-              </label>
-              <div class="pluginActions">
-                <uiButton
-                  v-if="uploadablePluginKeys.has(plugin.key)"
-                  :aria-label="`上传 ${plugin.displayName} 到市场`"
-                  title="上传到市场"
-                  @click="openUpload(plugin)"
-                  variant="outline"
-                  type="button"
-                  :disabled="(loading || pendingPlugins.has(plugin.key) || exportingPlugins.has(plugin.key))"
-                  size="sm"><component :is="IconCloudUpload" aria-hidden="true" />上传</uiButton>
-                <uiButton
-                  v-if="plugin.type === 'node' || plugin.type === 'skill' || plugin.type === 'tool' || plugin.type === 'ext' || (plugin.type === 'agent' && plugin.kind === 'local')"
-                  :aria-label="`导出分享 ${plugin.displayName}`"
-                  title="导出分享"
-                  @click="exportPlugin(plugin)"
-                  variant="outline"
-                  type="button"
-                  :disabled="(loading || pendingPlugins.has(plugin.key) || (plugin.type === 'tool' && !canManageTools) || (plugin.type === 'agent' && !canManageAgents) || (plugin.type === 'ext' && !plugin.canManage)) || (exportingPlugins.has(plugin.key))"
-                  size="sm">
-                  <icon-loader-2 v-if="exportingPlugins.has(plugin.key)" class="animate-spin" aria-hidden="true" />
-                  <component :is="IconShare" aria-hidden="true" />
-                </uiButton>
-                <uiButton
-                  v-if="plugin.type === 'agent' && plugin.kind === 'local'"
-                  @click="selectedAgent = plugin"
-                  variant="outline"
-                  type="button"
-                  :disabled="(!canManageAgents || loading || pendingPlugins.has(plugin.key))"
-                  size="sm">编辑</uiButton>
-                <uiButton
-                  v-if="plugin.type === 'agent' && plugin.cardUrl"
-                  @click="copyCard(plugin.cardUrl)"
-                  variant="outline"
-                  type="button"
-                  size="sm"><component :is="IconCopy" aria-hidden="true" />Card</uiButton>
-                <span
-                  v-if="(plugin.type === 'tool' || plugin.type === 'node' || plugin.type === 'ext') && plugin.configRules?.length"
-                  class="pluginConfigBadge">
-                  <uiButton
-                    :aria-label="`配置 ${plugin.displayName}${hasMissingConfig(plugin) ? '，有必填配置未填写' : ''}`"
-                    @click="
-                    selectedConfigPlugin = plugin;
-                    configVisible = true;
-                  "
-                    variant="outline"
-                    type="button"
-                    :disabled="(!canConfigurePlugin(plugin) || loading || pendingPlugins.has(plugin.key))"
-                    size="sm">配置</uiButton>
-                  <span v-if="hasMissingConfig(plugin)" class="configDot" aria-hidden="true" />
-                </span>
-                <uiPopover
-                  v-model:open="confirmVisible3[String(plugin.key)]"
-                  v-if="plugin.author !== 'Toonflow' || plugin.type === 'skill' || plugin.type === 'agent' || plugin.type === 'ext'">
-                  <uiPopoverTrigger asChild>
-                    <uiButton
-                      :aria-label="`卸载 ${plugin.displayName}`"
-                      variant="outline"
-                      type="button"
-                      :disabled="(!canEditPlugin(plugin) || loading || pendingPlugins.has(plugin.key) || exportingPlugins.has(plugin.key)) || (pendingPlugins.has(plugin.key))"
-                      size="sm"><icon-loader-2 v-if="pendingPlugins.has(plugin.key)" class="animate-spin" aria-hidden="true" />卸载</uiButton>
-                  </uiPopoverTrigger>
-                  <uiPopoverContent class="w-[280px]">
-                    <p>{{ `确定卸载“${plugin.displayName}”${plugin.type === 'skill' ? '及其附属文件' : ''}吗？` }}</p>
-                    <div class="confirmActions">
-                      <uiButton type="button" variant="outline" size="sm" @click="confirmVisible3[String(plugin.key)] = false; ">取消</uiButton>
-                      <uiButton type="button" size="sm" @click="confirmVisible3[String(plugin.key)] = false; updatePlugin(plugin, 'uninstall')">卸载</uiButton>
-                    </div>
-                  </uiPopoverContent>
-                </uiPopover>
-              </div>
+            <div class="pluginTags">
+              <el-tag v-if="plugin.demoVideoUrl" type="info" size="small" effect="plain">效果演示</el-tag>
+              <el-tag v-if="plugin.builtin || installedByKey.get(`${plugin.type}:${plugin.name}`)?.builtin" type="info" size="small" effect="plain">内置</el-tag>
+              <el-tag
+                v-for="(tag, index) in plugin.tags"
+                :key="index"
+                class="pluginLabel"
+                type="info"
+                size="small"
+                effect="plain"
+                :style="getPluginTagStyle(tag.color)">{{ tag.text }}</el-tag>
+              <el-tag :type="pluginTypes[plugin.type].tagType" size="small">{{ pluginTypes[plugin.type].label }}</el-tag>
             </div>
           </div>
-        </uiCard>
+          <p v-if="plugin.description" class="pluginDescription">{{ plugin.description }}</p>
+          <div v-if="isMarketTab && selectedType === 'my'" class="reviewStatus" :class="{ rejected: plugin.state === 2 }">
+            <el-tag :type="plugin.state === 1 ? 'success' : plugin.state === 2 ? 'danger' : 'warning'" size="small" effect="plain">
+              {{ plugin.state === 1 ? '已发布' : plugin.state === 2 ? '审核未通过' : '待审核' }}
+            </el-tag>
+            <p v-if="plugin.state === 2 && plugin.rejectReason" class="reviewReason"><span>审核意见</span>{{ plugin.rejectReason }}</p>
+          </div>
+          <el-text v-if="plugin.loadError" type="danger" size="small">{{ plugin.loadError }}</el-text>
+          <div v-if="plugin.author || plugin.version" class="pluginMeta">
+            <span v-if="plugin.author" class="pluginAuthor">{{ plugin.author }}</span>
+            <span v-if="plugin.version" class="pluginVersion" type="info" size="small" effect="plain">v{{ plugin.version }}</span>
+          </div>
+          <div v-if="isMarketTab" class="pluginFooter" @click.stop>
+            <el-button size="small" :aria-label="`查看 ${plugin.displayName} 的详情`" @click="openPlugin(plugin)">查看详情</el-button>
+            <el-button
+              v-if="selectedType === 'my'"
+              size="small"
+              type="primary"
+              :disabled="plugin.state === 0 || loading || deletingPlugins.has(plugin.key) || collectingPlugins.has(plugin.key) || pendingPlugins.has(plugin.key)"
+              :aria-label="`${plugin.state === 1 ? '更新版本' : plugin.state === 2 ? '修改后重新提交' : '等待审核'} ${plugin.displayName}`"
+              @click="openResubmit(plugin)">{{ plugin.state === 1 ? '更新版本' : plugin.state === 2 ? '修改后重新提交' : '等待审核' }}</el-button>
+            <el-text v-if="installLabel(plugin) === '已安装'" type="info" size="small">已安装</el-text>
+            <el-popconfirm
+              v-else-if="pluginTypes[plugin.type].path && plugin.url && plugin.fileName"
+              :title="`${translate(installLabel(plugin))}${pluginTypes[plugin.type].label}“${plugin.displayName}”（${plugin.fileName}）？`"
+              width="280"
+              :confirmButtonText="translate(installLabel(plugin))"
+              cancelButtonText="取消"
+              @confirm="installMarketPlugin(plugin)">
+              <template #reference>
+                <el-button
+                  size="small"
+                  type="primary"
+                  :loading="pendingPlugins.has(plugin.key)"
+                  :disabled="loading || pendingPlugins.has(plugin.key) || deletingPlugins.has(plugin.key)"
+                  :aria-label="`${translate(installLabel(plugin))} ${plugin.displayName}`">
+                  {{ translate(installLabel(plugin)) }}
+                </el-button>
+              </template>
+            </el-popconfirm>
+            <el-text v-else type="info" size="small">{{ plugin.type === 'agent' && !agentMarketEnabled ? '测试阶段，暂未开放' : '暂不支持安装' }}</el-text>
+            <div v-if="plugin.state === 1 || selectedType === 'my'" class="pluginActions">
+              <component
+                v-if="plugin.state === 1"
+                :is="plugin.isCollected ? IconStarFilled : IconStar"
+                class="collectionIcon"
+                :size="18"
+                role="button"
+                tabindex="0"
+                :aria-disabled="collectingPlugins.has(plugin.key) || deletingPlugins.has(plugin.key)"
+                :aria-pressed="plugin.isCollected === true"
+                :aria-label="`${plugin.isCollected ? '取消收藏' : '添加收藏'} ${plugin.displayName}`"
+                :title="plugin.isCollected ? '取消收藏' : '添加收藏'"
+                @click="toggleCollection(plugin)"
+                @keydown.enter.prevent="toggleCollection(plugin)"
+                @keydown.space.prevent="toggleCollection(plugin)" />
+              <el-popconfirm
+                v-if="selectedType === 'my'"
+                :title="`确定从市场删除“${plugin.displayName}”吗？`"
+                width="280"
+                confirmButtonText="删除"
+                cancelButtonText="取消"
+                confirmButtonType="danger"
+                @confirm="deletePlugin(plugin)">
+                <template #reference>
+                  <el-button
+                    size="small"
+                    type="danger"
+                    plain
+                    :loading="deletingPlugins.has(plugin.key)"
+                    :disabled="deletingPlugins.has(plugin.key) || collectingPlugins.has(plugin.key) || pendingPlugins.has(plugin.key)"
+                    :aria-label="`从市场删除 ${plugin.displayName}`">删除</el-button>
+                </template>
+              </el-popconfirm>
+            </div>
+          </div>
+          <div v-else class="pluginFooter pluginControls" @click.stop>
+            <label class="pluginToggle">
+              <span>{{ plugin.enabled === false ? "已禁用" : "已启用" }}</span>
+              <el-switch
+                :modelValue="plugin.enabled !== false"
+                size="small"
+                :loading="pendingPlugins.has(plugin.key)"
+                :disabled="!canEditPlugin(plugin) || loading || pendingPlugins.has(plugin.key)"
+                :aria-label="`启用 ${plugin.displayName}`"
+                @change="updatePlugin(plugin, 'setEnabled', $event === true)" />
+            </label>
+            <div class="pluginActions">
+              <el-button
+                v-if="uploadablePluginKeys.has(plugin.key)"
+                size="small"
+                :icon="IconCloudUpload"
+                :disabled="loading || pendingPlugins.has(plugin.key) || exportingPlugins.has(plugin.key)"
+                :aria-label="`上传 ${plugin.displayName} 到市场`"
+                title="上传到市场"
+                @click="openUpload(plugin)">上传</el-button>
+              <el-button
+                v-if="plugin.type === 'node' || plugin.type === 'skill' || plugin.type === 'tool' || plugin.type === 'ext' || (plugin.type === 'agent' && plugin.kind === 'local')"
+                size="small"
+                :icon="IconShare"
+                :loading="exportingPlugins.has(plugin.key)"
+                :disabled="loading || pendingPlugins.has(plugin.key) || (plugin.type === 'tool' && !canManageTools) || (plugin.type === 'agent' && !canManageAgents) || (plugin.type === 'ext' && !plugin.canManage)"
+                :aria-label="`导出分享 ${plugin.displayName}`"
+                title="导出分享"
+                @click="exportPlugin(plugin)" />
+              <el-button v-if="plugin.type === 'agent' && plugin.kind === 'local'" size="small" :disabled="!canManageAgents || loading || pendingPlugins.has(plugin.key)" @click="selectedAgent = plugin">编辑</el-button>
+              <el-button v-if="plugin.type === 'agent' && plugin.cardUrl" size="small" :icon="IconCopy" @click="copyCard(plugin.cardUrl)">Card</el-button>
+              <el-badge v-if="(plugin.type === 'tool' || plugin.type === 'node' || plugin.type === 'ext') && plugin.configRules?.length" isDot :hidden="!hasMissingConfig(plugin)">
+                <el-button
+                  size="small"
+                  :disabled="!canConfigurePlugin(plugin) || loading || pendingPlugins.has(plugin.key)"
+                  :aria-label="`配置 ${plugin.displayName}${hasMissingConfig(plugin) ? '，有必填配置未填写' : ''}`"
+                  @click="
+                    selectedConfigPlugin = plugin;
+                    configVisible = true;
+                  ">
+                  配置
+                </el-button>
+              </el-badge>
+              <el-popconfirm
+                v-if="plugin.author !== 'Toonflow' || plugin.type === 'skill' || plugin.type === 'agent' || plugin.type === 'ext'"
+                :title="`确定卸载“${plugin.displayName}”${plugin.type === 'skill' ? '及其附属文件' : ''}吗？`"
+                width="280"
+                confirmButtonText="卸载"
+                cancelButtonText="取消"
+                confirmButtonType="danger"
+                hideIcon
+                @confirm="updatePlugin(plugin, 'uninstall')">
+                <template #reference>
+                  <el-button
+                    size="small"
+                    :loading="pendingPlugins.has(plugin.key)"
+                    :disabled="!canEditPlugin(plugin) || loading || pendingPlugins.has(plugin.key) || exportingPlugins.has(plugin.key)"
+                    :aria-label="`卸载 ${plugin.displayName}`">
+                    卸载
+                  </el-button>
+                </template>
+              </el-popconfirm>
+            </div>
+          </div>
+        </el-card>
       </div>
       <p v-if="activeTab === 'installed' ? loading : marketLoading" class="listStatus" role="status">正在加载插件…</p>
-      <p v-else-if="!visiblePlugins.length && (isMarketTab ? accountToken && !marketError : !visibleLoadErrors.length)" class="listStatus">{{ activeTab === "installed" ? "暂无符合条件的已安装插件" : selectedType === "collection" ? "暂无符合条件的收藏插件" : selectedType === "my" ? "暂无符合条件的已上传插件" : "未找到相关插件" }}</p>
+      <p v-else-if="!visiblePlugins.length && (isMarketTab ? accountToken && !marketError : !visibleLoadErrors.length)" class="listStatus">
+        {{ activeTab === "installed" ? "暂无符合条件的已安装插件" : selectedType === "collection" ? "暂无符合条件的收藏插件" : selectedType === "my" ? "暂无符合条件的已上传插件" : "未找到相关插件" }}
+      </p>
       <el-pagination
         v-if="isMarketTab && accountToken && !marketError"
         v-model:currentPage="marketPage"
@@ -325,11 +294,7 @@
         :pagerCount="5"
         layout="total, prev, pager, next"
         size="small" />
-      <pluginConfigDialog
-        v-if="selectedConfigPlugin"
-        v-model="configVisible"
-        :plugin="selectedConfigPlugin"
-        :canManage="canConfigurePlugin(selectedConfigPlugin)" />
+      <pluginConfigDialog v-if="selectedConfigPlugin" v-model="configVisible" :plugin="selectedConfigPlugin" :canManage="canConfigurePlugin(selectedConfigPlugin)" />
       <uploadPluginDialog
         v-if="uploadVisible"
         :plugin="selectedUploadPlugin"
@@ -337,13 +302,7 @@
         :token="accountToken"
         @uploaded="onPluginUploaded"
         @closed="uploadVisible = false; selectedUploadPlugin = undefined; selectedMarketPlugin = undefined" />
-      <agentEditorDialog
-        v-if="selectedAgent"
-        :key="selectedAgent.key"
-        :agent="selectedAgent"
-        :canManage="canManageAgents"
-        @saved="refreshInstalled"
-        @closed="selectedAgent = undefined" />
+      <agentEditorDialog v-if="selectedAgent" :key="selectedAgent.key" :agent="selectedAgent" :canManage="canManageAgents" @saved="refreshInstalled" @closed="selectedAgent = undefined" />
       <agentConnectDialog v-if="agentConnectVisible" @saved="refreshInstalled" @closed="agentConnectVisible = false" />
       <a2aSettingsDialog v-if="a2aSettingsVisible" @saved="refreshInstalled" @closed="a2aSettingsVisible = false" />
       <skillEditorDialog
@@ -352,75 +311,61 @@
         :skill="selectedSkill"
         @saved="refreshInstalled"
         @closed="selectedSkill = undefined" />
-      <uiDialog v-if="selectedPlugin" :open="detailsVisible" @update:open="open => { if (!open) { detailsVisible = false; } }">
-        <uiDialogContent
-          :aria-describedby="undefined"
-          class="uiDialogPanel"
-          :style="{ width: 'min(800px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
-          @closeAutoFocus="() => { selectedPlugin = undefined; }">
-          <uiDialogHeader class="dialogHeader">
-            <uiDialogTitle>{{ selectedPlugin.displayName }}</uiDialogTitle>
-          </uiDialogHeader>
-          <div class="dialogBody">
-            <div class="pluginContent" tabindex="0" aria-label="插件详情">
-              <div v-if="selectedPlugin.id !== undefined" class="detailMeta">
-                <uiBadge variant="secondary">{{ pluginTypes[selectedPlugin.type].label }}</uiBadge>
-                <span>{{ selectedPlugin.name }}</span>
-                <span v-if="selectedPlugin.version">v{{ selectedPlugin.version }}</span>
-                <span v-if="selectedPlugin.author">{{ selectedPlugin.author }}</span>
-              </div>
-              <div v-if="selectedPlugin.tags?.length" class="detailLabels" aria-label="插件标签">
-                <uiBadge v-for="(tag, index) in selectedPlugin.tags" :key="index" :style="getPluginTagStyle(tag.color)" variant="outline">{{ tag.text }}</uiBadge>
-              </div>
-              <p v-if="selectedPlugin.description && selectedPlugin.id !== undefined" class="detailDescription">{{ selectedPlugin.description }}</p>
-              <img
-                v-if="selectedPlugin.coverUrl"
-                class="detailCover"
-                :src="selectedPlugin.coverUrl"
-                :alt="`${selectedPlugin.displayName} 插件封面`"
-                referrerpolicy="no-referrer" />
-              <section v-if="selectedPlugin.demoVideoUrl" class="detailDemo" aria-label="效果演示">
-                <h3>效果演示</h3>
-                <uiAlert v-if="demoVideoFailed" variant="destructive">
-                  <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">演示视频加载失败，请重试</uiAlertTitle>
-                  <uiButton @click="demoVideoFailed = false" variant="outline" type="button" size="sm">重试</uiButton>
-                </uiAlert>
-                <videoPlayer
-                  v-else
-                  :key="selectedPlugin.demoVideoUrl"
-                  class="demoPlayer"
-                  :src="selectedPlugin.demoVideoUrl"
-                  :label="`${selectedPlugin.displayName} 效果演示`"
-                  :active="detailsVisible && visible"
-                  @error="demoVideoFailed = true" />
-              </section>
-              <messageMarkdown v-if="selectedPlugin.readme" :content="selectedPlugin.readme" />
-            </div>
+      <el-dialog
+        v-if="selectedPlugin"
+        v-model="detailsVisible"
+        :title="selectedPlugin.displayName"
+        width="min(800px, calc(100vw - 32px))"
+        alignCenter
+        appendToBody
+        destroyOnClose
+        @closed="selectedPlugin = undefined">
+        <div class="pluginContent" tabindex="0" aria-label="插件详情">
+          <div v-if="selectedPlugin.id !== undefined" class="detailMeta">
+            <el-tag :type="pluginTypes[selectedPlugin.type].tagType" size="small">{{ pluginTypes[selectedPlugin.type].label }}</el-tag>
+            <span>{{ selectedPlugin.name }}</span>
+            <span v-if="selectedPlugin.version">v{{ selectedPlugin.version }}</span>
+            <span v-if="selectedPlugin.author">{{ selectedPlugin.author }}</span>
           </div>
-        </uiDialogContent>
-      </uiDialog>
+          <div v-if="selectedPlugin.tags?.length" class="detailLabels" aria-label="插件标签">
+            <el-tag
+              v-for="(tag, index) in selectedPlugin.tags"
+              :key="index"
+              type="info"
+              size="small"
+              effect="plain"
+              :style="getPluginTagStyle(tag.color)">{{ tag.text }}</el-tag>
+          </div>
+          <p v-if="selectedPlugin.description && selectedPlugin.id !== undefined" class="detailDescription">{{ selectedPlugin.description }}</p>
+          <img v-if="selectedPlugin.coverUrl" class="detailCover" :src="selectedPlugin.coverUrl" :alt="`${selectedPlugin.displayName} 插件封面`" referrerpolicy="no-referrer" />
+          <section v-if="selectedPlugin.demoVideoUrl" class="detailDemo" aria-label="效果演示">
+            <h3>效果演示</h3>
+            <el-alert v-if="demoVideoFailed" title="演示视频加载失败，请重试" type="error" :closable="false" showIcon>
+              <el-button size="small" @click="demoVideoFailed = false">重试</el-button>
+            </el-alert>
+            <videoPlayer
+              v-else
+              :key="selectedPlugin.demoVideoUrl"
+              class="demoPlayer"
+              :src="selectedPlugin.demoVideoUrl"
+              :label="`${selectedPlugin.displayName} 效果演示`"
+              :active="detailsVisible && visible"
+              @error="demoVideoFailed = true" />
+          </section>
+          <messageMarkdown v-if="selectedPlugin.readme" :content="selectedPlugin.readme" />
+        </div>
+      </el-dialog>
     </template>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
-import { uiSwitch } from "@/components/ui/switch";
-import { uiBadge } from "@/components/ui/badge";
-import { uiCard } from "@/components/ui/card";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiLabel } from "@/components/ui/label";
-import { uiCheckbox } from "@/components/ui/checkbox";
-import { uiInput } from "@/components/ui/input";
-import { uiButton } from "@/components/ui/button";
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import parse from "semver/functions/parse";
 import { computed, defineAsyncComponent, markRaw, onMounted, onBeforeUnmount, ref, watch } from "vue";
 import { IconBox, IconBook, IconTool, IconFileText, IconExternalLink, IconSparkles2, IconUpload, IconCloudUpload, IconShare, IconStar, IconStarFilled, IconLink, IconSettings, IconCopy } from "@tabler/icons-vue";
-import { toast } from "vue-sonner";
-import messageBox from "@/lib/messageBox";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { toonflowAccountToken as accountToken } from "@/stores/settings";
 import http from "@/lib/http";
 import videoPlayer from "@/components/videoPlayer.vue";
@@ -784,9 +729,9 @@ function errorMessage(error: unknown, fallback: string) {
 async function copyCard(url: string) {
   try {
     await writeClipboardText(url);
-    toast.success("Agent Card 地址已复制");
+    ElMessage.success("Agent Card 地址已复制");
   } catch {
-    await messageBox.alert(url, "Agent Card 地址", { confirmButtonText: "关闭" }).catch(() => {});
+    await ElMessageBox.alert(url, "Agent Card 地址", { confirmButtonText: "关闭" }).catch(() => {});
   }
 }
 
@@ -823,9 +768,9 @@ async function toggleCollection(plugin: Plugin) {
     const current = marketPlugins.value.find(item => item.id === plugin.id);
     if (current) current.isCollected = collected;
     if (selectedType.value === "collection" || marketLoading.value) marketRefreshKey.value++;
-    toast.success(collected ? "收藏成功" : "已取消收藏");
+    ElMessage.success(collected ? "收藏成功" : "已取消收藏");
   } catch (error) {
-    if (!controller.signal.aborted && accountToken.value === token) toast.error(errorMessage(error, "修改收藏失败，请重试"));
+    if (!controller.signal.aborted && accountToken.value === token) ElMessage.error(errorMessage(error, "修改收藏失败，请重试"));
   } finally {
     if (marketMutationController === controller) collectingPlugins.value.delete(plugin.key);
   }
@@ -846,9 +791,9 @@ async function deletePlugin(plugin: Plugin) {
     if (controller.signal.aborted || accountToken.value !== token) return;
     marketRefreshKey.value++;
     pluginExistenceRefreshKey.value++;
-    toast.success(message || "插件已从市场删除");
+    ElMessage.success(message || "插件已从市场删除");
   } catch (error) {
-    if (!controller.signal.aborted && accountToken.value === token) toast.error(errorMessage(error, "删除插件失败，请重试"));
+    if (!controller.signal.aborted && accountToken.value === token) ElMessage.error(errorMessage(error, "删除插件失败，请重试"));
   } finally {
     if (marketMutationController === controller) deletingPlugins.value.delete(plugin.key);
   }
@@ -865,9 +810,9 @@ async function installMarketPlugin(plugin: Plugin) {
     if (data.code !== 200) throw new Error(data.message || "安装插件失败");
     window.dispatchEvent(new CustomEvent("toonflow:plugin-installed", { detail: { type: plugin.type, name: data.data.name } }));
     if (plugin.type === "ext") window.dispatchEvent(new CustomEvent("toonflow:ext-updated", { detail: { name: data.data.name } }));
-    toast.success(action === "更新" ? `${plugin.displayName}已更新` : `${plugin.displayName}已安装`);
+    ElMessage.success(action === "更新" ? `${plugin.displayName}已更新` : `${plugin.displayName}已安装`);
   } catch (error) {
-    toast.error(errorMessage(error, "安装插件失败，请重试"));
+    ElMessage.error(errorMessage(error, "安装插件失败，请重试"));
   } finally {
     pendingPlugins.value.delete(plugin.key);
   }
@@ -894,9 +839,9 @@ async function installFile(event: Event) {
     if (!type) throw new Error("不支持这个安装文件。支持的格式：文件扩展 ext-*.umd.js；Agent .agent.zip；节点 .umd.js；工具 .tool.js；技能 .zip、.md、.tar、.tar.gz、.tgz。");
     if (type === "agent" && !agentMarketEnabled) throw new Error("Agent 功能处于测试阶段，暂未开放安装");
     await installPluginFile(type, file);
-    toast.success(`${pluginTypes[type].label}已安装`);
+    ElMessage.success(`${pluginTypes[type].label}已安装`);
   } catch (error) {
-    toast.error(errorMessage(error, "安装插件失败，请重试"));
+    ElMessage.error(errorMessage(error, "安装插件失败，请重试"));
   } finally {
     installing.value = false;
   }
@@ -932,7 +877,7 @@ async function exportPlugin(plugin: Plugin) {
         .catch(() => null);
       if (typeof data?.message === "string") message = data.message;
     }
-    toast.error(message);
+    ElMessage.error(message);
   } finally {
     exportingPlugins.value.delete(plugin.key);
   }
@@ -968,21 +913,17 @@ async function updatePlugin(plugin: Plugin, action: "setEnabled" | "uninstall", 
         detailsVisible.value = false;
         selectedPlugin.value = undefined;
       }
-      toast.success("插件已卸载");
+      ElMessage.success("插件已卸载");
     } else plugin.enabled = enabled;
     if (plugin.type === "node")
       window.dispatchEvent(new CustomEvent("toonflow:plugin-installed", { detail: { type: plugin.type, name: plugin.name } }));
     if (plugin.type === "ext") window.dispatchEvent(new CustomEvent("toonflow:ext-updated", { detail: { name: plugin.name } }));
   } catch (error) {
-    toast.error(errorMessage(error, `${actionLabel}失败，请重试`));
+    ElMessage.error(errorMessage(error, `${actionLabel}失败，请重试`));
   } finally {
     pendingPlugins.value.delete(plugin.key);
   }
 }
-
-const confirmVisible1 = ref<Record<string, boolean>>({});
-const confirmVisible2 = ref<Record<string, boolean>>({});
-const confirmVisible3 = ref<Record<string, boolean>>({});
 </script>
 
 <style lang="scss" scoped>
@@ -997,7 +938,7 @@ const confirmVisible3 = ref<Record<string, boolean>>({});
     padding-bottom: 20px;
     background: var(--el-bg-color);
 
-    [data-slot="button"] { margin-left: 0; }
+    .el-button { margin-left: 0; }
 
     .marketHeader {
       display: flex;
@@ -1071,7 +1012,7 @@ const confirmVisible3 = ref<Record<string, boolean>>({});
         max-width: 400px;
         gap: 8px;
 
-        :is(.el-input, [data-slot="input"], .inputGroup) { flex: 1; min-width: 0; }
+        .el-input { flex: 1; min-width: 0; }
       }
 
       .marketActions {
@@ -1185,7 +1126,7 @@ const confirmVisible3 = ref<Record<string, boolean>>({});
         }
       }
 
-      :deep(.cardBody) {
+      :deep(.el-card__body) {
         display: flex;
         flex-direction: column;
         height: 100%;
@@ -1355,26 +1296,11 @@ const confirmVisible3 = ref<Record<string, boolean>>({});
           font-size: 12px;
           cursor: pointer;
 
-          > :is(.el-switch, [data-slot="switch"]) {
+          > .el-switch {
             flex-shrink: 0;
           }
         }
         .pluginActions {
-          .pluginConfigBadge {
-            position: relative;
-            display: inline-flex;
-
-            .configDot {
-              position: absolute;
-              top: -3px;
-              right: -3px;
-              width: 8px;
-              height: 8px;
-              border: 1px solid var(--background);
-              border-radius: 50%;
-              background: var(--destructive);
-            }
-          }
           display: flex;
           align-items: center;
           flex-wrap: wrap;
@@ -1383,7 +1309,7 @@ const confirmVisible3 = ref<Record<string, boolean>>({});
           max-width: 100%;
           min-width: 0;
           margin-left: auto;
-          [data-slot="button"] {
+          .el-button {
             margin-left: 0;
           }
           .collectionIcon {

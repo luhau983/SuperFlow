@@ -1,5 +1,5 @@
 import { unzip, type UnzipFileInfo } from "fflate";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
 import { getReadableFileMimeType } from "@toonflow/server/documentFormats";
 
@@ -62,16 +62,16 @@ export async function expandZipAttachments(files: File[]): Promise<File[]> {
       continue;
     }
     if (file.size > maxZipSize) {
-      toast.warning(`${translate("ZIP 文件不能超过 500 MB")}：${file.name}`);
+      ElMessage.warning(`${translate("ZIP 文件不能超过 500 MB")}：${file.name}`);
       continue;
     }
     try {
       const entries = await extractZip(file);
-      if (!entries.length) toast.warning(`${translate("压缩包中没有可添加的文件")}：${file.name}`);
+      if (!entries.length) ElMessage.warning(`${translate("压缩包中没有可添加的文件")}：${file.name}`);
       expanded.push(...entries);
     } catch (error) {
       console.error("解压 ZIP 附件失败：", error);
-      toast.error(`${translate("无法解压 ZIP 文件，可能已损坏或已加密")}：${file.name}`);
+      ElMessage.error(`${translate("无法解压 ZIP 文件，可能已损坏或已加密")}：${file.name}`);
     }
   }
   return expanded;

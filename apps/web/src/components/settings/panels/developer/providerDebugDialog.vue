@@ -1,53 +1,32 @@
 <template>
-  <uiDialog v-model:open="visible">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      :class="provider ? 'sm:max-w-[1120px]' : 'sm:max-w-[560px]'"
-      @interactOutside="event => event.preventDefault()"
-      @closeAutoFocus="reset">
-      <uiDialogHeader>
-        <uiDialogTitle>供应商开发工具</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="providerDebug" :class="{ hasProvider: !!provider }">
-        <div class="sourceBar">
-          <div class="sourceInfo">
-            <strong>{{ fileName || '选择本地供应商文件' }}</strong>
-            <span class="sourceHint">每次运行自动读取文件最新内容{{ modifiedAt ? ` · ${modifiedAt}` : '' }}</span>
-          </div>
-          <uiButton v-if="fileName" variant="outline" :disabled="busy" @click="refreshFile"><icon-loader-2 v-if="action === 'refresh'" class="animate-spin" aria-hidden="true" /><icon-refresh v-else aria-hidden="true" />执行并加载配置</uiButton>
-          <uiButton variant="outline" :disabled="busy" @click="selectFile"><icon-loader-2 v-if="action === 'select'" class="animate-spin" aria-hidden="true" /><icon-folder-open v-else aria-hidden="true" />选择文件</uiButton>
+  <el-dialog v-model="visible" title="供应商开发工具" :width="provider ? 'min(1120px, calc(100vw - 32px))' : 'min(560px, calc(100vw - 32px))'" alignCenter appendToBody destroyOnClose :closeOnClickModal="false" @closed="reset">
+    <div class="providerDebug" :class="{ hasProvider: !!provider }">
+      <div class="sourceBar">
+        <div class="sourceInfo">
+          <el-text tag="strong">{{ fileName || '选择本地供应商文件' }}</el-text>
+          <el-text size="small" type="info">每次运行自动读取文件最新内容{{ modifiedAt ? ` · ${modifiedAt}` : '' }}</el-text>
         </div>
-        <providerTestPanel
-          v-if="provider"
-          ref="testPanel"
-          :source="source"
-          :provider="provider"
-          :disabled="!!action"
-          :beforeRun="refreshProvider"
-          @busyChange="testing = $event">
-          <template #actions>
-            <uiButton variant="outline" :disabled="busy || !source" @click="install"><icon-loader-2 v-if="action === 'install'" class="animate-spin" aria-hidden="true" /><icon-download v-else aria-hidden="true" />安装供应商</uiButton>
-          </template>
-        </providerTestPanel>
-        <uiAlert v-if="errorMessage" class="errorAlert" variant="destructive">
-          <icon-circle-x aria-hidden="true" />
-          <uiAlertDescription>{{ errorMessage }}</uiAlertDescription>
-        </uiAlert>
+        <el-button v-if="fileName" :icon="IconRefresh" :loading="action === 'refresh'" :disabled="busy" @click="refreshFile">执行并加载配置</el-button>
+        <el-button :icon="IconFolderOpen" :loading="action === 'select'" :disabled="busy" @click="selectFile">选择文件</el-button>
       </div>
-    </uiDialogContent>
-  </uiDialog>
+      <providerTestPanel v-if="provider" ref="testPanel" :source="source" :provider="provider" :disabled="!!action" :beforeRun="refreshProvider" @busyChange="testing = $event">
+        <template #actions>
+          <el-button :icon="IconDownload" :disabled="busy || !source" :loading="action === 'install'" @click="install">安装供应商</el-button>
+        </template>
+      </providerTestPanel>
+      <el-alert v-if="errorMessage" :title="errorMessage" type="error" :closable="false" showIcon />
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
 import axios from "axios";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
+import { IconFolderOpen, IconRefresh, IconDownload } from "@tabler/icons-vue";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
 import { actualPlatform } from "@/lib/platform";
 import providerTestPanel from "../mediaModel/providerTestPanel.vue";
-import { uiAlert, uiAlertDescription } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 import type { MediaProvider } from "@toonflow/provider-web/types";
 
 type DebugProvider = Pick<MediaProvider, "id" | "label" | "rules" | "models">;
@@ -148,7 +127,7 @@ async function install() {
     await axios.post("/api/providers/media/add", { source: source.value }, { signal: owner.signal });
     owner.signal.throwIfAborted();
     invalidateNodeModels("media");
-    toast.success("供应商已安装，可在媒体模型设置中配置使用");
+    ElMessage.success("供应商已安装，可在媒体模型设置中配置使用");
   } catch (error) { if (!owner.signal.aborted) showError(error); }
   finally { if (controller === owner) { controller = undefined; action.value = ""; } }
 }
@@ -171,9 +150,8 @@ onBeforeUnmount(reset);
   display: flex;
   flex-direction: column;
   gap: 16px;
-  min-width: 0;
   &.hasProvider { height: min(660px, calc(100dvh - 180px)); }
-  > .errorAlert { flex-shrink: 0; max-height: 120px; overflow: auto; }
+  > .el-alert { flex-shrink: 0; max-height: 120px; overflow: auto; }
   .sourceBar {
     display: flex;
     align-items: center;
@@ -186,9 +164,9 @@ onBeforeUnmount(reset);
       flex-direction: column;
       gap: 4px;
       overflow-wrap: anywhere;
-      font-size: 14px;
-      .sourceHint { color: var(--muted-foreground); font-size: 12px; }
+      .el-text { align-self: flex-start; }
     }
+    .el-button { margin: 0; }
   }
   @media (max-width: 760px) { .sourceBar { flex-wrap: wrap; } }
 }

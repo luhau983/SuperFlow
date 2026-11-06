@@ -1,56 +1,26 @@
 <template>
   <section class="modelCatalog" aria-label="模型列表" :aria-busy="loading">
     <div class="catalogToolbar">
-      <uiTabs
-        v-if="scope !== 'text'"
-        class="typeSwitch"
-        :modelValue="selectedType"
-        @update:modelValue="value => { selectedType = value as typeof selectedType; }">
-        <uiTabsList :aria-label="'模型分类'">
-          <uiTabsTrigger
-            v-for="option in typeOptions"
-            :key="typeof option === 'object' ? option.value : option"
-            :value="typeof option === 'object' ? option.value : option"
-            :disabled="(typeof option === 'object' && 'disabled' in option && !!option.disabled) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)">{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
-        </uiTabsList>
-      </uiTabs>
-      <div class="inputGroup">
-        <component :is="IconSearch" aria-hidden="true" />
-        <uiInput v-model="search" class="modelSearch" placeholder="搜索模型名称" aria-label="搜索模型名称"></uiInput>
-        <uiButton
-          @mousedown.prevent
-          v-if="search"
-          type="button"
-          variant="ghost"
-          size="icon-sm"
-          aria-label="清除"
-          @click="search = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
-          <icon-x />
-        </uiButton>
-      </div>
+      <el-segmented v-if="scope !== 'text'" v-model="selectedType" class="typeSwitch" :options="typeOptions" aria-label="模型分类" />
+      <el-input v-model="search" class="modelSearch" :prefixIcon="IconSearch" placeholder="搜索模型名称" aria-label="搜索模型名称" clearable />
     </div>
-    <uiAlert v-if="errorMessage" variant="destructive">
-      <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ errorMessage }}</uiAlertTitle>
-      <uiButton @click="refresh" variant="outline" type="button" size="sm">重试</uiButton>
-    </uiAlert>
-    <div :aria-busy="loading" class="catalogGrid portLoading">
+    <el-alert v-if="errorMessage" :title="errorMessage" type="error" :closable="false" showIcon>
+      <el-button size="small" @click="refresh">重试</el-button>
+    </el-alert>
+    <div v-loading="loading" class="catalogGrid">
       <article v-for="model in filteredModels" :key="model.id" class="modelCard" :aria-label="model.name">
-        <div class="modelGlow" aria-hidden="true">
-          <modelIcon :model="model.name" :size="112" />
-        </div>
+        <div class="modelGlow" aria-hidden="true"><modelIcon :model="model.name" :size="112" /></div>
         <header class="modelHeader">
-          <div class="modelIconBox" aria-hidden="true">
-            <modelIcon :model="model.name" :size="24" />
-          </div>
+          <div class="modelIconBox" aria-hidden="true"><modelIcon :model="model.name" :size="24" /></div>
           <div class="modelHeading">
             <h3>{{ model.name }}</h3>
             <span class="modelType">{{ typeLabels[model.type] }}</span>
           </div>
-          <uiBadge v-if="!model.available" class="statusTag" variant="outline">已下架</uiBadge>
+          <el-tag v-if="!model.available" class="statusTag" type="info" size="small" effect="plain">已下架</el-tag>
         </header>
         <div v-if="model.abilities.length || model.qualities.length" class="modelTags">
-          <uiBadge v-for="ability in model.abilities" :key="`ability:${ability}`" variant="secondary">{{ ability }}</uiBadge>
-          <uiBadge v-for="quality in model.qualities" :key="`quality:${quality}`" variant="outline">{{ quality }}</uiBadge>
+          <el-tag v-for="ability in model.abilities" :key="`ability:${ability}`" size="small" effect="light">{{ ability }}</el-tag>
+          <el-tag v-for="quality in model.qualities" :key="`quality:${quality}`" type="info" size="small" effect="plain">{{ quality }}</el-tag>
         </div>
         <footer class="modelFooter">
           <div v-if="model.available" class="billingSummary">
@@ -61,104 +31,64 @@
             </div>
             <span v-else-if="model.billing.type === 1" class="fixedPrice">{{ formatPrice(model.billing.fixedPrice, model) }}</span>
           </div>
-          <uiButton class="detailsButton" :aria-label="`查看 ${model.name} 的详情`" @click="openDetails(model)" variant="link" type="button">查看详情<icon-chevron-right :size="14" aria-hidden="true" /></uiButton>
+          <el-button class="detailsButton" link type="primary" :aria-label="`查看 ${model.name} 的详情`" @click="openDetails(model)">
+            查看详情<icon-chevron-right :size="14" aria-hidden="true" />
+          </el-button>
         </footer>
       </article>
-      <div v-if="loading" class="portLoadingMask" aria-hidden="true">
-        <icon-loader-2 class="animate-spin" />
-      </div>
     </div>
-    <uiDialog :open="detailsVisible" @update:open="open => { if (!open) { detailsVisible = false; } }">
-      <uiDialogContent
-        :aria-describedby="undefined"
-        class="modelDetailsDialog uiDialogPanel"
-        :style="{ width: 'min(760px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
-        <uiDialogHeader class="dialogHeader">
-          <uiDialogTitle>{{ selectedModel?.name }}</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="dialogBody">
-          <div v-if="selectedModel" class="modelDetails">
-            <div class="detailTags">
-              <uiBadge variant="secondary">{{ typeLabels[selectedModel.type] }}</uiBadge>
-              <uiBadge v-if="!selectedModel.available" variant="secondary">已下架</uiBadge>
-              <uiBadge v-for="ability in selectedModel.abilities" :key="`ability:${ability}`" variant="outline">{{ ability }}</uiBadge>
-              <uiBadge v-for="quality in selectedModel.qualities" :key="`quality:${quality}`" variant="outline">{{ quality }}</uiBadge>
-            </div>
-            <p v-if="selectedModel.description" class="modelDescription">{{ selectedModel.description }}</p>
-            <template v-if="selectedModel.available">
-              <h3>{{ billingLabels[selectedModel.billing.type] }}</h3>
-              <p v-if="selectedModel.currency !== 'cny'" class="currencyNote">外币标价，实际扣费按当天汇率计算（人民币结算）。</p>
-              <dl v-if="selectedModel.billing.type === 0 || selectedModel.billing.type === 1" class="priceList">
-                <template v-if="selectedModel.billing.type === 0">
-                  <div>
-                    <dt>输入价格</dt>
-                    <dd>{{ formatPrice(selectedModel.billing.inputPrice, selectedModel) }}</dd>
-                  </div>
-                  <div>
-                    <dt>输出价格</dt>
-                    <dd>{{ formatPrice(selectedModel.billing.outputPrice, selectedModel) }}</dd>
-                  </div>
-                </template>
-                <div v-else>
-                  <dt>固定价格</dt>
-                  <dd>{{ formatPrice(selectedModel.billing.fixedPrice, selectedModel) }}</dd>
-                </div>
-              </dl>
-              <div v-else-if="selectedModel.billing.type === 4" class="ruleDescription" v-html="ruleDescription"></div>
-              <template v-else>
-                <p v-if="selectedModel.billing.type === 5" class="timeNote">以下时段均为北京时间，其他时间按空闲时段计费。</p>
-                <section v-for="(group, index) in priceGroups" :key="index" class="priceGroup">
-                  <h4 v-if="group.title">{{ group.title }}</h4>
-                  <p v-if="group.schedule" class="periodSchedule">{{ group.schedule }}</p>
-                  <div class="tableViewport" :style="{ maxHeight: undefined, height: undefined }">
-                    <uiTable>
-                      <uiTableHeader>
-                        <uiTableRow>
-                          <uiTableHead :style="{ minWidth: '155px', textAlign: 'left' }">输入 Token</uiTableHead>
-                          <uiTableHead :style="{ minWidth: '155px', textAlign: 'left' }">输出 Token</uiTableHead>
-                          <uiTableHead :style="{ minWidth: '115px', textAlign: 'left' }">输入价格</uiTableHead>
-                          <uiTableHead :style="{ minWidth: '115px', textAlign: 'left' }">输出价格</uiTableHead>
-                        </uiTableRow>
-                      </uiTableHeader>
-                      <uiTableBody>
-                        <uiTableRow v-for="(row, $index) in group.steps" :key="$index">
-                          <uiTableCell :style="{ textAlign: 'left' }">{{ formatRange(row.inputMinTokens, row.inputMaxTokens) }}</uiTableCell>
-                          <uiTableCell :style="{ textAlign: 'left' }">{{ formatRange(row.outputMinTokens, row.outputMaxTokens) }}</uiTableCell>
-                          <uiTableCell :style="{ textAlign: 'left' }">{{ formatPrice(row.inputPrice, selectedModel) }}</uiTableCell>
-                          <uiTableCell :style="{ textAlign: 'left' }">{{ formatPrice(row.outputPrice, selectedModel) }}</uiTableCell>
-                        </uiTableRow>
-                        <uiTableEmpty v-if="!(group.steps)?.length" :colspan="4"></uiTableEmpty>
-                      </uiTableBody>
-                    </uiTable>
-                  </div>
-                  <dl v-if="group.cacheRead !== undefined || group.cacheWrite !== undefined" class="priceList">
-                    <div v-if="group.cacheRead !== undefined">
-                      <dt>缓存读取</dt>
-                      <dd>{{ formatPrice(group.cacheRead, selectedModel) }}</dd>
-                    </div>
-                    <div v-if="group.cacheWrite !== undefined">
-                      <dt>缓存写入</dt>
-                      <dd>{{ formatPrice(group.cacheWrite, selectedModel) }}</dd>
-                    </div>
-                  </dl>
-                </section>
-              </template>
-            </template>
-          </div>
+    <el-dialog v-model="detailsVisible" class="modelDetailsDialog" :title="selectedModel?.name" width="min(760px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
+      <div v-if="selectedModel" class="modelDetails">
+        <div class="detailTags">
+          <el-tag size="small">{{ typeLabels[selectedModel.type] }}</el-tag>
+          <el-tag v-if="!selectedModel.available" type="info" size="small">已下架</el-tag>
+          <el-tag v-for="ability in selectedModel.abilities" :key="`ability:${ability}`" size="small" effect="plain">{{ ability }}</el-tag>
+          <el-tag v-for="quality in selectedModel.qualities" :key="`quality:${quality}`" type="info" size="small" effect="plain">{{ quality }}</el-tag>
         </div>
-      </uiDialogContent>
-    </uiDialog>
+        <p v-if="selectedModel.description" class="modelDescription">{{ selectedModel.description }}</p>
+        <template v-if="selectedModel.available">
+          <h3>{{ billingLabels[selectedModel.billing.type] }}</h3>
+          <p v-if="selectedModel.currency !== 'cny'" class="currencyNote">外币标价，实际扣费按当天汇率计算（人民币结算）。</p>
+          <dl v-if="selectedModel.billing.type === 0 || selectedModel.billing.type === 1" class="priceList">
+            <template v-if="selectedModel.billing.type === 0">
+              <div><dt>输入价格</dt><dd>{{ formatPrice(selectedModel.billing.inputPrice, selectedModel) }}</dd></div>
+              <div><dt>输出价格</dt><dd>{{ formatPrice(selectedModel.billing.outputPrice, selectedModel) }}</dd></div>
+            </template>
+            <div v-else><dt>固定价格</dt><dd>{{ formatPrice(selectedModel.billing.fixedPrice, selectedModel) }}</dd></div>
+          </dl>
+          <div v-else-if="selectedModel.billing.type === 4" class="ruleDescription" v-html="ruleDescription"></div>
+          <template v-else>
+            <p v-if="selectedModel.billing.type === 5" class="timeNote">以下时段均为北京时间，其他时间按空闲时段计费。</p>
+            <section v-for="(group, index) in priceGroups" :key="index" class="priceGroup">
+              <h4 v-if="group.title">{{ group.title }}</h4>
+              <p v-if="group.schedule" class="periodSchedule">{{ group.schedule }}</p>
+              <el-table :data="group.steps" size="small" emptyText="">
+                <el-table-column label="输入 Token" minWidth="155">
+                  <template #default="{ row }">{{ formatRange(row.inputMinTokens, row.inputMaxTokens) }}</template>
+                </el-table-column>
+                <el-table-column label="输出 Token" minWidth="155">
+                  <template #default="{ row }">{{ formatRange(row.outputMinTokens, row.outputMaxTokens) }}</template>
+                </el-table-column>
+                <el-table-column label="输入价格" minWidth="115">
+                  <template #default="{ row }">{{ formatPrice(row.inputPrice, selectedModel) }}</template>
+                </el-table-column>
+                <el-table-column label="输出价格" minWidth="115">
+                  <template #default="{ row }">{{ formatPrice(row.outputPrice, selectedModel) }}</template>
+                </el-table-column>
+              </el-table>
+              <dl v-if="group.cacheRead !== undefined || group.cacheWrite !== undefined" class="priceList">
+                <div v-if="group.cacheRead !== undefined"><dt>缓存读取</dt><dd>{{ formatPrice(group.cacheRead, selectedModel) }}</dd></div>
+                <div v-if="group.cacheWrite !== undefined"><dt>缓存写入</dt><dd>{{ formatPrice(group.cacheWrite, selectedModel) }}</dd></div>
+              </dl>
+            </section>
+          </template>
+        </template>
+      </div>
+    </el-dialog>
   </section>
 </template>
 
 <script setup lang="ts">
-import { uiTable, uiTableHeader, uiTableHead, uiTableBody, uiTableRow, uiTableCell, uiTableEmpty } from "@/components/ui/table";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
-import { uiBadge } from "@/components/ui/badge";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
-import { uiInput } from "@/components/ui/input";
-import { uiTabs, uiTabsList, uiTabsTrigger } from "@/components/ui/tabs";
 import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { translate } from "@toonflow/i18n/vue";
 import { IconChevronRight, IconSearch } from "@tabler/icons-vue";
@@ -441,9 +371,9 @@ defineExpose({ refresh });
   flex-direction: column;
   max-height: calc(100dvh - 48px);
 
-  .dialogHeader { flex-shrink: 0; }
+  .el-dialog__header { flex-shrink: 0; }
 
-  .dialogBody {
+  .el-dialog__body {
     min-height: 0;
     overflow-y: auto;
     overscroll-behavior: contain;

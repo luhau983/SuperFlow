@@ -29,16 +29,15 @@
         @keydown="resizeWithKeyboard($event, handle.edge)" />
       <agent v-model="visible">
         <template #menuActions>
-          <uiButton
-            class="rounded-full"
-            variant="ghost"
-            size="icon-sm"
+          <el-button
+            text
+            circle
             :aria-label="docked ? '切换为悬浮' : '停靠到右侧'"
             :title="docked ? '切换为悬浮' : '停靠到右侧'"
             @click="docked = !docked">
             <icon-app-window-bottom-right v-if="docked" :size="17" aria-hidden="true" />
             <icon-layout-sidebar-right v-else :size="17" aria-hidden="true" />
-          </uiButton>
+          </el-button>
         </template>
       </agent>
     </aside>
@@ -49,7 +48,6 @@
 import { computed, onBeforeUnmount, reactive, ref, shallowRef, watch } from "vue";
 import { IconLayoutSidebarRight, IconAppWindowBottomRight } from "@tabler/icons-vue";
 import agent from "@/components/agent/index.vue";
-import { uiButton } from "@/components/ui/button";
 
 const visible = defineModel<boolean>({ default: false });
 const emit = defineEmits<{ resize: [width: number] }>();
@@ -201,16 +199,16 @@ onBeforeUnmount(() => {
   box-sizing: border-box;
   max-width: 100vw;
   max-height: 100dvh;
-  border: 1px solid var(--border);
+  border: 1px solid var(--el-border-color-light);
   border-radius: var(--ui-radius-large, 12px);
-  background: color-mix(in oklch, var(--popover) 70%, transparent);
+  background: color-mix(in srgb, var(--el-bg-color-overlay) 70%, transparent);
   backdrop-filter: blur(6px);
-  box-shadow: 0 2px 12px rgb(0 0 0 / 8%);
+  box-shadow: var(--el-box-shadow-light);
 
   &.docked {
     border-width: 0 0 0 1px;
     border-radius: 0;
-    background: var(--popover);
+    background: var(--el-bg-color-overlay);
     box-shadow: none;
   }
 
@@ -258,7 +256,7 @@ onBeforeUnmount(() => {
 
     &:hover,
     &:focus-visible {
-      background: color-mix(in oklch, var(--primary) 50%, transparent);
+      background: var(--el-color-primary-light-5);
     }
   }
 }

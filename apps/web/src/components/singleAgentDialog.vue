@@ -1,121 +1,56 @@
 <template>
-  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      class="singleAgentDialog uiDialogPanel"
-      :style="{ width: slots.aside ? 'min(1240px, calc(100vw - 32px))' : 'min(800px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
-      @interactOutside="event => { if (!(false)) event.preventDefault(); }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>{{ title ?? 'Agent 对话' }}</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <div class="singleAgentBody" :class="{ withAside: !!slots.aside }">
-          <div class="conversationColumn">
-            <div ref="messageList" class="messageList" role="region" aria-label="对话消息" tabindex="0" @scroll="updateFollowing">
-              <article
-                v-for="message in msgList"
-                :key="message.id"
-                class="messageItem"
-                :class="{ userMessage: message.role === 'user' }"
-                :aria-label="message.role === 'user' ? '我的消息' : '助手回复'">
-                <div v-if="message.role === 'user'" class="userContent">{{ message.content }}</div>
-                <messageMarkdown
-                  v-else-if="!message.parts?.length && message.content"
-                  :content="message.content"
-                  :streaming="!!message.streaming"
-                  :directory="sessionDirectory" />
-                <template v-for="part in message.parts" :key="part.id">
-                  <details v-if="part.type === 'thinking' && part.content" class="thinkingContent">
-                    <summary><icon-chevron-right class="thinkingChevron" :size="14" aria-hidden="true" />思考<span v-if="part.duration !== undefined">·{{ part.duration.toFixed(1) }}秒</span></summary>
-                    <messageMarkdown :content="part.content" :streaming="!!message.streaming" :directory="sessionDirectory" />
-                  </details>
-                  <slot
-                    v-else-if="part.type === 'tool'"
-                    name="tool"
-                    :tool="part.tool"
-                    :sessionId="sessionId"
-                    :status="status"
-                    :pause="pause"
-                    :resume="resume">
-                    <toolMessage
-                      v-model:collapsed="part.collapsed"
-                      :tool="part.tool"
-                      :directory="sessionDirectory"
-                      :toolSessionId="sessionId || undefined"
-                      @copy="copyMessage" />
-                  </slot>
-                  <messageMarkdown
-                    v-else-if="part.type === 'text' && part.content"
-                    :content="part.content"
-                    :streaming="!!message.streaming"
-                    :directory="sessionDirectory" />
-                </template>
-                <span v-if="message.streaming && !message.parts?.length && !message.content" class="replyPending" role="status">正在处理…</span>
-                <div v-if="message.error" class="messageError" role="alert">{{ message.error }}</div>
-              </article>
-            </div>
-            <div class="composerArea">
-              <div v-if="formError" class="formError" role="alert">{{ formError }}</div>
-              <div class="messageComposer">
-                <uiTextarea
-                  v-model="draft"
-                  :placeholder="placeholder"
-                  :disabled="busy"
-                  aria-label="对话消息输入"
-                  @keydown="handleInputKeydown"
-                  :rows="3"
-                  style="field-sizing:fixed; resize:none"></uiTextarea>
-                <div class="composerActions">
-                  <modelPopover v-model="selectedModel" v-model:reasoningEffort="reasoningEffort" :active="visible" :disabled="busy" />
-                  <span
-                    v-if="status !== 'idle'"
-                    class="executionStatus"
-                    :class="{ pausedStatus: status === 'paused' }"
-                    role="status"
-                    aria-live="polite">{{ statusLabels[status] }}</span>
-                  <div class="executionActions">
-                    <uiButton v-if="status === 'running'" @click="pause" variant="ghost" type="button"><component :is="IconPlayerPause" aria-hidden="true" />暂停</uiButton>
-                    <uiButton v-if="status === 'pausing' || status === 'paused'" @click="resume" variant="ghost" type="button"><component :is="IconPlayerPlay" aria-hidden="true" />继续</uiButton>
-                    <uiButton
-                      v-if="busy"
-                      class="sendButton"
-                      aria-label="停止生成"
-                      title="停止生成"
-                      @click="stop"
-                      variant="default"
-                      type="button"
-                      size="icon"
-                      style="border-radius: 9999px">
-                      <icon-player-stop-filled :size="14" />
-                    </uiButton>
-                    <uiButton
-                      v-else
-                      class="sendButton"
-                      aria-label="发送消息"
-                      title="发送消息"
-                      @click="send()"
-                      variant="default"
-                      type="button"
-                      :disabled="(!draft.trim() || !selectedModel)"
-                      size="icon"
-                      style="border-radius: 9999px">
-                      <icon-arrow-up :size="16" />
-                    </uiButton>
-                  </div>
-                </div>
+  <el-dialog
+    v-model="visible"
+    class="singleAgentDialog"
+    :title="title ?? 'Agent 对话'"
+    :width="slots.aside ? 'min(1240px, calc(100vw - 32px))' : 'min(800px, calc(100vw - 32px))'"
+    alignCenter
+    appendToBody
+    destroyOnClose
+    :closeOnClickModal="false">
+    <div class="singleAgentBody" :class="{ withAside: !!slots.aside }">
+      <div class="conversationColumn">
+        <div ref="messageList" class="messageList" role="region" aria-label="对话消息" tabindex="0" @scroll="updateFollowing">
+          <article v-for="message in msgList" :key="message.id" class="messageItem" :class="{ userMessage: message.role === 'user' }" :aria-label="message.role === 'user' ? '我的消息' : '助手回复'">
+            <div v-if="message.role === 'user'" class="userContent">{{ message.content }}</div>
+            <messageMarkdown v-else-if="!message.parts?.length && message.content" :content="message.content" :streaming="!!message.streaming" :directory="sessionDirectory" />
+            <template v-for="part in message.parts" :key="part.id">
+              <details v-if="part.type === 'thinking' && part.content" class="thinkingContent">
+                <summary><icon-chevron-right class="thinkingChevron" :size="14" aria-hidden="true" />思考<span v-if="part.duration !== undefined"> · {{ part.duration.toFixed(1) }} 秒</span></summary>
+                <messageMarkdown :content="part.content" :streaming="!!message.streaming" :directory="sessionDirectory" />
+              </details>
+              <slot v-else-if="part.type === 'tool'" name="tool" :tool="part.tool" :sessionId="sessionId" :status="status" :pause="pause" :resume="resume">
+                <toolMessage v-model:collapsed="part.collapsed" :tool="part.tool" :directory="sessionDirectory" :toolSessionId="sessionId || undefined" @copy="copyMessage" />
+              </slot>
+              <messageMarkdown v-else-if="part.type === 'text' && part.content" :content="part.content" :streaming="!!message.streaming" :directory="sessionDirectory" />
+            </template>
+            <span v-if="message.streaming && !message.parts?.length && !message.content" class="replyPending" role="status">正在处理…</span>
+            <div v-if="message.error" class="messageError" role="alert">{{ message.error }}</div>
+          </article>
+        </div>
+        <div class="composerArea">
+          <div v-if="formError" class="formError" role="alert">{{ formError }}</div>
+          <div class="messageComposer">
+            <el-input v-model="draft" type="textarea" :rows="3" resize="none" :placeholder="placeholder" :disabled="busy" aria-label="对话消息输入" @keydown="handleInputKeydown" />
+            <div class="composerActions">
+              <modelPopover v-model="selectedModel" v-model:reasoningEffort="reasoningEffort" :active="visible" :disabled="busy" />
+              <span v-if="status !== 'idle'" class="executionStatus" :class="{ pausedStatus: status === 'paused' }" role="status" aria-live="polite">{{ statusLabels[status] }}</span>
+              <div class="executionActions">
+                <el-button v-if="status === 'running'" text :icon="IconPlayerPause" @click="pause">暂停</el-button>
+                <el-button v-if="status === 'pausing' || status === 'paused'" text :icon="IconPlayerPlay" @click="resume">继续</el-button>
+                <el-button v-if="busy" class="sendButton" type="primary" circle aria-label="停止生成" title="停止生成" @click="stop"><icon-player-stop-filled :size="14" /></el-button>
+                <el-button v-else class="sendButton" type="primary" circle :disabled="!draft.trim() || !selectedModel" aria-label="发送消息" title="发送消息" @click="send()"><icon-arrow-up :size="16" /></el-button>
               </div>
             </div>
           </div>
-          <aside v-if="slots.aside" class="auxiliaryArea">
-            <slot name="aside" v-bind="slotContext" />
-          </aside>
         </div>
-        <uiDialogFooter class="dialogFooter">
-          <slot name="footer" v-bind="slotContext" />
-        </uiDialogFooter>
       </div>
-    </uiDialogContent>
-  </uiDialog>
+      <aside v-if="slots.aside" class="auxiliaryArea">
+        <slot name="aside" v-bind="slotContext" />
+      </aside>
+    </div>
+    <template v-if="slots.footer" #footer><slot name="footer" v-bind="slotContext" /></template>
+  </el-dialog>
 </template>
 
 <script lang="ts">
@@ -129,13 +64,10 @@ export type SingleAgentDialogResult = SingleAgentResult & { messages: AgentMessa
 </script>
 
 <script setup lang="ts">
-import { uiButton } from "@/components/ui/button";
-import { uiTextarea } from "@/components/ui/textarea";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
 import axios from "axios";
 import { translate } from "@toonflow/i18n/vue";
 import { computed, nextTick, onBeforeUnmount, reactive, ref, useSlots, watch } from "vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { IconArrowUp, IconChevronRight, IconPlayerPause, IconPlayerPlay, IconPlayerStopFilled } from "@tabler/icons-vue";
 import type { SingleAgentEvent } from "@toonflow/server/singleAgent/types";
 import type { ThinkingLevel } from "@toonflow/server/modelReasoning";
@@ -365,7 +297,7 @@ function stop() {
 
 async function copyMessage(content: string) {
   try { await writeClipboardText(content); }
-  catch { toast.error("复制失败"); }
+  catch { ElMessage.error("复制失败"); }
 }
 
 function updateFollowing() {
@@ -411,14 +343,14 @@ defineExpose({ send, pause, resume, stop, sessionId, msgList, tools, status });
 </script>
 
 <style lang="scss">
-.singleAgentDialog.uiDialogPanel {
+.singleAgentDialog.el-dialog {
   display: flex;
   height: min(780px, calc(100dvh - 48px));
   flex-direction: column;
   overflow: hidden;
 
-  .dialogHeader, .dialogFooter { flex-shrink: 0; }
-  .dialogBody { display: flex; flex: 1; min-height: 0; }
+  .el-dialog__header, .el-dialog__footer { flex-shrink: 0; }
+  .el-dialog__body { display: flex; flex: 1; min-height: 0; }
 
   .singleAgentBody {
     display: grid;
@@ -493,7 +425,7 @@ defineExpose({ send, pause, resume, stop, sessionId, msgList, tools, status });
           transition: border-color .2s;
           &:focus-within { border-color: var(--el-color-primary-light-5); }
 
-          textarea[data-slot="textarea"] {
+          .el-textarea__inner {
             min-height: 80px;
             padding: 12px 12px 4px;
             background: transparent;
@@ -516,7 +448,7 @@ defineExpose({ send, pause, resume, stop, sessionId, msgList, tools, status });
               align-items: center;
               gap: 4px;
               margin-left: auto;
-              [data-slot="button"] { margin: 0; padding-inline: 10px; }
+              .el-button { margin: 0; padding-inline: 10px; }
               .sendButton { width: 34px; height: 34px; padding: 0; border: none; }
             }
           }

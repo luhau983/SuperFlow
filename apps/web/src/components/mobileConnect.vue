@@ -1,167 +1,94 @@
 <template>
-  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }" :unmountOnHide="false">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      v-if="dialogRendered1"
-      modalClass="deviceConnectOverlay"
-      :alignCenter="viewportHeight > 600"
-      :top="viewportHeight <= 600 ? '16px' : undefined"
-      class="uiDialogPanel"
-      :style="{ width: 'min(560px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
-      :showCloseButton="!submitting"
-      @interactOutside="event => { if (!(!submitting)) event.preventDefault(); }"
-      @escapeKeyDown="event => { if (!(!submitting)) event.preventDefault(); }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>设备互联</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <div
-          :aria-busy="loading"
-          class="mobileConnect portLoading"
-          :class="{ compact: viewportHeight < 320 }"
-          :style="{ maxHeight: `${Math.max(80, viewportHeight - (viewportHeight < 320 ? 104 : 128))}px`, height: choosingConnection ? '428px' : undefined }">
-          <uiTabs
-            v-if="choosingConnection"
-            class="inputModes"
-            :modelValue="view"
-            @update:modelValue="value => { (value => value === 'manual' ? showManual() : scanAgain())(value); }">
-            <uiTabsList :aria-label="'连接方式'">
-              <uiTabsTrigger
-                v-for="option in connectionModes"
-                :key="typeof option === 'object' ? option.value : option"
-                :value="typeof option === 'object' ? option.value : option"
-                :disabled="(loading || submitting) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)">{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
-            </uiTabsList>
-          </uiTabs>
-          <div class="connectionBody">
-            <section v-if="deviceHubEnabled" class="connectionInfo" aria-label="本机共享状态">
-              <icon-device-desktop :size="40" aria-hidden="true" />
-              <uiBadge variant="secondary">共享中</uiBadge>
-              <h3>本机已开启共享</h3>
-              <p class="description">其他设备可使用本机的项目与配置。<br />如需连接其他设备，请先在“设置 → 设备互联”中关闭共享。</p>
-            </section>
-            <section v-else-if="!deviceConnectionSupported" class="connectionInfo" aria-label="设备互联说明">
-              <icon-device-desktop :size="40" aria-hidden="true" />
-              <p class="description">请使用 SuperFlow 桌面端或 Android 客户端连接其他设备。<br />本机共享可在“设置 → 设备互联”中管理。</p>
-            </section>
-            <section v-else-if="view === 'current'" class="connectionInfo" aria-label="当前连接">
-              <icon-device-desktop :size="40" aria-hidden="true" />
-              <uiBadge variant="secondary">{{ mobileConnectionLabel }}</uiBadge>
-              <h3>{{ mobileConnection.name || 'SuperFlow' }}</h3>
-              <code>{{ mobileConnection.url }}</code>
-              <p class="description">{{ mobileConnection.online === true ? '正在使用这个设备的项目与配置。' : mobileConnection.online === false ? '暂时无法连接这个设备，请检查对方是否运行以及网络连接。' : '正在确认这个设备是否可以连接…' }}</p>
-              <uiAlert v-if="mobileConnectionVersionWarning">
-                <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ mobileConnectionVersionWarning }}</uiAlertTitle>
-              </uiAlert>
-              <div class="connectionActions">
-                <uiButton @click="scanAgain" variant="default" type="button" :disabled="(submitting)">连接其他设备</uiButton>
-                <uiButton @click="disconnect" variant="outline" type="button" :disabled="(submitting)"><icon-loader-2 v-if="submitting" class="animate-spin" aria-hidden="true" />断开并独立运行</uiButton>
-              </div>
-            </section>
-            <section v-else-if="view === 'confirm' && candidate" class="connectionInfo" aria-label="连接目标">
-              <icon-device-desktop :size="40" aria-hidden="true" />
-              <uiBadge variant="secondary">已识别设备</uiBadge>
-              <h3>{{ candidate.name }}</h3>
-              <code>{{ candidate.url }}</code>
-              <p class="description">连接后将使用对方的项目与配置。请确认这是你要连接的设备。</p>
-              <uiAlert v-if="candidateVersionWarning">
-                <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ candidateVersionWarning }}</uiAlertTitle>
-              </uiAlert>
-              <div class="connectionActions">
-                <uiButton @click="connect" variant="default" type="button" :disabled="(submitting)"><icon-loader-2 v-if="submitting" class="animate-spin" aria-hidden="true" />连接这个设备</uiButton>
-                <uiButton @click="scanAgain" variant="outline" type="button" :disabled="(submitting)">重新扫描</uiButton>
-              </div>
-            </section>
-            <section v-else-if="view === 'manual'" class="manualPanel" aria-label="手动连接">
-              <p class="description">在对方“设备互联”中展开“手动连接信息”，查看地址和配对码。</p>
-              <form size="large" @submit.prevent="connectManually" class="uiForm">
-                <fieldset class="formFields" :disabled="submitting">
-                  <div class="formField">
-                    <uiLabel :for="portFieldId + '-1'">服务器地址</uiLabel>
-                    <uiInput
-                      :id="portFieldId + '-1'"
-                      v-model="manualUrl"
-                      placeholder="192.168.1.10:43123 或 https://example.com"
-                      inputmode="url"
-                      autocomplete="off"
-                      autocapitalize="none"
-                      :spellcheck="false"
-                      aria-label="服务器地址"
-                      :disabled="(submitting) || (false)"></uiInput>
-                  </div>
-                  <div class="formField">
-                    <uiLabel :for="portFieldId + '-2'">12 位配对码</uiLabel>
-                    <uiInput
-                      :id="portFieldId + '-2'"
-                      v-model="manualCode"
-                      placeholder="1234 5678 9012"
-                      inputmode="numeric"
-                      autocomplete="off"
-                      :maxlength="14"
-                      aria-label="12 位配对码"
-                      :disabled="(submitting) || (false)"></uiInput>
-                  </div>
-                  <p class="description">连接后使用对方的项目与配置。</p>
-                  <div class="manualActions">
-                    <uiButton variant="default" type="submit" :disabled="(loading) || (submitting) || (submitting)"><icon-loader-2 v-if="submitting" class="animate-spin" aria-hidden="true" />连接</uiButton>
-                    <uiButton
-                      v-if="mobileConnection.mode === 'remote'"
-                      @click="showCurrent"
-                      variant="link"
-                      type="button"
-                      :disabled="(submitting) || (submitting)">返回当前连接</uiButton>
-                  </div>
-                </fieldset>
-              </form>
-            </section>
-            <section v-else class="scanPanel" aria-label="扫描二维码">
-              <div class="scanInfo">
-                <h3>扫描另一台设备上的二维码</h3>
-                <p class="description">在对方“设置 → 设备互联”中开启共享。<br />局域网连接时，请使用同一 Wi-Fi。</p>
-              </div>
-              <div class="scannerView">
-                <video v-show="scanning" ref="video" autoplay muted playsinline aria-label="扫码摄像头预览" />
-                <svg class="scannerFrame" viewBox="0 0 200 200" fill="none" aria-hidden="true">
-                  <path d="M1 25V1H25M175 1H199V25M199 175V199H175M25 199H1V175" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
-                </svg>
-                <div v-if="!scanning" class="scannerHint">
-                  <icon-qrcode :size="40" aria-hidden="true" />
-                  <span role="status">{{ starting ? '正在开启摄像头…' : cameraError || '将二维码放入框内' }}</span>
-                  <uiButton @click="startCamera" variant="default" type="button" :disabled="(loading || submitting) || (starting)"><icon-loader-2 v-if="starting" class="animate-spin" aria-hidden="true" /><component :is="IconCamera" aria-hidden="true" />开启摄像头</uiButton>
-                </div>
-              </div>
-              <div class="scanActions">
-                <uiButton @click="imageInput?.click()" variant="outline" type="button" :disabled="(loading || submitting) || (readingImage)"><icon-loader-2 v-if="readingImage" class="animate-spin" aria-hidden="true" /><component :is="IconPhoto" aria-hidden="true" />{{ isDesktop ? '选择二维码图片' : '从相册选择' }}</uiButton>
-                <input ref="imageInput" class="imageInput" type="file" accept="image/*" @change="readImage" />
-                <uiButton v-if="mobileConnection.mode === 'remote'" @click="showCurrent" variant="link" type="button" :disabled="(submitting)">返回当前连接</uiButton>
-              </div>
-            </section>
-            <uiAlert v-if="error" variant="destructive">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ error }}</uiAlertTitle>
-            </uiAlert>
-            <p v-if="restarting" class="description" role="status">正在切换连接…</p>
+  <el-dialog v-model="visible" title="设备互联" modalClass="deviceConnectOverlay" width="min(560px, calc(100vw - 32px))" :alignCenter="viewportHeight > 600" :top="viewportHeight <= 600 ? '16px' : undefined" appendToBody :closeOnClickModal="!submitting" :closeOnPressEscape="!submitting" :showClose="!submitting">
+    <div v-loading="loading" class="mobileConnect" :class="{ compact: viewportHeight < 320 }" :style="{ maxHeight: `${Math.max(80, viewportHeight - (viewportHeight < 320 ? 104 : 128))}px`, height: choosingConnection ? '428px' : undefined }">
+      <el-segmented v-if="choosingConnection" class="inputModes" :modelValue="view" :options="connectionModes" :disabled="loading || submitting" block ariaLabel="连接方式" @change="value => value === 'manual' ? showManual() : scanAgain()">
+        <template #default="{ item }">
+          <span class="modeOption"><component :is="item.icon" :size="18" aria-hidden="true" />{{ item.label }}</span>
+        </template>
+      </el-segmented>
+      <div class="connectionBody">
+      <section v-if="deviceHubEnabled" class="connectionInfo" aria-label="本机共享状态">
+        <icon-device-desktop :size="40" aria-hidden="true" />
+        <el-tag type="success">共享中</el-tag>
+        <h3>本机已开启共享</h3>
+        <p class="description">其他设备可使用本机的项目与配置。<br />如需连接其他设备，请先在“设置 → 设备互联”中关闭共享。</p>
+      </section>
+      <section v-else-if="!deviceConnectionSupported" class="connectionInfo" aria-label="设备互联说明">
+        <icon-device-desktop :size="40" aria-hidden="true" />
+        <p class="description">请使用 SuperFlow 桌面端或 Android 客户端连接其他设备。<br />本机共享可在“设置 → 设备互联”中管理。</p>
+      </section>
+      <section v-else-if="view === 'current'" class="connectionInfo" aria-label="当前连接">
+        <icon-device-desktop :size="40" aria-hidden="true" />
+        <el-tag :type="mobileConnection.online === true ? mobileConnectionVersionWarning ? 'warning' : 'success' : mobileConnection.online === false ? 'danger' : 'info'">{{ mobileConnectionLabel }}</el-tag>
+        <h3>{{ mobileConnection.name || 'SuperFlow' }}</h3>
+        <code>{{ mobileConnection.url }}</code>
+        <p class="description">{{ mobileConnection.online === true ? '正在使用这个设备的项目与配置。' : mobileConnection.online === false ? '暂时无法连接这个设备，请检查对方是否运行以及网络连接。' : '正在确认这个设备是否可以连接…' }}</p>
+        <el-alert v-if="mobileConnectionVersionWarning" :title="mobileConnectionVersionWarning" type="warning" :closable="false" showIcon />
+        <div class="connectionActions">
+          <el-button type="primary" :disabled="submitting" @click="scanAgain">连接其他设备</el-button>
+          <el-button :loading="submitting" @click="disconnect">断开并独立运行</el-button>
+        </div>
+      </section>
+      <section v-else-if="view === 'confirm' && candidate" class="connectionInfo" aria-label="连接目标">
+        <icon-device-desktop :size="40" aria-hidden="true" />
+        <el-tag>已识别设备</el-tag>
+        <h3>{{ candidate.name }}</h3>
+        <code>{{ candidate.url }}</code>
+        <p class="description">连接后将使用对方的项目与配置。请确认这是你要连接的设备。</p>
+        <el-alert v-if="candidateVersionWarning" :title="candidateVersionWarning" type="warning" :closable="false" showIcon />
+        <div class="connectionActions">
+          <el-button type="primary" :loading="submitting" @click="connect">连接这个设备</el-button>
+          <el-button :disabled="submitting" @click="scanAgain">重新扫描</el-button>
+        </div>
+      </section>
+      <section v-else-if="view === 'manual'" class="manualPanel" aria-label="手动连接">
+        <p class="description">在对方“设备互联”中展开“手动连接信息”，查看地址和配对码。</p>
+        <el-form labelPosition="top" size="large" :disabled="submitting" @submit.prevent="connectManually">
+          <el-form-item label="服务器地址">
+            <el-input v-model="manualUrl" placeholder="192.168.1.10:43123 或 https://example.com" inputmode="url" autocomplete="off" autocapitalize="none" :spellcheck="false" aria-label="服务器地址" />
+          </el-form-item>
+          <el-form-item label="12 位配对码">
+            <el-input v-model="manualCode" placeholder="1234 5678 9012" inputmode="numeric" autocomplete="off" :maxlength="14" aria-label="12 位配对码" />
+          </el-form-item>
+          <p class="description">连接后使用对方的项目与配置。</p>
+          <div class="manualActions">
+            <el-button type="primary" nativeType="submit" :loading="submitting" :disabled="loading">连接</el-button>
+            <el-button v-if="mobileConnection.mode === 'remote'" link :disabled="submitting" @click="showCurrent">返回当前连接</el-button>
           </div>
-          <div v-if="loading" class="portLoadingMask" aria-hidden="true">
-            <icon-loader-2 class="animate-spin" />
+        </el-form>
+      </section>
+      <section v-else class="scanPanel" aria-label="扫描二维码">
+        <div class="scanInfo">
+          <h3>扫描另一台设备上的二维码</h3>
+          <p class="description">在对方“设置 → 设备互联”中开启共享。<br />局域网连接时，请使用同一 Wi-Fi。</p>
+        </div>
+        <div class="scannerView">
+          <video v-show="scanning" ref="video" autoplay muted playsinline aria-label="扫码摄像头预览" />
+          <svg class="scannerFrame" viewBox="0 0 200 200" fill="none" aria-hidden="true"><path d="M1 25V1H25M175 1H199V25M199 175V199H175M25 199H1V175" stroke="currentColor" stroke-width="2" stroke-linecap="round" /></svg>
+          <div v-if="!scanning" class="scannerHint">
+            <icon-qrcode :size="40" aria-hidden="true" />
+            <span role="status">{{ starting ? '正在开启摄像头…' : cameraError || '将二维码放入框内' }}</span>
+            <el-button type="primary" :icon="IconCamera" :loading="starting" :disabled="loading || submitting" @click="startCamera">开启摄像头</el-button>
           </div>
         </div>
+        <div class="scanActions">
+          <el-button :icon="IconPhoto" :loading="readingImage" :disabled="loading || submitting" @click="imageInput?.click()">{{ isDesktop ? '选择二维码图片' : '从相册选择' }}</el-button>
+          <input ref="imageInput" class="imageInput" type="file" accept="image/*" @change="readImage" />
+          <el-button v-if="mobileConnection.mode === 'remote'" link :disabled="submitting" @click="showCurrent">返回当前连接</el-button>
+        </div>
+      </section>
+      <el-alert v-if="error" :title="error" type="error" :closable="false" showIcon />
+      <p v-if="restarting" class="description" role="status">正在切换连接…</p>
       </div>
-    </uiDialogContent>
-  </uiDialog>
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { uiInput } from "@/components/ui/input";
-import { uiLabel } from "@/components/ui/label";
-import { uiButton } from "@/components/ui/button";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiBadge } from "@/components/ui/badge";
-import { uiTabs, uiTabsList, uiTabsTrigger } from "@/components/ui/tabs";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import jsQR from "jsqr";
-import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch, useId } from "vue";
+import { computed, nextTick, onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { IconCamera, IconPhoto, IconQrcode, IconDeviceDesktop, IconKeyboard } from "@tabler/icons-vue";
 import { changeDeviceConnection, deviceConnectionSupported, deviceHubEnabled, getDeviceVersionWarning, mobileConnection, mobileConnectionLabel, mobileConnectionVersionWarning, refreshMobileConnection } from "@/lib/mobile";
 import { isDesktop } from "@/lib/platform";
@@ -440,9 +367,6 @@ onBeforeUnmount(() => {
   document.removeEventListener("visibilitychange", visibilityChanged);
   window.visualViewport?.removeEventListener("resize", viewportResized);
 });
-const dialogRendered1 = ref(visible.value);
-watch(visible, open => { if (open) dialogRendered1.value = true; });
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -499,7 +423,7 @@ const portFieldId = useId();
       display: grid;
       gap: 16px;
 
-      :is(.el-form-item, .formField) { margin-bottom: 16px; }
+      .el-form-item { margin-bottom: 16px; }
       .manualActions {
         display: flex;
         flex-direction: row-reverse;
@@ -507,7 +431,7 @@ const portFieldId = useId();
         align-items: center;
         gap: 8px;
         margin-top: 12px;
-        [data-slot="button"] { margin-left: 0; }
+        .el-button { margin-left: 0; }
       }
     }
 
@@ -521,7 +445,7 @@ const portFieldId = useId();
 
       h3 { margin: 0; font-size: 20px; }
       code { max-width: 100%; overflow-wrap: anywhere; color: var(--el-text-color-regular); user-select: text; }
-      .connectionActions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; [data-slot="button"] { margin-left: 0; } }
+      .connectionActions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; .el-button { margin-left: 0; } }
     }
 
     .scanPanel {
@@ -571,7 +495,7 @@ const portFieldId = useId();
         align-items: center;
         justify-content: center;
         gap: 8px;
-        [data-slot="button"] { margin-left: 0; }
+        .el-button { margin-left: 0; }
         .imageInput { display: none; }
       }
 

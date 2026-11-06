@@ -4,152 +4,66 @@
       <section class="parameters" aria-label="测试参数">
         <h3>{{ provider.label }}</h3>
         <form-create v-model="configValues" v-model:api="formApi" :rule="formRules" :option="formOptions" />
-        <form class="uiForm">
-          <fieldset class="formFields" :disabled="busy || disabled">
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-1'">模型</uiLabel>
-              <uiSelect
-                :modelValue="String(selectedModelId) === '' ? '__empty__' : (selectedModelId)"
-                @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; selectedModelId = value as typeof selectedModelId; }">
-                <uiSelectTrigger :id="portFieldId + '-1'" aria-label="测试模型">
-                  <uiSelectValue placeholder="选择模型" />
-                </uiSelectTrigger>
-                <uiSelectContent>
-                  <uiSelectItem v-for="model in mediaModels" :key="model.id" :value="model.id">{{ model.label }}</uiSelectItem>
-                </uiSelectContent>
-              </uiSelect>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-2'">提示词</uiLabel>
-              <uiTextarea
-                :id="portFieldId + '-2'"
-                v-model="prompt"
-                aria-label="测试提示词"
-                :disabled="(busy || disabled) || (false)"
-                :rows="4"
-                style="field-sizing:fixed; resize:none"></uiTextarea>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-3'">参考素材</uiLabel>
-              <div class="references">
-                <div v-for="(item, index) in references" :key="item.url" class="referenceItem">
-                  <el-image v-if="item.file.type.startsWith('image/')" :src="item.url" fit="cover" :previewSrcList="[item.url]" previewTeleported />
-                  <videoPlayer
-                    v-else-if="item.file.type.startsWith('video/')"
-                    class="referenceVideo"
-                    :src="item.url"
-                    :label="item.file.name"
-                    muted />
-                  <icon-music v-else :size="22" aria-hidden="true" />
-                  <uiButton
-                    class="removeReference"
-                    :aria-label="`移除 ${item.file.name}`"
-                    @click="removeReference(index)"
-                    variant="outline"
-                    type="button"
-                    :disabled="(busy || disabled) || (busy || disabled)"
-                    size="icon-sm"
-                    style="border-radius: 9999px">
-                    <component :is="IconX" aria-hidden="true" />
-                  </uiButton>
-                  <uiSelect
-                    v-if="activeModel?.type === 'video' && item.file.type.startsWith('image/')"
-                    :modelValue="String(item.role) === '' ? '__empty__' : (item.role)"
-                    @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; item.role = value as typeof item.role; }">
-                    <uiSelectTrigger :id="portFieldId + '-3'" aria-label="参考图用途">
-                      <uiSelectValue />
-                    </uiSelectTrigger>
-                    <uiSelectContent>
-                      <uiSelectItem value="images">参考图</uiSelectItem>
-                      <uiSelectItem value="firstFrame">首帧</uiSelectItem>
-                      <uiSelectItem value="lastFrame">尾帧</uiSelectItem>
-                    </uiSelectContent>
-                  </uiSelect>
-                </div>
-                <uiButton
-                  class="addReference"
-                  aria-label="添加参考素材"
-                  @click="referenceInput?.click()"
-                  variant="outline"
-                  type="button"
-                  :disabled="(busy || disabled) || (busy || disabled)">
-                  <component :is="IconPlus" aria-hidden="true" />
-                </uiButton>
-                <input
-                  ref="referenceInput"
-                  type="file"
-                  multiple
-                  :accept="activeModel?.type === 'image' ? 'image/*' : activeModel?.type === 'audio' ? 'audio/*' : 'image/*,video/*,audio/*'"
-                  hidden
-                  @change="addReferences" />
-              </div>
-            </div>
-            <div class="parameterGrid">
-              <div v-if="activeModel?.type !== 'audio'" class="formField">
-                <uiLabel>比例</uiLabel>
-                <el-select v-model="ratio" clearable filterable allowCreate defaultFirstOption aria-label="画面比例">
-                  <el-option v-for="item in activeModel?.imageRatios ?? ['1:1', '16:9', '9:16']" :key="item" :label="item" :value="item" />
+        <el-form labelPosition="top" :disabled="busy || disabled">
+          <el-form-item label="模型">
+            <el-select v-model="selectedModelId" placeholder="选择模型" aria-label="测试模型">
+              <el-option v-for="model in mediaModels" :key="model.id" :label="model.label" :value="model.id" />
+            </el-select>
+          </el-form-item>
+          <el-form-item label="提示词">
+            <el-input v-model="prompt" type="textarea" :rows="4" resize="vertical" aria-label="测试提示词" />
+          </el-form-item>
+          <el-form-item label="参考素材">
+            <div class="references">
+              <div v-for="(item, index) in references" :key="item.url" class="referenceItem">
+                <el-image v-if="item.file.type.startsWith('image/')" :src="item.url" fit="cover" :previewSrcList="[item.url]" previewTeleported />
+                <videoPlayer v-else-if="item.file.type.startsWith('video/')" class="referenceVideo" :src="item.url" :label="item.file.name" muted />
+                <icon-music v-else :size="22" aria-hidden="true" />
+                <el-button class="removeReference" circle size="small" :icon="IconX" :disabled="busy || disabled" :aria-label="`移除 ${item.file.name}`" @click="removeReference(index)" />
+                <el-select v-if="activeModel?.type === 'video' && item.file.type.startsWith('image/')" v-model="item.role" size="small" aria-label="参考图用途">
+                  <el-option label="参考图" value="images" /><el-option label="首帧" value="firstFrame" /><el-option label="尾帧" value="lastFrame" />
                 </el-select>
               </div>
-              <div v-if="activeModel?.type === 'image'" class="formField">
-                <uiLabel>尺寸</uiLabel>
-                <el-select v-model="size" clearable filterable allowCreate defaultFirstOption aria-label="图片尺寸">
-                  <el-option v-for="item in activeModel.imageSizes ?? ['1K', '2K', '4K']" :key="item" :label="item" :value="item" />
-                </el-select>
-              </div>
-              <div v-if="activeModel?.type === 'video'" class="formField">
-                <uiLabel>分辨率</uiLabel>
-                <el-select v-model="resolution" clearable filterable allowCreate defaultFirstOption aria-label="视频分辨率">
-                  <el-option v-for="item in resolutions" :key="item" :label="item" :value="item" />
-                </el-select>
-              </div>
-              <div v-if="activeModel?.type === 'video'" class="formField">
-                <uiLabel :for="portFieldId + '-4'">时长（秒）</uiLabel>
-                <uiNumberField class="numberField" v-model="duration" :min="1" :formatOptions="{ maximumFractionDigits: 0, minimumFractionDigits: 0 }">
-                  <uiNumberFieldContent>
-                    <uiNumberFieldDecrement />
-                    <uiNumberFieldInput :id="portFieldId + '-4'" :aria-label="'视频时长'" />
-                    <uiNumberFieldIncrement />
-                  </uiNumberFieldContent>
-                </uiNumberField>
-              </div>
-              <div v-if="activeModel?.type === 'video'" class="formField">
-                <uiLabel :for="portFieldId + '-5'">生成音频</uiLabel>
-                <uiSwitch :id="portFieldId + '-5'" v-model="generateAudio" aria-label="生成音频" :disabled="(busy || disabled)"></uiSwitch>
-              </div>
-              <div v-if="activeModel?.type === 'audio'" class="formField">
-                <uiLabel>音色</uiLabel>
-                <el-select v-model="voice" clearable filterable allowCreate defaultFirstOption aria-label="音色">
-                  <el-option v-for="item in activeModel.voices ?? []" :key="item.voice" :label="item.title" :value="item.voice" />
-                </el-select>
-              </div>
+              <el-button class="addReference" :icon="IconPlus" :disabled="busy || disabled" aria-label="添加参考素材" @click="referenceInput?.click()" />
+              <input ref="referenceInput" type="file" multiple :accept="activeModel?.type === 'image' ? 'image/*' : activeModel?.type === 'audio' ? 'audio/*' : 'image/*,video/*,audio/*'" hidden @change="addReferences" />
             </div>
-            <div>
-              <uiCollapsible>
-                <uiCollapsibleTrigger class="collapseTrigger">更多请求参数<icon-chevron-down /></uiCollapsibleTrigger>
-                <uiCollapsibleContent>
-                  <uiTextarea
-                    v-model="extraParameters"
-                    dir="ltr"
-                    aria-label="更多请求参数 JSON"
-                    placeholder="JSON 对象，可填写 mode、quality、other 等字段"
-                    :disabled="(busy || disabled) || (false)"
-                    :rows="4"
-                    style="field-sizing:fixed; resize:none"></uiTextarea>
-                </uiCollapsibleContent>
-              </uiCollapsible>
-            </div>
-          </fieldset>
-        </form>
+          </el-form-item>
+          <div class="parameterGrid">
+            <el-form-item v-if="activeModel?.type !== 'audio'" label="比例">
+              <el-select v-model="ratio" clearable filterable allowCreate defaultFirstOption aria-label="画面比例">
+                <el-option v-for="item in activeModel?.imageRatios ?? ['1:1', '16:9', '9:16']" :key="item" :label="item" :value="item" />
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="activeModel?.type === 'image'" label="尺寸">
+              <el-select v-model="size" clearable filterable allowCreate defaultFirstOption aria-label="图片尺寸">
+                <el-option v-for="item in activeModel.imageSizes ?? ['1K', '2K', '4K']" :key="item" :label="item" :value="item" />
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="activeModel?.type === 'video'" label="分辨率">
+              <el-select v-model="resolution" clearable filterable allowCreate defaultFirstOption aria-label="视频分辨率">
+                <el-option v-for="item in resolutions" :key="item" :label="item" :value="item" />
+              </el-select>
+            </el-form-item>
+            <el-form-item v-if="activeModel?.type === 'video'" label="时长（秒）">
+              <el-input-number v-model="duration" :min="1" :precision="0" controlsPosition="right" aria-label="视频时长" />
+            </el-form-item>
+            <el-form-item v-if="activeModel?.type === 'video'" label="生成音频"><el-switch v-model="generateAudio" aria-label="生成音频" /></el-form-item>
+            <el-form-item v-if="activeModel?.type === 'audio'" label="音色">
+              <el-select v-model="voice" clearable filterable allowCreate defaultFirstOption aria-label="音色">
+                <el-option v-for="item in activeModel.voices ?? []" :key="item.voice" :label="item.title" :value="item.voice" />
+              </el-select>
+            </el-form-item>
+          </div>
+          <el-collapse>
+            <el-collapse-item title="更多请求参数" name="request">
+              <el-input v-model="extraParameters" type="textarea" dir="ltr" :rows="4" aria-label="更多请求参数 JSON" placeholder="JSON 对象，可填写 mode、quality、other 等字段" />
+            </el-collapse-item>
+          </el-collapse>
+        </el-form>
       </section>
       <section class="output" aria-label="测试结果">
-        <uiTabs v-model="activeTab" class="resultTabs">
-          <uiTabsList>
-            <uiTabsTrigger :value="'preview'">结果预览</uiTabsTrigger>
-            <uiTabsTrigger :value="'response'">响应数据</uiTabsTrigger>
-            <uiTabsTrigger :value="'logs'">{{ `请求日志${logs.length ? ` (${logs.length})` : ''}` }}</uiTabsTrigger>
-          </uiTabsList>
-          <uiTabsContent :value="'preview'" forceMount v-show="activeTab === 'preview'">
+        <el-tabs v-model="activeTab" class="resultTabs">
+          <el-tab-pane label="结果预览" name="preview">
             <div class="mediaPreview">
               <template v-for="asset in assets" :key="asset.url">
                 <el-image v-if="asset.type === 'image'" :src="asset.url" fit="contain" :previewSrcList="imagePreviews" previewTeleported />
@@ -157,66 +71,41 @@
                 <audio v-else :src="asset.url" controls preload="metadata" />
               </template>
             </div>
-          </uiTabsContent>
-          <uiTabsContent :value="'response'" forceMount v-show="activeTab === 'response'">
-            <pre v-if="responseText">{{ responseText }}</pre>
-          </uiTabsContent>
-          <uiTabsContent :value="'logs'" forceMount v-show="activeTab === 'logs'">
-            <div>
-              <uiCollapsible v-for="log in logs" :key="log.id">
-                <uiCollapsibleTrigger class="collapseTrigger">
-                  <div class="logTitle">
-                    <uiBadge variant="secondary">{{ log.status || log.method }}</uiBadge>
-                    <span>{{ log.url }}</span>
-                    <small v-if="log.duration !== undefined">{{ log.duration }}ms</small>
-                  </div>
-                  <icon-chevron-down />
-                </uiCollapsibleTrigger>
-                <uiCollapsibleContent>
-                  <pre>{{ log.method }} {{ log.url }}
+          </el-tab-pane>
+          <el-tab-pane label="响应数据" name="response"><pre v-if="responseText">{{ responseText }}</pre></el-tab-pane>
+          <el-tab-pane :label="`请求日志${logs.length ? ` (${logs.length})` : ''}`" name="logs">
+            <el-collapse>
+              <el-collapse-item v-for="log in logs" :key="log.id" :name="log.id">
+                <template #title>
+                  <div class="logTitle"><el-tag size="small" :type="log.state === 'error' ? 'danger' : log.state === 'success' ? 'success' : 'info'">{{ log.status || log.method }}</el-tag><span>{{ log.url }}</span><small v-if="log.duration !== undefined">{{ log.duration }} ms</small></div>
+                </template>
+                <pre>{{ log.method }} {{ log.url }}
 {{ log.request }}
 {{ log.response || log.error }}</pre>
-                </uiCollapsibleContent>
-              </uiCollapsible>
-            </div>
-          </uiTabsContent>
-        </uiTabs>
+              </el-collapse-item>
+            </el-collapse>
+          </el-tab-pane>
+        </el-tabs>
       </section>
     </div>
     <div v-if="errorMessage" class="testError">
-      <uiAlert variant="destructive">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ errorMessage }}</uiAlertTitle>
-      </uiAlert>
-      <uiButton v-if="allowFeedback" @click="sendFeedback" variant="outline" type="button" :disabled="(busy || feedbackDisabled)">发送给 AI 修改</uiButton>
+      <el-alert :title="errorMessage" type="error" :closable="false" showIcon />
+      <el-button v-if="allowFeedback" :disabled="busy || feedbackDisabled" @click="sendFeedback">发送给 AI 修改</el-button>
     </div>
     <div class="testFooter">
-      <span
-        :type="status === '成功' ? 'success' : status === '失败' ? 'danger' : 'info'"
-        role="status"
-        aria-live="polite"
-        data-ui-text="status === '成功' ? 'success' : status === '失败' ? 'danger' : 'info'">{{ statusLabel }}{{ elapsed ? ` · ${(elapsed / 1000).toFixed(1)} 秒` : '' }}</span>
+      <el-text size="small" :type="status === '成功' ? 'success' : status === '失败' ? 'danger' : 'info'" role="status" aria-live="polite">{{ statusLabel }}{{ elapsed ? ` · ${(elapsed / 1000).toFixed(1)} 秒` : '' }}</el-text>
       <div class="testActions">
         <slot name="actions" :busy="busy" />
-        <uiButton v-if="busy" @click="stop" variant="destructive" type="button"><component :is="IconPlayerStop" aria-hidden="true" />停止</uiButton>
-        <uiButton v-else @click="run" variant="default" type="button" :disabled="(disabled || !source || !activeModel)"><component :is="IconPlayerPlay" aria-hidden="true" />开始测试</uiButton>
+        <el-button v-if="busy" type="danger" :icon="IconPlayerStop" @click="stop">停止</el-button>
+        <el-button v-else type="primary" :icon="IconPlayerPlay" :disabled="disabled || !source || !activeModel" @click="run">开始测试</el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiBadge } from "@/components/ui/badge";
-import { uiTabs, uiTabsList, uiTabsTrigger, uiTabsContent } from "@/components/ui/tabs";
-import { uiCollapsible, uiCollapsibleTrigger, uiCollapsibleContent } from "@/components/ui/collapsible";
-import { uiSwitch } from "@/components/ui/switch";
-import { uiNumberField, uiNumberFieldContent, uiNumberFieldInput, uiNumberFieldDecrement, uiNumberFieldIncrement } from "@/components/ui/numberField";
-import { uiButton } from "@/components/ui/button";
-import { uiTextarea } from "@/components/ui/textarea";
-import { uiSelect, uiSelectTrigger, uiSelectValue, uiSelectContent, uiSelectItem } from "@/components/ui/select";
-import { uiLabel } from "@/components/ui/label";
 import { locale, translate } from "@toonflow/i18n/vue";
-import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch, useId } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
 import axios from "axios";
 import { IconPlus, IconX, IconMusic, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-vue";
 import type { Provider } from "@toonflow/providers";
@@ -520,7 +409,6 @@ watch(mediaModels, models => {
 watch(busy, value => emit("busyChange", value), { flush: "sync" });
 onBeforeUnmount(reset);
 defineExpose({ run, stop, reset });
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -547,7 +435,7 @@ const portFieldId = useId();
       overscroll-behavior: contain;
       h3 { margin: 0 0 16px; font-size: 14px; color: var(--el-text-color-primary); overflow-wrap: anywhere; }
       .parameterGrid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0 12px; }
-      :is(.el-select, [data-slot="select-trigger"]), :is(.el-input-number, .numberField) { width: 100%; }
+      .el-select, .el-input-number { width: 100%; }
 
       .references {
         display: flex;
@@ -576,8 +464,8 @@ const portFieldId = useId();
         flex-direction: column;
         flex: 1;
         min-height: 0;
-        :deep([data-slot="tabs-list"]) { flex-shrink: 0; }
-        :deep([data-slot="tabs-content"]) { overflow-y: auto; overscroll-behavior: contain; }
+        :deep(.el-tabs__header) { flex-shrink: 0; }
+        :deep(.el-tabs__content) { overflow-y: auto; overscroll-behavior: contain; }
       }
       pre { margin: 0; font-size: 12px; line-height: 1.7; white-space: pre-wrap; overflow-wrap: anywhere; }
       .mediaPreview {
@@ -619,7 +507,7 @@ const portFieldId = useId();
       flex-wrap: wrap;
       gap: 8px;
       margin-left: auto;
-      :deep([data-slot="button"]) { margin: 0; }
+      :deep(.el-button) { margin: 0; }
     }
   }
   &.compactPanel .testBody {
@@ -629,7 +517,7 @@ const portFieldId = useId();
     overscroll-behavior: contain;
     gap: 16px;
     .parameters { flex-shrink: 0; overflow: visible; }
-    .output { flex-shrink: 0; min-height: 160px; .resultTabs { :deep([data-slot="tabs-content"]) { max-height: 360px; } } }
+    .output { flex-shrink: 0; min-height: 160px; .resultTabs { :deep(.el-tabs__content) { max-height: 360px; } } }
   }
   @media (max-width: 760px) {
     .testBody { display: flex; flex-direction: column; overflow-y: auto; gap: 16px; }

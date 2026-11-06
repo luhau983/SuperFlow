@@ -1,30 +1,24 @@
 <template>
   <nodeSkeleton v-if="loading" loading :label="node.data.label || node.type" :handles="node.data.handles" :outputs="node.data.outputs" />
   <component v-else-if="component && !error && !runtimeError" :is="component" v-bind="$attrs" />
-  <uiCard v-else class="remoteNodeState failed" role="alert">
+  <el-card v-else class="remoteNodeState failed" shadow="never" role="alert">
     <div class="stateHeader">
       <strong>{{ node.data.label || node.type }}</strong>
       <span class="stateLabel">error</span>
       <div class="stateActions nodrag nopan" @pointerdown.stop @mousedown.stop @dblclick.stop>
-        <uiButton variant="ghost" size="icon-sm" :disabled="reloading" title="重新加载节点" aria-label="重新加载节点" @click.stop="retry">
-          <icon-loader-2 v-if="reloading" class="animate-spin" aria-hidden="true" />
-          <icon-refresh v-else aria-hidden="true" />
-        </uiButton>
-        <uiButton variant="ghost" size="icon-sm" title="移除节点" aria-label="移除节点" @click.stop="removeNodes(node.id)">
-          <icon-trash aria-hidden="true" />
-        </uiButton>
+        <el-button :icon="IconRefresh" text :loading="reloading" title="重新加载节点" aria-label="重新加载节点" @click.stop="retry" />
+        <el-button :icon="IconTrash" text title="移除节点" aria-label="移除节点" @click.stop="removeNodes(node.id)" />
       </div>
     </div>
     <p>{{ error || runtimeError || "远程节点未加载，请确认插件已安装并启用" }}</p>
-  </uiCard>
+  </el-card>
 </template>
 
 <script setup lang="ts">
 import { inject, onErrorCaptured, ref, watch, type Component } from "vue";
 import { useNode, useVueFlow } from "@vue-flow/core";
-import { IconLoader2, IconRefresh, IconTrash } from "@tabler/icons-vue";
-import { uiButton } from "@/components/ui/button";
-import { uiCard } from "@/components/ui/card";
+import { ElButton, ElCard } from "element-plus";
+import { IconRefresh, IconTrash } from "@tabler/icons-vue";
 import { nodeSkeleton, type NodeData } from "@toonflow/nodes-scaffold/runtime";
 
 defineOptions({ inheritAttrs: false });
@@ -54,22 +48,19 @@ async function retry() {
 <style scoped lang="scss">
 .remoteNodeState {
   width: 320px;
-  gap: 0;
-  padding: 16px;
-  border-radius: var(--ui-radius-large);
-  &.failed { border-color: var(--destructive); }
+  &.failed { border-color: var(--el-color-danger); }
   .stateHeader {
     display: flex;
     align-items: center;
     gap: 8px;
     strong { flex: 1; min-width: 0; overflow-wrap: anywhere; }
-    .stateLabel { font-size: 12px; color: var(--muted-foreground); }
+    .stateLabel { font-size: 12px; color: var(--el-text-color-secondary); }
     .stateActions {
       display: flex;
-      button { width: 28px; height: 28px; }
+      .el-button { width: 28px; height: 28px; margin: 0; padding: 0; }
     }
   }
-  &.failed .stateLabel { color: var(--destructive); }
-  p { margin: 10px 0 0; font-size: 12px; color: var(--muted-foreground); white-space: pre-wrap; overflow-wrap: anywhere; }
+  &.failed .stateLabel { color: var(--el-color-danger); }
+  p { margin: 10px 0 0; font-size: 12px; color: var(--el-text-color-secondary); white-space: pre-wrap; overflow-wrap: anywhere; }
 }
 </style>

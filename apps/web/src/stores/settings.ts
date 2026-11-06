@@ -1,7 +1,7 @@
 import axios from "axios";
 import { normalizeLocale } from "@toonflow/i18n";
 import { computed, nextTick, ref, watch } from "vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { getNodeModelKey, invalidateNodeModels, readNodeModels, subscribeNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
 import { canvasShortcutFields, defaultCanvasShortcuts, getShortcutBindings, isShortcutAllowed, normalizeShortcut, type CanvasShortcuts } from "@/lib/canvasShortcuts";
 import { normalizeNodeMenu, type StoredNodeMenuItem } from "@toonflow/server/nodeMenu";
@@ -175,7 +175,7 @@ export async function refreshModelChoices(fresh = false, signal?: AbortSignal) {
 
 subscribeNodeModels(type => {
   if (type !== "language" || !settingsReady) return;
-  void refreshModelChoices().catch(error => { toast.error(error instanceof Error ? error.message : "读取模型推理等级失败"); });
+  void refreshModelChoices().catch(error => { ElMessage.error(error instanceof Error ? error.message : "读取模型推理等级失败"); });
 });
 
 export async function loadSettings() {
@@ -254,7 +254,7 @@ export function saveSettings(update?: (current: Record<string, unknown>) => Reco
 watch(settings, () => {
   if (!settingsReady || applyingSettings) return;
   void saveSettings().catch(error => {
-    toast.error(axios.isAxiosError(error) && error.response?.status === 409
+    ElMessage.error(axios.isAxiosError(error) && error.response?.status === 409
       ? "设置已更新，请重新读取后保存" : "设置保存失败，请稍后重试");
   });
 }, { deep: true, flush: "sync" });

@@ -6,55 +6,50 @@
           <h3>开发者工具</h3>
           <p>查看页面结构、控制台与网络请求。</p>
         </div>
-        <uiButton :disabled="opening || !actualPlatform.isDesktop" @click="openDevTools"><icon-loader-2 v-if="opening" class="animate-spin" aria-hidden="true" /><icon-terminal-2 v-else aria-hidden="true" />打开 DevTools</uiButton>
+        <el-button type="primary" :icon="IconTerminal2" :loading="opening" :disabled="!actualPlatform.isDesktop" @click="openDevTools">打开 DevTools</el-button>
       </div>
-      <p v-if="!actualPlatform.isDesktop" class="infoText">浏览器模式请从浏览器菜单打开开发者工具。</p>
-      <p v-if="requestError" class="errorText" role="alert">{{ requestError }}</p>
+      <el-text v-if="!actualPlatform.isDesktop" type="info">浏览器模式请从浏览器菜单打开开发者工具。</el-text>
+      <el-text v-if="requestError" type="danger" role="alert">{{ requestError }}</el-text>
       <div class="developerRow">
         <div class="toolDescription">
           <h3>模拟平台</h3>
           <p>切换会重新加载当前页面。仅模拟前端分支，原生能力与服务端权限仍以实际环境为准。</p>
         </div>
-        <uiSelect :modelValue="platformSimulation" @update:modelValue="changePlatformSimulation">
-          <uiSelectTrigger class="platformSelect" aria-label="模拟平台">
-            <uiSelectValue />
-          </uiSelectTrigger>
-          <uiSelectContent>
-            <uiSelectItem value="actual">实际平台</uiSelectItem>
-            <uiSelectItem value="browser">浏览器</uiSelectItem>
-            <uiSelectItem value="windowsDesktop">Windows 桌面</uiSelectItem>
-            <uiSelectItem value="macDesktop">macOS 桌面</uiSelectItem>
-            <uiSelectItem value="mobile">移动端</uiSelectItem>
-          </uiSelectContent>
-        </uiSelect>
+        <el-select class="platformSelect" :modelValue="platformSimulation" aria-label="模拟平台" @change="setPlatformSimulation">
+          <el-option label="实际平台" value="actual" />
+          <el-option label="浏览器" value="browser" />
+          <el-option label="Windows 桌面" value="windowsDesktop" />
+          <el-option label="macOS 桌面" value="macDesktop" />
+          <el-option label="移动端" value="mobile" />
+        </el-select>
       </div>
       <div class="developerRow">
         <div class="toolDescription">
           <h3>首次使用引导</h3>
           <p>当前{{ hello.completed ? '已完成' : '未完成' }}。重置后打开引导页，保留已配置的模型。</p>
         </div>
-        <uiButton variant="outline" :disabled="resettingHello || importingStorage || writingStorage" @click="resetHello"><icon-loader-2 v-if="resettingHello" class="animate-spin" aria-hidden="true" /><icon-refresh v-else aria-hidden="true" />重置并打开引导页</uiButton>
+        <el-button :icon="IconRefresh" :loading="resettingHello" :disabled="importingStorage || writingStorage" @click="resetHello">重置并打开引导页</el-button>
       </div>
       <div class="developerRow">
         <div class="toolDescription">
           <h3>更新说明</h3>
           <p>打开当前版本的更新说明弹窗。</p>
         </div>
-        <uiButton variant="outline" :disabled="openingUpdateBox" @click="openUpdateBox"><icon-loader-2 v-if="openingUpdateBox" class="animate-spin" aria-hidden="true" /><icon-file-text v-else aria-hidden="true" />查看更新说明</uiButton>
+        <el-button :icon="IconFileText" :loading="openingUpdateBox" @click="openUpdateBox">查看更新说明</el-button>
       </div>
       <div class="developerRow">
         <div class="toolDescription">
           <h3>供应商开发工具</h3>
           <p>授权读取本地供应商文件，调试生成接口与媒体结果。</p>
         </div>
-        <uiButton variant="outline" @click="providerDebugVisible = true"><icon-code aria-hidden="true" />开发供应商</uiButton>
+        <el-button :icon="IconCode" @click="providerDebugVisible = true">开发供应商</el-button>
       </div>
       <div class="developerRow">
         <div class="toolDescription">
           <h3>Agent 系统提示词</h3>
           <p>编辑 Agent 的基础指令，保存后下一条消息生效。</p>
         </div>
-        <uiButton variant="outline" @click="systemPromptVisible = true"><icon-edit aria-hidden="true" />编辑提示词</uiButton>
+        <el-button :icon="IconEdit" @click="systemPromptVisible = true">编辑提示词</el-button>
       </div>
       <div v-if="!isRemoteConnection" class="developerRow">
         <div class="toolDescription">
@@ -62,59 +57,31 @@
           <p>填写更新清单和安装包所在的目录地址，保存后可在关于页选择。</p>
         </div>
         <div class="updateSourceEditor">
-          <div class="clearableInput">
-            <uiInput
-              v-model="customUpdateUrl"
-              placeholder="https://example.com/desktopUpdates"
-              aria-label="自定义更新源目录地址"
-              :disabled="savingUpdateUrl"
-              @keyup.enter="saveCustomUpdateUrl" />
-            <button v-if="customUpdateUrl && !savingUpdateUrl" class="clearButton" type="button" aria-label="清除" @click="customUpdateUrl = ''">
-              <icon-circle-x aria-hidden="true" />
-            </button>
-          </div>
-          <uiButton :disabled="savingUpdateUrl" @click="saveCustomUpdateUrl"><icon-loader-2 v-if="savingUpdateUrl" class="animate-spin" aria-hidden="true" />保存</uiButton>
+          <el-input v-model="customUpdateUrl" placeholder="https://example.com/desktopUpdates" aria-label="自定义更新源目录地址" clearable :disabled="savingUpdateUrl" @keyup.enter="saveCustomUpdateUrl" />
+          <el-button type="primary" :loading="savingUpdateUrl" @click="saveCustomUpdateUrl">保存</el-button>
         </div>
       </div>
-      <p v-if="!isRemoteConnection && updateUrlError" class="errorText" role="alert">{{ updateUrlError }}</p>
+      <el-text v-if="!isRemoteConnection && updateUrlError" type="danger" role="alert">{{ updateUrlError }}</el-text>
       <div v-if="!isRemoteConnection" class="pluginInstaller">
         <div class="installerHeader">
           <h3>手动安装插件</h3>
-          <uiSelect v-model="installType" :disabled="!!installing">
-            <uiSelectTrigger class="typeSelect" aria-label="安装插件类型">
-              <uiSelectValue />
-            </uiSelectTrigger>
-            <uiSelectContent>
-              <uiSelectItem v-for="(item, type) in installTypes" :key="type" :value="type">{{ item.label }}</uiSelectItem>
-              <uiSelectItem value="agent" disabled>Agent（暂未开放）</uiSelectItem>
-            </uiSelectContent>
-          </uiSelect>
+          <el-select v-model="installType" class="typeSelect" :disabled="!!installing" aria-label="安装插件类型">
+            <el-option v-for="(item, type) in installTypes" :key="type" :label="item.label" :value="type" />
+            <el-option label="Agent（暂未开放）" value="agent" disabled />
+          </el-select>
         </div>
         <div class="toolDescription">
           <p>{{ selectedInstaller.description }}支持本地文件或文件直链，安装后可在插件市场查看。</p>
         </div>
-        <div class="checkboxField">
-          <uiCheckbox id="developerForceInstall" v-model="forceInstall" :disabled="!!installing" />
-          <uiLabel for="developerForceInstall">强制安装（允许覆盖同版本或降级）</uiLabel>
-        </div>
+        <el-checkbox v-model="forceInstall" :disabled="!!installing">强制安装（允许覆盖同版本或降级）</el-checkbox>
         <input ref="fileInput" class="fileInput" type="file" :accept="selectedInstaller.accept" @change="installFile" />
-        <uiButton variant="outline" :disabled="!!installing" @click="fileInput?.click()"><icon-loader-2 v-if="installing === 'file'" class="animate-spin" aria-hidden="true" /><icon-file-upload v-else aria-hidden="true" />选择本地{{ selectedInstaller.label }}文件</uiButton>
+        <el-button :icon="IconFileUpload" :loading="installing === 'file'" :disabled="!!installing" @click="fileInput?.click()">选择本地{{ selectedInstaller.label }}文件</el-button>
         <div class="urlInstaller">
-          <div class="clearableInput">
-            <uiInput
-              v-model="pluginUrl"
-              :disabled="!!installing"
-              :placeholder="`https://example.com/${selectedInstaller.example}`"
-              :aria-label="`${selectedInstaller.label}文件地址`"
-              @keyup.enter="installUrl" />
-            <button v-if="pluginUrl && !installing" class="clearButton" type="button" aria-label="清除" @click="pluginUrl = ''">
-              <icon-circle-x aria-hidden="true" />
-            </button>
-          </div>
-          <uiButton :disabled="!!installing || !pluginUrl.trim()" @click="installUrl"><icon-loader-2 v-if="installing === 'url'" class="animate-spin" aria-hidden="true" /><icon-download v-else aria-hidden="true" />从 URL 安装</uiButton>
+          <el-input v-model="pluginUrl" :disabled="!!installing" :placeholder="`https://example.com/${selectedInstaller.example}`" :aria-label="`${selectedInstaller.label}文件地址`" clearable @keyup.enter="installUrl" />
+          <el-button type="primary" :icon="IconDownload" :loading="installing === 'url'" :disabled="!!installing || !pluginUrl.trim()" @click="installUrl">从 URL 安装</el-button>
         </div>
-        <p v-if="installError" class="errorText" role="alert">{{ installError }}</p>
-        <p v-else-if="installedName" class="successText" role="status">{{ installedName }}已安装</p>
+        <el-text v-if="installError" type="danger" role="alert">{{ installError }}</el-text>
+        <el-text v-else-if="installedName" type="success" role="status">{{ installedName }} 已安装</el-text>
       </div>
       <div class="storageManager">
         <div class="developerRow">
@@ -124,42 +91,30 @@
           </div>
           <div class="storageToolbar">
             <input ref="storageFileInput" type="file" accept=".json,application/json" hidden @change="importStorage" />
-            <uiButton variant="outline" :disabled="storageBusy" @click="storageFileInput?.click()"><icon-loader-2 v-if="importingStorage" class="animate-spin" aria-hidden="true" /><icon-file-upload v-else aria-hidden="true" />导入</uiButton>
-            <uiButton variant="outline" :disabled="storageBusy" @click="exportStorage"><icon-download aria-hidden="true" />导出</uiButton>
-            <uiButton variant="outline" :disabled="storageBusy" @click="loadStorage"><icon-refresh aria-hidden="true" />刷新列表</uiButton>
+            <el-button :icon="IconFileUpload" :loading="importingStorage" :disabled="storageBusy" @click="storageFileInput?.click()">导入</el-button>
+            <el-button :icon="IconDownload" :disabled="storageBusy" @click="exportStorage">导出</el-button>
+            <el-button :icon="IconRefresh" :disabled="storageBusy" @click="loadStorage">刷新列表</el-button>
           </div>
         </div>
-        <p v-if="storageError" class="errorText" role="alert">{{ storageError }}</p>
-        <p v-else-if="storageMessage" class="successText" role="status">{{ translate(storageMessage) }}</p>
+        <el-text v-if="storageError" type="danger" role="alert">{{ storageError }}</el-text>
+        <el-text v-else-if="storageMessage" type="success" role="status">{{ translate(storageMessage) }}</el-text>
         <div v-for="entry in storageEntries" :key="entry.key" class="storageItem">
           <div class="storageHeader">
             <span class="storageKey">{{ entry.key || '（空键名）' }}</span>
             <div class="storageActions">
-              <uiButton variant="ghost" size="sm" :disabled="storageBusy" :aria-label="`修改 ${entry.key}`" @click="editStorage(entry)"><icon-edit aria-hidden="true" />修改</uiButton>
-              <uiPopover :open="deleteConfirmKey === entry.key" @update:open="open => deleteConfirmKey = open ? entry.key : null">
-                <uiPopoverTrigger asChild>
-                  <uiButton
-                    class="text-destructive hover:text-destructive"
-                    variant="ghost"
-                    size="sm"
-                    :disabled="storageBusy"
-                    :aria-label="`删除 ${entry.key}`"><icon-trash aria-hidden="true" />删除</uiButton>
-                </uiPopoverTrigger>
-                <uiPopoverContent class="grid w-64 gap-3 text-sm" align="end">
-                  <p class="m-0">确定删除这条缓存？</p>
-                  <div class="flex justify-end gap-2">
-                    <uiButton variant="outline" size="sm" @click="deleteConfirmKey = null">取消</uiButton>
-                    <uiButton variant="destructive" size="sm" :disabled="storageBusy" @click="confirmDeleteStorage(entry)">删除</uiButton>
-                  </div>
-                </uiPopoverContent>
-              </uiPopover>
+              <el-button :icon="IconEdit" text :disabled="storageBusy" :aria-label="`修改 ${entry.key}`" @click="editStorage(entry)">修改</el-button>
+              <el-popconfirm title="确定删除这条缓存？" confirmButtonText="删除" cancelButtonText="取消" @confirm="writeStorage(entry, null)">
+                <template #reference>
+                  <el-button :icon="IconTrash" type="danger" text :disabled="storageBusy" :aria-label="`删除 ${entry.key}`">删除</el-button>
+                </template>
+              </el-popconfirm>
             </div>
           </div>
           <template v-if="editingKey === entry.key">
-            <uiTextarea v-model="storageValue" class="storageEditor" rows="5" :disabled="storageBusy" :aria-label="`${entry.key} 的值`" />
+            <el-input v-model="storageValue" type="textarea" :rows="5" :disabled="storageBusy" :aria-label="`${entry.key} 的值`" />
             <div class="storageActions">
-              <uiButton variant="outline" :disabled="storageBusy" @click="editingKey = null">取消</uiButton>
-              <uiButton :disabled="storageBusy" @click="writeStorage(entry, storageValue)"><icon-loader-2 v-if="writingStorage" class="animate-spin" aria-hidden="true" />保存</uiButton>
+              <el-button :disabled="storageBusy" @click="editingKey = null">取消</el-button>
+              <el-button type="primary" :loading="writingStorage" :disabled="storageBusy" @click="writeStorage(entry, storageValue)">保存</el-button>
             </div>
           </template>
           <div v-else class="storageValue">{{ entry.value }}</div>
@@ -168,16 +123,12 @@
     </div>
     <providerDebugDialog v-if="providerDebugVisible" v-model="providerDebugVisible" />
     <systemPromptDialog v-if="systemPromptVisible" v-model="systemPromptVisible" />
-    <updateBox
-      v-if="updateBoxVisible"
-      v-model="updateBoxVisible"
-      :version="updateBoxBuild.version"
-      :buildCode="updateBoxBuild.hash || translate('未提供')" />
+    <updateBox v-if="updateBoxVisible" v-model="updateBoxVisible" :version="updateBoxBuild.version" :buildCode="updateBoxBuild.hash || translate('未提供')" />
     <div v-if="developerLocked" class="developerConfirm">
       <icon-code :size="28" aria-hidden="true" />
       <h3>确认进入开发者选项</h3>
       <p>此功能仅供开发调试，普通用户请勿开启。安装未知节点或修改、清除缓存可能导致程序异常或数据丢失。请确认你了解相关风险后继续，系统将记住你的选择。</p>
-      <uiButton @click="confirmDeveloper">确认并继续</uiButton>
+      <el-button type="primary" @click="confirmDeveloper">确认并继续</el-button>
     </div>
   </div>
 </template>
@@ -194,16 +145,9 @@ import type { updateSnapshot } from "@toonflow/server/desktop";
 import saveFile from "@/lib/saveFile";
 import { actualPlatform, isRemoteConnection, platformSimulation, setPlatformSimulation } from "@/lib/platform";
 import { installPluginFile } from "../../installPluginFile";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import axios from "axios";
-import { uiButton } from "@/components/ui/button";
-import { uiCheckbox } from "@/components/ui/checkbox";
-import { uiInput } from "@/components/ui/input";
-import { uiLabel } from "@/components/ui/label";
-import { uiPopover, uiPopoverContent, uiPopoverTrigger } from "@/components/ui/popover";
-import { uiSelect, uiSelectContent, uiSelectItem, uiSelectTrigger, uiSelectValue } from "@/components/ui/select";
-import type { AcceptableValue } from "reka-ui";
-import { uiTextarea } from "@/components/ui/textarea";
+import { IconCode, IconTerminal2, IconFileUpload, IconFileText, IconDownload, IconRefresh, IconEdit, IconTrash } from "@tabler/icons-vue";
 
 const developerStore = useDeveloperStore();
 const hello = useHelloStore();
@@ -233,7 +177,7 @@ async function openUpdateBox() {
     }
     updateBoxVisible.value = true;
   } catch (error) {
-    toast.error(axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "读取版本信息失败");
+    ElMessage.error(axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "读取版本信息失败");
   } finally {
     openingUpdateBox.value = false;
   }
@@ -257,17 +201,12 @@ async function saveCustomUpdateUrl() {
       ...(url || current.desktopUpdateSource !== "custom" ? {} : { desktopUpdateSource: "official" }),
     }));
     customUpdateUrl.value = url;
-    toast.success("自定义更新源已保存");
+    ElMessage.success("自定义更新源已保存");
   } catch (error) {
     updateUrlError.value = axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "保存更新源失败";
   } finally {
     savingUpdateUrl.value = false;
   }
-}
-
-function changePlatformSimulation(value: AcceptableValue) {
-  // reka Select 选中当前项时也会触发更新，保持原 change 语义只在值变化时重新加载。
-  if (typeof value === "string" && value !== platformSimulation) setPlatformSimulation(value);
 }
 
 async function resetHello() {
@@ -278,7 +217,7 @@ async function resetHello() {
     loadStorage();
     await router.replace("/hello");
   } catch {
-    toast.error("重置引导失败，请重试");
+    ElMessage.error("重置引导失败，请重试");
   } finally {
     resettingHello.value = false;
   }
@@ -311,7 +250,6 @@ watch(installType, () => {
 const storageEntries = ref<{ key: string; value: string }[]>([]);
 const storageError = ref("");
 const editingKey = ref<string | null>(null);
-const deleteConfirmKey = ref<string | null>(null);
 const storageValue = ref("");
 const storageFileInput = ref<HTMLInputElement>();
 const importingStorage = ref(false);
@@ -389,11 +327,6 @@ function loadStorage() {
 function editStorage(entry: { key: string; value: string }) {
   editingKey.value = entry.key;
   storageValue.value = entry.value;
-}
-
-function confirmDeleteStorage(entry: { key: string; value: string }) {
-  deleteConfirmKey.value = null;
-  writeStorage(entry, null);
 }
 
 function writeStorage(entry: { key: string; value: string }, value: string | null) {
@@ -485,39 +418,8 @@ async function openDevTools() {
     gap: 16px;
 
     .toolDescription {
-      h3 { margin: 0 0 8px; font-size: 14px; color: var(--foreground); }
-      p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--muted-foreground); }
-    }
-
-    .infoText, .errorText, .successText { margin: 0; font-size: 14px; overflow-wrap: anywhere; }
-    .infoText { color: var(--muted-foreground); }
-    .errorText { color: var(--destructive); }
-    .successText { color: var(--el-color-success); }
-
-    .clearableInput {
-      position: relative;
-      flex: 1;
-      min-width: 200px;
-
-      :deep(input) { padding-inline-end: 32px; }
-
-      .clearButton {
-        position: absolute;
-        top: 50%;
-        inset-inline-end: 8px;
-        display: inline-flex;
-        padding: 2px;
-        border: 0;
-        border-radius: 999px;
-        background: transparent;
-        color: var(--muted-foreground);
-        cursor: pointer;
-        transform: translateY(-50%);
-
-        &:hover { color: var(--foreground); }
-        &:focus-visible { outline: 2px solid var(--ring); }
-        svg { width: 16px; height: 16px; }
-      }
+      h3 { margin: 0 0 8px; font-size: 14px; color: var(--el-text-color-primary); }
+      p { margin: 0; font-size: 13px; line-height: 1.6; color: var(--el-text-color-secondary); }
     }
 
     .pluginInstaller {
@@ -535,17 +437,18 @@ async function openDevTools() {
         gap: 12px;
         width: 100%;
 
-        h3 { margin: 0; font-size: 14px; color: var(--foreground); }
+        h3 { margin: 0; font-size: 14px; color: var(--el-text-color-primary); }
         .typeSelect { width: 160px; }
       }
 
-      .checkboxField { display: flex; align-items: center; gap: 8px; }
       .fileInput { display: none; }
       .urlInstaller {
         display: flex;
         flex-wrap: wrap;
         width: 100%;
         gap: 12px;
+
+        .el-input { flex: 1; min-width: 200px; }
       }
     }
 
@@ -564,6 +467,8 @@ async function openDevTools() {
         flex-wrap: wrap;
         gap: 8px;
         min-width: min(100%, 280px);
+
+        .el-input { flex: 1; min-width: 200px; }
       }
     }
 
@@ -578,6 +483,8 @@ async function openDevTools() {
         display: flex;
         flex-wrap: wrap;
         gap: 8px;
+
+        .el-button { margin-left: 0; }
       }
 
       .storageItem {
@@ -585,8 +492,8 @@ async function openDevTools() {
         flex-direction: column;
         gap: 12px;
         padding: 12px;
-        border-radius: var(--radius);
-        background: var(--muted);
+        border-radius: var(--el-border-radius-base);
+        background: var(--el-fill-color-light);
 
         .storageHeader {
           display: flex;
@@ -598,9 +505,8 @@ async function openDevTools() {
           .storageKey { overflow-wrap: anywhere; font-size: 13px; font-weight: 500; }
         }
 
-        .storageActions { display: flex; justify-content: flex-end; flex-shrink: 0; gap: 8px; }
-        .storageEditor { field-sizing: fixed; background: var(--background); }
-        .storageValue { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 120px; overflow: auto; font-size: 13px; color: var(--muted-foreground); }
+        .storageActions { display: flex; justify-content: flex-end; flex-shrink: 0; }
+        .storageValue { white-space: pre-wrap; overflow-wrap: anywhere; max-height: 120px; overflow: auto; font-size: 13px; color: var(--el-text-color-secondary); }
       }
     }
   }
@@ -616,11 +522,10 @@ async function openDevTools() {
     padding: 24px;
     overflow-y: auto;
     text-align: center;
-    background: color-mix(in srgb, var(--background) 75%, transparent);
+    background: color-mix(in srgb, var(--el-bg-color) 75%, transparent);
 
     h3 { margin: 0; font-size: 16px; }
-    p { margin: 0; max-width: 320px; line-height: 1.6; color: var(--muted-foreground); }
+    p { margin: 0; max-width: 320px; line-height: 1.6; color: var(--el-text-color-secondary); }
   }
 }
-
 </style>

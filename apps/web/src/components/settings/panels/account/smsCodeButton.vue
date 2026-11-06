@@ -1,17 +1,22 @@
 <template>
-  <uiPopover :open="popupVisible" @update:open="value => value ? openCaptcha() : closeCaptcha()">
-    <uiPopoverTrigger asChild>
-      <uiButton
+  <el-popover
+    :visible="popupVisible"
+    trigger="click"
+    placement="top"
+    :width="300"
+    :popperStyle="{ padding: 0 }"
+    @update:visible="value => value ? openCaptcha() : closeCaptcha()">
+    <div ref="codeBoxRef" class="smsCaptcha" @keydown.esc="closeCaptcha" />
+    <template #reference>
+      <el-button
         class="smsCodeButton"
-        @keydown.esc="closeCaptcha"
-        variant="outline"
-        type="button"
-        :disabled="(disabled || visible === false || !phone.trim() || countdown > 0 || sending) || (loading || sending)"><icon-loader-2 v-if="loading || sending" class="animate-spin" aria-hidden="true" />{{ countdown > 0 ? `${countdown}s 后重试` : "获取验证码" }}</uiButton>
-    </uiPopoverTrigger>
-    <uiPopoverContent class="hoverPanel " side="top" align="center" :sideOffset="8" :style="{ width: '300px', maxWidth: 'calc(100vw - 24px)' }">
-      <div ref="codeBoxRef" class="smsCaptcha" @keydown.esc="closeCaptcha" />
-    </uiPopoverContent>
-  </uiPopover>
+        :disabled="disabled || visible === false || !phone.trim() || countdown > 0 || sending"
+        :loading="loading || sending"
+        @keydown.esc="closeCaptcha">
+        {{ countdown > 0 ? `${countdown}s 后重试` : "获取验证码" }}
+      </el-button>
+    </template>
+  </el-popover>
 </template>
 
 <script lang="ts">
@@ -52,14 +57,11 @@ function loadCaptcha() {
   });
   return captchaLoading;
 }
-
 </script>
 
 <script setup lang="ts">
-import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
-import { uiButton } from "@/components/ui/button";
 import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import http from "@/lib/http";
 
 const props = defineProps<{ phone: string; disabled?: boolean; visible?: boolean; isForget?: boolean }>();
@@ -114,7 +116,7 @@ async function openCaptcha() {
       if (result.ret !== 0) return closeCaptcha();
       if (!result.ticket || !result.randstr) {
         closeCaptcha();
-        toast.error("人机验证失败，请重试");
+        ElMessage.error("人机验证失败，请重试");
         return;
       }
       submitted = true;
@@ -128,9 +130,9 @@ async function openCaptcha() {
         retryAt.value = timestamp;
         try { localStorage.setItem(storageKey, JSON.stringify({ phone, retryAt: timestamp })); } catch { /* ACT: 浏览器禁用存储时仅保留当前页面倒计时。 */ }
         updateCountdown();
-        toast.success("验证码已发送，请查收短信");
+        ElMessage.success("验证码已发送，请查收短信");
       } catch (error) {
-        if (!request.signal.aborted) toast.error(error instanceof Error ? error.message : "发送短信验证码失败");
+        if (!request.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "发送短信验证码失败");
       } finally {
         if (controller === request) closeCaptcha();
       }
@@ -139,7 +141,7 @@ async function openCaptcha() {
   } catch (error) {
     if (!request.signal.aborted) {
       closeCaptcha();
-      toast.error(error instanceof Error ? error.message : "人机验证码加载失败，请重试");
+      ElMessage.error(error instanceof Error ? error.message : "人机验证码加载失败，请重试");
     }
   } finally {
     if (controller === request) loading.value = false;

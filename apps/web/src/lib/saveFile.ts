@@ -1,5 +1,5 @@
 import axios from "axios";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { actualPlatform } from "./platform";
 
 declare global {
@@ -75,7 +75,7 @@ export function registerDownloads() {
     link.dispatchEvent(new CustomEvent("downloadstate", { detail: true }));
     // ACT: 捕获同源下载以兼容已安装节点；Android 先暂存内容，再交给系统文件选择器。
     void saveFile(() => axios.get<Blob>(url.href, { responseType: "blob" }).then(({ data }) => data), link.download || "download").catch(error => {
-      toast.error(axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "保存文件失败");
+      ElMessage.error(axios.isAxiosError<{ message?: string }>(error) ? error.response?.data?.message || error.message : error instanceof Error ? error.message : "保存文件失败");
     }).finally(() => {
       pending.delete(link);
       link.dispatchEvent(new CustomEvent("downloadstate", { detail: false }));

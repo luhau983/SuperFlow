@@ -1,39 +1,43 @@
 <template>
   <main class="hello" :class="{ configuring: !multiTenantEnabled && view !== 'welcome' }">
-    <div class="pageLanguage">
-      <languageSelect popover />
-    </div>
+    <div class="pageLanguage"><languageSelect popover /></div>
     <section class="welcomePanel" aria-labelledby="welcomeTitle">
       <div v-if="!multiTenantEnabled && view !== 'welcome'" class="providerContent">
         <header class="providerHeader">
-          <uiButton @click="view = 'welcome'" variant="ghost" type="button" :disabled="(saving)"><component :is="IconArrowLeft" aria-hidden="true" />返回</uiButton>
+          <el-button text :icon="IconArrowLeft" :disabled="saving" @click="view = 'welcome'">返回</el-button>
           <h1 id="welcomeTitle">配置第三方模型</h1>
         </header>
         <div class="providerBody">
           <languageModel />
         </div>
-        <uiButton
-          @click="completeSetup"
-          variant="default"
-          type="button"
-          :disabled="(!customProviders.some((provider) => provider.models.length)) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />开始使用</uiButton>
+        <el-button
+          type="primary"
+          :loading="saving"
+          :disabled="!customProviders.some((provider) => provider.models.length)"
+          @click="completeSetup">
+          开始使用
+        </el-button>
       </div>
       <div v-else class="welcomeContent">
         <h1 id="welcomeTitle">快速开始</h1>
         <p class="description">登录 SuperFlow 即可免配置快速开始，直接开启创作。</p>
         <accountPanel v-if="!loggedIn" class="accountContent" @loggedIn="startWithAccount" />
-        <uiButton v-else class="startButton" type="button" :disabled="saving" @click="completeSetup"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />开始使用</uiButton>
+        <el-button v-else class="startButton" type="primary" :loading="saving" @click="completeSetup">开始使用</el-button>
         <div class="secondaryActions">
           <template v-if="!multiTenantEnabled">
-            <uiButton class="secondaryButton" @click="view = 'custom'" variant="outline" type="button" :disabled="(saving)"><icon-key class="buttonIcon" />配置第三方模型</uiButton>
+            <el-button class="secondaryButton" round :disabled="saving" @click="view = 'custom'">
+              <icon-key class="buttonIcon" />
+              配置第三方模型
+            </el-button>
             <span class="separator">或</span>
           </template>
-          <uiButton class="secondaryButton" @click="completeSetup" variant="outline" type="button" :disabled="(saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />稍后配置</uiButton>
+          <el-button class="secondaryButton" round :loading="saving" @click="completeSetup">稍后配置</el-button>
         </div>
       </div>
+
       <footer class="pageFooter">
-        <uiButton class="deviceLink" @click="mobileConnectVisible = true" variant="outline" type="button" size="sm"><component :is="IconDevices" aria-hidden="true" />{{ mobileConnectionLabel }}</uiButton>
-        <p>©{{ new Date().getFullYear() }}SuperFlow · 保留所有权利。</p>
+        <el-button class="deviceLink" size="small" :icon="IconDevices" @click="mobileConnectVisible = true">{{ mobileConnectionLabel }}</el-button>
+        <p>© {{ new Date().getFullYear() }} SuperFlow · 保留所有权利。</p>
       </footer>
     </section>
     <div class="artPanel" aria-hidden="true">
@@ -48,10 +52,9 @@
 </template>
 
 <script setup lang="ts">
-import { uiButton } from "@/components/ui/button";
 import { defineAsyncComponent, ref } from "vue";
 import { useRouter } from "vue-router";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { IconArrowLeft, IconDevices } from "@tabler/icons-vue";
 import { customProviders, multiTenantEnabled, toonflowAccountToken } from "@/stores/settings";
 import { useHelloStore } from "@/stores/hello";
@@ -84,7 +87,7 @@ async function completeSetup() {
     anonymousData.track(view.value === "custom" || toonflowAccountToken.value ? "onboarding.complete" : "onboarding.skip");
     await router.replace("/home");
   } catch {
-    toast.error("保存引导状态失败，请重试");
+    ElMessage.error("保存引导状态失败，请重试");
   } finally {
     saving.value = false;
   }

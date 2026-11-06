@@ -2,7 +2,6 @@ import { fileURLToPath } from "node:url";
 import { basename } from "node:path";
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import tailwindcss from "@tailwindcss/vite";
 import components from "unplugin-vue-components/vite";
 import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 import desktopConfig from "../../electrobun.config.ts";
@@ -55,10 +54,8 @@ export default defineConfig(({ command }) => ({
     },
     i18nPlugin(),
     vue(),
-    tailwindcss(),
     components({
-      // ACT: shadcn-vue 组件通过 @/components/ui/* 显式导入，不注册为全局组件。
-      globsExclude: ["src/components/settings/panels/**/*Dialog.vue", "src/components/ui/**"],
+      globsExclude: ["src/components/settings/panels/**/*Dialog.vue"],
       // ACT: 声明由开发服务生成，避免 dev 与 build 并行抢写同一源码文件。
       dts: command === "serve" ? "src/types/components.d.ts" : false,
       resolvers: [

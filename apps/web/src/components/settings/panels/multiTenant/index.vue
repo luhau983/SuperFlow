@@ -1,196 +1,68 @@
 <template>
   <div class="multiTenant">
-    <div v-if="loading" class="loadingSkeleton" aria-busy="true">
-      <uiSkeleton class="h-4 w-2/5" />
-      <uiSkeleton class="h-4 w-full" />
-      <uiSkeleton class="h-4 w-full" />
-      <uiSkeleton class="h-4 w-3/5" />
-    </div>
+    <el-skeleton v-if="loading" :rows="3" animated />
     <div v-else-if="status?.configured" class="configuredSettings">
       <div class="enabledRow">
         <div class="settingInfo">
-          <uiLabel for="configuredMultiTenantEnabled">开启多租户</uiLabel>
-          <uiBadge :variant="status.enabled ? 'default' : 'secondary'">{{ status.enabled ? translate("已开启") : translate("未开启") }}</uiBadge>
+          <label for="configuredMultiTenantEnabled">开启多租户</label>
+          <el-tag :type="status.enabled ? 'primary' : 'info'" size="small" effect="light">{{ status.enabled ? translate("已开启") : translate("未开启") }}</el-tag>
         </div>
-        <uiSwitch
-          id="configuredMultiTenantEnabled"
-          :modelValue="status.enabled"
-          :disabled="saving || credentialsVisible"
-          aria-label="开启多租户"
-          @update:modelValue="changeEnabled" />
+        <el-switch id="configuredMultiTenantEnabled" :modelValue="status.enabled" :loading="saving" :disabled="saving || credentialsVisible" aria-label="开启多租户" @change="changeEnabled" />
       </div>
       <div class="formActions">
-        <uiButton :disabled="saving || credentialsVisible" @click="openAdmin">进入超管后台</uiButton>
+        <el-button type="primary" :disabled="saving || credentialsVisible" @click="openAdmin">进入超管后台</el-button>
       </div>
     </div>
-    <form v-else-if="status?.canSetup" class="setupForm" @submit.prevent="save">
-      <fieldset class="credentialsGroup" :disabled="saving">
+    <el-form v-else-if="status?.canSetup" class="setupForm" labelPosition="top" :disabled="saving" @submit.prevent="save">
+      <fieldset class="credentialsGroup">
         <legend>超级管理员</legend>
-        <div class="formField accountField">
-          <uiLabel for="setupAdminUserName">超级管理员账号<span class="requiredMark" aria-hidden="true">*</span></uiLabel>
-          <uiInput
-            id="setupAdminUserName"
-            ref="userNameInput"
-            v-model="userName"
-            autocomplete="username"
-            :maxlength="64"
-            required
-            :aria-invalid="!!userNameError || undefined" />
-          <p v-if="userNameError" class="fieldError" role="alert">{{ userNameError }}</p>
-        </div>
-        <div class="formField">
-          <uiLabel for="setupAdminPassword">超级管理员密码<span class="requiredMark" aria-hidden="true">*</span></uiLabel>
-          <div class="passwordField">
-            <uiInput
-              id="setupAdminPassword"
-              ref="passwordInput"
-              v-model="password"
-              :type="visiblePasswords.setup ? 'text' : 'password'"
-              autocomplete="new-password"
-              :minlength="8"
-              :maxlength="128"
-              required
-              :aria-invalid="!!passwordError || undefined" />
-            <uiButton
-              type="button"
-              class="passwordToggle"
-              variant="ghost"
-              size="icon-sm"
-              :aria-label="visiblePasswords.setup ? translate('隐藏密码') : translate('显示密码')"
-              :aria-pressed="visiblePasswords.setup"
-              @click="visiblePasswords.setup = !visiblePasswords.setup">
-              <icon-eye-off v-if="visiblePasswords.setup" aria-hidden="true" />
-              <icon-eye v-else aria-hidden="true" />
-            </uiButton>
-          </div>
-          <p v-if="passwordError" class="fieldError" role="alert">{{ passwordError }}</p>
-        </div>
-        <div class="formField">
-          <uiLabel for="setupAdminPasswordConfirm">确认密码<span class="requiredMark" aria-hidden="true">*</span></uiLabel>
-          <div class="passwordField">
-            <uiInput
-              id="setupAdminPasswordConfirm"
-              ref="confirmationInput"
-              v-model="passwordConfirm"
-              :type="visiblePasswords.confirm ? 'text' : 'password'"
-              autocomplete="new-password"
-              :minlength="8"
-              :maxlength="128"
-              required
-              :aria-invalid="!!confirmationError || undefined" />
-            <uiButton
-              type="button"
-              class="passwordToggle"
-              variant="ghost"
-              size="icon-sm"
-              :aria-label="visiblePasswords.confirm ? translate('隐藏密码') : translate('显示密码')"
-              :aria-pressed="visiblePasswords.confirm"
-              @click="visiblePasswords.confirm = !visiblePasswords.confirm">
-              <icon-eye-off v-if="visiblePasswords.confirm" aria-hidden="true" />
-              <icon-eye v-else aria-hidden="true" />
-            </uiButton>
-          </div>
-          <p v-if="confirmationError" class="fieldError" role="alert">{{ confirmationError }}</p>
-        </div>
+        <el-form-item class="accountField" label="超级管理员账号" for="setupAdminUserName" :error="userNameError" required>
+          <el-input id="setupAdminUserName" ref="userNameInput" v-model="userName" autocomplete="username" :maxlength="64" />
+        </el-form-item>
+        <el-form-item label="超级管理员密码" for="setupAdminPassword" :error="passwordError" required>
+          <el-input id="setupAdminPassword" ref="passwordInput" v-model="password" type="password" showPassword autocomplete="new-password" :minlength="8" :maxlength="128" />
+        </el-form-item>
+        <el-form-item label="确认密码" for="setupAdminPasswordConfirm" :error="confirmationError" required>
+          <el-input id="setupAdminPasswordConfirm" ref="confirmationInput" v-model="passwordConfirm" type="password" showPassword autocomplete="new-password" :minlength="8" :maxlength="128" />
+        </el-form-item>
       </fieldset>
       <div class="enabledRow">
-        <uiLabel for="setupMultiTenantEnabled">开启多租户</uiLabel>
-        <uiSwitch id="setupMultiTenantEnabled" v-model="enabled" :disabled="saving" aria-label="开启多租户" />
+        <label for="setupMultiTenantEnabled">开启多租户</label>
+        <el-switch id="setupMultiTenantEnabled" v-model="enabled" aria-label="开启多租户" />
       </div>
       <div class="formActions">
-        <uiButton type="submit" :disabled="saving"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
+        <el-button type="primary" nativeType="submit" :loading="saving" :disabled="saving">保存</el-button>
       </div>
-    </form>
-    <uiAlert v-else-if="status" variant="destructive">
-      <icon-alert-circle aria-hidden="true" />
-      <uiAlertTitle class="alertText">请在服务端本机设置超级管理员账号和密码</uiAlertTitle>
-    </uiAlert>
-    <uiAlert v-if="requestError" variant="destructive">
-      <icon-alert-circle aria-hidden="true" />
-      <uiAlertTitle class="alertText">{{ requestError }}</uiAlertTitle>
-    </uiAlert>
-    <uiButton v-if="!loading && !status" class="retryButton" variant="outline" @click="loadStatus">重新读取</uiButton>
-    <uiDialog v-model:open="credentialsVisible">
-      <uiDialogContent
-        :aria-describedby="undefined"
-        class="credentialsDialog sm:max-w-[420px]"
-        :showCloseButton="!saving"
-        @interactOutside="(event) => event.preventDefault()"
-        @escapeKeyDown="(event) => saving && event.preventDefault()">
-        <uiDialogHeader>
-          <uiDialogTitle>验证超级管理员</uiDialogTitle>
-        </uiDialogHeader>
-        <form id="multiTenantCredentialsForm" class="credentialsForm" @submit.prevent="confirmEnabled">
-          <fieldset class="credentialsFields" :disabled="saving">
-            <div class="formField">
-              <uiLabel for="verifyAdminUserName">超级管理员账号<span class="requiredMark" aria-hidden="true">*</span></uiLabel>
-              <uiInput
-                id="verifyAdminUserName"
-                ref="userNameInput"
-                v-model="userName"
-                autocomplete="username"
-                :maxlength="64"
-                required
-                :aria-invalid="!!userNameError || undefined" />
-              <p v-if="userNameError" class="fieldError" role="alert">{{ userNameError }}</p>
-            </div>
-            <div class="formField">
-              <uiLabel for="verifyAdminPassword">超级管理员密码<span class="requiredMark" aria-hidden="true">*</span></uiLabel>
-              <div class="passwordField">
-                <uiInput
-                  id="verifyAdminPassword"
-                  ref="passwordInput"
-                  v-model="password"
-                  :type="visiblePasswords.verify ? 'text' : 'password'"
-                  autocomplete="current-password"
-                  :minlength="8"
-                  :maxlength="128"
-                  required
-                  :aria-invalid="!!passwordError || undefined" />
-                <uiButton
-                  type="button"
-                  class="passwordToggle"
-                  variant="ghost"
-                  size="icon-sm"
-                  :aria-label="visiblePasswords.verify ? translate('隐藏密码') : translate('显示密码')"
-                  :aria-pressed="visiblePasswords.verify"
-                  @click="visiblePasswords.verify = !visiblePasswords.verify">
-                  <icon-eye-off v-if="visiblePasswords.verify" aria-hidden="true" />
-                  <icon-eye v-else aria-hidden="true" />
-                </uiButton>
-              </div>
-              <p v-if="passwordError" class="fieldError" role="alert">{{ passwordError }}</p>
-            </div>
-            <uiAlert v-if="credentialsError" variant="destructive">
-              <icon-alert-circle aria-hidden="true" />
-              <uiAlertTitle class="alertText">{{ credentialsError }}</uiAlertTitle>
-            </uiAlert>
-          </fieldset>
-        </form>
-        <uiDialogFooter>
-          <uiButton variant="outline" :disabled="saving" @click="credentialsVisible = false">取消</uiButton>
-          <uiButton type="submit" form="multiTenantCredentialsForm" :disabled="saving"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />确认</uiButton>
-        </uiDialogFooter>
-      </uiDialogContent>
-    </uiDialog>
+    </el-form>
+    <el-alert v-else-if="status" title="请在服务端本机设置超级管理员账号和密码" type="error" :closable="false" showIcon />
+    <el-alert v-if="requestError" :title="requestError" type="error" :closable="false" showIcon />
+    <el-button v-if="!loading && !status" class="retryButton" @click="loadStatus">重新读取</el-button>
+    <el-dialog v-model="credentialsVisible" class="credentialsDialog" title="验证超级管理员" width="min(420px, calc(100vw - 32px))" alignCenter appendToBody :closeOnClickModal="false" :closeOnPressEscape="!saving" :showClose="!saving" @closed="clearCredentials">
+      <el-form id="multiTenantCredentialsForm" class="credentialsForm" labelPosition="top" :disabled="saving" @submit.prevent="confirmEnabled">
+        <el-form-item label="超级管理员账号" for="verifyAdminUserName" :error="userNameError" required>
+          <el-input id="verifyAdminUserName" ref="userNameInput" v-model="userName" autocomplete="username" :maxlength="64" />
+        </el-form-item>
+        <el-form-item label="超级管理员密码" for="verifyAdminPassword" :error="passwordError" required>
+          <el-input id="verifyAdminPassword" ref="passwordInput" v-model="password" type="password" showPassword autocomplete="current-password" :minlength="8" :maxlength="128" />
+        </el-form-item>
+        <el-alert v-if="credentialsError" :title="credentialsError" type="error" :closable="false" showIcon />
+      </el-form>
+      <template #footer>
+        <el-button :disabled="saving" @click="credentialsVisible = false">取消</el-button>
+        <el-button type="primary" nativeType="submit" form="multiTenantCredentialsForm" :loading="saving" :disabled="saving">确认</el-button>
+      </template>
+    </el-dialog>
   </div>
 </template>
 
 <script setup lang="ts">
 import { translate } from "@toonflow/i18n/vue";
-import { onBeforeUnmount, onMounted, reactive, ref, watch } from "vue";
+import { onBeforeUnmount, onMounted, ref, watch } from "vue";
 import { useRouter } from "vue-router";
+import type { InputInstance } from "element-plus";
 import http from "@/lib/http";
 import { actualPlatform } from "@/lib/platform";
 import { applyMultiTenantEnabled } from "@/stores/settings";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiBadge } from "@/components/ui/badge";
-import { uiButton } from "@/components/ui/button";
-import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
-import { uiInput } from "@/components/ui/input";
-import { uiLabel } from "@/components/ui/label";
-import { uiSkeleton } from "@/components/ui/skeleton";
-import { uiSwitch } from "@/components/ui/switch";
 
 const router = useRouter();
 const hostWindow = window as Window & { __electrobunSendToHost?: (message: { type: "openExternal"; url: string }) => void };
@@ -208,10 +80,9 @@ const requestError = ref("");
 const credentialsVisible = ref(false);
 const credentialsError = ref("");
 const pendingEnabled = ref<boolean | null>(null);
-const userNameInput = ref<{ $el: HTMLInputElement }>();
-const passwordInput = ref<{ $el: HTMLInputElement }>();
-const confirmationInput = ref<{ $el: HTMLInputElement }>();
-const visiblePasswords = reactive({ setup: false, confirm: false, verify: false });
+const userNameInput = ref<InputInstance>();
+const passwordInput = ref<InputInstance>();
+const confirmationInput = ref<InputInstance>();
 const controller = new AbortController();
 let readingStatus = false;
 
@@ -221,11 +92,6 @@ watch([userName, password, passwordConfirm], () => {
   confirmationError.value = "";
   requestError.value = "";
   credentialsError.value = "";
-});
-
-// 替代 el-dialog 的 @closed：对话框关闭后清空凭据
-watch(credentialsVisible, (visible) => {
-  if (!visible) clearCredentials();
 });
 
 function openAdmin() {
@@ -258,17 +124,17 @@ function validateCredentials() {
   const name = userName.value.trim();
   if (!name || name.length > 64) {
     userNameError.value = translate("账号长度应为 1 到 64 个字符");
-    userNameInput.value?.$el.focus();
+    userNameInput.value?.focus();
     return false;
   }
   if (/[\s\u0000-\u001f\u007f]/.test(name)) {
     userNameError.value = translate("账号不能包含空白或控制字符");
-    userNameInput.value?.$el.focus();
+    userNameInput.value?.focus();
     return false;
   }
   if (password.value.length < 8 || password.value.length > 128) {
     passwordError.value = translate("密码长度应为 8 到 128 个字符");
-    passwordInput.value?.$el.focus();
+    passwordInput.value?.focus();
     return false;
   }
   return true;
@@ -278,7 +144,7 @@ async function save() {
   if (saving.value || !status.value?.canSetup || status.value.configured || !validateCredentials()) return;
   if (password.value !== passwordConfirm.value) {
     confirmationError.value = translate("两次输入的密码不一致");
-    confirmationInput.value?.$el.focus();
+    confirmationInput.value?.focus();
     return;
   }
   saving.value = true;
@@ -333,7 +199,6 @@ function clearCredentials() {
   passwordError.value = "";
   credentialsError.value = "";
   pendingEnabled.value = null;
-  visiblePasswords.verify = false;
 }
 
 onMounted(() => {
@@ -355,20 +220,7 @@ onBeforeUnmount(() => {
   gap: 20px;
   width: 100%;
   min-width: 0;
-  color: var(--foreground);
-
-  .loadingSkeleton {
-    display: flex;
-    flex-direction: column;
-    gap: 12px;
-  }
-
-  .alertText {
-    line-clamp: none;
-    -webkit-line-clamp: none;
-    white-space: normal;
-    overflow-wrap: anywhere;
-  }
+  color: var(--el-text-color-primary);
 
   .configuredSettings,
   .setupForm {
@@ -383,7 +235,7 @@ onBeforeUnmount(() => {
       min-height: 76px;
       padding: 20px 0;
       box-sizing: border-box;
-      border-bottom: 1px solid var(--border);
+      border-bottom: 1px solid var(--el-border-color-lighter);
 
       .settingInfo {
         display: flex;
@@ -400,13 +252,15 @@ onBeforeUnmount(() => {
         line-height: 1.6;
         overflow-wrap: anywhere;
       }
+
+      .el-switch { flex-shrink: 0; }
     }
 
     .formActions {
       display: flex;
       padding-top: 24px;
 
-      button {
+      .el-button {
         min-width: 140px;
         min-height: 44px;
         margin: 0;
@@ -416,6 +270,8 @@ onBeforeUnmount(() => {
   }
 
   .setupForm {
+    --el-component-size: 44px;
+
     .credentialsGroup {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -428,51 +284,38 @@ onBeforeUnmount(() => {
       legend {
         padding: 0;
         margin-bottom: 20px;
-        color: var(--foreground);
+        color: var(--el-text-color-primary);
         font-size: 15px;
         font-weight: 600;
         line-height: 1.6;
       }
 
       .accountField { grid-column: 1 / -1; }
-    }
 
-    .enabledRow { border-top: 1px solid var(--border); }
-  }
+      :deep(.el-form-item) {
+        min-width: 0;
+        margin-bottom: 24px;
+      }
 
-  .formField {
-    display: grid;
-    gap: 8px;
-    min-width: 0;
-    margin-bottom: 24px;
+      :deep(.el-form-item__label) {
+        height: auto;
+        margin-bottom: 8px;
+        color: var(--el-text-color-regular);
+        line-height: 1.6;
+      }
 
-    input { height: 44px; }
-
-    .requiredMark { margin-inline-start: -4px; color: var(--destructive); }
-
-    .passwordField {
-      position: relative;
-
-      input { padding-inline-end: 40px; }
-
-      .passwordToggle {
-        position: absolute;
-        top: 50%;
-        inset-inline-end: 6px;
-        transform: translateY(-50%);
-        color: var(--muted-foreground);
+      :deep(.el-form-item__error) {
+        position: static;
+        width: 100%;
+        padding-top: 6px;
+        line-height: 1.5;
       }
     }
 
-    .fieldError {
-      margin: 0;
-      color: var(--destructive);
-      font-size: 13px;
-      line-height: 1.5;
-    }
+    .enabledRow { border-top: 1px solid var(--el-border-color-lighter); }
   }
 
-  .retryButton { align-self: flex-start; margin-left: 0; }
+  .retryButton { margin-left: 0; }
 
   @media (max-width: 680px) {
     .setupForm .credentialsGroup { grid-template-columns: minmax(0, 1fr); }
@@ -480,60 +323,20 @@ onBeforeUnmount(() => {
     .configuredSettings,
     .setupForm {
       .enabledRow { gap: 16px; }
-      .formActions button { width: 100%; }
+      .formActions .el-button { width: 100%; }
     }
   }
 }
 
 .credentialsDialog {
+  --el-component-size: 44px;
+
   .credentialsForm {
     padding-top: 8px;
 
-    .credentialsFields {
-      min-width: 0;
-      padding: 0;
-      margin: 0;
-      border: 0;
-    }
-
-    .formField {
-      display: grid;
-      gap: 8px;
-      min-width: 0;
-      margin-bottom: 24px;
-
-      input { height: 44px; }
-
-      .requiredMark { margin-inline-start: -4px; color: var(--destructive); }
-
-      .passwordField {
-        position: relative;
-
-        input { padding-inline-end: 40px; }
-
-        .passwordToggle {
-          position: absolute;
-          top: 50%;
-          inset-inline-end: 6px;
-          transform: translateY(-50%);
-          color: var(--muted-foreground);
-        }
-      }
-
-      .fieldError {
-        margin: 0;
-        color: var(--destructive);
-        font-size: 13px;
-        line-height: 1.5;
-      }
-    }
-
-    .alertText {
-      line-clamp: none;
-      -webkit-line-clamp: none;
-      white-space: normal;
-      overflow-wrap: anywhere;
-    }
+    :deep(.el-form-item) { margin-bottom: 24px; }
+    :deep(.el-form-item__label) { height: auto; line-height: 1.6; }
+    :deep(.el-form-item__error) { position: static; width: 100%; padding-top: 6px; line-height: 1.5; }
   }
 }
 </style>

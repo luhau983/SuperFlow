@@ -5,9 +5,7 @@
         <template #content>
           <section class="welcomeMessage" aria-label="开始新对话">
             <div class="welcomeHeader">
-              <span class="welcomeIcon" aria-hidden="true">
-                <span class="welcomeLogo" :style="{ maskImage: `url(${logoUrl})` }" />
-              </span>
+              <span class="welcomeIcon" aria-hidden="true"><span class="welcomeLogo" :style="{ maskImage: `url(${logoUrl})` }" /></span>
               <div>
                 <p class="welcomeLabel">你好，我是 SuperFlow 助手</p>
                 <h3>从一个想法开始</h3>
@@ -15,23 +13,11 @@
             </div>
             <p class="welcomeDescription">聊聊你的故事、画面或镜头，让我们一起把想法落到画布上。</p>
             <div class="welcomeSuggestions">
-              <uiButton
-                v-for="item in welcomeSuggestions"
-                :key="item.label"
-                class="welcomeSuggestion"
-                bg
-                :aria-label="`填入提示：${item.label}`"
-                @click="emit('fillPrompt', item.prompt)"
-                variant="ghost"
-                type="button"
-                :disabled="(locked)">
+              <el-button v-for="item in welcomeSuggestions" :key="item.label" class="welcomeSuggestion" text bg :disabled="locked" :aria-label="`填入提示：${item.label}`" @click="emit('fillPrompt', item.prompt)">
                 <component :is="item.icon" :size="19" aria-hidden="true" />
-                <span class="suggestionContent">
-                  <strong>{{ item.label }}</strong>
-                  <span>{{ item.description }}</span>
-                </span>
+                <span class="suggestionContent"><strong>{{ item.label }}</strong><span>{{ item.description }}</span></span>
                 <icon-arrow-up-right class="suggestionArrow" :size="15" aria-hidden="true" />
-              </uiButton>
+              </el-button>
             </div>
             <p class="welcomeHint">点击填入提示，也可以直接输入，或添加图片、视频和文档。</p>
           </section>
@@ -48,150 +34,56 @@
           class="messageRow"
           :style="{ transform: `translateY(${row.start}px)` }"
           :class="{ userMessage: item.role === 'user', editingMessage: editingId === item.id }">
-          <chat-item
-            :role="item.role"
-            :variant="item.role === 'user' ? 'base' : 'text'"
-            :textLoading="!!item.streaming && !compacting && !item.parts?.some(part => part.type === 'tool' || part.content)"
-            animation="moving"
-            @vue:updated="measureMessage($event.el?.parentElement ?? null)">
+          <chat-item :role="item.role" :variant="item.role === 'user' ? 'base' : 'text'" :textLoading="!!item.streaming && !compacting && !item.parts?.some(part => part.type === 'tool' || part.content)" animation="moving" @vue:updated="measureMessage($event.el?.parentElement ?? null)">
             <template #content>
               <div class="messageContent">
                 <span v-if="item.role === 'user' && item.delivery?.mode === 'steer'" class="steeringLabel" title="当前任务的补充引导，已完成的操作不会撤销"><icon-corner-down-right :size="14" aria-hidden="true" />引导</span>
-                <div v-if="item.report" class="reportHeader"><icon-users-group :size="14" />{{ item.report.name }}上报</div>
-                <div v-if="item.agentMessage" class="reportHeader"><icon-users-group :size="14" />来自{{ item.agentMessage.fromName }}的消息</div>
+                <div v-if="item.report" class="reportHeader"><icon-users-group :size="14" />{{ item.report.name }} 上报</div>
+                <div v-if="item.agentMessage" class="reportHeader"><icon-users-group :size="14" />来自 {{ item.agentMessage.fromName }} 的消息</div>
                 <template v-for="part in item.parts" :key="part.id">
-                  <chat-reasoning
-                    v-if="part.type === 'thinking' && part.content"
-                    class="messageReasoning"
-                    :collapsed="part.collapsed ?? true"
-                    expandIconPlacement="left"
-                    @update:collapsed="part.collapsed = $event">
-                    <template #expandIcon>
-                      <component :is="(part.collapsed ?? true) ? IconChevronRight : IconChevronDown" :size="14" aria-hidden="true" />
-                    </template>
+                  <chat-reasoning v-if="part.type === 'thinking' && part.content" class="messageReasoning" :collapsed="part.collapsed ?? true" expandIconPlacement="left" @update:collapsed="part.collapsed = $event">
+                    <template #expandIcon><component :is="(part.collapsed ?? true) ? IconChevronRight : IconChevronDown" :size="14" aria-hidden="true" /></template>
                     <template #header>
                       <span class="reasoningHeader">
                         <icon-atom :size="14" />
                         <span>思考</span>
-                        <span v-if="part.duration !== undefined" class="thinkingDuration">{{ part.duration.toFixed(1) }}秒</span>
+                        <span v-if="part.duration !== undefined" class="thinkingDuration">{{ part.duration.toFixed(1) }} 秒</span>
                       </span>
                     </template>
                     <messageMarkdown v-if="!(part.collapsed ?? true)" :content="part.content" :streaming="!!item.streaming" :directory="directory" />
                   </chat-reasoning>
-                  <toolMessage
-                    v-else-if="part.type === 'tool' && !isBrowserTool(part.tool)"
-                    v-model:collapsed="part.collapsed"
-                    :tool="part.tool"
-                    :directory="directory"
-                    @copy="emit('copy', $event)" />
-                  <messageMarkdown
-                    v-else-if="part.type === 'text' && part.content"
-                    :content="part.content"
-                    :streaming="!!item.streaming"
-                    :directory="directory" />
+                  <toolMessage v-else-if="part.type === 'tool' && !isBrowserTool(part.tool)" v-model:collapsed="part.collapsed" :tool="part.tool" :directory="directory" @copy="emit('copy', $event)" />
+                  <messageMarkdown v-else-if="part.type === 'text' && part.content" :content="part.content" :streaming="!!item.streaming" :directory="directory" />
                 </template>
                 <attachmentList v-if="item.attachments?.length" :attachments="item.attachments" :directory="directory" />
-                <div v-if="item.role === 'user'" class="messageText">
-                  <mentionContent :content="item.content" :mentions="item.mentions" :directory="directory" />
-                </div>
+                <div v-if="item.role === 'user'" class="messageText"><mentionContent :content="item.content" :mentions="item.mentions" :directory="directory" /></div>
                 <div v-if="item.error" class="messageError" role="alert">{{ item.error }}</div>
               </div>
             </template>
           </chat-item>
           <div v-if="!item.streaming" class="messageActions">
             <template v-if="editingId === item.id">
-              <uiButton
-                @click="emit('cancelEdit')"
-                variant="ghost"
-                type="button"
-                :disabled="(busy || deletingId !== undefined || voiceActive)"
-                size="sm"><icon-x :size="14" />取消</uiButton>
+              <el-button text size="small" :disabled="busy || deletingId !== undefined || voiceActive" @click="emit('cancelEdit')"><icon-x :size="14" />取消</el-button>
               <span class="editingHint">正在下方编辑</span>
             </template>
             <template v-else>
-              <uiButton
-                v-if="item.content"
-                class="messageAction"
-                aria-label="复制消息"
-                title="复制消息"
-                @click="emit('copy', mentionPlainText(item.content, item.mentions))"
-                variant="ghost"
-                type="button"
-                size="icon"
-                style="border-radius: 9999px">
-                <icon-copy :size="14" />
-              </uiButton>
+              <el-button v-if="item.content" class="messageAction" text circle aria-label="复制消息" title="复制消息" @click="emit('copy', mentionPlainText(item.content, item.mentions))"><icon-copy :size="14" /></el-button>
               <template v-if="item.role === 'user'">
-                <uiButton
-                  class="messageAction"
-                  aria-label="编辑消息"
-                  title="编辑消息"
-                  @click="emit('edit', item)"
-                  variant="ghost"
-                  type="button"
-                  :disabled="(locked || remoteRunning)"
-                  size="icon"
-                  style="border-radius: 9999px">
-                  <icon-pencil :size="14" />
-                </uiButton>
+                <el-button class="messageAction" text circle :disabled="locked || remoteRunning" aria-label="编辑消息" title="编辑消息" @click="emit('edit', item)"><icon-pencil :size="14" /></el-button>
               </template>
-              <uiButton
-                v-if="!item.report && !item.agentMessage"
-                class="messageAction"
-                aria-label="从此消息创建分支"
-                title="从此消息创建分支"
-                @click="emit('branch', item)"
-                variant="ghost"
-                type="button"
-                :disabled="(locked || remoteRunning || !(item.entryId || item.replyTo)) || (branchingId === item.id)"
-                size="icon"
-                style="border-radius: 9999px">
-                <icon-loader-2 v-if="branchingId === item.id" class="animate-spin" aria-hidden="true" />
-                <icon-arrow-fork v-if="branchingId !== item.id" :size="14" style="transform: rotate(90deg)" aria-hidden="true" />
-              </uiButton>
-              <uiButton
-                v-if="!item.report && !item.agentMessage"
-                class="messageAction"
-                aria-label="删除消息"
-                title="删除消息"
-                @click="emit('delete', item)"
-                variant="ghost"
-                type="button"
-                :disabled="(locked || remoteRunning) || (deletingId === item.id)"
-                size="icon"
-                style="border-radius: 9999px">
-                <icon-loader-2 v-if="deletingId === item.id" class="animate-spin" aria-hidden="true" />
-                <icon-trash v-if="deletingId !== item.id" :size="14" />
-              </uiButton>
+              <el-button v-if="!item.report && !item.agentMessage" class="messageAction" text circle :loading="branchingId === item.id" :disabled="locked || remoteRunning || !(item.entryId || item.replyTo)" aria-label="从此消息创建分支" title="从此消息创建分支" @click="emit('branch', item)"><icon-arrow-fork v-if="branchingId !== item.id" :size="14" style="transform: rotate(90deg)" aria-hidden="true" /></el-button>
+              <el-button v-if="!item.report && !item.agentMessage" class="messageAction" text circle :loading="deletingId === item.id" :disabled="locked || remoteRunning" aria-label="删除消息" title="删除消息" @click="emit('delete', item)"><icon-trash v-if="deletingId !== item.id" :size="14" /></el-button>
             </template>
           </div>
-          <browserPanel
-            v-if="browserMessages.tools.has(item.id)"
-            class="browserPreview"
-            :tools="browserMessages.tools.get(item.id)!"
-            :directory="directory"
-            :active="active"
-            :live="item.id === browserMessages.liveMessageId" />
+          <browserPanel v-if="browserMessages.tools.has(item.id)" class="browserPreview" :tools="browserMessages.tools.get(item.id)!" :directory="directory" :active="active" :live="item.id === browserMessages.liveMessageId" />
         </div>
       </div>
     </div>
-    <uiButton
-      v-if="messages.length && !atLatestMessage"
-      class="scrollBottom"
-      aria-label="回到最新消息"
-      title="回到最新消息"
-      @click="messageVirtualizer.scrollToEnd()"
-      variant="outline"
-      type="button"
-      size="icon"
-      style="border-radius: 9999px">
-      <icon-arrow-down :size="18" />
-    </uiButton>
+    <el-button v-if="messages.length && !atLatestMessage" class="scrollBottom" circle aria-label="回到最新消息" title="回到最新消息" @click="messageVirtualizer.scrollToEnd()"><icon-arrow-down :size="18" /></el-button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiButton } from "@/components/ui/button";
 import { computed, nextTick, onUpdated, ref, watch, type ComponentPublicInstance } from "vue";
 import { defaultRangeExtractor, observeElementRect, useVirtualizer } from "@tanstack/vue-virtual";
 import { IconArrowDown, IconArrowFork, IconArrowUpRight, IconAtom, IconChevronDown, IconChevronRight, IconCopy, IconCornerDownRight, IconMovie, IconPencil, IconPhoto, IconTrash, IconUsersGroup, IconVector, IconX } from "@tabler/icons-vue";
@@ -438,7 +330,7 @@ const welcomeSuggestions = [
         gap: 4px;
         margin-top: 4px;
 
-        [data-slot="button"] {
+        .el-button {
           margin: 0;
 
           .tabler-icon {

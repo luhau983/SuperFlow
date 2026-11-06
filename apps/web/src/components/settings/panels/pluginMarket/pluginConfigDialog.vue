@@ -1,37 +1,20 @@
 <template>
-  <uiDialog v-model:open="visible">
-    <uiDialogContent
-      class="sm:max-w-[520px]"
-      :showCloseButton="!saving"
-      :aria-describedby="undefined"
-      @interactOutside="(event: Event) => event.preventDefault()"
-      @escapeKeyDown="(event: Event) => saving && event.preventDefault()"
-      @closeAutoFocus="formApi = undefined">
-      <uiDialogHeader>
-        <uiDialogTitle>{{ plugin.displayName }}配置</uiDialogTitle>
-      </uiDialogHeader>
-      <form-create v-model="formValues" v-model:api="formApi" :rule="formRules" :option="formOptions" />
-      <uiAlert v-if="configError" variant="destructive">
-        <icon-alert-circle aria-hidden="true" />
-        <uiAlertTitle class="line-clamp-none">{{ configError }}</uiAlertTitle>
-      </uiAlert>
-      <uiDialogFooter>
-        <uiButton variant="outline" :disabled="saving" @click="visible = false">取消</uiButton>
-        <uiButton :disabled="saving || !canManage || !formApi" @click="saveConfig"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
-      </uiDialogFooter>
-    </uiDialogContent>
-  </uiDialog>
+  <el-dialog v-model="visible" :title="`${plugin.displayName}配置`" width="min(520px, 94vw)" alignCenter appendToBody destroyOnClose :closeOnClickModal="false" :closeOnPressEscape="!saving" :showClose="!saving" @closed="formApi = undefined">
+    <form-create v-model="formValues" v-model:api="formApi" :rule="formRules" :option="formOptions" />
+    <el-alert v-if="configError" :title="configError" type="error" :closable="false" showIcon />
+    <template #footer>
+      <el-button :disabled="saving" @click="visible = false">取消</el-button>
+      <el-button type="primary" :loading="saving" :disabled="!canManage || !formApi" @click="saveConfig">保存</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import axios from "axios";
 import { computed, ref, shallowRef, toRaw, watch } from "vue";
 import formCreate, { type Api, type Options } from "@toonflow/provider-web/formCreate";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import type { Plugin } from "./types";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
-import { uiDialog, uiDialogContent, uiDialogFooter, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 import { extensionConfig, saveExtensionConfig } from "@/pages/workspace/panels/document/extensions";
 
 const { plugin, canManage } = defineProps<{ plugin: Plugin; canManage: boolean }>();
@@ -68,7 +51,7 @@ async function saveConfig() {
     }
     if (plugin.type === "node") window.dispatchEvent(new Event("toonflow:node-config-updated"));
     visible.value = false;
-    toast.success("插件配置已保存");
+    ElMessage.success("插件配置已保存");
   } catch (error) {
     configError.value = axios.isAxiosError(error)
       ? error.response?.data?.message || "保存失败，请重试；当前填写的内容已保留"

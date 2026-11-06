@@ -1,104 +1,54 @@
 <template>
-  <form class="network uiForm" @submit.prevent="saveNetwork">
-    <fieldset class="formFields" :disabled="busy">
-      <div class="networkHeader">
-        <uiRadioGroup v-model="form.mode" class="proxyModes" aria-label="代理模式">
-          <uiLabel class="radioField"><uiRadioGroupItem :value="'none'" />不使用代理</uiLabel>
-          <uiLabel class="radioField"><uiRadioGroupItem :value="'system'" />使用系统代理设置</uiLabel>
-          <uiLabel class="radioField"><uiRadioGroupItem :value="'custom'" />自定义代理</uiLabel>
-        </uiRadioGroup>
-        <div class="networkActions">
-          <uiButton @click="testNetwork" variant="outline" type="button" :disabled="(busy) || (testing) || (busy)"><icon-loader-2 v-if="testing" class="animate-spin" aria-hidden="true" />测试</uiButton>
-          <uiButton variant="default" type="submit" :disabled="(busy) || (saving) || (busy)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />确定</uiButton>
-        </div>
+  <el-form class="network" labelPosition="top" :disabled="busy" @submit.prevent="saveNetwork">
+    <div class="networkHeader">
+      <el-radio-group v-model="form.mode" class="proxyModes" aria-label="代理模式">
+        <el-radio value="none">不使用代理</el-radio>
+        <el-radio value="system">使用系统代理设置</el-radio>
+        <el-radio value="custom">自定义代理</el-radio>
+      </el-radio-group>
+      <div class="networkActions">
+        <el-button :loading="testing" :disabled="busy" @click="testNetwork">测试</el-button>
+        <el-button type="primary" nativeType="submit" :loading="saving" :disabled="busy">确定</el-button>
       </div>
-      <p class="description">控制服务端 AI、媒体等网络请求，保存后生效。</p>
-      <p v-if="form.mode === 'system'" class="description">使用服务端所在设备的系统 HTTP(S) 代理：Windows、macOS 读取静态代理，其他平台读取代理环境变量。暂不支持 PAC 自动配置。</p>
-      <div v-if="form.mode === 'custom'" class="customProxy">
-        <div class="formField">
-          <uiLabel :for="portFieldId + '-1'">代理协议</uiLabel>
-          <uiSelect
-            :modelValue="String(form.protocol) === '' ? '__empty__' : (form.protocol)"
-            @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; form.protocol = value as typeof form.protocol; }">
-            <uiSelectTrigger :id="portFieldId + '-1'" class="protocolSelect" aria-label="代理协议">
-              <uiSelectValue />
-            </uiSelectTrigger>
-            <uiSelectContent>
-              <uiSelectItem value="http">HTTP 代理</uiSelectItem>
-              <uiSelectItem value="https">HTTPS 代理</uiSelectItem>
-            </uiSelectContent>
-          </uiSelect>
-        </div>
-        <div class="proxyFields">
-          <div class="formField">
-            <uiLabel :for="portFieldId + '-2'">服务器</uiLabel>
-            <uiInput
-              :id="portFieldId + '-2'"
-              v-model="form.host"
-              dir="ltr"
-              placeholder="请输入 IP 或域名"
-              autocomplete="off"
-              :disabled="(busy) || (false)"></uiInput>
-          </div>
-          <div class="formField">
-            <uiLabel :for="portFieldId + '-3'">端口</uiLabel>
-            <uiNumberField class="numberField" v-model="form.port" :min="1" :max="65535" :formatOptions="{ maximumFractionDigits: 0, minimumFractionDigits: 0 }">
-              <uiNumberFieldContent>
-                <uiNumberFieldInput :id="portFieldId + '-3'" :aria-label="'代理端口'" />
-              </uiNumberFieldContent>
-            </uiNumberField>
-          </div>
-          <div class="formField">
-            <uiLabel :for="portFieldId + '-4'">用户名</uiLabel>
-            <uiInput :id="portFieldId + '-4'" v-model="form.username" autocomplete="off" :disabled="(busy) || (false)"></uiInput>
-          </div>
-          <div class="formField">
-            <uiLabel :for="portFieldId + '-5'">密码</uiLabel>
-            <div class="inputGroup">
-              <uiInput
-                :id="portFieldId + '-5'"
-                v-model="form.password"
-                autocomplete="off"
-                :disabled="(busy) || (false)"
-                :type="passwordVisible1 ? 'text' : 'password'"></uiInput>
-              <uiButton
-                @mousedown.prevent
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                :aria-label="passwordVisible1 ? '隐藏密码' : '显示密码'"
-                :disabled="busy"
-                @click="passwordVisible1 = !passwordVisible1">
-                <icon-eye-off v-if="passwordVisible1" />
-                <icon-eye v-else />
-              </uiButton>
-            </div>
-          </div>
-        </div>
+    </div>
+
+    <p class="description">控制服务端 AI、媒体等网络请求，保存后生效。</p>
+    <p v-if="form.mode === 'system'" class="description">使用服务端所在设备的系统 HTTP(S) 代理：Windows、macOS 读取静态代理，其他平台读取代理环境变量。暂不支持 PAC 自动配置。</p>
+
+    <div v-if="form.mode === 'custom'" class="customProxy">
+      <el-form-item label="代理协议">
+        <el-select v-model="form.protocol" class="protocolSelect" aria-label="代理协议">
+          <el-option label="HTTP 代理" value="http" />
+          <el-option label="HTTPS 代理" value="https" />
+        </el-select>
+      </el-form-item>
+      <div class="proxyFields">
+        <el-form-item label="服务器" required>
+          <el-input v-model="form.host" dir="ltr" placeholder="请输入 IP 或域名" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="端口" required>
+          <el-input-number v-model="form.port" :min="1" :max="65535" :precision="0" :controls="false" aria-label="代理端口" />
+        </el-form-item>
+        <el-form-item label="用户名">
+          <el-input v-model="form.username" autocomplete="off" />
+        </el-form-item>
+        <el-form-item label="密码">
+          <el-input v-model="form.password" type="password" showPassword autocomplete="off" />
+        </el-form-item>
       </div>
-      <p class="description">测试地址：<span dir="ltr">https://www.baidu.com/robots.txt</span></p>
-      <uiAlert v-if="requestError" variant="destructive">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ requestError }}</uiAlertTitle>
-      </uiAlert>
-      <uiAlert v-else-if="testLatency !== null">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ `连接成功，耗时 ${testLatency} ms` }}</uiAlertTitle>
-      </uiAlert>
-    </fieldset>
-  </form>
+    </div>
+
+    <p class="description">测试地址：<span dir="ltr">https://www.baidu.com/robots.txt</span></p>
+    <el-alert v-if="requestError" :title="requestError" type="error" :closable="false" showIcon />
+    <el-alert v-else-if="testLatency !== null" :title="`连接成功，耗时 ${testLatency} ms`" type="success" :closable="false" showIcon />
+  </el-form>
 </template>
 
 <script setup lang="ts">
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiNumberField, uiNumberFieldContent, uiNumberFieldInput } from "@/components/ui/numberField";
-import { uiInput } from "@/components/ui/input";
-import { uiSelect, uiSelectTrigger, uiSelectValue, uiSelectContent, uiSelectItem } from "@/components/ui/select";
-import { uiButton } from "@/components/ui/button";
-import { uiLabel } from "@/components/ui/label";
-import { uiRadioGroup, uiRadioGroupItem } from "@/components/ui/radioGroup";
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
-import { computed, onBeforeUnmount, reactive, ref, watch, useId } from "vue";
-import { toast } from "vue-sonner";
+import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
+import { ElMessage } from "element-plus";
 import { saveSettings, settings } from "@/stores/settings";
 
 type NetworkSettings = {
@@ -172,17 +122,14 @@ async function saveNetwork() {
   try {
     const network = readForm();
     await saveSettings(() => ({ network }));
-    toast.success("网络设置已保存");
+    ElMessage.success("网络设置已保存");
   } catch (cause) {
     requestError.value = errorMessage(cause);
-    if (controller.signal.aborted) toast.error(requestError.value);
+    if (controller.signal.aborted) ElMessage.error(requestError.value);
   } finally {
     saving.value = false;
   }
 }
-
-const passwordVisible1 = ref(false);
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -202,7 +149,7 @@ const portFieldId = useId();
     .proxyModes {
       gap: 4px 20px;
 
-      :is(.el-radio, .radioField) { margin-right: 0; }
+      .el-radio { margin-right: 0; }
     }
 
     .networkActions {
@@ -210,7 +157,7 @@ const portFieldId = useId();
       flex-shrink: 0;
       gap: 8px;
 
-      [data-slot="button"] { margin-left: 0; }
+      .el-button { margin-left: 0; }
     }
   }
 
@@ -230,7 +177,7 @@ const portFieldId = useId();
       grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 0 20px;
 
-      :is(.el-input-number, .numberField) { width: 100%; }
+      .el-input-number { width: 100%; }
 
       @media (max-width: 700px) { grid-template-columns: minmax(0, 1fr); }
     }

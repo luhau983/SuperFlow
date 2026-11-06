@@ -1,37 +1,34 @@
 <template>
-  <uiPopover v-if="popover" v-model:open="visible">
-    <uiPopoverTrigger asChild>
+  <el-popover
+    v-if="popover"
+    v-model:visible="visible"
+    trigger="click"
+    placement="bottom-end"
+    role="dialog"
+    :aria-label="translate('语言')"
+    :width="280"
+    :showArrow="false"
+    :offset="10"
+    :popperStyle="{ maxWidth: 'calc(100vw - 32px)', padding: '12px', borderRadius: '14px' }"
+    @after-enter="popoverPanel?.focusSelected()">
+    <template #reference>
       <button ref="triggerButton" class="languageTrigger" type="button" :aria-label="translate('语言')" @keydown.esc.stop.prevent="closePopover">
-        <svg class="languageFlag" viewBox="0 0 32 24" aria-hidden="true">
-          <use :href="`${languageFlags}#${flagIds[locale]}`" />
-        </svg>
+        <svg class="languageFlag" viewBox="0 0 32 24" aria-hidden="true"><use :href="`${languageFlags}#${flagIds[locale]}`" /></svg>
         <span class="triggerName" :lang="locale" dir="auto">{{ selectedName }}</span>
         <icon-chevron-down class="triggerChevron" :class="{ opened: visible }" :size="15" aria-hidden="true" />
       </button>
-    </uiPopoverTrigger>
-    <uiPopoverContent
-      class="hoverPanel "
-      side="bottom"
-      align="end"
-      :sideOffset="10"
-      :style="{ width: '280px', maxWidth: 'calc(100vw - 24px)' }"
-      @openAutoFocus="() => { popoverPanel?.focusSelected(); }">
-      <div class="languagePopup" @keydown.esc.stop.prevent="closePopover">
-        <header class="popupHeader">
-          <div class="popupHeading">
-            <span class="headingIcon">
-              <icon-language :size="20" aria-hidden="true" />
-            </span>
-            <strong>{{ translate('语言') }}</strong>
-          </div>
-          <button class="closeButton" type="button" :aria-label="translate('关闭')" @click="closePopover">
-            <icon-x :size="18" aria-hidden="true" />
-          </button>
-        </header>
-        <languageSelect ref="popoverPanel" @select="closePopover" />
-      </div>
-    </uiPopoverContent>
-  </uiPopover>
+    </template>
+    <div class="languagePopup" @keydown.esc.stop.prevent="closePopover">
+      <header class="popupHeader">
+        <div class="popupHeading">
+          <span class="headingIcon"><icon-language :size="20" aria-hidden="true" /></span>
+          <strong>{{ translate('语言') }}</strong>
+        </div>
+        <button class="closeButton" type="button" :aria-label="translate('关闭')" @click="closePopover"><icon-x :size="18" aria-hidden="true" /></button>
+      </header>
+      <languageSelect ref="popoverPanel" @select="closePopover" />
+    </div>
+  </el-popover>
   <div v-else ref="panel" class="languagePanel" role="radiogroup" :aria-label="translate('语言')" @keydown="navigateLanguages">
     <div class="languageGrid">
       <button
@@ -45,12 +42,8 @@
         :data-language="language.code"
         @click="changeLanguage(language.code)">
         <span class="cardTop">
-          <svg class="languageFlag" viewBox="0 0 32 24" aria-hidden="true">
-            <use :href="`${languageFlags}#${flagIds[language.code]}`" />
-          </svg>
-          <span class="selectionMark" aria-hidden="true">
-            <icon-check v-if="uiSettings.language === language.code" :size="12" stroke="3" />
-          </span>
+          <svg class="languageFlag" viewBox="0 0 32 24" aria-hidden="true"><use :href="`${languageFlags}#${flagIds[language.code]}`" /></svg>
+          <span class="selectionMark" aria-hidden="true"><icon-check v-if="uiSettings.language === language.code" :size="12" stroke="3" /></span>
         </span>
         <span class="languageName" :lang="language.code" dir="auto">{{ language.name }}</span>
       </button>
@@ -59,7 +52,6 @@
 </template>
 
 <script setup lang="ts">
-import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
 import { computed, nextTick, ref } from "vue";
 import { IconCheck, IconChevronDown, IconLanguage, IconX } from "@tabler/icons-vue";
 import { supportedLocales, type Locale } from "@toonflow/i18n";
@@ -111,7 +103,6 @@ function closePopover() {
   void nextTick(() => triggerButton.value?.focus({ preventScroll: true }));
 }
 defineExpose({ focusSelected });
-
 </script>
 
 <style scoped lang="scss">

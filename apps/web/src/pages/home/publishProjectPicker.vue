@@ -1,26 +1,20 @@
 <template>
   <div class="projectPicker">
     <div class="sourceActions">
-      <uiButton @click="folderInput?.click()" variant="outline" type="button"><component :is="IconFolderOpen" aria-hidden="true" />选择文件夹</uiButton>
-      <uiButton @click="archiveInput?.click()" variant="outline" type="button"><component :is="IconFileZip" aria-hidden="true" />选择 ZIP 压缩包</uiButton>
+      <el-button :icon="IconFolderOpen" @click="folderInput?.click()">选择文件夹</el-button>
+      <el-button :icon="IconFileZip" @click="archiveInput?.click()">选择 ZIP 压缩包</el-button>
       <input ref="folderInput" type="file" webkitdirectory multiple hidden @change="selectFolder" />
       <input ref="archiveInput" type="file" accept=".zip,application/zip,application/x-zip-compressed" hidden @change="selectArchive" />
     </div>
     <div v-if="projects.length" class="projectItems">
-      <projectCard
-        v-for="project in projects"
-        :key="project.directory"
-        :project="project"
-        actionLabel="选择项目"
-        @select="emit('select', { name: project.name, directory: project.directory })" />
+      <projectCard v-for="project in projects" :key="project.directory" :project="project" actionLabel="选择项目" @select="emit('select', { name: project.name, directory: project.directory })" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiButton } from "@/components/ui/button";
 import { computed, ref } from "vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { IconFileZip, IconFolderOpen } from "@tabler/icons-vue";
 import { useWorkspaceStore } from "@/stores/workspace";
 import projectCard from "./projectCard.vue";
@@ -40,7 +34,7 @@ function selectFolder(event: Event) {
   if (!files.length) return;
   const name = files[0]!.webkitRelativePath.split("/")[0];
   if (!name || !files.every(file => file.webkitRelativePath.startsWith(`${name}/`))) {
-    toast.warning("无法读取文件夹，请重新选择");
+    ElMessage.warning("无法读取文件夹，请重新选择");
     return;
   }
   emit("select", { name, files });
@@ -52,7 +46,7 @@ function selectArchive(event: Event) {
   input.value = "";
   if (!file) return;
   if (!/\.zip$/i.test(file.name) || !file.size) {
-    toast.warning("请选择非空的 ZIP 压缩包");
+    ElMessage.warning("请选择非空的 ZIP 压缩包");
     return;
   }
   emit("select", { name: file.name, files: [file] });
@@ -67,7 +61,7 @@ function selectArchive(event: Event) {
     gap: 8px;
     margin-bottom: 20px;
 
-    [data-slot="button"] { margin: 0; }
+    .el-button { margin: 0; }
   }
 
   .projectItems {

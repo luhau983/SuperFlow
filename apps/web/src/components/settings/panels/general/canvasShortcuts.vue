@@ -3,22 +3,27 @@
     <div class="shortcutHeader">
       <h3 id="canvasShortcutsTitle">画布快捷键</h3>
       <div class="shortcutActions">
-        <uiDropdownMenu v-model:open="bindModeVisible">
-          <uiDropdownMenuTrigger asChild>
-            <uiButton variant="ghost" size="sm" aria-label="快捷键绑定方式">{{ bindMode === 'listen' ? '按键录制' : '手动填写' }}<component :is="bindModeVisible ? IconChevronUp : IconChevronDown" :size="14" aria-hidden="true" /></uiButton>
-          </uiDropdownMenuTrigger>
-          <uiDropdownMenuContent align="end">
-            <uiDropdownMenuItem @select="changeBindMode('listen')"><icon-keyboard />按键录制</uiDropdownMenuItem>
-            <uiDropdownMenuItem @select="changeBindMode('input')"><icon-edit />手动填写</uiDropdownMenuItem>
-          </uiDropdownMenuContent>
-        </uiDropdownMenu>
-        <uiButton variant="ghost" size="sm" @click="resetShortcuts"><icon-restore />恢复默认</uiButton>
+        <el-dropdown trigger="click" @command="changeBindMode" @visibleChange="bindModeVisible = $event">
+          <el-button text size="small" aria-label="快捷键绑定方式">
+            {{ bindMode === 'listen' ? '按键录制' : '手动填写' }}
+            <component :is="bindModeVisible ? IconChevronUp : IconChevronDown" :size="14" aria-hidden="true" />
+          </el-button>
+          <template #dropdown>
+            <el-dropdown-menu>
+              <el-dropdown-item command="listen" :icon="IconKeyboard">按键录制</el-dropdown-item>
+              <el-dropdown-item command="input" :icon="IconEdit">手动填写</el-dropdown-item>
+            </el-dropdown-menu>
+          </template>
+        </el-dropdown>
+        <el-button text size="small" :icon="IconRestore" @click="resetShortcuts">恢复默认</el-button>
       </div>
     </div>
-    <p class="description">{{ bindMode === "listen" ? "点击键帽录制，Esc 退出；右侧 × 取消绑定，箭头菜单可选择无需按键。" : "使用按键代号，如 Ctrl+KeyG / Alt+KeyG；None 表示无需按键，可写 None / Space；留空取消绑定，回车或移开焦点保存。" }}</p>
+    <p class="description">
+      {{ bindMode === "listen" ? "点击键帽录制，Esc 退出；右侧 × 取消绑定，箭头菜单可选择无需按键。" : "使用按键代号，如 Ctrl+KeyG / Alt+KeyG；None 表示无需按键，可写 None / Space；留空取消绑定，回车或移开焦点保存。" }}
+    </p>
     <p class="description">将画布平移设为无需按键前，请先把框选节点改成 Shift 等按键。</p>
-    <div class="shortcutList">
-      <div v-for="field in canvasShortcutFields" :key="`${field.id}:${resetKey}`" class="shortcutItem">
+    <el-form class="shortcutList">
+      <el-form-item v-for="field in canvasShortcutFields" :key="`${field.id}:${resetKey}`" class="shortcutItem" :error="issues[field.id]">
         <div class="shortcutRow">
           <div class="shortcutInfo">
             <span class="shortcutName">{{ field.label }}</span>
@@ -33,32 +38,20 @@
             :allowNone="field.allowNone"
             @change="setShortcut(field.id, $event)" />
         </div>
-        <p v-if="issues[field.id]" class="shortcutError" role="alert">{{ issues[field.id] }}</p>
-      </div>
-      <div class="gestureRow">
-        <span>触摸板缩放</span>
-        <span class="gestureValue"><icon-hand-two-fingers :size="16" />双指捏合</span>
-      </div>
-      <div class="gestureRow">
-        <span>触摸板双指滑动</span>
-        <span class="gestureValue"><icon-hand-two-fingers :size="16" />跟随滚轮配置</span>
-      </div>
-      <div class="gestureRow">
-        <span>鼠标平移</span>
-        <span class="gestureValue"><icon-mouse :size="16" />中键拖动</span>
-      </div>
-    </div>
+      </el-form-item>
+      <div class="gestureRow"><span>触摸板缩放</span><span class="gestureValue"><icon-hand-two-fingers :size="16" />双指捏合</span></div>
+      <div class="gestureRow"><span>触摸板双指滑动</span><span class="gestureValue"><icon-hand-two-fingers :size="16" />跟随滚轮配置</span></div>
+      <div class="gestureRow"><span>鼠标平移</span><span class="gestureValue"><icon-mouse :size="16" />中键拖动</span></div>
+    </el-form>
   </section>
 </template>
 
 <script setup lang="ts">
 import { ref } from "vue";
 import { t, translate } from "@toonflow/i18n/vue";
-import { IconChevronDown, IconChevronUp } from "@tabler/icons-vue";
+import { IconRestore, IconChevronDown, IconChevronUp, IconKeyboard, IconEdit, IconHandTwoFingers, IconMouse } from "@tabler/icons-vue";
 import { generalSettings, updateGeneralSettings } from "@/stores/settings";
 import { canvasShortcutFields, defaultCanvasShortcuts, getShortcutBindings, isShortcutAllowed, normalizeShortcut, type CanvasShortcutAction } from "@/lib/canvasShortcuts";
-import { uiButton } from "@/components/ui/button";
-import { uiDropdownMenu, uiDropdownMenuContent, uiDropdownMenuItem, uiDropdownMenuTrigger } from "@/components/ui/dropdownMenu";
 import keyInput from "./keyInput.vue";
 
 const bindMode = ref<"listen" | "input">("listen");
@@ -121,7 +114,7 @@ function resetShortcuts() {
       margin: 0;
       font-size: 14px;
       font-weight: 600;
-      color: var(--foreground);
+      color: var(--el-text-color-primary);
     }
 
     .shortcutActions {
@@ -129,6 +122,7 @@ function resetShortcuts() {
       align-items: center;
       gap: 4px;
 
+      .el-button { margin-left: 0; }
       svg { margin-left: 4px; }
     }
   }
@@ -137,7 +131,7 @@ function resetShortcuts() {
     margin: 8px 0 12px;
     font-size: 12px;
     line-height: 1.6;
-    color: var(--muted-foreground);
+    color: var(--el-text-color-secondary);
   }
   .shortcutList {
     display: grid;
@@ -150,6 +144,12 @@ function resetShortcuts() {
       margin: 0;
       padding: 5px 0;
 
+      :deep(.el-form-item__content) { min-width: 0; }
+      :deep(.el-form-item__error) {
+        position: static;
+        padding-top: 4px;
+        line-height: 1.5;
+      }
 
       .shortcutRow {
         display: flex;
@@ -167,20 +167,12 @@ function resetShortcuts() {
           .shortcutName { font-size: 13px; }
           .shortcutHint {
             display: block;
-            color: var(--muted-foreground);
+            color: var(--el-text-color-secondary);
             font-size: 11px;
           }
         }
 
         .shortcutInput { flex: 1; min-width: 0; }
-      }
-
-      .shortcutError {
-        margin: 0;
-        padding-top: 4px;
-        color: var(--destructive);
-        font-size: 12px;
-        line-height: 1.5;
       }
     }
 
@@ -190,7 +182,7 @@ function resetShortcuts() {
       justify-content: space-between;
       gap: 12px;
       min-height: 42px;
-      color: var(--muted-foreground);
+      color: var(--el-text-color-secondary);
       font-size: 12px;
 
       .gestureValue { display: inline-flex; align-items: center; gap: 6px; }

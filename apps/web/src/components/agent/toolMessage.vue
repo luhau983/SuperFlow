@@ -1,10 +1,8 @@
 <template>
   <component v-if="renderer" :is="renderer" :tool="tool" :directory="directory" :toolSessionId="toolSessionId" @copy="emit('copy', $event)" />
-  <span v-if="rendererError" class="rendererError">工具界面加载失败，请停止后重试：{{ rendererError }}</span>
+  <el-text v-if="rendererError" type="danger">工具界面加载失败，请停止后重试：{{ rendererError }}</el-text>
   <chat-reasoning v-model:collapsed="collapsed" class="messageReasoning toolCall" expandIconPlacement="left">
-    <template #expandIcon>
-      <component :is="collapsed ? IconChevronRight : IconChevronDown" :size="14" aria-hidden="true" />
-    </template>
+    <template #expandIcon><component :is="collapsed ? IconChevronRight : IconChevronDown" :size="14" aria-hidden="true" /></template>
     <template #header>
       <span class="toolHeader" :data-status="tool.status">
         <icon-tool :size="14" />
@@ -15,20 +13,12 @@
     <div v-if="!collapsed" class="toolDetails">
       <template v-for="(data, index) in [args, result]" :key="index">
         <template v-if="data">
-          <span class="toolLabel">{{ index === 0 ? "参数" : "结果" }}<uiButton v-if="!data.markdown" variant="ghost" size="icon-xs" :aria-label="index === 0 ? '复制工具参数' : '复制工具结果'" @click="emit('copy', data.content)"><icon-copy /></uiButton></span>
-          <messageMarkdown
-            v-if="data.markdown"
-            class="toolData"
-            :class="{ toolError: index === 1 && tool.status === 'error' }"
-            :content="data.markdown"
-            :directory="directory"
-            :codeOptions="toolCodeOptions" />
-          <pre
-            v-else
-            class="toolData toolPlain"
-            :class="{ toolError: index === 1 && tool.status === 'error' }"
-            tabindex="0"
-            :aria-label="index === 0 ? '工具参数' : '工具结果'">{{ data.content }}</pre>
+          <span class="toolLabel">
+            {{ index === 0 ? "参数" : "结果" }}
+            <el-button v-if="!data.markdown" text size="small" :icon="IconCopy" :aria-label="index === 0 ? '复制工具参数' : '复制工具结果'" @click="emit('copy', data.content)" />
+          </span>
+          <messageMarkdown v-if="data.markdown" class="toolData" :class="{ toolError: index === 1 && tool.status === 'error' }" :content="data.markdown" :directory="directory" :codeOptions="toolCodeOptions" />
+          <pre v-else class="toolData toolPlain" :class="{ toolError: index === 1 && tool.status === 'error' }" tabindex="0" :aria-label="index === 0 ? '工具参数' : '工具结果'">{{ data.content }}</pre>
         </template>
       </template>
     </div>
@@ -43,7 +33,6 @@ import chatReasoning from "@tdesign-vue-next/chat/es/chat-reasoning";
 import type { AgentToolCall } from "@toonflow/server/agent/types";
 import messageMarkdown from "@/components/messageMarkdown.vue";
 import marketInstallApproval from "./marketInstallApproval.vue";
-import { uiButton } from "@/components/ui/button";
 
 const { tool, directory, toolSessionId } = defineProps<{ tool: AgentToolCall; directory?: string; toolSessionId?: string }>();
 const emit = defineEmits<{ copy: [content: string] }>();
@@ -99,18 +88,16 @@ function formatToolData(value: unknown) {
 </script>
 
 <style scoped lang="scss">
-.rendererError { color: var(--destructive); font-size: 14px; }
-
 .toolCall {
   min-width: 0;
-  :deep(.t-collapse-panel__icon) { color: var(--muted-foreground); }
+  :deep(.t-collapse-panel__icon) { color: var(--el-text-color-secondary); }
 
   .toolHeader {
     display: flex;
     align-items: center;
     gap: 6px;
     min-width: 0;
-    color: var(--muted-foreground);
+    color: var(--el-text-color-secondary);
 
     .toolName {
       overflow: hidden;
@@ -123,7 +110,7 @@ function formatToolData(value: unknown) {
       font-size: 12px;
     }
 
-    &[data-status="error"] .toolState { color: var(--destructive); }
+    &[data-status="error"] .toolState { color: var(--el-color-danger); }
   }
 
   .toolDetails {
@@ -137,7 +124,7 @@ function formatToolData(value: unknown) {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      color: var(--muted-foreground);
+      color: var(--el-text-color-secondary);
     }
 
     .toolData {
@@ -158,7 +145,7 @@ function formatToolData(value: unknown) {
         }
       }
 
-      &.toolError :deep([data-stream-markdown="code-block"]) { border-color: color-mix(in oklch, var(--destructive) 50%, transparent); }
+      &.toolError :deep([data-stream-markdown="code-block"]) { border-color: var(--el-color-danger-light-5); }
 
       &.toolPlain {
         min-width: 0;
@@ -170,12 +157,12 @@ function formatToolData(value: unknown) {
         white-space: pre;
         overflow-wrap: normal;
         font-family: ui-monospace, SFMono-Regular, Consolas, monospace;
-        color: var(--foreground);
-        background: var(--muted);
-        border: 1px solid var(--border);
+        color: var(--el-text-color-primary);
+        background: var(--el-fill-color-light);
+        border: 1px solid var(--el-border-color-lighter);
         border-radius: var(--ui-radius);
 
-        &.toolError { border-color: color-mix(in oklch, var(--destructive) 50%, transparent); }
+        &.toolError { border-color: var(--el-color-danger-light-5); }
       }
     }
   }

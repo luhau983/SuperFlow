@@ -1,331 +1,105 @@
 <template>
-  <assetBrowser
-    v-if="visible && expanded"
-    v-model:folder="folder"
-    v-model:searchQuery="searchQuery"
-    v-model:newFolderName="newFolderName"
-    :entries="entries"
-    :loading="loading"
-    :uploading="uploading"
-    :newFolderParent="newFolderParent"
-    :folderSaving="folderSaving"
-    :mediaKind="mediaKind"
-    :assetUrl="assetUrl"
-    :canSelect="canSelect"
-    :selecting="selecting"
-    @select="emit('select', $event)"
-    @upload="fileInput?.click()"
-    @startFolder="startFolder"
-    @saveFolder="saveFolder"
-    @cancelFolder="cancelFolder"
-    @preview="openPreview"
-    @menu="openItemMenu"
-    @drag="startAssetDrag" />
-  <uiCard v-else-if="visible" class="assetLibrary" role="region" aria-label="素材库" @dblclick.stop style="gap:0; padding:0">
-    <div class="cardBody" :style="{ padding: '8px' }">
-      <div class="libraryToolbar">
-        <div class="inputGroup">
-          <component :is="IconSearch" aria-hidden="true" />
-          <uiInput v-model="searchQuery" class="searchInput" placeholder="搜索素材" aria-label="搜索素材" @keydown.esc.stop="searchQuery = ''"></uiInput>
-          <uiButton
-            @mousedown.prevent
-            v-if="searchQuery"
-            type="button"
-            variant="ghost"
-            size="icon-sm"
-            aria-label="清除"
-            @click="searchQuery = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
-            <icon-x />
-          </uiButton>
-        </div>
-        <uiButton
-          class="toolbarButton"
-          title="本地上传"
-          aria-label="本地上传"
-          @click="fileInput?.click()"
-          variant="ghost"
-          type="button"
-          :disabled="(loading || newFolderParent !== undefined) || (uploading)">
-          <icon-loader-2 v-if="uploading" class="animate-spin" aria-hidden="true" />
-          <component :is="IconUpload" aria-hidden="true" />
-        </uiButton>
-        <uiButton
-          class="toolbarButton"
-          title="新建文件夹"
-          aria-label="新建文件夹"
-          @click="startFolder"
-          variant="ghost"
-          type="button"
-          :disabled="(newFolderParent !== undefined)">
-          <component :is="IconFolderPlus" aria-hidden="true" />
-        </uiButton>
-        <uiButton class="toolbarButton" title="关闭素材库" aria-label="关闭素材库" @click="visible = false" variant="ghost" type="button">
-          <component :is="IconX" aria-hidden="true" />
-        </uiButton>
-      </div>
-      <div
-        class="libraryScroll"
-        style="overflow:auto; overscroll-behavior:contain"
-        :style="{ maxHeight: 'min(440px, calc(100dvh - 198px))', height: undefined }">
-        <el-tree
-          ref="assetTree"
-          class="assetTree"
-          :data="displayEntries"
-          nodeKey="path"
-          :props="{ label: 'name' }"
-          :icon="IconChevronRight"
-          :currentNodeKey="folder === '.' ? undefined : folder"
-          :filterNodeMethod="filterEntry"
-          defaultExpandAll
-          highlightCurrent
-          emptyText=""
-          @nodeClick="selectFolder">
-          <template #default="{ data, node }">
-            <div
-              class="assetEntry"
-              :title="data.name"
-              :draggable="data.type === 'file'"
-              @dragstart.stop="startAssetDrag($event, data)"
-              @dblclick.stop="openPreview(data)"
-              @contextmenu="openItemMenu($event, data)">
-              <span v-if="data.type === 'directory'" class="fileIcon">
-                <component :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder" :size="18" aria-hidden="true" />
-              </span>
-              <mentionThumbnail
-                v-else-if="mediaKind(data) === 'image'"
-                class="assetThumbnail"
-                :thumbnail="{ url: data.path, mimeType: getMediaMimeType({ name: data.path, type: '' }) }"
-                globalAsset
-                @click.stop="openPreview(data)">
-                <icon-photo :size="18" />
-              </mentionThumbnail>
-              <mentionThumbnail
-                v-else-if="mediaKind(data) === 'video'"
-                class="assetThumbnail"
-                :thumbnail="{ url: data.path, mimeType: mentionAssetType(data.path).mimeType }"
-                globalAsset
-                @click.stop="openPreview(data)">
-                <icon-video :size="18" />
-              </mentionThumbnail>
-              <span v-else class="fileIcon">
-                <icon-music v-if="mediaKind(data) === 'audio'" :size="18" />
-                <icon-file v-else :size="18" />
-              </span>
-              <uiInput
-                v-if="data.draft"
-                ref="folderInput"
-                v-model="newFolderName"
-                class="folderNameInput"
-                aria-label="文件夹名称"
-                :disabled="folderSaving"
-                @click.stop
-                @keydown.stop
-                @keydown.enter.prevent="saveFolder"
-                @keydown.esc.prevent="cancelFolder"
-                @blur="saveFolder"></uiInput>
-              <span v-else class="assetName">{{ data.name }}</span>
-              <uiButton
-                v-if="mediaKind(data)"
-                class="moreButton"
-                :aria-label="'预览 ' + data.name"
-                title="预览（也可双击素材）"
-                @click.stop="openPreview(data)"
-                variant="ghost"
-                type="button">
-                <component :is="IconEye" aria-hidden="true" />
-              </uiButton>
-              <uiButton
-                v-if="!data.draft"
-                class="moreButton"
-                :aria-label="'更多 ' + data.name"
-                title="更多"
-                @click.stop="openItemMenu($event, data)"
-                variant="ghost"
-                type="button">
-                <component :is="IconDots" aria-hidden="true" />
-              </uiButton>
-            </div>
-          </template>
-        </el-tree>
-      </div>
-      <div v-if="previewAsset?.kind === 'audio'" class="audioPreview">
-        <div class="audioHeader">
-          <span :title="previewAsset.name">{{ previewAsset.name }}</span>
-          <uiButton aria-label="关闭音频预览" @click="previewAsset = undefined" variant="ghost" type="button">
-            <component :is="IconX" aria-hidden="true" />
-          </uiButton>
-        </div>
-        <uiAlert v-if="previewError" variant="destructive">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ previewError }}</uiAlertTitle>
-        </uiAlert>
-        <audio v-else :src="mediaSrc" :aria-label="previewAsset.name" controls preload="auto" @loadeddata="handleLoaded" @error="handleError" />
-        <p v-if="preparing" role="status">正在生成兼容预览…</p>
-      </div>
+  <assetBrowser v-if="visible && expanded" v-model:folder="folder" v-model:searchQuery="searchQuery" v-model:newFolderName="newFolderName" :entries="entries" :loading="loading" :uploading="uploading" :newFolderParent="newFolderParent" :folderSaving="folderSaving" :mediaKind="mediaKind" :assetUrl="assetUrl" :canSelect="canSelect" :selecting="selecting" @select="emit('select', $event)" @upload="fileInput?.click()" @startFolder="startFolder" @saveFolder="saveFolder" @cancelFolder="cancelFolder" @preview="openPreview" @menu="openItemMenu" @drag="startAssetDrag" />
+  <el-card v-else-if="visible" class="assetLibrary" shadow="never" :bodyStyle="{ padding: '8px' }" role="region" aria-label="素材库" @dblclick.stop>
+    <div class="libraryToolbar">
+      <el-input v-model="searchQuery" class="searchInput" :prefixIcon="IconSearch" placeholder="搜索素材" aria-label="搜索素材" clearable @keydown.esc.stop="searchQuery = ''" />
+      <el-button class="toolbarButton" text :icon="IconUpload" title="本地上传" aria-label="本地上传" :loading="uploading" :disabled="loading || newFolderParent !== undefined" @click="fileInput?.click()" />
+      <el-button class="toolbarButton" text :icon="IconFolderPlus" title="新建文件夹" aria-label="新建文件夹" :disabled="newFolderParent !== undefined" @click="startFolder" />
+      <el-button class="toolbarButton" text :icon="IconX" title="关闭素材库" aria-label="关闭素材库" @click="visible = false" />
     </div>
-  </uiCard>
+    <el-scrollbar class="libraryScroll" maxHeight="min(440px, calc(100dvh - 198px))">
+      <el-tree ref="assetTree" class="assetTree" :data="displayEntries" nodeKey="path" :props="{ label: 'name' }" :icon="IconChevronRight" :currentNodeKey="folder === '.' ? undefined : folder" :filterNodeMethod="filterEntry" defaultExpandAll highlightCurrent emptyText="" @nodeClick="selectFolder">
+        <template #default="{ data, node }">
+          <div class="assetEntry" :title="data.name" :draggable="data.type === 'file'" @dragstart.stop="startAssetDrag($event, data)" @dblclick.stop="openPreview(data)" @contextmenu="openItemMenu($event, data)">
+            <span v-if="data.type === 'directory'" class="fileIcon"><component :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder" :size="18" aria-hidden="true" /></span>
+            <mentionThumbnail v-else-if="mediaKind(data) === 'image'" class="assetThumbnail" :thumbnail="{ url: data.path, mimeType: getMediaMimeType({ name: data.path, type: '' }) }" globalAsset @click.stop="openPreview(data)"><icon-photo :size="18" /></mentionThumbnail>
+            <mentionThumbnail v-else-if="mediaKind(data) === 'video'" class="assetThumbnail" :thumbnail="{ url: data.path, mimeType: mentionAssetType(data.path).mimeType }" globalAsset @click.stop="openPreview(data)"><icon-video :size="18" /></mentionThumbnail>
+            <span v-else class="fileIcon">
+              <icon-music v-if="mediaKind(data) === 'audio'" :size="18" />
+              <icon-file v-else :size="18" />
+            </span>
+            <el-input v-if="data.draft" ref="folderInput" v-model="newFolderName" class="folderNameInput" size="small" aria-label="文件夹名称" :disabled="folderSaving" @click.stop @keydown.stop @keydown.enter.prevent="saveFolder" @keydown.esc.prevent="cancelFolder" @blur="saveFolder" />
+            <span v-else class="assetName">{{ data.name }}</span>
+            <el-button v-if="mediaKind(data)" class="moreButton" text :icon="IconEye" :aria-label="'预览 ' + data.name" title="预览（也可双击素材）" @click.stop="openPreview(data)" />
+            <el-button v-if="!data.draft" class="moreButton" text :icon="IconDots" :aria-label="'更多 ' + data.name" title="更多" @click.stop="openItemMenu($event, data)" />
+          </div>
+        </template>
+      </el-tree>
+    </el-scrollbar>
+    <div v-if="previewAsset?.kind === 'audio'" class="audioPreview">
+      <div class="audioHeader">
+        <span :title="previewAsset.name">{{ previewAsset.name }}</span>
+        <el-button text :icon="IconX" aria-label="关闭音频预览" @click="previewAsset = undefined" />
+      </div>
+      <el-alert v-if="previewError" :title="previewError" type="error" :closable="false" showIcon />
+      <audio v-else :src="mediaSrc" :aria-label="previewAsset.name" controls preload="auto" @loadeddata="handleLoaded" @error="handleError" />
+      <p v-if="preparing" role="status">正在生成兼容预览…</p>
+    </div>
+  </el-card>
+
   <input ref="fileInput" type="file" multiple hidden aria-label="选择本地素材" :disabled="uploading" @change="uploadFiles" />
   <assetMenu v-if="visible" ref="assetMenuRef" :entries="entries" @changed="refreshAssets" />
+
   <el-image-viewer v-if="previewAsset?.kind === 'image'" :urlList="[mediaSrc]" teleported @error="handleError" @close="previewAsset = undefined" />
-  <uiDialog :open="previewAsset?.kind === 'video'" @update:open="open => { if (!open) { previewAsset = undefined; } }">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      class="uiDialogPanel"
-      :style="{ width: 'min(800px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>{{ previewAsset?.name }}</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <div v-if="previewAsset?.kind === 'video'" class="assetPreview">
-          <uiAlert v-if="previewError" variant="destructive">
-            <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ previewError }}</uiAlertTitle>
-          </uiAlert>
-          <video
-            v-else
-            class="previewVideo"
-            :src="mediaSrc"
-            :aria-label="previewAsset.name"
-            controls
-            playsinline
-            preload="auto"
-            @loadeddata="handleLoaded"
-            @error="handleError" />
-          <p v-if="preparing" role="status">正在生成兼容预览…</p>
+
+  <el-dialog :modelValue="previewAsset?.kind === 'video'" :title="previewAsset?.name" width="min(800px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose @update:modelValue="previewAsset = undefined">
+    <div v-if="previewAsset?.kind === 'video'" class="assetPreview">
+      <el-alert v-if="previewError" :title="previewError" type="error" :closable="false" showIcon />
+      <video v-else class="previewVideo" :src="mediaSrc" :aria-label="previewAsset.name" controls playsinline preload="auto" @loadeddata="handleLoaded" @error="handleError" />
+      <p v-if="preparing" role="status">正在生成兼容预览…</p>
+    </div>
+  </el-dialog>
+
+  <el-dialog v-if="expanded" :modelValue="previewAsset?.kind === 'audio'" :title="previewAsset?.name" width="min(560px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose @update:modelValue="previewAsset = undefined">
+    <div v-if="previewAsset?.kind === 'audio'" class="assetPreview">
+      <el-alert v-if="previewError" :title="previewError" type="error" :closable="false" showIcon />
+      <audio v-else class="previewAudio" :src="mediaSrc" :aria-label="previewAsset.name" controls preload="auto" @loadeddata="handleLoaded" @error="handleError" />
+      <p v-if="preparing" role="status">正在生成兼容预览…</p>
+    </div>
+  </el-dialog>
+
+  <el-dialog v-model="saveVisible" title="保存到素材库" width="460px" alignCenter appendToBody :closeOnClickModal="false" @opened="assetNameInput?.select()">
+    <el-form class="saveForm" labelPosition="top" @submit.prevent="saveAsset">
+      <el-form-item label="素材名称">
+        <el-input ref="assetNameInput" v-model="assetName" aria-label="素材名称" placeholder="输入完整文件名" :disabled="saving" @keydown.enter.prevent="saveAsset" />
+      </el-form-item>
+      <el-form-item v-if="outputs.length > 1" label="节点输出">
+        <el-select v-model="selectedOutput" aria-label="节点输出" :disabled="saving">
+          <el-option v-for="(item, index) in outputs" :key="index" :label="item.label" :value="index" />
+        </el-select>
+      </el-form-item>
+      <div class="saveLocation">
+        <div class="locationHeader">
+          <span>保存位置</span>
+          <el-button text :icon="IconFolderPlus" :disabled="saving || saveFolderName !== undefined" @click="startSaveFolder">新建文件夹</el-button>
+        </div>
+        <div class="locationPath" :title="saveLocationLabel">{{ saveLocationLabel }}</div>
+        <el-scrollbar class="saveFolderScroll" maxHeight="220px">
+          <el-tree class="saveFolderTree" :data="folders" nodeKey="path" :props="{ label: 'name' }" :icon="IconChevronRight" :currentNodeKey="saveDirectory" :expandOnClickNode="false" defaultExpandAll highlightCurrent @nodeClick="(entry: AssetEntry) => { if (!saving && saveFolderName === undefined) saveDirectory = entry.path; }">
+            <template #default="{ data, node }">
+              <span class="saveFolderEntry"><component :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder" :size="18" aria-hidden="true" /><span>{{ data.name }}</span></span>
+            </template>
+          </el-tree>
+        </el-scrollbar>
+        <div v-if="saveFolderName !== undefined" class="createFolderRow">
+          <el-input ref="saveFolderInput" v-model="saveFolderName" aria-label="新文件夹名称" :disabled="folderSaving" @keydown.enter.prevent="createFolder" @keydown.esc.stop="saveFolderName = undefined" />
+          <el-button :loading="folderSaving" :disabled="!saveFolderName.trim()" @click="createFolder">创建</el-button>
+          <el-button text :disabled="folderSaving" @click="saveFolderName = undefined">取消</el-button>
         </div>
       </div>
-    </uiDialogContent>
-  </uiDialog>
-  <uiDialog v-if="expanded" :open="previewAsset?.kind === 'audio'" @update:open="open => { if (!open) { previewAsset = undefined; } }">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      class="uiDialogPanel"
-      :style="{ width: 'min(560px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>{{ previewAsset?.name }}</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <div v-if="previewAsset?.kind === 'audio'" class="assetPreview">
-          <uiAlert v-if="previewError" variant="destructive">
-            <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ previewError }}</uiAlertTitle>
-          </uiAlert>
-          <audio
-            v-else
-            class="previewAudio"
-            :src="mediaSrc"
-            :aria-label="previewAsset.name"
-            controls
-            preload="auto"
-            @loadeddata="handleLoaded"
-            @error="handleError" />
-          <p v-if="preparing" role="status">正在生成兼容预览…</p>
-        </div>
-      </div>
-    </uiDialogContent>
-  </uiDialog>
-  <uiDialog :open="saveVisible" @update:open="open => { if (!open) { saveVisible = false; } }" :unmountOnHide="false">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      v-if="dialogRendered1"
-      class="uiDialogPanel"
-      :style="{ width: '460px', maxWidth: 'calc(100vw - 32px)' }"
-      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
-      @openAutoFocus="() => { assetNameInput?.$el.select(); }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>保存到素材库</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <form class="saveForm uiForm" @submit.prevent="saveAsset">
-          <fieldset class="formFields">
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-1'">素材名称</uiLabel>
-              <uiInput
-                :id="portFieldId + '-1'"
-                ref="assetNameInput"
-                v-model="assetName"
-                aria-label="素材名称"
-                placeholder="输入完整文件名"
-                :disabled="saving"
-                @keydown.enter.prevent="saveAsset"></uiInput>
-            </div>
-            <div v-if="outputs.length > 1" class="formField">
-              <uiLabel :for="portFieldId + '-2'">节点输出</uiLabel>
-              <uiSelect
-                :disabled="saving"
-                :modelValue="String(selectedOutput) === '' ? '__empty__' : (selectedOutput)"
-                @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; selectedOutput = value as typeof selectedOutput; }">
-                <uiSelectTrigger :id="portFieldId + '-2'" aria-label="节点输出">
-                  <uiSelectValue />
-                </uiSelectTrigger>
-                <uiSelectContent>
-                  <uiSelectItem v-for="(item, index) in outputs" :key="index" :value="index">{{ item.label }}</uiSelectItem>
-                </uiSelectContent>
-              </uiSelect>
-            </div>
-            <div class="saveLocation">
-              <div class="locationHeader">
-                <span>保存位置</span>
-                <uiButton @click="startSaveFolder" variant="ghost" type="button" :disabled="(saving || saveFolderName !== undefined)"><component :is="IconFolderPlus" aria-hidden="true" />新建文件夹</uiButton>
-              </div>
-              <div class="locationPath" :title="saveLocationLabel">{{ saveLocationLabel }}</div>
-              <div class="saveFolderScroll" style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: '220px', height: undefined }">
-                <el-tree
-                  class="saveFolderTree"
-                  :data="folders"
-                  nodeKey="path"
-                  :props="{ label: 'name' }"
-                  :icon="IconChevronRight"
-                  :currentNodeKey="saveDirectory"
-                  :expandOnClickNode="false"
-                  defaultExpandAll
-                  highlightCurrent
-                  @nodeClick="(entry: AssetEntry) => { if (!saving && saveFolderName === undefined) saveDirectory = entry.path; }">
-                  <template #default="{ data, node }">
-                    <span class="saveFolderEntry">
-                      <component :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder" :size="18" aria-hidden="true" />
-                      <span>{{ data.name }}</span>
-                    </span>
-                  </template>
-                </el-tree>
-              </div>
-              <div v-if="saveFolderName !== undefined" class="createFolderRow">
-                <uiInput
-                  ref="saveFolderInput"
-                  v-model="saveFolderName"
-                  aria-label="新文件夹名称"
-                  :disabled="folderSaving"
-                  @keydown.enter.prevent="createFolder"
-                  @keydown.esc.stop="saveFolderName = undefined"></uiInput>
-                <uiButton @click="createFolder" variant="outline" type="button" :disabled="(!saveFolderName.trim()) || (folderSaving)"><icon-loader-2 v-if="folderSaving" class="animate-spin" aria-hidden="true" />创建</uiButton>
-                <uiButton @click="saveFolderName = undefined" variant="ghost" type="button" :disabled="(folderSaving)">取消</uiButton>
-              </div>
-            </div>
-          </fieldset>
-        </form>
-        <uiDialogFooter class="dialogFooter">
-          <uiButton @click="saveVisible = false" variant="outline" type="button" :disabled="(saving)">取消</uiButton>
-          <uiButton
-            @click="saveAsset"
-            variant="default"
-            type="button"
-            :disabled="(!assetName.trim() || /[\\/]/.test(assetName) || saveFolderName !== undefined) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
-        </uiDialogFooter>
-      </div>
-    </uiDialogContent>
-  </uiDialog>
+    </el-form>
+    <template #footer>
+      <el-button :disabled="saving" @click="saveVisible = false">取消</el-button>
+      <el-button type="primary" :loading="saving" :disabled="!assetName.trim() || /[\\/]/.test(assetName) || saveFolderName !== undefined" @click="saveAsset">保存</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { uiSelect, uiSelectTrigger, uiSelectValue, uiSelectContent, uiSelectItem } from "@/components/ui/select";
-import { uiLabel } from "@/components/ui/label";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
-import { uiInput } from "@/components/ui/input";
-import { uiCard } from "@/components/ui/card";
-import { computed, nextTick, onBeforeUnmount, ref, watch, useId } from "vue";
+import { computed, nextTick, onBeforeUnmount, ref, watch } from "vue";
 import axios from "axios";
 import { t } from "@toonflow/i18n/vue";
-import { ElTree, type TreeNodeData } from "element-plus";
-import { toast } from "vue-sonner";
+import { ElMessage, ElTree, type InputInstance, type TreeNodeData } from "element-plus";
 import { IconChevronRight, IconDots, IconEye, IconFile, IconFolder, IconFolderOpen, IconFolderPlus, IconMusic, IconPhoto, IconSearch, IconUpload, IconVideo, IconX } from "@tabler/icons-vue";
 import type { NodeOutput } from "@toonflow/nodes-scaffold/values";
 import { mentionAssetType } from "@toonflow/server/agent/mentionSources";
@@ -351,21 +125,21 @@ const uploading = ref(false);
 const fileInput = ref<HTMLInputElement>();
 const folder = ref(".");
 const assetName = ref("");
-const assetNameInput = ref<{ $el: HTMLInputElement }>();
+const assetNameInput = ref<InputInstance>();
 const saveDirectory = ref(".");
 const saveFolderName = ref<string>();
-const saveFolderInput = ref<{ $el: HTMLInputElement }>();
+const saveFolderInput = ref<InputInstance>();
 const saveLocationLabel = computed(() => saveDirectory.value === "." ? "素材库" : `素材库 / ${saveDirectory.value.split("/").join(" / ")}`);
 const searchQuery = ref("");
 const assetTree = ref<InstanceType<typeof ElTree>>();
-const folderInput = ref<{ $el: HTMLInputElement }>();
+const folderInput = ref<InputInstance>();
 const newFolderParent = ref<string>();
 const newFolderName = ref("");
 const folderSaving = ref(false);
 const assetMenuRef = ref<InstanceType<typeof assetMenu>>();
 const previewAsset = ref<{ name: string; url: string; kind: "image" | "audio" | "video" }>();
 const { src: mediaSrc, preparing, error: previewError, handleError, handleLoaded } = useMediaPreview(() => previewAsset.value?.url, () => previewAsset.value?.kind ?? "image");
-watch(previewError, error => { if (error && previewAsset.value?.kind === "image") toast.error(error); });
+watch(previewError, error => { if (error && previewAsset.value?.kind === "image") ElMessage.error(error); });
 let loadRequest = 0;
 onBeforeUnmount(() => { loadRequest++; });
 
@@ -423,7 +197,7 @@ async function startFolder() {
   await nextTick();
   assetTree.value?.getNode(folder.value)?.expand();
   await nextTick();
-  folderInput.value?.$el.select();
+  folderInput.value?.select();
 }
 
 function cancelFolder() {
@@ -443,7 +217,7 @@ async function saveFolder() {
   } catch (error) {
     showError(error);
     await nextTick();
-    folderInput.value?.$el.focus();
+    folderInput.value?.focus();
   } finally {
     folderSaving.value = false;
   }
@@ -482,7 +256,7 @@ async function loadEntries() {
 
 function showError(error: unknown, name?: string) {
   const message = axios.isAxiosError<{ message: string }>(error) ? error.response?.data.message || error.message : (error as Error).message;
-  toast.error(name ? `${name}：${message}` : message);
+  ElMessage.error(name ? `${name}：${message}` : message);
 }
 
 async function uploadFiles(event: Event) {
@@ -505,7 +279,7 @@ async function uploadFiles(event: Event) {
       }
     }
     if (uploaded) {
-      toast.success(t`已上传 ${uploaded} 个素材`);
+      ElMessage.success(t`已上传 ${uploaded} 个素材`);
       await refreshAssets();
     }
   } finally {
@@ -530,7 +304,7 @@ function selectFolder(entry: AssetEntry) {
 async function startSaveFolder() {
   saveFolderName.value = "新建文件夹";
   await nextTick();
-  saveFolderInput.value?.$el.select();
+  saveFolderInput.value?.select();
 }
 
 async function createFolder() {
@@ -583,7 +357,7 @@ async function saveAsset() {
       : new Blob([String(output.value)]);
     await axios.put("/api/assets/save", content, { params: { path }, headers: { "Content-Type": "application/octet-stream" } });
     saveVisible.value = false;
-    toast.success("已保存到素材库");
+    ElMessage.success("已保存到素材库");
     await loadEntries();
   } catch (error) {
     showError(error);
@@ -593,9 +367,6 @@ async function saveAsset() {
 }
 
 defineExpose({ openSave });
-const dialogRendered1 = ref(saveVisible.value);
-watch(saveVisible, open => { if (open) dialogRendered1.value = true; });
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -603,7 +374,7 @@ const portFieldId = useId();
   width: min(320px, calc(100vw - 30px));
   max-height: calc(100dvh - 140px);
 
-  :deep(.cardBody) {
+  :deep(.el-card__body) {
     display: flex;
     flex-direction: column;
     max-height: inherit;
@@ -775,8 +546,8 @@ const portFieldId = useId();
       gap: 8px;
       margin-top: 10px;
 
-      :is(.el-input, [data-slot="input"], .inputGroup) { flex: 1; min-width: 0; }
-      [data-slot="button"] { margin: 0; }
+      .el-input { flex: 1; min-width: 0; }
+      .el-button { margin: 0; }
     }
   }
 }

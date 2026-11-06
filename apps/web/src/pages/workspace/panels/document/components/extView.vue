@@ -3,30 +3,25 @@
     <div v-if="context.error || runtimeError" class="extError" role="alert">
       <span>{{ context.error || runtimeError }}</span>
       <span class="errorActions">
-        <uiButton v-if="session.conflict" variant="ghost" size="xs" @click="reloadDisk">载入磁盘版本</uiButton>
-        <uiButton v-if="context.dirty && session.extension.text" variant="ghost" size="xs" @click="saveCopy">另存副本</uiButton>
-        <uiButton v-if="runtimeError || context.dirty || !session.component" variant="ghost" size="xs" @click="retry">重试</uiButton>
+        <el-button v-if="session.conflict" text size="small" @click="reloadDisk">载入磁盘版本</el-button>
+        <el-button v-if="context.dirty && session.extension.text" text size="small" @click="saveCopy">另存副本</el-button>
+        <el-button v-if="runtimeError || context.dirty || !session.component" text size="small" @click="retry">重试</el-button>
       </span>
     </div>
     <div v-if="session.extensionChanged" class="extensionNotice" role="status">扩展已更新，关闭该扩展的所有标签后重新打开，以应用新版本。</div>
     <div v-if="session.extensionDisabled" class="extensionNotice" role="status">扩展已停用。未保存内容仍保留，请重试保存、另存副本或重新启用扩展。</div>
-    <div class="extContent" :inert="session.extensionDisabled" :aria-busy="context.loading && !session.extensionDisabled">
+    <div v-loading="context.loading && !session.extensionDisabled" class="extContent" :inert="session.extensionDisabled">
       <component v-if="session.component && !runtimeError" :is="session.component" :context="context" />
-      <div v-if="context.loading && !session.extensionDisabled" class="loadingMask">
-        <icon-loader-2 class="animate-spin" :size="28" aria-hidden="true" />
-      </div>
     </div>
   </section>
 </template>
 
 <script setup lang="ts">
 import { computed, onErrorCaptured, onBeforeUnmount, ref } from "vue";
-import { toast } from "vue-sonner";
-import messageBox from "@/lib/messageBox";
+import { ElMessage, ElMessageBox } from "element-plus";
 import type { IDockviewPanelProps } from "dockview-vue";
 import type { EditorParams } from "../documentSession";
 import { documentError } from "../documentSession";
-import { uiButton } from "@/components/ui/button";
 
 const props = defineProps<{ params: IDockviewPanelProps<EditorParams> }>();
 const session = computed(() => props.params.params.session);
@@ -53,19 +48,19 @@ function retry() {
 }
 async function reloadDisk() {
   try {
-    await messageBox.confirm("将重新读取磁盘中的文件，替换当前内容。未保存的修改会丢失，如需保留，请先另存副本。", "载入磁盘版本", { type: "warning", confirmButtonText: "载入", cancelButtonText: "取消" });
+    await ElMessageBox.confirm("将重新读取磁盘中的文件，替换当前内容。未保存的修改会丢失，如需保留，请先另存副本。", "载入磁盘版本", { type: "warning", confirmButtonText: "载入", cancelButtonText: "取消" });
     await session.value.reloadDisk();
-  } catch (error) { if (error !== "cancel" && error !== "close") toast.error(documentError(error)); }
+  } catch (error) { if (error !== "cancel" && error !== "close") ElMessage.error(documentError(error)); }
 }
 async function saveCopy() {
   try {
     const path = context.value.resource.path;
     const dot = path.lastIndexOf(".");
     const suggested = dot > path.lastIndexOf("/") ? `${path.slice(0, dot)} 副本${path.slice(dot)}` : `${path} 副本`;
-    const { value } = await messageBox.prompt("请输入当前工作区内的相对路径，例如“文件夹/副本.txt”。不会覆盖已有的同名文件。", "另存副本", { inputValue: suggested, inputValidator: value => !!value?.trim() || "请输入文件路径", confirmButtonText: "保存", cancelButtonText: "取消" });
+    const { value } = await ElMessageBox.prompt("请输入当前工作区内的相对路径，例如“文件夹/副本.txt”。不会覆盖已有的同名文件。", "另存副本", { inputValue: suggested, inputValidator: value => !!value?.trim() || "请输入文件路径", confirmButtonText: "保存", cancelButtonText: "取消" });
     await context.value.files.write(value.trim(), context.value.text, true);
-    toast.success("副本已保存");
-  } catch (error) { if (error !== "cancel" && error !== "close") toast.error(documentError(error)); }
+    ElMessage.success("副本已保存");
+  } catch (error) { if (error !== "cancel" && error !== "close") ElMessage.error(documentError(error)); }
 }
 </script>
 
@@ -76,35 +71,19 @@ async function saveCopy() {
   width: 100%;
   height: 100%;
   min-height: 0;
-  background: var(--background);
+  background: var(--el-bg-color);
   .extError {
     display: flex;
     align-items: center;
     justify-content: space-between;
     padding: 8px 12px;
-    color: var(--destructive);
-    background: color-mix(in oklch, var(--destructive) 10%, transparent);
+    color: var(--el-color-danger);
+    background: var(--el-color-danger-light-9);
     font-size: 12px;
     overflow-wrap: anywhere;
     .errorActions { display: flex; flex-shrink: 0; flex-wrap: wrap; }
   }
   .extensionNotice { padding: 6px 12px; color: var(--el-color-warning); font-size: 12px; }
-  .extContent {
-    position: relative;
-    flex: 1;
-    min-width: 0;
-    min-height: 0;
-    overflow: hidden;
-    .loadingMask {
-      position: absolute;
-      inset: 0;
-      z-index: 2;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: var(--primary);
-      background: color-mix(in oklch, var(--background) 90%, transparent);
-    }
-  }
+  .extContent { flex: 1; min-width: 0; min-height: 0; overflow: hidden; }
 }
 </style>

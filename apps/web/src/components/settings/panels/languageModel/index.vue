@@ -3,46 +3,35 @@
     <div class="itemList">
       <toonflowProviderCard scope="text" :provider="customProviders.find(item => item.id.toLowerCase() === 'toonflow')" />
       <codexProviderCard />
-      <uiCard v-for="item in visibleProviders" :key="item.id" class="providerItem" style="gap:0; padding:0">
-        <div class="cardBody" :style="{ padding: '20px' }">
-          <div class="providerHeader">
-            <div v-if="item.icon" class="providerMark" aria-hidden="true">
-              <img class="providerLogo" :src="item.icon" alt="" />
-            </div>
-            <div class="providerInfo">
-              <div class="providerHeading">
-                <strong class="providerName" data-ui-text="default">{{ item.label }}</strong>
-              </div>
-              <span class="providerId" :title="item.id" data-ui-text="info">{{ item.id }}</span>
-            </div>
+      <el-card v-for="item in visibleProviders" :key="item.id" class="providerItem" shadow="never">
+        <div class="providerHeader">
+          <div v-if="item.icon" class="providerMark" aria-hidden="true">
+            <img class="providerLogo" :src="item.icon" alt="" />
           </div>
-          <div class="providerFooter">
-            <div class="providerMeta">
-              <uiBadge v-if="getProviderVersion(item)" variant="outline">v{{ getProviderVersion(item) }}</uiBadge>
-              <span data-ui-text="info">{{ item.models.length }}个模型</span>
+          <div class="providerInfo">
+            <div class="providerHeading">
+              <el-text class="providerName" tag="strong">{{ item.label }}</el-text>
             </div>
-            <div class="itemActions" style="display:flex; flex-wrap:wrap; align-items:center; gap:8px">
-              <uiButton @click="openCustomProvider(item)" variant="ghost" type="button" :disabled="(!!deletingId)"><component :is="IconEdit" aria-hidden="true" />编辑</uiButton>
-              <uiPopover v-model:open="confirmVisible1[String(item.id)]">
-                <uiPopoverTrigger asChild>
-                  <uiButton variant="ghost" type="button" :disabled="(!!deletingId) || (deletingId === item.id)"><icon-loader-2 v-if="deletingId === item.id" class="animate-spin" aria-hidden="true" /><component :is="IconTrash" aria-hidden="true" />删除</uiButton>
-                </uiPopoverTrigger>
-                <uiPopoverContent class="w-[280px]">
-                  <p>确定删除此供应商及其模型？</p>
-                  <div class="confirmActions">
-                    <uiButton type="button" variant="outline" size="sm" @click="confirmVisible1[String(item.id)] = false; ">取消</uiButton>
-                    <uiButton type="button" size="sm" @click="confirmVisible1[String(item.id)] = false; deleteProvider(item.id)">删除</uiButton>
-                  </div>
-                </uiPopoverContent>
-              </uiPopover>
-            </div>
+            <el-text class="providerId" size="small" type="info" :title="item.id">{{ item.id }}</el-text>
           </div>
         </div>
-      </uiCard>
+        <div class="providerFooter">
+          <div class="providerMeta">
+            <el-tag v-if="getProviderVersion(item)" size="small" type="info" effect="plain">v{{ getProviderVersion(item) }}</el-tag>
+            <el-text size="small" type="info">{{ item.models.length }} 个模型</el-text>
+          </div>
+          <el-space class="itemActions" wrap>
+            <el-button text :icon="IconEdit" :disabled="!!deletingId" @click="openCustomProvider(item)">编辑</el-button>
+            <el-popconfirm title="确定删除此供应商及其模型？" confirmButtonText="删除" cancelButtonText="取消" @confirm="deleteProvider(item.id)">
+              <template #reference><el-button text type="danger" :icon="IconTrash" :loading="deletingId === item.id" :disabled="!!deletingId">删除</el-button></template>
+            </el-popconfirm>
+          </el-space>
+        </div>
+      </el-card>
     </div>
     <div class="providerActions">
-      <uiButton class="addButton" @click="openProvider" variant="outline" type="button"><component :is="IconPlus" aria-hidden="true" />添加供应商</uiButton>
-      <uiButton class="addButton" @click="openCustomProvider()" variant="outline" type="button"><component :is="IconSettings" aria-hidden="true" />添加自定义供应商</uiButton>
+      <el-button class="addButton" :icon="IconPlus" @click="openProvider">添加供应商</el-button>
+      <el-button class="addButton" :icon="IconSettings" @click="openCustomProvider()">添加自定义供应商</el-button>
     </div>
     <component :is="addProviderDialog" v-model="providerDialogVisible" />
     <component :is="addCustomProviderDialog" v-model="customProviderDialogVisible" :provider="editingProvider" />
@@ -50,12 +39,8 @@
 </template>
 
 <script setup lang="ts">
-import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
-import { uiButton } from "@/components/ui/button";
-import { uiBadge } from "@/components/ui/badge";
-import { uiCard } from "@/components/ui/card";
 import { computed, defineAsyncComponent, ref, shallowRef, type Component } from "vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { customProviders, saveSettings, type CustomProvider } from "@/stores/settings";
 import { IconPlus, IconSettings, IconEdit, IconTrash } from "@tabler/icons-vue";
 import { languageProviders } from "@toonflow/providers";
@@ -97,11 +82,9 @@ async function deleteProvider(id: string) {
       if (!Array.isArray(current)) throw new Error("配置格式错误");
       return { customProviders: current.filter(item => item?.id !== id) };
     });
-  } catch { toast.error("删除失败，请重试"); }
+  } catch { ElMessage.error("删除失败，请重试"); }
   finally { deletingId.value = ""; }
 }
-
-const confirmVisible1 = ref<Record<string, boolean>>({});
 </script>
 
 <style lang="scss" scoped src="../../providerList.scss"></style>

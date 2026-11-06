@@ -1,160 +1,68 @@
 <template>
-  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }" :unmountOnHide="false">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      v-if="dialogRendered1"
-      class="uiDialogPanel"
-      :style="{ width: 'min(520px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
-      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
-      @closeAutoFocus="() => { emit('closed'); }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>{{ marketPlugin ? '重新提交插件' : '上传插件到市场' }}</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <form :id="formId" class="uploadForm uiForm" @submit.prevent="upload">
-          <fieldset class="formFields" :disabled="uploading">
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-1'">插件名称</uiLabel>
-              <uiInput :id="portFieldId + '-1'" v-model="form.name" :maxlength="200" autocomplete="off" :disabled="(uploading) || (false)"></uiInput>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-2'">插件标识</uiLabel>
-              <uiInput
-                :id="portFieldId + '-2'"
-                v-model="form.identifier"
-                :readonly="!!plugin || !!marketPlugin"
-                :maxlength="200"
-                autocomplete="off"
-                :disabled="(uploading) || (false)"></uiInput>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-3'">插件类型</uiLabel>
-              <uiSelect
-                :disabled="!!plugin || !!marketPlugin"
-                :modelValue="String(form.type) === '' ? '__empty__' : (form.type)"
-                @update:modelValue="selected => { const value = selected === '__empty__' ? '' : selected; form.type = value as typeof form.type; }">
-                <uiSelectTrigger :id="portFieldId + '-3'" aria-label="插件类型">
-                  <uiSelectValue />
-                </uiSelectTrigger>
-                <uiSelectContent>
-                  <uiSelectItem v-for="option in typeOptions" :key="option.value" :value="option.value">{{ option.label }}</uiSelectItem>
-                </uiSelectContent>
-              </uiSelect>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-4'">版本号</uiLabel>
-              <uiInput
-                :id="portFieldId + '-4'"
-                v-model="form.version"
-                :readonly="!!pluginFile"
-                :maxlength="128"
-                autocomplete="off"
-                placeholder="例如 1.0.0"
-                :disabled="(uploading) || (false)"></uiInput>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-5'">描述</uiLabel>
-              <uiTextarea
-                :id="portFieldId + '-5'"
-                v-model="form.desc"
-                :maxlength="20000"
-                :disabled="(uploading) || (false)"
-                :rows="3"
-                style="field-sizing:fixed; resize:none"></uiTextarea>
-            </div>
-            <div class="formField">
-              <uiLabel>插件文件</uiLabel>
-              <div class="fileDetails">
-                <template v-if="!plugin || marketPlugin">
-                  <uiButton @click="fileInput?.click()" variant="outline" type="button" :disabled="(uploading) || (uploading)">{{ file ? '重新选择文件' : '选择文件' }}</uiButton>
-                  <input ref="fileInput" type="file" :accept="fileExtension" :disabled="uploading" hidden @change="selectFile" />
-                </template>
-                <uiButton
-                  v-if="marketPlugin && canLoadLocalFile"
-                  @click="loadFile"
-                  variant="outline"
-                  type="button"
-                  :disabled="(uploading) || (loadingFile) || (uploading)"><icon-loader-2 v-if="loadingFile" class="animate-spin" aria-hidden="true" />读取已安装文件</uiButton>
-                <span v-if="fileName">{{ fileName }}</span>
-                <span v-if="loadingFile" data-ui-text="info">正在读取插件文件…</span>
-                <span v-else-if="file" data-ui-text="info">{{ (file.size / 1024 / 1024).toFixed(2) }}MB</span>
-                <span v-if="!plugin || marketPlugin" data-ui-text="info">{{ fileExtension }}文件，最大{{ maxFileMegabytes }}MB</span>
-              </div>
-            </div>
-            <div v-if="mediaKind" class="formField">
-              <uiLabel>{{ mediaLabel }}</uiLabel>
-              <div class="mediaField">
-                <videoPlayer
-                  v-if="mediaPreview && mediaKind === 'video'"
-                  class="mediaPreview"
-                  :src="mediaPreview"
-                  :label="mediaLabel"
-                  :active="visible" />
-                <img v-else-if="mediaPreview" class="mediaPreview" :src="mediaPreview" alt="节点截图封面预览" />
-                <div class="fileDetails">
-                  <uiButton @click="mediaInput?.click()" variant="outline" type="button" :disabled="(uploading) || (uploading)">{{ mediaPreview ? '更换素材' : `选择${mediaLabel}` }}</uiButton>
-                  <uiButton
-                    v-if="mediaFile && existingMediaUrl"
-                    @click="clearMedia"
-                    variant="ghost"
-                    type="button"
-                    :disabled="(uploading) || (uploading)">取消替换</uiButton>
-                  <input
-                    ref="mediaInput"
-                    type="file"
-                    :accept="mediaKind === 'video' ? '.mp4,.webm' : '.jpg,.jpeg,.png,.webp'"
-                    :disabled="uploading"
-                    hidden
-                    @change="selectMedia" />
-                  <span v-if="mediaFile">{{ mediaFile.name }}</span>
-                  <span v-else-if="existingMediaUrl" data-ui-text="info">保留已上传的素材</span>
-                </div>
-                <span data-ui-text="info">{{ mediaKind === 'video' ? '展示 Skill 的实际效果，支持 MP4、WebM，最大 100 MB' : '展示节点界面或运行效果，支持 JPG、PNG、WebP，最大 10 MB' }}</span>
-                <div v-if="mediaProgress >= 0" class="progressRow">
-                  <uiProgress :modelValue="mediaProgress"></uiProgress>
-                  <span class="progressValue">{{ mediaProgress }}%</span>
-                </div>
-              </div>
-            </div>
-            <uiAlert v-if="formError" variant="destructive">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ formError }}</uiAlertTitle>
-            </uiAlert>
-            <uiAlert v-if="fileError" variant="destructive">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ fileError }}</uiAlertTitle>
-              <uiButton
-                v-if="canLoadLocalFile && !marketPlugin"
-                @click="loadFile"
-                variant="outline"
-                type="button"
-                :disabled="(loadingFile || uploading) || (uploading)"
-                size="sm">重新读取</uiButton>
-            </uiAlert>
-            <uiAlert v-if="uploadError" variant="destructive">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ uploadError }}</uiAlertTitle>
-            </uiAlert>
-          </fieldset>
-        </form>
-        <uiDialogFooter class="dialogFooter">
-          <uiButton @click="visible = false" variant="outline" type="button">取消</uiButton>
-          <uiButton :form="formId" variant="default" type="submit" :disabled="(!ready) || (uploading)"><icon-loader-2 v-if="uploading" class="animate-spin" aria-hidden="true" />{{ marketPlugin ? '重新提交审核' : '上传并提交审核' }}</uiButton>
-        </uiDialogFooter>
-      </div>
-    </uiDialogContent>
-  </uiDialog>
+  <el-dialog v-model="visible" :title="marketPlugin ? '重新提交插件' : '上传插件到市场'" width="min(520px, calc(100vw - 32px))" alignCenter appendToBody :closeOnClickModal="false" @closed="emit('closed')">
+    <el-form :id="formId" class="uploadForm" labelPosition="top" :disabled="uploading" @submit.prevent="upload">
+      <el-form-item label="插件名称" required>
+        <el-input v-model="form.name" :maxlength="200" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="插件标识" required>
+        <el-input v-model="form.identifier" :readonly="!!plugin || !!marketPlugin" :maxlength="200" autocomplete="off" />
+      </el-form-item>
+      <el-form-item label="插件类型" required>
+        <el-select v-model="form.type" :disabled="!!plugin || !!marketPlugin" aria-label="插件类型">
+          <el-option v-for="option in typeOptions" :key="option.value" :label="option.label" :value="option.value" />
+        </el-select>
+      </el-form-item>
+      <el-form-item label="版本号" required>
+        <el-input v-model="form.version" :readonly="!!pluginFile" :maxlength="128" autocomplete="off" placeholder="例如 1.0.0" />
+      </el-form-item>
+      <el-form-item label="描述">
+        <el-input v-model="form.desc" type="textarea" :rows="3" :maxlength="20000" resize="none" />
+      </el-form-item>
+      <el-form-item label="插件文件" required>
+        <div class="fileDetails">
+          <template v-if="!plugin || marketPlugin">
+            <el-button :disabled="uploading" @click="fileInput?.click()">{{ file ? '重新选择文件' : '选择文件' }}</el-button>
+            <input ref="fileInput" type="file" :accept="fileExtension" :disabled="uploading" hidden @change="selectFile" />
+          </template>
+          <el-button v-if="marketPlugin && canLoadLocalFile" :loading="loadingFile" :disabled="uploading" @click="loadFile">读取已安装文件</el-button>
+          <span v-if="fileName">{{ fileName }}</span>
+          <el-text v-if="loadingFile" type="info" size="small">正在读取插件文件…</el-text>
+          <el-text v-else-if="file" type="info" size="small">{{ (file.size / 1024 / 1024).toFixed(2) }} MB</el-text>
+          <el-text v-if="!plugin || marketPlugin" type="info" size="small">{{ fileExtension }} 文件，最大 {{ maxFileMegabytes }} MB</el-text>
+        </div>
+      </el-form-item>
+      <el-form-item v-if="mediaKind" :label="mediaLabel" required>
+        <div class="mediaField">
+          <videoPlayer v-if="mediaPreview && mediaKind === 'video'" class="mediaPreview" :src="mediaPreview" :label="mediaLabel" :active="visible" />
+          <img v-else-if="mediaPreview" class="mediaPreview" :src="mediaPreview" alt="节点截图封面预览" />
+          <div class="fileDetails">
+            <el-button :disabled="uploading" @click="mediaInput?.click()">{{ mediaPreview ? '更换素材' : `选择${mediaLabel}` }}</el-button>
+            <el-button v-if="mediaFile && existingMediaUrl" text :disabled="uploading" @click="clearMedia">取消替换</el-button>
+            <input ref="mediaInput" type="file" :accept="mediaKind === 'video' ? '.mp4,.webm' : '.jpg,.jpeg,.png,.webp'" :disabled="uploading" hidden @change="selectMedia" />
+            <span v-if="mediaFile">{{ mediaFile.name }}</span>
+            <el-text v-else-if="existingMediaUrl" type="info" size="small">保留已上传的素材</el-text>
+          </div>
+          <el-text type="info" size="small">{{ mediaKind === 'video' ? '展示 Skill 的实际效果，支持 MP4、WebM，最大 100 MB' : '展示节点界面或运行效果，支持 JPG、PNG、WebP，最大 10 MB' }}</el-text>
+          <el-progress v-if="mediaProgress >= 0" :percentage="mediaProgress" :strokeWidth="4" />
+        </div>
+      </el-form-item>
+      <el-alert v-if="formError" :title="formError" type="error" :closable="false" showIcon />
+      <el-alert v-if="fileError" :title="fileError" type="error" :closable="false" showIcon>
+        <el-button v-if="canLoadLocalFile && !marketPlugin" size="small" :disabled="loadingFile || uploading" @click="loadFile">重新读取</el-button>
+      </el-alert>
+      <el-alert v-if="uploadError" :title="uploadError" type="error" :closable="false" showIcon />
+    </el-form>
+    <template #footer>
+      <el-button @click="visible = false">取消</el-button>
+      <el-button type="primary" nativeType="submit" :form="formId" :loading="uploading" :disabled="!ready">{{ marketPlugin ? '重新提交审核' : '上传并提交审核' }}</el-button>
+    </template>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiProgress } from "@/components/ui/progress";
-import { uiButton } from "@/components/ui/button";
-import { uiTextarea } from "@/components/ui/textarea";
-import { uiSelect, uiSelectTrigger, uiSelectValue, uiSelectContent, uiSelectItem } from "@/components/ui/select";
-import { uiInput } from "@/components/ui/input";
-import { uiLabel } from "@/components/ui/label";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
 import axios from "axios";
 import { computed, onBeforeUnmount, onMounted, reactive, ref, shallowRef, useId, watch } from "vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { t, translate } from "@toonflow/i18n/vue";
 import http from "@/lib/http";
 import videoPlayer from "@/components/videoPlayer.vue";
@@ -316,7 +224,7 @@ async function upload() {
       signal: request.signal, headers: { Authorization: `Bearer ${token}` }, timeout: 65000,
     });
     if (request.signal.aborted) return;
-    toast.success(message || (marketPlugin ? "重新提交成功，等待审核" : "上传成功，等待审核"));
+    ElMessage.success(message || (marketPlugin ? "重新提交成功，等待审核" : "上传成功，等待审核"));
     emit("uploaded");
     visible.value = false;
   } catch (error) {
@@ -350,12 +258,12 @@ function selectMedia(event: Event) {
   const extension = video ? /\.(mp4|webm)$/i : /\.(jpe?g|png|webp)$/i;
   const mimeTypes = video ? ["video/mp4", "video/webm"] : ["image/jpeg", "image/png", "image/webp"];
   if (!extension.test(selected.name) || (selected.type && !mimeTypes.includes(selected.type))) {
-    toast.warning(video ? "请选择 MP4 或 WebM 视频" : "请选择 JPG、PNG 或 WebP 截图");
+    ElMessage.warning(video ? "请选择 MP4 或 WebM 视频" : "请选择 JPG、PNG 或 WebP 截图");
     return;
   }
   const maxMegabytes = video ? 100 : 10;
   if (!selected.size || selected.size > maxMegabytes * 1024 * 1024 || selected.name.length > 255) {
-    toast.warning(`素材不能为空、不能超过 ${maxMegabytes} MB，文件名不能超过 255 个字符`);
+    ElMessage.warning(`素材不能为空、不能超过 ${maxMegabytes} MB，文件名不能超过 255 个字符`);
     return;
   }
   clearMedia();
@@ -378,9 +286,6 @@ watch(() => form.type, () => {
 }, { flush: "sync" });
 onMounted(loadFile);
 onBeforeUnmount(cancelRequests);
-const dialogRendered1 = ref(visible.value);
-watch(visible, open => { if (open) dialogRendered1.value = true; });
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>

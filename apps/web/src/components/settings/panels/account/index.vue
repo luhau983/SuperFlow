@@ -2,59 +2,39 @@
   <div class="accountPanel">
     <div v-if="account" class="overview" :aria-busy="overviewLoading">
       <section class="profileCard" aria-label="当前账户">
-        <div class="profileIcon">
-          <img :src="logoUrl" alt="SuperFlow" />
-        </div>
+        <div class="profileIcon"><img :src="logoUrl" alt="SuperFlow" /></div>
         <div class="profileInfo">
           <h3>{{ account.nickname || "SuperFlow 账号" }}</h3>
           <p v-if="account.contact">{{ account.contact }}</p>
         </div>
         <div class="profileActions">
-          <uiButton variant="ghost" type="button" asChild>
-            <a href="https://api.toonflow.net/console/preview" target="_blank" rel="noopener noreferrer"><component :is="IconExternalLink" aria-hidden="true" />更多账号信息</a>
-          </uiButton>
-          <uiButton @click="refreshAccount" variant="ghost" type="button" :disabled="(loggingOut) || (overviewLoading)"><icon-loader-2 v-if="overviewLoading" class="animate-spin" aria-hidden="true" /><component :is="IconRefresh" aria-hidden="true" />刷新</uiButton>
-          <uiButton @click="logout" variant="ghost" type="button" :disabled="(loggingOut)"><icon-loader-2 v-if="loggingOut" class="animate-spin" aria-hidden="true" /><component :is="IconLogout" aria-hidden="true" />退出登录</uiButton>
+          <el-button tag="a" href="https://api.toonflow.net/console/preview" target="_blank" rel="noopener noreferrer" text type="primary" :icon="IconExternalLink">更多账号信息</el-button>
+          <el-button text :icon="IconRefresh" :loading="overviewLoading" :disabled="loggingOut" @click="refreshAccount">刷新</el-button>
+          <el-button text type="danger" :icon="IconLogout" :loading="loggingOut" @click="logout">退出登录</el-button>
         </div>
       </section>
+
       <div class="accountTabs">
-        <uiTabs class="tabSwitch" :modelValue="accountTab" @update:modelValue="value => { accountTab = value as typeof accountTab; }">
-          <uiTabsList :aria-label="'账号页面'">
-            <uiTabsTrigger
-              v-for="option in accountOptions"
-              :key="typeof option === 'object' ? option.value : option"
-              :value="typeof option === 'object' ? option.value : option"
-              :disabled="(typeof option === 'object' && 'disabled' in option && !!option.disabled) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)">{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
-          </uiTabsList>
-        </uiTabs>
+        <el-segmented v-model="accountTab" class="tabSwitch" :options="accountOptions" ariaLabel="账号页面" />
         <div v-show="accountTab === 'overview'" class="overviewContent">
-          <uiAlert v-if="overviewError" variant="destructive">
-            <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ overviewError }}</uiAlertTitle>
-          </uiAlert>
+          <el-alert v-if="overviewError" :title="overviewError" type="error" :closable="false" showIcon />
+
           <div class="summaryGrid">
             <section class="summaryCard" aria-label="本金余额">
-              <div class="summaryLabel">
-                <span>本金余额</span>
-                <icon-wallet :size="20" aria-hidden="true" />
-              </div>
+              <div class="summaryLabel"><span>本金余额</span><icon-wallet :size="20" aria-hidden="true" /></div>
               <strong>{{ formatMoney(previewData?.totalPoints) }}</strong>
-              <uiButton class="rechargeButton" @click="accountTab = 'wallet'" variant="default" type="button"><component :is="IconCreditCard" aria-hidden="true" />充值</uiButton>
+              <el-button class="rechargeButton" type="primary" :icon="IconCreditCard" @click="accountTab = 'wallet'">充值</el-button>
             </section>
             <section class="summaryCard" aria-label="可用赠送金">
-              <div class="summaryLabel">
-                <span>可用赠送金</span>
-                <icon-gift :size="20" aria-hidden="true" />
-              </div>
+              <div class="summaryLabel"><span>可用赠送金</span><icon-gift :size="20" aria-hidden="true" /></div>
               <strong>{{ formatMoney(previewData?.bonusBalance) }}</strong>
             </section>
             <section class="summaryCard" aria-label="累计消费金额">
-              <div class="summaryLabel">
-                <span>累计消费金额</span>
-                <icon-chart-bar :size="20" aria-hidden="true" />
-              </div>
+              <div class="summaryLabel"><span>累计消费金额</span><icon-chart-bar :size="20" aria-hidden="true" /></div>
               <strong>{{ formatMoney(previewData?.totalConsumption) }}</strong>
             </section>
           </div>
+
           <section class="usageCard" aria-labelledby="usageTitle">
             <h3 id="usageTitle">用量概览（今日）</h3>
             <dl class="usageMetrics">
@@ -77,6 +57,7 @@
               label="按模型统计消费金额"
               :loading="usageLoading" />
           </section>
+
           <section class="trendCard" aria-labelledby="trendTitle">
             <h3 id="trendTitle">余额消耗趋势（最近14天）</h3>
             <accountChart kind="line" :dates="trendData.dates" :series="trendData.series" label="最近14天的余额消耗趋势" :loading="previewLoading" />
@@ -110,177 +91,59 @@
           :token="accountToken" />
       </div>
     </div>
+
     <section v-else class="authSection" aria-label="登录与注册">
       <div class="authContent">
         <header class="authHeader">
-          <div class="authLogo">
-            <img :src="logoUrl" alt="SuperFlow" />
-          </div>
+          <div class="authLogo"><img :src="logoUrl" alt="SuperFlow" /></div>
           <div class="authInfo">
             <h3>SuperFlow</h3>
             <p>登录后直接使用 SuperFlow</p>
           </div>
-          <uiTabs class="authTabs" :modelValue="authTab" @update:modelValue="value => { authTab = value as typeof authTab; }">
-            <uiTabsList :aria-label="'登录或注册'">
-              <uiTabsTrigger
-                v-for="option in authOptions"
-                :key="typeof option === 'object' ? option.value : option"
-                :value="typeof option === 'object' ? option.value : option"
-                :disabled="(submitting) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)">{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
-            </uiTabsList>
-          </uiTabs>
+          <el-segmented v-model="authTab" class="authTabs" :options="authOptions" :disabled="submitting" block aria-label="登录或注册" />
         </header>
-        <form v-if="authTab === 'login'" class="authForm uiForm" @submit.prevent="submitLogin">
-          <fieldset class="formFields" :disabled="submitting">
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-1'">手机号或邮箱</uiLabel>
-              <uiInput
-                :id="portFieldId + '-1'"
-                v-model="loginForm.account"
-                autocomplete="username"
-                placeholder="请输入手机号或邮箱"
-                :disabled="(submitting) || (false)"></uiInput>
+        <el-form v-if="authTab === 'login'" class="authForm" labelPosition="top" :disabled="submitting" @submit.prevent="submitLogin">
+          <el-form-item label="手机号或邮箱">
+            <el-input v-model="loginForm.account" autocomplete="username" placeholder="请输入手机号或邮箱" />
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input v-model="loginForm.password" type="password" autocomplete="current-password" showPassword placeholder="请输入密码" />
+          </el-form-item>
+          <el-form-item label="图形验证码">
+            <div class="verificationRow">
+              <el-input v-model="loginForm.captcha" autocomplete="off" placeholder="请输入计算结果" aria-label="图形验证码" />
+              <el-button class="captchaButton" :class="{ captchaLoaded: !!captchaImage }" aria-label="刷新图形验证码" :icon="captchaImage ? undefined : IconRefresh" :loading="captchaLoading" @click="refreshCaptcha">
+                <img v-if="captchaImage" :src="captchaImage" alt="图形验证码" />
+                <span v-else>获取验证码</span>
+              </el-button>
             </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-2'">密码</uiLabel>
-              <div class="inputGroup">
-                <uiInput
-                  :id="portFieldId + '-2'"
-                  v-model="loginForm.password"
-                  autocomplete="current-password"
-                  placeholder="请输入密码"
-                  :disabled="(submitting) || (false)"
-                  :type="passwordVisible1 ? 'text' : 'password'"></uiInput>
-                <uiButton
-                  @mousedown.prevent
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  :aria-label="passwordVisible1 ? '隐藏密码' : '显示密码'"
-                  :disabled="submitting"
-                  @click="passwordVisible1 = !passwordVisible1">
-                  <icon-eye-off v-if="passwordVisible1" />
-                  <icon-eye v-else />
-                </uiButton>
-              </div>
+          </el-form-item>
+          <div class="authActions">
+            <el-button link type="primary" @click="forgotPasswordVisible = true">忘记密码</el-button>
+            <el-button class="submitButton" type="primary" nativeType="submit" :loading="submitting" :disabled="!loginReady">登录</el-button>
+          </div>
+        </el-form>
+        <el-form v-else class="authForm" labelPosition="top" :disabled="submitting" @submit.prevent="submitRegister">
+          <el-form-item label="手机号">
+            <el-input v-model="registerForm.phone" autocomplete="tel" placeholder="请输入手机号" />
+          </el-form-item>
+          <el-form-item label="昵称">
+            <el-input v-model="registerForm.nickname" autocomplete="nickname" placeholder="请输入昵称" />
+          </el-form-item>
+          <el-form-item label="密码">
+            <el-input v-model="registerForm.password" type="password" autocomplete="new-password" showPassword placeholder="请输入密码" />
+          </el-form-item>
+          <el-form-item label="确认密码" :error="registerForm.confirmPassword && registerForm.confirmPassword !== registerForm.password ? '两次输入的密码不一致' : ''">
+            <el-input v-model="registerForm.confirmPassword" type="password" autocomplete="new-password" showPassword placeholder="请再次输入密码" />
+          </el-form-item>
+          <el-form-item label="短信验证码">
+            <div class="verificationRow">
+              <el-input v-model="registerForm.verificationCode" autocomplete="one-time-code" placeholder="请输入短信验证码" aria-label="短信验证码" />
+              <smsCodeButton :phone="registerForm.phone" :disabled="submitting" :visible="visible" />
             </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-3'">图形验证码</uiLabel>
-              <div class="verificationRow">
-                <uiInput
-                  :id="portFieldId + '-3'"
-                  v-model="loginForm.captcha"
-                  autocomplete="off"
-                  placeholder="请输入计算结果"
-                  aria-label="图形验证码"
-                  :disabled="(submitting) || (false)"></uiInput>
-                <uiButton
-                  class="captchaButton"
-                  :class="{ captchaLoaded: !!captchaImage }"
-                  aria-label="刷新图形验证码"
-                  @click="refreshCaptcha"
-                  variant="outline"
-                  type="button"
-                  :disabled="(captchaLoading) || (submitting)">
-                  <icon-loader-2 v-if="captchaLoading" class="animate-spin" aria-hidden="true" />
-                  <component :is="captchaImage ? undefined : IconRefresh" aria-hidden="true" />
-                  <img v-if="captchaImage" :src="captchaImage" alt="图形验证码" />
-                  <span v-else>获取验证码</span>
-                </uiButton>
-              </div>
-            </div>
-            <div class="authActions">
-              <uiButton @click="forgotPasswordVisible = true" variant="link" type="button" :disabled="(submitting)">忘记密码</uiButton>
-              <uiButton class="submitButton" variant="default" type="submit" :disabled="(!loginReady) || (submitting) || (submitting)"><icon-loader-2 v-if="submitting" class="animate-spin" aria-hidden="true" />登录</uiButton>
-            </div>
-          </fieldset>
-        </form>
-        <form v-else class="authForm uiForm" @submit.prevent="submitRegister">
-          <fieldset class="formFields" :disabled="submitting">
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-4'">手机号</uiLabel>
-              <uiInput
-                :id="portFieldId + '-4'"
-                v-model="registerForm.phone"
-                autocomplete="tel"
-                placeholder="请输入手机号"
-                :disabled="(submitting) || (false)"></uiInput>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-5'">昵称</uiLabel>
-              <uiInput
-                :id="portFieldId + '-5'"
-                v-model="registerForm.nickname"
-                autocomplete="nickname"
-                placeholder="请输入昵称"
-                :disabled="(submitting) || (false)"></uiInput>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-6'">密码</uiLabel>
-              <div class="inputGroup">
-                <uiInput
-                  :id="portFieldId + '-6'"
-                  v-model="registerForm.password"
-                  autocomplete="new-password"
-                  placeholder="请输入密码"
-                  :disabled="(submitting) || (false)"
-                  :type="passwordVisible2 ? 'text' : 'password'"></uiInput>
-                <uiButton
-                  @mousedown.prevent
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  :aria-label="passwordVisible2 ? '隐藏密码' : '显示密码'"
-                  :disabled="submitting"
-                  @click="passwordVisible2 = !passwordVisible2">
-                  <icon-eye-off v-if="passwordVisible2" />
-                  <icon-eye v-else />
-                </uiButton>
-              </div>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-7'">确认密码</uiLabel>
-              <div class="inputGroup">
-                <uiInput
-                  :id="portFieldId + '-7'"
-                  v-model="registerForm.confirmPassword"
-                  autocomplete="new-password"
-                  placeholder="请再次输入密码"
-                  :disabled="(submitting) || (false)"
-                  :type="passwordVisible3 ? 'text' : 'password'"></uiInput>
-                <uiButton
-                  @mousedown.prevent
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  :aria-label="passwordVisible3 ? '隐藏密码' : '显示密码'"
-                  :disabled="submitting"
-                  @click="passwordVisible3 = !passwordVisible3">
-                  <icon-eye-off v-if="passwordVisible3" />
-                  <icon-eye v-else />
-                </uiButton>
-              </div>
-              <p
-                v-if="registerForm.confirmPassword && registerForm.confirmPassword !== registerForm.password ? '两次输入的密码不一致' : ''"
-                class="text-destructive text-sm"
-                role="alert">{{ registerForm.confirmPassword && registerForm.confirmPassword !== registerForm.password ? '两次输入的密码不一致' : '' }}</p>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-8'">短信验证码</uiLabel>
-              <div class="verificationRow">
-                <uiInput
-                  :id="portFieldId + '-8'"
-                  v-model="registerForm.verificationCode"
-                  autocomplete="one-time-code"
-                  placeholder="请输入短信验证码"
-                  aria-label="短信验证码"
-                  :disabled="(submitting) || (false)"></uiInput>
-                <smsCodeButton :phone="registerForm.phone" :disabled="submitting" :visible="visible" />
-              </div>
-            </div>
-            <uiButton class="submitButton" variant="default" type="submit" :disabled="(!registerReady) || (submitting) || (submitting)"><icon-loader-2 v-if="submitting" class="animate-spin" aria-hidden="true" />注册</uiButton>
-          </fieldset>
-        </form>
+          </el-form-item>
+          <el-button class="submitButton" type="primary" nativeType="submit" :loading="submitting" :disabled="!registerReady">注册</el-button>
+        </el-form>
       </div>
     </section>
     <forgotPasswordDialog v-if="!account" v-model="forgotPasswordVisible" :phone="loginForm.account" @reset="onPasswordReset" />
@@ -288,13 +151,8 @@
 </template>
 
 <script setup lang="ts">
-import { uiInput } from "@/components/ui/input";
-import { uiLabel } from "@/components/ui/label";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiTabs, uiTabsList, uiTabsTrigger } from "@/components/ui/tabs";
-import { uiButton } from "@/components/ui/button";
-import { computed, onBeforeUnmount, reactive, ref, watch, useId } from "vue";
-import { toast } from "vue-sonner";
+import { computed, onBeforeUnmount, reactive, ref, watch } from "vue";
+import { ElMessage } from "element-plus";
 import { translate } from "@toonflow/i18n/vue";
 import { IconChartBar, IconCreditCard, IconExternalLink, IconGift, IconLogout, IconRefresh, IconWallet } from "@tabler/icons-vue";
 import logoUrl from "@toonflow/assets/logo.svg";
@@ -457,7 +315,7 @@ async function refreshCaptcha() {
     captchaImage.value = `data:image/svg+xml;charset=utf-8,${encodeURIComponent(result.svg)}`;
     originalCaptcha.value = result.captcha;
   } catch (error) {
-    if (!request.signal.aborted) toast.error(error instanceof Error ? error.message : "获取图形验证码失败");
+    if (!request.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "获取图形验证码失败");
   } finally {
     if (captchaRequest === request) captchaLoading.value = false;
   }
@@ -478,12 +336,12 @@ async function submitLogin() {
     });
     const saved = await saveSettings(() => request.signal.aborted ? undefined : { toonflowAccount: result });
     if (saved && !request.signal.aborted) {
-      toast.success("登录成功");
+      ElMessage.success("登录成功");
       emit("loggedIn");
     }
   } catch (error) {
     if (!request.signal.aborted) {
-      toast.error(error instanceof Error ? error.message : "登录失败");
+      ElMessage.error(error instanceof Error ? error.message : "登录失败");
       void refreshCaptcha();
     }
   } finally {
@@ -509,9 +367,9 @@ async function submitRegister() {
     clearForms();
     loginForm.account = phone;
     authTab.value = "login";
-    toast.success("注册成功，请登录");
+    ElMessage.success("注册成功，请登录");
   } catch (error) {
-    if (!request.signal.aborted) toast.error(error instanceof Error ? error.message : "注册失败");
+    if (!request.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "注册失败");
   } finally {
     if (authRequest === request) submitting.value = false;
   }
@@ -522,9 +380,9 @@ async function logout() {
   loggingOut.value = true;
   try {
     await saveSettings(() => ({ toonflowAccount: null }));
-    toast.success("已退出登录");
+    ElMessage.success("已退出登录");
   } catch (error) {
-    toast.error(error instanceof Error ? error.message : "退出登录失败");
+    ElMessage.error(error instanceof Error ? error.message : "退出登录失败");
   } finally {
     loggingOut.value = false;
   }
@@ -570,11 +428,6 @@ onBeforeUnmount(() => {
   captchaRequest?.abort();
   authRequest?.abort();
 });
-
-const passwordVisible1 = ref(false);
-const passwordVisible2 = ref(false);
-const passwordVisible3 = ref(false);
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -771,9 +624,9 @@ const portFieldId = useId();
         grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 20px;
 
-        :deep(:is(.el-form-item, .formField)) { min-width: 0; margin-bottom: 0; }
-        :deep(:is(.el-form-item__label, [data-slot="label"])) { height: auto; margin-bottom: 6px; font-size: 12px; line-height: 18px; }
-        :deep(:is(.el-input__wrapper, [data-slot="input"])) { min-height: 36px; background: var(--el-bg-color); }
+        :deep(.el-form-item) { min-width: 0; margin-bottom: 0; }
+        :deep(.el-form-item__label) { height: auto; margin-bottom: 6px; font-size: 12px; line-height: 18px; }
+        :deep(.el-input__wrapper) { min-height: 36px; background: var(--el-bg-color); }
 
         .verificationRow {
           display: grid;
@@ -781,8 +634,8 @@ const portFieldId = useId();
           gap: 8px;
           width: 100%;
 
-          :is(.el-input, [data-slot="input"], .inputGroup) { min-width: 0; }
-          [data-slot="button"] { height: 36px; margin: 0; padding: 0 10px; font-size: 12px; }
+          .el-input { min-width: 0; }
+          .el-button { height: 36px; margin: 0; padding: 0 10px; font-size: 12px; }
 
           .captchaButton {
             min-width: 0;

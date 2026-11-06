@@ -9,128 +9,110 @@
     maskColor="var(--el-mask-color-extra-light)"
     @click="({ position }) => setCenter(position.x, position.y, { zoom: viewport.zoom, duration: 250 })" />
   <panel class="canvasControlsPanel" position="bottom-left">
-    <uiCard class="canvasControlsCard">
+    <el-card class="canvasControlsCard" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
       <div class="canvasControls">
-        <uiTooltip v-if="currentUser?.role !== 'user'" disableHoverableContent>
-          <uiTooltipTrigger asChild>
-            <uiButton
-              class="toolButton"
-              :class="{ active: assetsVisible }"
-              variant="ghost"
-              size="icon-sm"
-              :aria-pressed="assetsVisible"
-              aria-label="素材库"
-              @click="assetsVisible = !assetsVisible">
-              <icon-folders :size="18" />
-            </uiButton>
-          </uiTooltipTrigger>
-          <uiTooltipContent side="top">{{ assetsVisible ? '关闭素材库' : '打开素材库' }}</uiTooltipContent>
-        </uiTooltip>
-        <!-- 撤销整理弹层用锚点而非触发器，只由 arrangeNodes 控制打开，点击外部仍自动关闭 -->
-        <uiPopover v-model:open="undoPopoverVisible">
-          <uiTooltip disableHoverableContent :disabled="undoPopoverVisible">
-            <uiTooltipTrigger asChild>
-              <span class="toolTrigger">
-                <uiPopoverAnchor asChild>
-                  <uiButton class="toolButton" variant="ghost" size="icon-sm" :disabled="!canArrange" aria-label="整理画布" @click="arrangeNodes">
-                    <icon-sitemap :size="18" />
-                  </uiButton>
-                </uiPopoverAnchor>
-              </span>
-            </uiTooltipTrigger>
-            <uiTooltipContent side="top">整理画布</uiTooltipContent>
-          </uiTooltip>
-          <uiPopoverContent class="w-[180px] p-0" side="top" align="start" @openAutoFocus.prevent>
-            <div class="zoomMenu">
-              <uiButton class="zoomAction" variant="ghost" size="sm" @click="undoArrange">撤销整理</uiButton>
-            </div>
-          </uiPopoverContent>
-        </uiPopover>
-        <uiTooltip disableHoverableContent>
-          <uiTooltipTrigger asChild>
-            <uiButton
-              class="toolButton"
-              :class="{ active: showMap }"
-              variant="ghost"
-              size="icon-sm"
-              :aria-pressed="showMap"
-              aria-label="显示或隐藏地图"
-              @click="showMap = !showMap">
-              <icon-map :size="18" />
-            </uiButton>
-          </uiTooltipTrigger>
-          <uiTooltipContent side="top">{{ showMap ? '隐藏地图' : '显示地图' }}</uiTooltipContent>
-        </uiTooltip>
-        <uiTooltip disableHoverableContent>
-          <uiTooltipTrigger asChild>
-            <uiButton
-              class="toolButton"
-              :class="{ active: snapEnabled }"
-              variant="ghost"
-              size="icon-sm"
-              :aria-pressed="snapEnabled"
-              aria-label="网格吸附"
-              @click="snapEnabled = !snapEnabled">
-              <icon-magnet :size="18" />
-            </uiButton>
-          </uiTooltipTrigger>
-          <uiTooltipContent side="top">{{ snapEnabled ? '关闭网格吸附' : '开启网格吸附' }}</uiTooltipContent>
-        </uiTooltip>
-        <uiTooltip disableHoverableContent>
-          <uiTooltipTrigger asChild>
-            <uiButton
-              class="toolButton"
-              :class="{ active: showEdges }"
-              variant="ghost"
-              size="icon-sm"
-              :aria-pressed="showEdges"
-              aria-label="显示或隐藏连线"
-              @click="showEdges = !showEdges">
-              <icon-arrow-guide :size="18" />
-            </uiButton>
-          </uiTooltipTrigger>
-          <uiTooltipContent side="top">{{ showEdges ? '隐藏连线' : '显示连线' }}</uiTooltipContent>
-        </uiTooltip>
-        <uiTooltip disableHoverableContent>
-          <uiTooltipTrigger asChild>
-            <uiButton class="toolButton" variant="ghost" size="icon-sm" aria-label="适应视图" @click="fitView({ duration: 250 })">
-              <icon-focus-centered :size="18" />
-            </uiButton>
-          </uiTooltipTrigger>
-          <uiTooltipContent side="top">适应视图</uiTooltipContent>
-        </uiTooltip>
-        <uiPopover v-model:open="zoomMenuVisible">
-          <uiTooltip disableHoverableContent :disabled="zoomMenuVisible">
-            <uiTooltipTrigger asChild>
-              <span class="toolTrigger">
-                <uiPopoverTrigger asChild>
-                  <uiButton
-                    class="toolButton zoomButton"
-                    variant="ghost"
-                    size="sm"
-                    aria-label="缩放菜单"
-                    @wheel.stop.prevent="$event.deltaY && applyZoom(Math.min(800, Math.max(20, zoomPercent - Math.sign($event.deltaY))))">{{ zoomPercent }}%</uiButton>
-                </uiPopoverTrigger>
-              </span>
-            </uiTooltipTrigger>
-            <uiTooltipContent side="top">缩放菜单（滚轮调整缩放）</uiTooltipContent>
-          </uiTooltip>
-          <uiPopoverContent class="w-[216px] p-0" side="top" align="start" @openAutoFocus.prevent>
-            <div class="zoomMenu">
-              <uiNumberField class="zoomInput numberField" :modelValue="zoomPercent" :min="20" :max="800" @update:modelValue="applyZoom">
-                <uiNumberFieldContent>
-                  <uiNumberFieldInput class="zoomValue" aria-label="缩放百分比" />
-                  <span class="zoomSuffix" aria-hidden="true">%</span>
-                </uiNumberFieldContent>
-              </uiNumberField>
-              <uiButton class="zoomAction" variant="ghost" size="sm" @click="zoomIn()">放大</uiButton>
-              <uiButton class="zoomAction" variant="ghost" size="sm" @click="zoomOut()">缩小</uiButton>
-              <uiButton class="zoomAction" variant="ghost" size="sm" @click="fitView({ duration: 250 })">适合屏幕</uiButton>
-            </div>
-          </uiPopoverContent>
-        </uiPopover>
+        <el-tooltip v-if="currentUser?.role !== 'user'" :showArrow="false" :content="assetsVisible ? '关闭素材库' : '打开素材库'" placement="top" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+          <el-button
+            class="toolButton"
+            text
+            :type="assetsVisible ? 'primary' : 'default'"
+            :aria-pressed="assetsVisible"
+            aria-label="素材库"
+            @click="assetsVisible = !assetsVisible">
+            <icon-folders :size="18" />
+          </el-button>
+        </el-tooltip>
+        <!-- trigger 用 contextmenu 是为了让整理按钮只由 arrangeNodes 控制显隐，同时仍保留点击外部自动关闭 -->
+        <el-tooltip :showArrow="false" content="整理画布" placement="top" :hideAfter="0" :enterable="false" :triggerKeys="[]" :disabled="undoPopoverVisible">
+          <span class="toolTrigger">
+            <el-popover trigger="contextmenu" placement="top-start" :width="180" v-model:visible="undoPopoverVisible">
+              <template #reference>
+                <el-button class="toolButton" text :disabled="!canArrange" aria-label="整理画布" @click="arrangeNodes">
+                  <icon-sitemap :size="18" />
+                </el-button>
+              </template>
+              <div class="zoomMenu">
+                <el-button class="zoomAction" style="width: 100%" text @click="undoArrange">撤销整理</el-button>
+              </div>
+            </el-popover>
+          </span>
+        </el-tooltip>
+        <el-tooltip :showArrow="false" :content="showMap ? '隐藏地图' : '显示地图'" placement="top" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+          <el-button
+            class="toolButton"
+            text
+            :type="showMap ? 'primary' : 'default'"
+            :aria-pressed="showMap"
+            aria-label="显示或隐藏地图"
+            @click="showMap = !showMap">
+            <icon-map :size="18" />
+          </el-button>
+        </el-tooltip>
+        <el-tooltip :showArrow="false" :content="snapEnabled ? '关闭网格吸附' : '开启网格吸附'" placement="top" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+          <el-button
+            class="toolButton"
+            text
+            :type="snapEnabled ? 'primary' : 'default'"
+            :aria-pressed="snapEnabled"
+            aria-label="网格吸附"
+            @click="snapEnabled = !snapEnabled">
+            <icon-magnet :size="18" />
+          </el-button>
+        </el-tooltip>
+        <el-tooltip :showArrow="false" :content="showEdges ? '隐藏连线' : '显示连线'" placement="top" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+          <el-button
+            class="toolButton"
+            text
+            :type="showEdges ? 'primary' : 'default'"
+            :aria-pressed="showEdges"
+            aria-label="显示或隐藏连线"
+            @click="showEdges = !showEdges">
+            <icon-arrow-guide :size="18" />
+          </el-button>
+        </el-tooltip>
+        <el-tooltip :showArrow="false" content="适应视图" placement="top" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+          <el-button class="toolButton" text aria-label="适应视图" @click="fitView({ duration: 250 })">
+            <icon-focus-centered :size="18" />
+          </el-button>
+        </el-tooltip>
+        <el-tooltip :showArrow="false"
+          content="缩放菜单（滚轮调整缩放）"
+          placement="top"
+          :hideAfter="0"
+          :enterable="false"
+          :triggerKeys="[]"
+          :disabled="zoomMenuVisible">
+          <span class="toolTrigger">
+            <el-popover v-model:visible="zoomMenuVisible" trigger="click" placement="top-start" :width="216">
+              <template #reference>
+                <el-button
+                  class="toolButton"
+                  text
+                  aria-label="缩放菜单"
+                  @wheel.stop.prevent="$event.deltaY && applyZoom(Math.min(800, Math.max(20, zoomPercent - Math.sign($event.deltaY))))">
+                  {{ zoomPercent }}%
+                </el-button>
+              </template>
+              <div class="zoomMenu">
+                <el-input-number
+                  class="zoomInput"
+                  :model-value="zoomPercent"
+                  :min="20"
+                  :max="800"
+                  :controls="false"
+                  aria-label="缩放百分比"
+                  @change="applyZoom">
+                  <template #suffix>%</template>
+                </el-input-number>
+                <el-button class="zoomAction" text @click="zoomIn()">放大</el-button>
+                <el-button class="zoomAction" text @click="zoomOut()">缩小</el-button>
+                <el-button class="zoomAction" text @click="fitView({ duration: 250 })">适合屏幕</el-button>
+              </div>
+            </el-popover>
+          </span>
+        </el-tooltip>
       </div>
-    </uiCard>
+    </el-card>
   </panel>
 </template>
 
@@ -139,12 +121,7 @@ import { computed, onBeforeUnmount, ref, watch } from "vue";
 import { Panel, useVueFlow, type XYPosition } from "@vue-flow/core";
 import { MiniMap } from "@vue-flow/minimap";
 import { IconMap, IconMagnet, IconFocusCentered } from "@tabler/icons-vue";
-import { toast } from "vue-sonner";
-import { uiButton } from "@/components/ui/button";
-import { uiCard } from "@/components/ui/card";
-import { uiNumberField, uiNumberFieldContent, uiNumberFieldInput } from "@/components/ui/numberField";
-import { uiPopover, uiPopoverAnchor, uiPopoverContent, uiPopoverTrigger } from "@/components/ui/popover";
-import { uiTooltip, uiTooltipContent, uiTooltipTrigger } from "@/components/ui/tooltip";
+import { ElMessage } from "element-plus";
 import { currentUser } from "@/stores/multiTenant";
 import { arrangeCanvas } from "../arrangeCanvas";
 
@@ -188,8 +165,8 @@ watch(
 );
 onBeforeUnmount(() => arrangeController?.abort());
 
-function applyZoom(value: number | null | undefined) {
-  if (typeof value === "number" && Number.isFinite(value)) void zoomTo(value / 100);
+function applyZoom(value: number | undefined) {
+  if (value !== undefined && Number.isFinite(value)) void zoomTo(value / 100);
 }
 
 async function arrangeNodes() {
@@ -206,7 +183,7 @@ async function arrangeNodes() {
       undoPopoverVisible.value = true;
     });
   } catch (error) {
-    if (!controller.signal.aborted) toast.error(error instanceof Error ? error.message : "整理画布失败");
+    if (!controller.signal.aborted) ElMessage.error(error instanceof Error ? error.message : "整理画布失败");
   } finally {
     arrangeController = undefined;
     arranging.value = false;
@@ -226,7 +203,7 @@ async function undoArrange() {
       undoPopoverVisible.value = false;
     });
   } catch (error) {
-    toast.error(error instanceof Error ? error.message : "撤销整理失败");
+    ElMessage.error(error instanceof Error ? error.message : "撤销整理失败");
   }
 }
 </script>
@@ -239,15 +216,7 @@ async function undoArrange() {
   .canvasMiniMap.vue-flow__minimap { bottom: 92px; }
 }
 
-.canvasControlsCard {
-  justify-content: center;
-  gap: 0;
-  height: 34px;
-  box-sizing: border-box;
-  padding: 2px 4px;
-  border-radius: var(--ui-radius-large);
-  box-shadow: none;
-}
+.canvasControlsCard { height: 34px; box-sizing: border-box; }
 
 .canvasControls {
   display: flex;
@@ -266,27 +235,20 @@ async function undoArrange() {
     padding: 0;
     font-size: 12px;
     font-variant-numeric: tabular-nums;
-
-    &.active { color: var(--primary); }
-    &.zoomButton { width: auto; min-width: 28px; padding: 0 4px; }
   }
 }
 
 .zoomMenu {
   display: flex;
   flex-direction: column;
-  padding: 6px;
 
   .zoomInput {
     width: 100%;
-    margin-bottom: 4px;
-
-    .zoomValue { padding-right: 24px; padding-left: 12px; text-align: left; }
-    .zoomSuffix { position: absolute; top: 50%; right: 10px; color: var(--muted-foreground); font-size: 12px; transform: translateY(-50%); pointer-events: none; }
   }
 
   .zoomAction {
     justify-content: flex-start;
+    margin-left: 0;
   }
 }
 </style>

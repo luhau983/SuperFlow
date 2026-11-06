@@ -1,219 +1,120 @@
 <template>
-  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      class="uiDialogPanel"
-      :style="{ width: mode === 'builtin' ? 'min(860px, 94vw)' : 'min(760px, 94vw)', maxWidth: 'calc(100vw - 32px)' }"
-      :showCloseButton="!saving"
-      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
-      @escapeKeyDown="event => { if (!(!saving)) event.preventDefault(); }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>{{ provider ? `编辑供应商代码：${provider.label}` : mode === 'builtin' ? '添加媒体供应商' : '添加自定义媒体供应商' }}</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <div v-if="mode === 'builtin'" class="providerPicker">
-          <aside class="providerSidebar" aria-label="选择厂商">
-            <button
-              v-for="item in mediaProviders"
-              :key="item.id"
-              class="providerItem"
-              type="button"
-              :disabled="saving"
-              :aria-pressed="selectedProvider === item.id"
-              @click="selectedProvider = item.id">
-              <img v-if="item.icon" class="providerLogo" :src="item.icon" alt="" />
-              <modelIcon v-else :model="item.id" :size="18" />
-              <span>{{ item.label }}</span>
-            </button>
-          </aside>
-          <div class="providerDetails" style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: undefined, height: undefined }">
-            <section v-if="activeProvider" :key="selectedProvider" class="providerContent" :aria-label="activeProvider.label">
-              <div class="providerHeader">
-                <h3>{{ activeProvider.label }}</h3>
-                <uiBadge v-if="activeProvider.version" variant="outline">v{{ activeProvider.version }}</uiBadge>
-              </div>
-              <messageMarkdown v-if="providerReadme" class="providerReadme" :content="providerReadme" />
-              <div class="dividerLabel"><span>连接配置</span><uiSeparator /></div>
-              <form-create v-model:api="formApi" :rule="providerRules" :option="formOptions" />
-              <div class="modelHeader">
-                <strong data-ui-text="default">模型列表<span data-ui-text="info">{{ models.length }}</span></strong>
-              </div>
-              <div v-if="models.length" class="tableViewport" :style="{ maxHeight: undefined, height: undefined }">
-                <uiTable class="modelList" aria-label="模型列表">
-                  <uiTableHeader>
-                    <uiTableRow>
-                      <uiTableHead :style="{ minWidth: '220px', textAlign: 'left' }">模型 ID</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '180px', textAlign: 'left' }">显示名称</uiTableHead>
-                    </uiTableRow>
-                  </uiTableHeader>
-                  <uiTableBody>
-                    <uiTableRow v-for="(row, $index) in models" :key="row.id">
-                      <uiTableCell :style="{ textAlign: 'left' }">{{ row.id }}</uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">{{ row.label }}</uiTableCell>
-                    </uiTableRow>
-                    <uiTableEmpty v-if="!(models)?.length" :colspan="2"></uiTableEmpty>
-                  </uiTableBody>
-                </uiTable>
-              </div>
-              <uiAlert v-if="formError" variant="destructive">
-                <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ formError }}</uiAlertTitle>
-              </uiAlert>
-            </section>
+  <el-dialog
+    v-model="visible"
+    :title="provider ? `编辑供应商代码：${provider.label}` : mode === 'builtin' ? '添加媒体供应商' : '添加自定义媒体供应商'"
+    :width="mode === 'builtin' ? 'min(860px, 94vw)' : 'min(760px, 94vw)'"
+    alignCenter
+    appendToBody
+    destroyOnClose
+    :closeOnClickModal="false"
+    :closeOnPressEscape="!saving"
+    :showClose="!saving">
+    <div v-if="mode === 'builtin'" class="providerPicker">
+      <aside class="providerSidebar" aria-label="选择厂商">
+        <button
+          v-for="item in mediaProviders"
+          :key="item.id"
+          class="providerItem"
+          type="button"
+          :disabled="saving"
+          :aria-pressed="selectedProvider === item.id"
+          @click="selectedProvider = item.id">
+          <img v-if="item.icon" class="providerLogo" :src="item.icon" alt="" />
+          <modelIcon v-else :model="item.id" :size="18" />
+          <span>{{ item.label }}</span>
+        </button>
+      </aside>
+      <el-scrollbar class="providerDetails">
+        <section v-if="activeProvider" :key="selectedProvider" class="providerContent" :aria-label="activeProvider.label">
+          <div class="providerHeader">
+            <h3>{{ activeProvider.label }}</h3>
+            <el-tag v-if="activeProvider.version" size="small" type="info" effect="plain">v{{ activeProvider.version }}</el-tag>
           </div>
-        </div>
-        <div v-else style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: 'min(65dvh, calc(100dvh - 160px))', height: undefined }">
-          <div :aria-busy="loadingSource" class="dialogContent portLoading">
-            <form class="importForm uiForm" @submit.prevent>
-              <fieldset class="formFields" :disabled="saving || loadingSource || (!!provider && !revision)">
-                <div v-if="!provider" class="methodField formField">
-                  <uiLabel>添加方式</uiLabel>
-                  <uiTabs :modelValue="activeTab" @update:modelValue="value => { activeTab = value as typeof activeTab; }">
-                    <uiTabsList :aria-label="'添加方式'">
-                      <uiTabsTrigger
-                        v-for="option in addMethods"
-                        :key="typeof option === 'object' ? option.value : option"
-                        :value="typeof option === 'object' ? option.value : option"
-                        :disabled="(saving || loadingSource || (!!provider && !revision)) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)"><component :is="option.icon" :size="16" aria-hidden="true" />{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
-                    </uiTabsList>
-                  </uiTabs>
-                </div>
-                <div v-if="activeTab === 'file'" class="sourceField formField">
-                  <uiLabel :for="portFieldId + '-1'">供应商文件</uiLabel>
-                  <div class="fileImport">
-                    <div class="fileSource">
-                      <!-- ACT: Android 会把 .ts 识别为视频，选中后再校验扩展名和大小。 -->
-                      <input
-                        ref="fileInput"
-                        type="file"
-                        :accept="actualPlatform.isMobile ? undefined : '.ts'"
-                        hidden
-                        :disabled="saving"
-                        @change="readSourceFile" />
-                      <div class="inputGroup">
-                        <component :is="IconFileCode" aria-hidden="true" />
-                        <uiInput
-                          :id="portFieldId + '-1'"
-                          :modelValue="fileName"
-                          placeholder="尚未选择文件"
-                          readonly
-                          aria-label="已选择的供应商文件"
-                          :disabled="(saving || loadingSource || (!!provider && !revision)) || (false)"></uiInput>
-                      </div>
-                      <uiButton
-                        @click="fileInput?.click()"
-                        variant="outline"
-                        type="button"
-                        :disabled="(saving || loadingSource || (!!provider && !revision))"><component :is="IconFolderOpen" aria-hidden="true" />选择文件</uiButton>
-                    </div>
-                    <span class="fieldHint" data-ui-text="info">支持 .ts 文件，最大 1 MB。</span>
-                  </div>
-                </div>
-                <div v-else-if="activeTab === 'code'" class="sourceField formField">
-                  <uiLabel :for="portFieldId + '-2'">供应商代码</uiLabel>
-                  <uiTextarea
-                    :id="portFieldId + '-2'"
-                    v-model="code"
-                    class="sourceInput"
-                    dir="ltr"
-                    aria-label="供应商代码"
-                    :disabled="(saving || loadingSource || (!!provider && !revision)) || (false)"
-                    :rows="10"
-                    style="field-sizing:fixed; resize:none"></uiTextarea>
-                </div>
-                <div v-else class="sourceField formField">
-                  <uiLabel :for="portFieldId + '-3'">供应商文件链接</uiLabel>
-                  <div class="urlImport">
-                    <div class="inputGroup">
-                      <component :is="IconLink" aria-hidden="true" />
-                      <uiInput
-                        :id="portFieldId + '-3'"
-                        v-model="sourceUrl"
-                        type="url"
-                        dir="ltr"
-                        placeholder="请输入供应商 .ts 文件的直接下载链接"
-                        aria-label="供应商文件链接"
-                        :disabled="(saving || loadingSource || (!!provider && !revision)) || (false)"></uiInput>
-                    </div>
-                    <div class="urlHint" role="note" aria-label="文件链接填写说明">
-                      <div class="urlHintHeader">
-                        <span class="urlHintTitle"><icon-file-code :size="16" aria-hidden="true" />供应商 .ts 文件直链</span>
-                        <span class="urlHintMeta">HTTP/HTTPS · 最大 1 MB</span>
-                      </div>
-                      <p><strong>不要填写中转站地址或 API Base URL</strong>，网页、文档及登录页无法导入。</p>
-                    </div>
-                  </div>
-                </div>
-              </fieldset>
-            </form>
-            <section class="providerTips" aria-label="使用 AI 生成供应商">
-              <h4>{{ provider ? '使用 AI 修改供应商' : '还没有供应商文件？' }}</h4>
-              <p>{{ provider ? '将当前代码交给 AI，说明需要修改的功能，生成后可继续编辑并保存。' : '让 AI 读取接口文档并生成代码，遇到登录可手动操作。' }}</p>
-              <div class="assistantActions">
-                <uiButton
-                  @click="openAgent"
-                  variant="default"
-                  type="button"
-                  :disabled="(!modelChoices.length || saving || loadingSource || (!!provider && !revision)) || (openingAgent)"><icon-loader-2 v-if="openingAgent" class="animate-spin" aria-hidden="true" /><component :is="IconSparkles" aria-hidden="true" />{{ provider ? 'AI 修改供应商' : 'AI 生成供应商' }}</uiButton>
-                <uiButton @click="copyPrompt" variant="outline" type="button" :disabled="(loadingSource || (!!provider && !revision))"><component :is="IconCopy" aria-hidden="true" />复制提示词给其他 AI</uiButton>
+          <messageMarkdown v-if="providerReadme" class="providerReadme" :content="providerReadme" />
+          <el-divider v-if="providerReadme" contentPosition="left">连接配置</el-divider>
+          <form-create v-model:api="formApi" :rule="providerRules" :option="formOptions" />
+          <div class="modelHeader">
+            <el-text tag="strong">模型列表 <el-text type="info">{{ models.length }}</el-text></el-text>
+          </div>
+          <el-table v-if="models.length" class="modelList" :data="models" rowKey="id" aria-label="模型列表">
+            <el-table-column prop="id" label="模型 ID" minWidth="220" showOverflowTooltip />
+            <el-table-column prop="label" label="显示名称" minWidth="180" showOverflowTooltip />
+          </el-table>
+          <el-alert v-if="formError" :title="formError" type="error" :closable="false" showIcon />
+        </section>
+      </el-scrollbar>
+    </div>
+    <el-scrollbar v-else maxHeight="min(65dvh, calc(100dvh - 160px))">
+      <div v-loading="loadingSource" class="dialogContent">
+        <el-form class="importForm" labelPosition="top" :disabled="saving || loadingSource || (!!provider && !revision)" @submit.prevent>
+          <el-form-item v-if="!provider" class="methodField" label="添加方式">
+            <el-segmented v-model="activeTab" :options="addMethods" block ariaLabel="添加方式">
+              <template #default="{ item }">
+                <span class="methodOption">
+                  <component :is="item.icon" :size="16" aria-hidden="true" />
+                  {{ item.label }}
+                </span>
+              </template>
+            </el-segmented>
+          </el-form-item>
+          <el-form-item v-if="activeTab === 'file'" class="sourceField" label="供应商文件">
+            <div class="fileImport">
+              <div class="fileSource">
+                <!-- ACT: Android 会把 .ts 识别为视频，选中后再校验扩展名和大小。 -->
+                <input ref="fileInput" type="file" :accept="actualPlatform.isMobile ? undefined : '.ts'" hidden :disabled="saving" @change="readSourceFile" />
+                <el-input :modelValue="fileName" :prefixIcon="IconFileCode" placeholder="尚未选择文件" readonly aria-label="已选择的供应商文件" />
+                <el-button :icon="IconFolderOpen" @click="fileInput?.click()">选择文件</el-button>
               </div>
-              <span v-if="!modelChoices.length" class="fieldHint" data-ui-text="info">请先在文本模型设置中配置模型。</span>
-              <details class="promptDetails" :open="promptExpanded" @toggle="promptExpanded = ($event.target as HTMLDetailsElement).open">
-                <summary>查看完整提示词</summary>
-                <uiTextarea
-                  v-if="promptExpanded"
-                  :modelValue="developmentPrompt"
-                  readonly
-                  aria-label="供应商开发提示词"
-                  :rows="10"
-                  style="field-sizing:fixed; resize:none"></uiTextarea>
-              </details>
-            </section>
-            <uiAlert v-if="formError" class="formError" variant="destructive">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ formError }}</uiAlertTitle>
-            </uiAlert>
-            <div v-if="loadingSource" class="portLoadingMask" aria-hidden="true">
-              <icon-loader-2 class="animate-spin" />
+              <el-text class="fieldHint" type="info" size="small">支持 .ts 文件，最大 1 MB。</el-text>
             </div>
+          </el-form-item>
+          <el-form-item v-else-if="activeTab === 'code'" class="sourceField" label="供应商代码">
+            <el-input v-model="code" class="sourceInput" type="textarea" dir="ltr" :rows="10" resize="none" aria-label="供应商代码" />
+          </el-form-item>
+          <el-form-item v-else class="sourceField" label="供应商文件链接">
+            <div class="urlImport">
+              <el-input v-model="sourceUrl" type="url" dir="ltr" :prefixIcon="IconLink" placeholder="请输入供应商 .ts 文件的直接下载链接" aria-label="供应商文件链接" />
+              <div class="urlHint" role="note" aria-label="文件链接填写说明">
+                <div class="urlHintHeader">
+                  <span class="urlHintTitle"><icon-file-code :size="16" aria-hidden="true" />供应商 .ts 文件直链</span>
+                  <span class="urlHintMeta">HTTP/HTTPS · 最大 1 MB</span>
+                </div>
+                <p><strong>不要填写中转站地址或 API Base URL</strong>，网页、文档及登录页无法导入。</p>
+              </div>
+            </div>
+          </el-form-item>
+        </el-form>
+        <section class="providerTips" aria-label="使用 AI 生成供应商">
+          <h4>{{ provider ? '使用 AI 修改供应商' : '还没有供应商文件？' }}</h4>
+          <p>{{ provider ? '将当前代码交给 AI，说明需要修改的功能，生成后可继续编辑并保存。' : '让 AI 读取接口文档并生成代码，遇到登录可手动操作。' }}</p>
+          <div class="assistantActions">
+            <el-button type="primary" :icon="IconSparkles" :loading="openingAgent" :disabled="!modelChoices.length || saving || loadingSource || (!!provider && !revision)" @click="openAgent">{{ provider ? 'AI 修改供应商' : 'AI 生成供应商' }}</el-button>
+            <el-button :icon="IconCopy" :disabled="loadingSource || (!!provider && !revision)" @click="copyPrompt">复制提示词给其他 AI</el-button>
           </div>
-        </div>
-        <uiDialogFooter class="dialogFooter">
-          <uiButton @click="visible = false" variant="outline" type="button" :disabled="(saving)">取消</uiButton>
-          <uiButton
-            @click="addProvider"
-            variant="default"
-            type="button"
-            :disabled="(loadingSource || (!!provider && !revision) || !(isUrlImport ? sourceUrl : source).trim()) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />{{ provider ? '保存修改' : '确定添加供应商' }}</uiButton>
-        </uiDialogFooter>
+          <el-text v-if="!modelChoices.length" class="fieldHint" type="info" size="small">请先在文本模型设置中配置模型。</el-text>
+          <details class="promptDetails" :open="promptExpanded" @toggle="promptExpanded = ($event.target as HTMLDetailsElement).open">
+            <summary>查看完整提示词</summary>
+            <el-input v-if="promptExpanded" :modelValue="developmentPrompt" type="textarea" :rows="10" resize="none" readonly aria-label="供应商开发提示词" />
+          </details>
+        </section>
+        <el-alert v-if="formError" class="formError" :title="formError" type="error" :closable="false" showIcon />
       </div>
-    </uiDialogContent>
-  </uiDialog>
-  <component
-    v-if="providerAgentDialog"
-    :is="providerAgentDialog"
-    v-model="agentVisible"
-    :askUserEnabled="askUserEnabled"
-    :provider="provider"
-    :source="code"
-    @generated="useGeneratedSource" />
+    </el-scrollbar>
+    <template #footer>
+      <el-button :disabled="saving" @click="visible = false">取消</el-button>
+      <el-button type="primary" :loading="saving" :disabled="loadingSource || (!!provider && !revision) || !(isUrlImport ? sourceUrl : source).trim()" @click="addProvider">{{ provider ? '保存修改' : '确定添加供应商' }}</el-button>
+    </template>
+  </el-dialog>
+  <component v-if="providerAgentDialog" :is="providerAgentDialog" v-model="agentVisible" :askUserEnabled="askUserEnabled" :provider="provider" :source="code" @generated="useGeneratedSource" />
 </template>
 
 <script setup lang="ts">
-import { uiTextarea } from "@/components/ui/textarea";
-import { uiButton } from "@/components/ui/button";
-import { uiInput } from "@/components/ui/input";
-import { uiTabs, uiTabsList, uiTabsTrigger } from "@/components/ui/tabs";
-import { uiLabel } from "@/components/ui/label";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiTable, uiTableHeader, uiTableHead, uiTableBody, uiTableRow, uiTableCell, uiTableEmpty } from "@/components/ui/table";
-import { uiSeparator } from "@/components/ui/separator";
-import { uiBadge } from "@/components/ui/badge";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
-import { computed, defineAsyncComponent, onBeforeUnmount, ref, shallowRef, watch, type Component, useId } from "vue";
+import { computed, defineAsyncComponent, onBeforeUnmount, ref, shallowRef, watch, type Component } from "vue";
 import formCreate, { type Api, type Options } from "@toonflow/provider-web/formCreate";
 import { IconFileCode, IconCode, IconFolderOpen, IconCopy, IconSparkles, IconLink } from "@tabler/icons-vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { mediaProviders } from "@toonflow/providers";
 import { modelIcon } from "@toonflow/model-icons";
 import messageMarkdown from "@/components/messageMarkdown.vue";
@@ -418,12 +319,11 @@ async function addProvider() {
 async function copyPrompt() {
   try {
     await writeClipboardText(developmentPrompt.value);
-    toast.success("提示词已复制，发给其他 AI 后跟着回答问题即可");
+    ElMessage.success("提示词已复制，发给其他 AI 后跟着回答问题即可");
   } catch {
-    toast.error("复制失败，请展开「查看完整提示词」后手动复制");
+    ElMessage.error("复制失败，请展开「查看完整提示词」后手动复制");
   }
 }
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -584,8 +484,8 @@ const portFieldId = useId();
           width: 100%;
           gap: 8px;
 
-          :is(.el-input, [data-slot="input"], .inputGroup) { min-width: 0; }
-          [data-slot="button"] { flex-shrink: 0; }
+          .el-input { min-width: 0; }
+          .el-button { flex-shrink: 0; }
         }
 
         .fieldHint {
@@ -595,7 +495,7 @@ const portFieldId = useId();
         }
       }
 
-      .sourceInput :deep(textarea[data-slot="textarea"]) {
+      .sourceInput :deep(.el-textarea__inner) {
         height: min(28dvh, 240px);
         min-height: 140px;
         padding: 12px;
@@ -628,7 +528,7 @@ const portFieldId = useId();
       flex-wrap: wrap;
       gap: 8px;
 
-      [data-slot="button"] { margin-left: 0; }
+      .el-button { margin-left: 0; }
     }
 
     .fieldHint {
@@ -655,10 +555,10 @@ const portFieldId = useId();
         }
       }
 
-      :is(.el-textarea, [data-slot="textarea"]) {
+      .el-textarea {
         margin-top: 12px;
 
-        :deep(textarea[data-slot="textarea"]) {
+        :deep(.el-textarea__inner) {
           padding: 12px;
           font-size: 12px;
           line-height: 1.7;
@@ -675,11 +575,11 @@ const portFieldId = useId();
     .importForm .sourceField .fileImport .fileSource {
       flex-direction: column;
 
-      [data-slot="button"] { align-self: flex-start; }
+      .el-button { align-self: flex-start; }
     }
 
     .providerTips .assistantActions {
-      [data-slot="button"] { flex: 1 1 180px; }
+      .el-button { flex: 1 1 180px; }
     }
   }
 }

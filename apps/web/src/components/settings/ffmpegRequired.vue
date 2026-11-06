@@ -1,28 +1,13 @@
 <template>
-  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      class="uiDialogPanel"
-      :style="{ width: 'min(680px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>FFmpeg</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <uiAlert class="installationHint">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">安装完成后，请重新发起刚才的操作。</uiAlertTitle>
-        </uiAlert>
-        <ffmpeg v-if="visible" :downloadOnOpen="true" />
-      </div>
-    </uiDialogContent>
-  </uiDialog>
+  <el-dialog v-model="visible" title="FFmpeg" width="min(680px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
+    <el-alert class="installationHint" title="安装完成后，请重新发起刚才的操作。" type="info" :closable="false" showIcon />
+    <ffmpeg v-if="visible" :downloadOnOpen="true" />
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
 import { onBeforeUnmount, ref } from "vue";
-import { toast } from "vue-sonner";
-import messageBox from "@/lib/messageBox";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { actualPlatform } from "@/lib/platform";
 import ffmpeg from "./panels/pluginMarket/ffmpeg.vue";
 
@@ -35,12 +20,12 @@ events.onmessage = async event => {
   catch { return; }
   if (data?.type !== "required" || pending || visible.value) return;
   if (actualPlatform.isLocalMobile) {
-    toast.warning("未检测到可用的 FFmpeg，无法继续这项音视频处理。当前移动端版本暂不支持在应用内安装 FFmpeg。");
+    ElMessage.warning("未检测到可用的 FFmpeg，无法继续这项音视频处理。当前移动端版本暂不支持在应用内安装 FFmpeg。");
     return;
   }
   pending = true;
   try {
-    await messageBox.confirm("这项音视频处理需要 FFmpeg，但尚未检测到可用版本。现在下载并安装吗？", "需要 FFmpeg", {
+    await ElMessageBox.confirm("这项音视频处理需要 FFmpeg，但尚未检测到可用版本。现在下载并安装吗？", "需要 FFmpeg", {
       confirmButtonText: "下载并安装", cancelButtonText: "暂不下载", closeOnClickModal: false,
     });
     if (events.readyState !== EventSource.CLOSED) visible.value = true;

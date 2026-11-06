@@ -1,115 +1,66 @@
 <template>
-  <uiDialog :open="visible" @update:open="open => { if (!open) { visible = false; } }">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      class="uiDialogPanel"
-      :style="{ width: 'min(800px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
-      :showCloseButton="!saving"
-      @interactOutside="event => { if (!(false)) event.preventDefault(); }"
-      @escapeKeyDown="event => { if (!(!saving)) event.preventDefault(); }"
-      @closeAutoFocus="() => { formApi = undefined; }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>{{ `编辑媒体供应商：${provider?.label ?? ''}` }}</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <div class="providerEditor">
-          <messageMarkdown v-if="provider?.readme" class="providerReadme" :content="provider.readme" />
-          <form-create v-model="formValues" v-model:api="formApi" :rule="formRules" :option="formOptions" />
-          <div class="modelHeader">
-            <h4>模型配置<span data-ui-text="info">{{ models.length }}</span></h4>
-            <uiButton @click="editModel()" variant="outline" type="button" :disabled="(saving)" size="sm"><component :is="IconPlus" aria-hidden="true" />手动添加</uiButton>
-          </div>
-          <div class="modelList">
-            <uiCard v-for="(item, index) in models" :key="index" class="modelCard" style="gap:0; padding:0">
-              <div class="cardBody" :style="{ padding: '20px' }">
-                <div class="topInfo">
-                  <div class="modelNameWrap">
-                    <modelIcon :model="item.id" :size="24" />
-                    <div class="modelInfo">
-                      <span class="modelName">{{ item.label }}</span>
-                      <span class="modelId" data-ui-text="info">{{ item.id }}</span>
-                    </div>
-                  </div>
-                  <div class="actionButtons">
-                    <uiButton
-                      :title="item.type === 'text' ? '此处支持图片、视频和音频模型测试' : undefined"
-                      :aria-label="`测试模型 ${item.label}`"
-                      @click="testModel(index)"
-                      variant="ghost"
-                      type="button"
-                      :disabled="(saving || loadingTestModel !== undefined || item.type === 'text') || (loadingTestModel === index)"
-                      size="sm"><icon-loader-2 v-if="loadingTestModel === index" class="animate-spin" aria-hidden="true" /><component :is="IconPlayerPlay" aria-hidden="true" />测试</uiButton>
-                    <uiButton
-                      :aria-label="`编辑模型 ${item.label}`"
-                      @click="editModel(index)"
-                      variant="ghost"
-                      type="button"
-                      :disabled="(saving)"
-                      size="sm"><component :is="IconEdit" aria-hidden="true" />编辑</uiButton>
-                    <uiButton
-                      :aria-label="`删除模型 ${item.label}`"
-                      @click="models.splice(index, 1)"
-                      variant="ghost"
-                      type="button"
-                      :disabled="(saving)"
-                      size="sm"><component :is="IconTrash" aria-hidden="true" />删除</uiButton>
-                  </div>
-                </div>
-                <div class="modelTags">
-                  <uiBadge variant="secondary">{{ modelTypes[item.type] }}</uiBadge>
-                  <uiBadge v-for="(tag, tagIndex) in modelTags(item)" :key="tagIndex" variant="secondary">{{ tag }}</uiBadge>
-                </div>
+  <el-dialog
+    v-model="visible"
+    :title="`编辑媒体供应商：${provider?.label ?? ''}`"
+    width="min(800px, calc(100vw - 32px))"
+    alignCenter
+    appendToBody
+    destroyOnClose
+    :closeOnClickModal="false"
+    :closeOnPressEscape="!saving"
+    :showClose="!saving"
+    @closed="formApi = undefined">
+    <div class="providerEditor">
+      <messageMarkdown v-if="provider?.readme" class="providerReadme" :content="provider.readme" />
+      <form-create v-model="formValues" v-model:api="formApi" :rule="formRules" :option="formOptions" />
+      <div class="modelHeader">
+        <h4>模型配置 <el-text type="info">{{ models.length }}</el-text></h4>
+        <el-button :icon="IconPlus" size="small" :disabled="saving" @click="editModel()">手动添加</el-button>
+      </div>
+      <div class="modelList">
+        <el-card v-for="(item, index) in models" :key="index" class="modelCard" shadow="never">
+          <div class="topInfo">
+            <div class="modelNameWrap">
+              <modelIcon :model="item.id" :size="24" />
+              <div class="modelInfo">
+                <span class="modelName">{{ item.label }}</span>
+                <el-text class="modelId" type="info" size="small">{{ item.id }}</el-text>
               </div>
-            </uiCard>
-            <span v-if="!models.length" data-ui-text="info">暂无模型</span>
+            </div>
+            <div class="actionButtons">
+              <el-button text size="small" :icon="IconPlayerPlay" :loading="loadingTestModel === index" :disabled="saving || loadingTestModel !== undefined || item.type === 'text'" :title="item.type === 'text' ? '此处支持图片、视频和音频模型测试' : undefined" :aria-label="`测试模型 ${item.label}`" @click="testModel(index)">测试</el-button>
+              <el-button text size="small" :icon="IconEdit" :disabled="saving" :aria-label="`编辑模型 ${item.label}`" @click="editModel(index)">编辑</el-button>
+              <el-button text size="small" type="danger" :icon="IconTrash" :disabled="saving" :aria-label="`删除模型 ${item.label}`" @click="models.splice(index, 1)">删除</el-button>
+            </div>
           </div>
-        </div>
-        <uiAlert v-if="formError" class="formError" variant="destructive">
-          <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ formError }}</uiAlertTitle>
-        </uiAlert>
-        <uiDialogFooter class="dialogFooter">
-          <uiButton @click="visible = false" variant="outline" type="button" :disabled="(saving)">取消</uiButton>
-          <uiButton @click="saveModels" variant="default" type="button" :disabled="(!formApi) || (saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" /><component :is="IconDeviceFloppy" aria-hidden="true" />保存</uiButton>
-        </uiDialogFooter>
-        <component
-          :is="modelEditorDialog"
-          v-model="modelEditorVisible"
-          :model="editingModelIndex === undefined ? undefined : models[editingModelIndex]"
-          :models="models"
-          @confirmed="confirmModel" />
+          <div class="modelTags">
+            <el-tag size="small">{{ modelTypes[item.type] }}</el-tag>
+            <el-tag v-for="(tag, tagIndex) in modelTags(item)" :key="tagIndex" size="small" type="info">{{ tag }}</el-tag>
+          </div>
+        </el-card>
+        <el-text v-if="!models.length" type="info">暂无模型</el-text>
       </div>
-    </uiDialogContent>
-  </uiDialog>
-  <uiDialog :open="testVisible" @update:open="open => { if (!open) { testVisible = false; } }">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      class="uiDialogPanel"
-      :style="{ width: 'min(1120px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }"
-      @interactOutside="event => { if (!(false)) event.preventDefault(); }">
-      <uiDialogHeader class="dialogHeader">
-        <uiDialogTitle>{{ `测试媒体模型：${testProvider?.label ?? ''}` }}</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="dialogBody">
-        <div class="modelTestBody">
-          <providerTestPanel
-            v-if="testVisible && testProvider"
-            :source="testSource"
-            :provider="testProvider"
-            :config="testConfig"
-            :modelId="testModelId"
-            :models="testProvider.models" />
-        </div>
-      </div>
-    </uiDialogContent>
-  </uiDialog>
+    </div>
+    <el-alert v-if="formError" class="formError" :title="formError" type="error" :closable="false" showIcon />
+    <template #footer>
+      <el-button :disabled="saving" @click="visible = false">取消</el-button>
+      <el-button type="primary" :icon="IconDeviceFloppy" :loading="saving" :disabled="!formApi" @click="saveModels">保存</el-button>
+    </template>
+    <component
+      :is="modelEditorDialog"
+      v-model="modelEditorVisible"
+      :model="editingModelIndex === undefined ? undefined : models[editingModelIndex]"
+      :models="models"
+      @confirmed="confirmModel" />
+  </el-dialog>
+  <el-dialog v-model="testVisible" :title="`测试媒体模型：${testProvider?.label ?? ''}`" width="min(1120px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose :closeOnClickModal="false">
+    <div class="modelTestBody">
+      <providerTestPanel v-if="testVisible && testProvider" :source="testSource" :provider="testProvider" :config="testConfig" :modelId="testModelId" :models="testProvider.models" />
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiBadge } from "@/components/ui/badge";
-import { uiCard } from "@/components/ui/card";
-import { uiButton } from "@/components/ui/button";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
 import { translate } from "@toonflow/i18n/vue";
 
 import axios from "axios";

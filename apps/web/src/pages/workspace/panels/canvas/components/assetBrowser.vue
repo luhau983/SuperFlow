@@ -6,163 +6,64 @@
         <span>全部素材</span>
         <span class="assetCount">{{ allFiles.length }}</span>
       </button>
-      <div class="directoryHeading">
-        <span>文件夹</span>
-        <span>{{ allEntries.length - allFiles.length }}</span>
-      </div>
-      <div class="directoryScroll" style="overflow:auto; overscroll-behavior:contain" :style="{ maxHeight: undefined, height: undefined }">
-        <el-tree
-          class="directoryTree"
-          :data="directoryTree"
-          nodeKey="path"
-          :props="{ label: 'name' }"
-          :icon="IconChevronRight"
-          :currentNodeKey="folder === '.' ? undefined : folder"
-          :expandOnClickNode="false"
-          defaultExpandAll
-          highlightCurrent
-          emptyText=""
-          @nodeClick="selectDirectory">
+      <div class="directoryHeading"><span>文件夹</span><span>{{ allEntries.length - allFiles.length }}</span></div>
+      <el-scrollbar class="directoryScroll">
+        <el-tree class="directoryTree" :data="directoryTree" nodeKey="path" :props="{ label: 'name' }" :icon="IconChevronRight" :currentNodeKey="folder === '.' ? undefined : folder" :expandOnClickNode="false" defaultExpandAll highlightCurrent emptyText="" @nodeClick="selectDirectory">
           <template #default="{ data, node }">
-            <span
-              class="directoryEntry"
-              :title="data.name"
-              :aria-disabled="navigationLocked"
-              @contextmenu.prevent.stop="emit('menu', $event, data.source)">
+            <span class="directoryEntry" :title="data.name" :aria-disabled="navigationLocked" @contextmenu.prevent.stop="emit('menu', $event, data.source)">
               <component :is="node.expanded && !node.isLeaf ? IconFolderOpen : IconFolder" :size="17" aria-hidden="true" />
               <span>{{ data.name }}</span>
             </span>
           </template>
         </el-tree>
-      </div>
+      </el-scrollbar>
     </aside>
+
     <section class="browserMain">
       <header class="browserHeader">
         <nav class="breadcrumb" aria-label="当前目录">
           <button type="button" :disabled="navigationLocked" @click="navigateTo('.')">素材库</button>
           <template v-for="part in breadcrumb" :key="part.path">
             <icon-chevron-right :size="13" aria-hidden="true" />
-            <button
-              type="button"
-              :disabled="navigationLocked"
-              :aria-current="part.path === folder ? 'page' : undefined"
-              @click="navigateTo(part.path)">{{ part.name }}</button>
+            <button type="button" :disabled="navigationLocked" :aria-current="part.path === folder ? 'page' : undefined" @click="navigateTo(part.path)">{{ part.name }}</button>
           </template>
         </nav>
         <div class="headingRow">
           <div class="directoryTitle">
             <div class="titleLine">
               <h2>{{ currentDirectory?.name ?? '全部素材' }}</h2>
-              <uiButton
-                v-if="currentDirectory"
-                class="directoryMore"
-                :aria-label="'更多 ' + currentDirectory.name"
-                title="目录操作"
-                @click="emit('menu', $event, currentDirectory)"
-                variant="ghost"
-                type="button">
-                <component :is="IconDots" aria-hidden="true" />
-              </uiButton>
+              <el-button v-if="currentDirectory" class="directoryMore" text :icon="IconDots" :aria-label="'更多 ' + currentDirectory.name" title="目录操作" @click="emit('menu', $event, currentDirectory)" />
             </div>
-            <p>{{ scopeFiles.length }}个素材<span v-if="scopeDirectories.length">·{{ scopeDirectories.length }}个文件夹</span></p>
+            <p>{{ scopeFiles.length }} 个素材<span v-if="scopeDirectories.length"> · {{ scopeDirectories.length }} 个文件夹</span></p>
           </div>
           <div class="headerActions">
-            <div class="inputGroup">
-              <component :is="IconSearch" aria-hidden="true" />
-              <uiInput
-                v-model="searchQuery"
-                class="searchInput"
-                :placeholder="folder === '.' ? '搜索全部素材' : '搜索当前文件夹'"
-                aria-label="搜索素材"
-                @keydown.esc.stop="searchQuery = ''"></uiInput>
-              <uiButton
-                @mousedown.prevent
-                v-if="searchQuery"
-                type="button"
-                variant="ghost"
-                size="icon-sm"
-                aria-label="清除"
-                @click="searchQuery = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
-                <icon-x />
-              </uiButton>
-            </div>
-            <uiButton
-              class="createButton"
-              @click="emit('startFolder')"
-              variant="outline"
-              type="button"
-              :disabled="(newFolderParent !== undefined || loading)"><component :is="IconFolderPlus" aria-hidden="true" />新建文件夹</uiButton>
-            <uiButton
-              class="uploadButton"
-              @click="emit('upload')"
-              variant="default"
-              type="button"
-              :disabled="(newFolderParent !== undefined || loading || selecting) || (uploading)"><icon-loader-2 v-if="uploading" class="animate-spin" aria-hidden="true" /><component :is="IconUpload" aria-hidden="true" />本地上传</uiButton>
+            <el-input v-model="searchQuery" class="searchInput" :prefixIcon="IconSearch" :placeholder="folder === '.' ? '搜索全部素材' : '搜索当前文件夹'" aria-label="搜索素材" clearable @keydown.esc.stop="searchQuery = ''" />
+            <el-button class="createButton" :icon="IconFolderPlus" :disabled="newFolderParent !== undefined || loading" @click="emit('startFolder')">新建文件夹</el-button>
+            <el-button class="uploadButton" type="primary" :icon="IconUpload" :loading="uploading" :disabled="newFolderParent !== undefined || loading || selecting" @click="emit('upload')">本地上传</el-button>
           </div>
         </div>
         <div class="filterRow" role="group" aria-label="素材类型">
-          <button
-            v-for="item in filters"
-            :key="item.value"
-            class="filterButton"
-            :class="{ active: selectedKind === item.value }"
-            type="button"
-            :aria-pressed="selectedKind === item.value"
-            @click="selectedKind = item.value">{{ item.label }}<span>{{ item.count }}</span></button>
+          <button v-for="item in filters" :key="item.value" class="filterButton" :class="{ active: selectedKind === item.value }" type="button" :aria-pressed="selectedKind === item.value" @click="selectedKind = item.value">
+            {{ item.label }}<span>{{ item.count }}</span>
+          </button>
         </div>
       </header>
+
       <form v-if="newFolderParent !== undefined" class="newFolderRow" @submit.prevent="emit('saveFolder')">
         <icon-folder-plus :size="20" aria-hidden="true" />
-        <uiInput
-          ref="folderInput"
-          v-model="newFolderName"
-          class="folderNameInput"
-          aria-label="新文件夹名称"
-          :disabled="folderSaving"
-          @keydown.esc.prevent.stop="emit('cancelFolder')"></uiInput>
-        <uiButton variant="default" type="submit" :disabled="(!newFolderName.trim()) || (folderSaving)"><icon-loader-2 v-if="folderSaving" class="animate-spin" aria-hidden="true" />创建</uiButton>
-        <uiButton @click="emit('cancelFolder')" variant="ghost" type="button" :disabled="(folderSaving)">取消</uiButton>
+        <el-input ref="folderInput" v-model="newFolderName" class="folderNameInput" aria-label="新文件夹名称" :disabled="folderSaving" @keydown.esc.prevent.stop="emit('cancelFolder')" />
+        <el-button type="primary" nativeType="submit" :loading="folderSaving" :disabled="!newFolderName.trim()">创建</el-button>
+        <el-button text :disabled="folderSaving" @click="emit('cancelFolder')">取消</el-button>
       </form>
-      <div
-        :aria-busy="loading"
-        class="assetScroll portLoading"
-        aria-label="素材列表"
-        style="overflow:auto; overscroll-behavior:contain"
-        :style="{ maxHeight: undefined, height: undefined }">
+
+      <el-scrollbar v-loading="loading" class="assetScroll" aria-label="素材列表">
         <div v-if="displayEntries.length" class="assetGrid">
-          <article
-            v-for="entry in displayEntries"
-            :key="entry.path"
-            class="assetCard"
-            :draggable="!canSelect && entry.type === 'file'"
-            @dragstart="emit('drag', $event, entry)"
-            @contextmenu.prevent.stop="emit('menu', $event, entry)">
-            <component
-              :is="canSelect || entry.type === 'directory' || mediaKind(entry) ? 'button' : 'div'"
-              class="assetOpen"
-              :type="canSelect || entry.type === 'directory' || mediaKind(entry) ? 'button' : undefined"
-              :disabled="entry.type === 'directory' ? navigationLocked : canSelect && (selecting || !canSelect(entry))"
-              :aria-label="entry.type === 'directory' ? '打开文件夹 ' + entry.name : canSelect ? '引用素材 ' + entry.name : mediaKind(entry) ? '预览素材 ' + entry.name : undefined"
-              @click="openEntry(entry)">
+          <article v-for="entry in displayEntries" :key="entry.path" class="assetCard" :draggable="!canSelect && entry.type === 'file'" @dragstart="emit('drag', $event, entry)" @contextmenu.prevent.stop="emit('menu', $event, entry)">
+            <component :is="canSelect || entry.type === 'directory' || mediaKind(entry) ? 'button' : 'div'" class="assetOpen" :type="canSelect || entry.type === 'directory' || mediaKind(entry) ? 'button' : undefined" :disabled="entry.type === 'directory' ? navigationLocked : canSelect && (selecting || !canSelect(entry))" :aria-label="entry.type === 'directory' ? '打开文件夹 ' + entry.name : canSelect ? '引用素材 ' + entry.name : mediaKind(entry) ? '预览素材 ' + entry.name : undefined" @click="openEntry(entry)">
               <span class="assetVisual" :class="entry.type === 'directory' ? 'folderVisual' : mediaKind(entry) + 'Visual'">
-                <mentionThumbnail
-                  v-if="mediaKind(entry) === 'image'"
-                  class="assetImage"
-                  :thumbnail="{ url: entry.path, mimeType: getMediaMimeType({ name: entry.path, type: '' }) }"
-                  globalAsset>
-                  <span class="imageError">
-                    <icon-photo :size="38" aria-hidden="true" />
-                  </span>
-                </mentionThumbnail>
+                <mentionThumbnail v-if="mediaKind(entry) === 'image'" class="assetImage" :thumbnail="{ url: entry.path, mimeType: getMediaMimeType({ name: entry.path, type: '' }) }" globalAsset><span class="imageError"><icon-photo :size="38" aria-hidden="true" /></span></mentionThumbnail>
                 <icon-folder v-else-if="entry.type === 'directory'" :size="58" stroke="1.25" aria-hidden="true" />
-                <template v-else-if="mediaKind(entry) === 'video'">
-                  <mentionThumbnail class="assetVideo" :thumbnail="{ url: entry.path, mimeType: mentionAssetType(entry.path).mimeType }" globalAsset>
-                    <icon-video class="mediaBackdrop" :size="76" stroke="1" aria-hidden="true" />
-                  </mentionThumbnail>
-                  <span class="playButton">
-                    <icon-player-play :size="22" fill="currentColor" aria-hidden="true" />
-                  </span>
-                </template>
+                <template v-else-if="mediaKind(entry) === 'video'"><mentionThumbnail class="assetVideo" :thumbnail="{ url: entry.path, mimeType: mentionAssetType(entry.path).mimeType }" globalAsset><icon-video class="mediaBackdrop" :size="76" stroke="1" aria-hidden="true" /></mentionThumbnail><span class="playButton"><icon-player-play :size="22" fill="currentColor" aria-hidden="true" /></span></template>
                 <icon-music v-else-if="mediaKind(entry) === 'audio'" :size="52" stroke="1.25" aria-hidden="true" />
                 <icon-file v-else :size="52" stroke="1.25" aria-hidden="true" />
                 <span v-if="mediaKind(entry)" class="mediaBadge">{{ typeLabel(entry) }}</span>
@@ -171,15 +72,7 @@
             </component>
             <div class="cardFooter">
               <span class="assetDetails" :title="entry.path">{{ entry.type === 'directory' ? `${entry.children?.length ?? 0} 个项目` : folder === '.' && entry.path.includes('/') ? entry.path.slice(0, entry.path.lastIndexOf('/')) : typeLabel(entry) }}</span>
-              <uiButton
-                class="moreButton"
-                :aria-label="'更多 ' + entry.name"
-                title="更多操作"
-                @click="emit('menu', $event, entry)"
-                variant="ghost"
-                type="button">
-                <component :is="IconDots" aria-hidden="true" />
-              </uiButton>
+              <el-button class="moreButton" text :icon="IconDots" :aria-label="'更多 ' + entry.name" title="更多操作" @click="emit('menu', $event, entry)" />
             </div>
           </article>
         </div>
@@ -188,20 +81,16 @@
           <icon-folder v-else :size="44" stroke="1.25" aria-hidden="true" />
           <span>{{ searchQuery.trim() ? '没有找到匹配的素材' : '暂无素材' }}</span>
         </div>
-        <div v-if="loading" class="portLoadingMask" aria-hidden="true">
-          <icon-loader-2 class="animate-spin" />
-        </div>
-      </div>
+      </el-scrollbar>
     </section>
   </div>
 </template>
 
 <script setup lang="ts">
-import { uiInput } from "@/components/ui/input";
-import { uiButton } from "@/components/ui/button";
 import { getMediaMimeType } from "@toonflow/node-shared/mediaTypes";
 import { computed, nextTick, ref, watch } from "vue";
 import { t, translate } from "@toonflow/i18n/vue";
+import type { InputInstance } from "element-plus";
 import { IconChevronRight, IconDots, IconFile, IconFolder, IconFolderOpen, IconFolderPlus, IconLayoutGrid, IconMusic, IconPhoto, IconPlayerPlay, IconSearch, IconUpload, IconVideo } from "@tabler/icons-vue";
 import { mentionAssetType } from "@toonflow/server/agent/mentionSources";
 import mentionThumbnail from "@/components/agent/mentionThumbnail.vue";
@@ -235,7 +124,7 @@ const emit = defineEmits<{
   select: [entry: AssetEntry];
 }>();
 
-const folderInput = ref<{ $el: HTMLInputElement }>();
+const folderInput = ref<InputInstance>();
 const selectedKind = ref<"all" | MediaKind | "other">("all");
 const navigationLocked = computed(() => props.folderSaving || props.newFolderParent !== undefined);
 const allEntries = computed(() => {
@@ -305,7 +194,7 @@ function typeLabel(entry: AssetEntry) {
 watch(() => props.newFolderParent, async parent => {
   if (parent === undefined) return;
   await nextTick();
-  folderInput.value?.$el.select();
+  folderInput.value?.select();
 }, { immediate: true });
 
 watch(allEntries, () => {
@@ -532,7 +421,7 @@ watch(allEntries, () => {
 
       > svg { flex-shrink: 0; color: var(--el-text-color-secondary); }
       .folderNameInput { max-width: 320px; }
-      :deep([data-slot="button"] + [data-slot="button"]) { margin-left: 0; }
+      :deep(.el-button + .el-button) { margin-left: 0; }
     }
 
     .assetScroll {

@@ -1,54 +1,27 @@
 <template>
-  <uiDialog v-model:open="visible">
-    <uiDialogContent
-      :aria-describedby="undefined"
-      class="top-[12vh] translate-y-0 sm:max-w-[min(620px,94vw)]"
-      @interactOutside="event => event.preventDefault()"
-      @openAutoFocus="focusInput">
-      <uiDialogHeader>
-        <uiDialogTitle>快速打开</uiDialogTitle>
-      </uiDialogHeader>
-      <div class="quickOpen" @keydown.down.prevent="step(1)" @keydown.up.prevent="step(-1)" @keydown.enter.prevent="choose(selected)">
-        <div class="queryField">
-          <uiInput ref="input" v-model="query" class="pr-8" placeholder="输入文件路径或节点名称" aria-label="快速打开文件" />
-          <button v-if="query" type="button" class="clearQuery" aria-label="清空" @click="query = ''; focusInput()">
-            <icon-circle-x :size="14" aria-hidden="true" />
-          </button>
-        </div>
-        <p class="status" role="status">{{ loading ? '正在读取工作区…' : `已找到 ${entries.length} 个文件与节点` }}{{ results.length > 100 ? '，仅展示前 100 个匹配，请缩小范围' : '' }}</p>
-        <uiAlert v-if="error" class="text-amber-600">
-          <icon-alert-triangle aria-hidden="true" />
-          <uiAlertTitle>{{ error }}</uiAlertTitle>
-        </uiAlert>
-        <div class="resultList" role="listbox" aria-label="快速打开结果">
-          <button
-            v-for="(item, index) in results.slice(0, 100)"
-            :key="item.key"
-            class="resultItem"
-            :class="{ selected: selected === index }"
-            role="option"
-            :aria-selected="selected === index"
-            @click="choose(index)">
-            <img v-if="icon(item)" :src="icon(item)" alt="" />
-            <span class="label">{{ item.selection.label }}</span>
-            <small>{{ item.path }}</small>
-          </button>
-        </div>
+  <el-dialog v-model="visible" title="快速打开" width="min(620px, 94vw)" top="12vh" :closeOnClickModal="false" @closed="cancel" @opened="input?.focus()">
+    <div class="quickOpen" @keydown.down.prevent="step(1)" @keydown.up.prevent="step(-1)" @keydown.enter.prevent="choose(selected)">
+      <el-input ref="input" v-model="query" placeholder="输入文件路径或节点名称" aria-label="快速打开文件" clearable />
+      <p class="status" role="status">{{ loading ? '正在读取工作区…' : `已找到 ${entries.length} 个文件与节点` }}{{ results.length > 100 ? '，仅展示前 100 个匹配，请缩小范围' : '' }}</p>
+      <el-alert v-if="error" :title="error" type="warning" :closable="false" />
+      <div class="resultList" role="listbox" aria-label="快速打开结果">
+        <button v-for="(item, index) in results.slice(0, 100)" :key="item.key" class="resultItem" :class="{ selected: selected === index }" role="option" :aria-selected="selected === index" @click="choose(index)">
+          <img v-if="icon(item)" :src="icon(item)" alt="" />
+          <span class="label">{{ item.selection.label }}</span><small>{{ item.path }}</small>
+        </button>
       </div>
-    </uiDialogContent>
-  </uiDialog>
+    </div>
+  </el-dialog>
 </template>
 
 <script setup lang="ts">
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
+import type { InputInstance } from "element-plus";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
 import { isCanvasFile } from "@/pages/workspace/canvasFile";
 import { documentError } from "../documentSession";
 import { extensionIcon, listExtensions } from "../extensions";
 import type { TreeSelection } from "./fileTree.vue";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
-import { uiInput } from "@/components/ui/input";
 
 type Entry = { key: string; path: string; selection: TreeSelection };
 const props = defineProps<{ directory: string }>();
@@ -58,7 +31,7 @@ const loading = ref(false);
 const query = ref("");
 const selected = ref(0);
 const error = ref("");
-const input = ref<{ $el: HTMLInputElement }>();
+const input = ref<InputInstance>();
 const entries = shallowRef<Entry[]>([]);
 let controller: AbortController | undefined;
 const results = computed(() => {
@@ -68,11 +41,6 @@ const results = computed(() => {
       || left.path.localeCompare(right.path, "zh-CN", { numeric: true }));
 });
 watch(query, () => { selected.value = 0; });
-watch(visible, value => { if (!value) cancel(); });
-function focusInput(event?: Event) {
-  event?.preventDefault();
-  void nextTick(() => input.value?.$el.focus());
-}
 function icon(item: Entry) {
   return extensionIcon("filePath" in item.selection
     ? { kind: "file", directory: props.directory, path: item.path, label: item.selection.label }
@@ -132,31 +100,15 @@ defineExpose({ open });
 
 <style scoped lang="scss">
 .quickOpen {
-  .queryField {
-    position: relative;
-    .clearQuery {
-      position: absolute;
-      top: 50%;
-      right: 8px;
-      display: inline-flex;
-      padding: 2px;
-      border: 0;
-      background: transparent;
-      color: var(--muted-foreground);
-      cursor: pointer;
-      transform: translateY(-50%);
-      &:hover { color: var(--foreground); }
-    }
-  }
-  .status { color: var(--muted-foreground); font-size: 12px; }
+  .status { color: var(--el-text-color-secondary); font-size: 12px; }
   .resultList {
     max-height: 50vh; overflow: auto; margin-top: 8px;
     .resultItem {
-      display: flex; align-items: center; gap: 8px; width: 100%; border: 0; border-radius: calc(var(--radius) - 2px); padding: 9px; text-align: left; background: transparent; color: var(--foreground); cursor: pointer;
-      &.selected, &:hover { background: var(--accent); }
+      display: flex; align-items: center; gap: 8px; width: 100%; border: 0; padding: 9px; text-align: left; background: transparent; color: var(--el-text-color-primary); cursor: pointer;
+      &.selected, &:hover { background: var(--el-fill-color); }
       img { width: 16px; height: 16px; object-fit: contain; }
       .label { flex-shrink: 0; max-width: 50%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-      small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--muted-foreground); }
+      small { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: var(--el-text-color-secondary); }
     }
   }
 }

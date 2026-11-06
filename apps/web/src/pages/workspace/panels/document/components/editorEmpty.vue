@@ -21,10 +21,10 @@ import { IconFileText } from "@tabler/icons-vue";
   box-sizing: border-box;
   padding: 24px;
   text-align: center;
-  color: var(--muted-foreground);
+  color: var(--el-text-color-secondary);
 
-  .emptyIcon { color: color-mix(in oklch, var(--muted-foreground) 70%, transparent); }
-  .emptyTitle { margin: 18px 0 8px; font-size: 16px; font-weight: 500; color: var(--foreground); }
+  .emptyIcon { color: var(--el-text-color-placeholder); }
+  .emptyTitle { margin: 18px 0 8px; font-size: 16px; font-weight: 500; color: var(--el-text-color-regular); }
   .emptyDescription { margin: 0; font-size: 13px; line-height: 1.6; }
 }
 </style>

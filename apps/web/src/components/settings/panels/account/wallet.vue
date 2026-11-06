@@ -3,46 +3,24 @@
     <section class="balanceCard" aria-label="钱包余额">
       <div class="balanceHeader">
         <span>我的余额</span>
-        <uiButton @click="ordersVisible = true" variant="outline" type="button" size="sm"><component :is="IconReceipt" aria-hidden="true" />充值记录</uiButton>
+        <el-button size="small" :icon="IconReceipt" @click="ordersVisible = true">充值记录</el-button>
       </div>
       <strong class="balanceAmount">{{ formatMoney(balance) }}</strong>
-      <form class="exchangeForm uiForm" @submit.prevent="exchangeCode">
-        <fieldset class="formFields" :disabled="mutationBusy">
-          <div class="inputGroup">
-            <uiInput
-              v-model="code"
-              autocomplete="off"
-              placeholder="请输入兑换码"
-              aria-label="兑换码"
-              :disabled="(mutationBusy) || (false)"
-              :type="passwordVisible1 ? 'text' : 'password'"></uiInput>
-            <uiButton
-              @mousedown.prevent
-              type="button"
-              variant="ghost"
-              size="icon-sm"
-              :aria-label="passwordVisible1 ? '隐藏密码' : '显示密码'"
-              :disabled="mutationBusy"
-              @click="passwordVisible1 = !passwordVisible1">
-              <icon-eye-off v-if="passwordVisible1" />
-              <icon-eye v-else />
-            </uiButton>
-          </div>
-          <uiButton variant="outline" type="submit" :disabled="(!code.trim() || mutationBusy) || (exchanging) || (mutationBusy)"><icon-loader-2 v-if="exchanging" class="animate-spin" aria-hidden="true" />兑换</uiButton>
-        </fieldset>
-      </form>
-      <uiAlert v-if="exchangeError" class="exchangeError" variant="destructive">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ exchangeError }}</uiAlertTitle>
-      </uiAlert>
+      <el-form class="exchangeForm" :disabled="mutationBusy" @submit.prevent="exchangeCode">
+        <el-input v-model="code" type="password" showPassword autocomplete="off" placeholder="请输入兑换码" aria-label="兑换码" />
+        <el-button nativeType="submit" type="primary" plain :loading="exchanging" :disabled="!code.trim() || mutationBusy">兑换</el-button>
+      </el-form>
+      <el-alert v-if="exchangeError" class="exchangeError" :title="exchangeError" type="error" :closable="false" showIcon />
     </section>
+
     <walletBonus ref="bonusPanel" v-model:loading="bonusLoading" :visible="visible" :token="token" :serverTime="rechargeNow" />
+
     <section class="rechargeSection" aria-labelledby="rechargeTitle">
       <h3 id="rechargeTitle">选择充值套餐</h3>
-      <uiAlert v-if="plansError" variant="destructive">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ plansError }}</uiAlertTitle>
-        <uiButton @click="loadPlans" variant="outline" type="button" size="sm">重试</uiButton>
-      </uiAlert>
-      <div :aria-busy="plansLoading" class="plansGrid portLoading" role="group" aria-label="充值套餐">
+      <el-alert v-if="plansError" :title="plansError" type="error" :closable="false" showIcon>
+        <el-button size="small" @click="loadPlans">重试</el-button>
+      </el-alert>
+      <div v-loading="plansLoading" class="plansGrid" role="group" aria-label="充值套餐">
         <button
           v-for="plan in rechargeStale ? [] : plans"
           :key="plan.id"
@@ -53,9 +31,9 @@
           :disabled="mutationBusy"
           @click="selectedPlanId = plan.id">
           <strong>{{ formatMoney(plan.amount) }}</strong>
-          <span>充值到账{{ formatMoney(plan.points) }}</span>
-          <span v-if="plan.bonusAmount > 0" class="planBonus">赠送{{ formatMoney(plan.bonusAmount) }}</span>
-          <span v-if="plan.bonusAmount > 0">合计到账{{ formatMoney(plan.totalAmount) }}</span>
+          <span>充值到账 {{ formatMoney(plan.points) }}</span>
+          <span v-if="plan.bonusAmount > 0" class="planBonus">赠送 {{ formatMoney(plan.bonusAmount) }}</span>
+          <span v-if="plan.bonusAmount > 0">合计到账 {{ formatMoney(plan.totalAmount) }}</span>
           <span v-if="plan.description" class="planDescription">{{ plan.description }}</span>
         </button>
         <button
@@ -67,22 +45,12 @@
           @click="selectedPlanId = -1">
           <strong>自定义金额</strong>
         </button>
-        <div v-if="plansLoading" class="portLoadingMask" aria-hidden="true">
-          <icon-loader-2 class="animate-spin" />
-        </div>
       </div>
-      <form v-if="selectedPlanId === -1" class="customAmountForm uiForm" @submit.prevent>
-        <fieldset class="formFields" :disabled="mutationBusy">
-          <div class="formField">
-            <uiLabel :for="portFieldId + '-1'">充值金额（元）</uiLabel>
-            <uiNumberField class="numberField" v-model="customMoney" :min="1" :step="1" :formatOptions="{ maximumFractionDigits: 2, minimumFractionDigits: 2 }">
-              <uiNumberFieldContent>
-                <uiNumberFieldInput :id="portFieldId + '-1'" :placeholder="'请输入充值金额'" />
-              </uiNumberFieldContent>
-            </uiNumberField>
-          </div>
-        </fieldset>
-      </form>
+      <el-form v-if="selectedPlanId === -1" class="customAmountForm" labelPosition="top" :disabled="mutationBusy" @submit.prevent>
+        <el-form-item label="充值金额（元）">
+          <el-input-number v-model="customMoney" :min="1" :precision="2" :step="1" :controls="false" placeholder="请输入充值金额" />
+        </el-form-item>
+      </el-form>
       <section v-if="activeRechargeActivity" class="bonusRules" aria-labelledby="bonusRulesTitle">
         <header class="bonusRulesHeader">
           <h4 id="bonusRulesTitle"><icon-gift :size="17" aria-hidden="true" />赠送细则</h4>
@@ -91,53 +59,26 @@
         <dl class="bonusRuleFacts">
           <div>
             <dt>赠送方式</dt>
-            <dd v-if="activeRechargeActivity.rateMode === 'fixed'">赠送比例<strong>{{ formatRate(activeRechargeActivity.rate) }}</strong></dd>
+            <dd v-if="activeRechargeActivity.rateMode === 'fixed'">赠送比例 <strong>{{ formatRate(activeRechargeActivity.rate) }}</strong></dd>
             <dd v-else>按本次支付金额匹配档位，整笔金额使用对应比例</dd>
           </div>
-          <div v-if="bonusRulesExpiry">
-            <dt>赠送金有效期</dt>
-            <dd>{{ bonusRulesExpiry }}</dd>
-          </div>
-          <div v-if="activeRechargeActivity.startsAt !== null">
-            <dt>活动开始</dt>
-            <dd>
-              <time>{{ formatTime(activeRechargeActivity.startsAt) }}</time>
-            </dd>
-          </div>
-          <div v-if="activeRechargeActivity.endsAt !== null">
-            <dt>活动截止</dt>
-            <dd>
-              <time>{{ formatTime(activeRechargeActivity.endsAt) }}</time>
-            </dd>
-          </div>
+          <div v-if="bonusRulesExpiry"><dt>赠送金有效期</dt><dd>{{ bonusRulesExpiry }}</dd></div>
+          <div v-if="activeRechargeActivity.startsAt !== null"><dt>活动开始</dt><dd><time>{{ formatTime(activeRechargeActivity.startsAt) }}</time></dd></div>
+          <div v-if="activeRechargeActivity.endsAt !== null"><dt>活动截止</dt><dd><time>{{ formatTime(activeRechargeActivity.endsAt) }}</time></dd></div>
         </dl>
         <div v-if="activeRechargeActivity.rateMode === 'tiered'" class="bonusTierList" tabindex="0" role="region" aria-label="阶梯赠送比例">
           <table class="bonusTierTable">
-            <thead>
-              <tr>
-                <th scope="col">本次支付金额</th>
-                <th scope="col">赠送比例</th>
-                <th scope="col">
-                  <span class="srOnly">当前档位</span>
-                </th>
-              </tr>
-            </thead>
+            <thead><tr><th scope="col">本次支付金额</th><th scope="col">赠送比例</th><th scope="col"><span class="srOnly">当前档位</span></th></tr></thead>
             <tbody>
-              <tr
-                v-for="(tier, index) in activeRechargeActivity.tiers"
-                :key="tier.upTo"
-                :class="{ currentTier: currentBonusTier === index }"
-                :aria-current="currentBonusTier === index ? 'true' : undefined">
+              <tr v-for="(tier, index) in activeRechargeActivity.tiers" :key="tier.upTo" :class="{ currentTier: currentBonusTier === index }" :aria-current="currentBonusTier === index ? 'true' : undefined">
                 <td>
                   <template v-if="activeRechargeActivity.tiers.length === 1">全部支付金额</template>
-                  <template v-else-if="index === 0">不超过{{ formatMoney(tier.upTo) }}</template>
-                  <template v-else-if="index === activeRechargeActivity.tiers.length - 1">超过{{ formatMoney(activeRechargeActivity.tiers[index - 1]?.upTo) }}</template>
-                  <template v-else>超过{{ formatMoney(activeRechargeActivity.tiers[index - 1]?.upTo) }}，不超过{{ formatMoney(tier.upTo) }}</template>
+                  <template v-else-if="index === 0">不超过 {{ formatMoney(tier.upTo) }}</template>
+                  <template v-else-if="index === activeRechargeActivity.tiers.length - 1">超过 {{ formatMoney(activeRechargeActivity.tiers[index - 1]?.upTo) }}</template>
+                  <template v-else>超过 {{ formatMoney(activeRechargeActivity.tiers[index - 1]?.upTo) }}，不超过 {{ formatMoney(tier.upTo) }}</template>
                 </td>
                 <td>{{ formatRate(tier.rate) }}</td>
-                <td>
-                  <span v-if="currentBonusTier === index" class="currentTierLabel">当前档位</span>
-                </td>
+                <td><span v-if="currentBonusTier === index" class="currentTierLabel">当前档位</span></td>
               </tr>
             </tbody>
           </table>
@@ -145,18 +86,9 @@
       </section>
       <div v-if="rechargeReady" class="rechargeSummary" aria-live="polite">
         <dl>
-          <div>
-            <dt>充值到账</dt>
-            <dd>{{ formatMoney(rechargePoints) }}</dd>
-          </div>
-          <div v-if="rechargeBonus.bonusAmount > 0" class="bonusMetric">
-            <dt>本次赠送</dt>
-            <dd>+{{ formatMoney(rechargeBonus.bonusAmount) }}</dd>
-          </div>
-          <div v-if="rechargeBonus.bonusAmount > 0" class="totalMetric">
-            <dt>合计到账</dt>
-            <dd>{{ formatMoney(rechargeTotal) }}</dd>
-          </div>
+          <div><dt>充值到账</dt><dd>{{ formatMoney(rechargePoints) }}</dd></div>
+          <div v-if="rechargeBonus.bonusAmount > 0" class="bonusMetric"><dt>本次赠送</dt><dd>+{{ formatMoney(rechargeBonus.bonusAmount) }}</dd></div>
+          <div v-if="rechargeBonus.bonusAmount > 0" class="totalMetric"><dt>合计到账</dt><dd>{{ formatMoney(rechargeTotal) }}</dd></div>
         </dl>
       </div>
       <div v-for="activity in rechargeActivities" :key="activity.id" class="rechargeActivity">
@@ -164,213 +96,107 @@
         <p v-if="activity.rechargeConfig.summary">{{ activity.rechargeConfig.summary }}</p>
       </div>
       <div v-if="presentation?.agreement" class="agreementActions">
-        <uiLabel class="checkboxField"><uiCheckbox v-model="agreementAccepted" :disabled="mutationBusy || plansLoading"></uiCheckbox>我已阅读并同意</uiLabel>
-        <uiButton @click="agreementVisible = true" variant="link" type="button">《{{ presentation.agreement.title }}》</uiButton>
+        <el-checkbox v-model="agreementAccepted" :disabled="mutationBusy || plansLoading">我已阅读并同意</el-checkbox>
+        <el-button link type="primary" @click="agreementVisible = true">《{{ presentation.agreement.title }}》</el-button>
       </div>
-      <uiAlert v-else-if="!plansLoading && !plansError">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">充值协议暂不可用，请刷新后重试</uiAlertTitle>
-      </uiAlert>
+      <el-alert v-else-if="!plansLoading && !plansError" title="充值协议暂不可用，请刷新后重试" type="warning" :closable="false" showIcon />
       <div class="paymentActions">
-        <uiTabs :modelValue="payType" @update:modelValue="value => { payType = value as typeof payType; }">
-          <uiTabsList :aria-label="'支付方式'">
-            <uiTabsTrigger
-              v-for="option in paymentOptions"
-              :key="typeof option === 'object' ? option.value : option"
-              :value="typeof option === 'object' ? option.value : option"
-              :disabled="(mutationBusy) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)">{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
-          </uiTabsList>
-        </uiTabs>
-        <uiButton
-          @click="createPayment"
-          variant="default"
-          type="button"
-          :disabled="(!rechargeReady || !agreementAccepted || mutationBusy) || (paying)"><icon-loader-2 v-if="paying" class="animate-spin" aria-hidden="true" />{{ rechargeReady ? `支付 ${formatMoney(rechargeAmount)}` : '生成支付订单' }}</uiButton>
+        <el-segmented v-model="payType" :options="paymentOptions" :disabled="mutationBusy" aria-label="支付方式" />
+        <el-button type="primary" :loading="paying" :disabled="!rechargeReady || !agreementAccepted || mutationBusy" @click="createPayment">
+          {{ rechargeReady ? `支付 ${formatMoney(rechargeAmount)}` : '生成支付订单' }}
+        </el-button>
       </div>
-      <uiAlert v-if="paymentError" variant="destructive">
-        <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ paymentError }}</uiAlertTitle>
-      </uiAlert>
+      <el-alert v-if="paymentError" :title="paymentError" type="error" :closable="false" showIcon />
     </section>
-    <uiDialog :open="agreementVisible" @update:open="open => { if (!open) { agreementVisible = false; } }">
-      <uiDialogContent
-        :aria-describedby="undefined"
-        class="uiDialogPanel"
-        :style="{ width: 'min(720px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
-        <uiDialogHeader class="dialogHeader">
-          <uiDialogTitle>{{ presentation?.agreement?.title }}</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="dialogBody">
-          <div v-if="presentation?.agreement" class="agreementDialog">
-            <p class="agreementMeta">版本{{ presentation.agreement.version }}· 更新于{{ formatTime(presentation.agreement.updatedAt) }}</p>
-            <div class="agreementContent" v-html="agreementContent"></div>
-          </div>
-          <uiDialogFooter class="dialogFooter">
-            <uiButton @click="agreementVisible = false" variant="outline" type="button">关闭</uiButton>
-          </uiDialogFooter>
+
+    <el-dialog v-model="agreementVisible" :title="presentation?.agreement?.title" width="min(720px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
+      <div v-if="presentation?.agreement" class="agreementDialog">
+        <p class="agreementMeta">版本 {{ presentation.agreement.version }} · 更新于 {{ formatTime(presentation.agreement.updatedAt) }}</p>
+        <div class="agreementContent" v-html="agreementContent"></div>
+      </div>
+      <template #footer><el-button @click="agreementVisible = false">关闭</el-button></template>
+    </el-dialog>
+
+    <el-dialog v-model="ordersVisible" title="充值记录" width="min(1000px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
+      <div class="ordersSection" :aria-busy="ordersLoading">
+        <el-alert v-if="ordersError" :title="ordersError" type="error" :closable="false" showIcon>
+          <el-button size="small" @click="loadOrders()">重试</el-button>
+        </el-alert>
+        <div v-loading="ordersLoading" class="ordersList">
+          <el-table :data="orders" rowKey="id" emptyText="" maxHeight="min(460px, calc(100dvh - 260px))">
+            <el-table-column label="订单" minWidth="220">
+              <template #default="{ row }"><div class="orderIdentity"><strong>{{ row.name }}</strong><span>{{ row.orderNumber }}</span><span v-if="row.remark">{{ row.remark }}</span></div></template>
+            </el-table-column>
+            <el-table-column label="类型 / 支付方式" minWidth="125">
+              <template #default="{ row }"><div class="orderFields"><span>{{ orderTypeLabel(row.type) }}</span><span>{{ paymentLabel(row.paymentMethod) }}</span></div></template>
+            </el-table-column>
+            <el-table-column label="支付 / 到账金额" minWidth="125">
+              <template #default="{ row }"><div class="orderFields"><span>{{ formatMoney(row.amount) }}</span><span>{{ formatMoney(row.points) }}</span></div></template>
+            </el-table-column>
+            <el-table-column label="赠送金额 / 有效期" minWidth="175">
+              <template #default="{ row }"><div v-if="row.bonusAmount !== undefined" class="orderFields"><span>{{ formatMoney(row.bonusAmount) }}</span><span v-if="row.bonusAmount > 0">{{ row.bonusActivityName }}<br />{{ bonusExpiry(row) }}</span></div></template>
+            </el-table-column>
+            <el-table-column label="状态" width="90">
+              <template #default="{ row }"><el-tag :type="statusType(row.status)" size="small">{{ statusLabel(row.status) }}</el-tag></template>
+            </el-table-column>
+            <el-table-column label="创建 / 支付时间" minWidth="170">
+              <template #default="{ row }"><div class="orderFields"><time>{{ formatTime(row.createdAt) }}</time><time v-if="row.paidAt !== null">{{ formatTime(row.paidAt) }}</time></div></template>
+            </el-table-column>
+          </el-table>
         </div>
-      </uiDialogContent>
-    </uiDialog>
-    <uiDialog :open="ordersVisible" @update:open="open => { if (!open) { ordersVisible = false; } }">
-      <uiDialogContent
-        :aria-describedby="undefined"
-        class="uiDialogPanel"
-        :style="{ width: 'min(1000px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
-        <uiDialogHeader class="dialogHeader">
-          <uiDialogTitle>充值记录</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="dialogBody">
-          <div class="ordersSection" :aria-busy="ordersLoading">
-            <uiAlert v-if="ordersError" variant="destructive">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ ordersError }}</uiAlertTitle>
-              <uiButton @click="loadOrders()" variant="outline" type="button" size="sm">重试</uiButton>
-            </uiAlert>
-            <div :aria-busy="ordersLoading" class="ordersList portLoading">
-              <div class="tableViewport" :style="{ maxHeight: 'min(460px, calc(100dvh - 260px))', height: undefined }">
-                <uiTable>
-                  <uiTableHeader>
-                    <uiTableRow>
-                      <uiTableHead :style="{ minWidth: '220px', textAlign: 'left' }">订单</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '125px', textAlign: 'left' }">类型 / 支付方式</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '125px', textAlign: 'left' }">支付 / 到账金额</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '175px', textAlign: 'left' }">赠送金额 / 有效期</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '90px', textAlign: 'left' }">状态</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '170px', textAlign: 'left' }">创建 / 支付时间</uiTableHead>
-                    </uiTableRow>
-                  </uiTableHeader>
-                  <uiTableBody>
-                    <uiTableRow v-for="(row, $index) in orders" :key="row.id">
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <div class="orderIdentity">
-                          <strong>{{ row.name }}</strong>
-                          <span>{{ row.orderNumber }}</span>
-                          <span v-if="row.remark">{{ row.remark }}</span>
-                        </div>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <div class="orderFields">
-                          <span>{{ orderTypeLabel(row.type) }}</span>
-                          <span>{{ paymentLabel(row.paymentMethod) }}</span>
-                        </div>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <div class="orderFields">
-                          <span>{{ formatMoney(row.amount) }}</span>
-                          <span>{{ formatMoney(row.points) }}</span>
-                        </div>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <div v-if="row.bonusAmount !== undefined" class="orderFields">
-                          <span>{{ formatMoney(row.bonusAmount) }}</span>
-                          <span v-if="row.bonusAmount > 0">{{ row.bonusActivityName }}<br />{{ bonusExpiry(row) }}</span>
-                        </div>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <uiBadge variant="secondary">{{ statusLabel(row.status) }}</uiBadge>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <div class="orderFields">
-                          <time>{{ formatTime(row.createdAt) }}</time>
-                          <time v-if="row.paidAt !== null">{{ formatTime(row.paidAt) }}</time>
-                        </div>
-                      </uiTableCell>
-                    </uiTableRow>
-                    <uiTableEmpty v-if="!(orders)?.length" :colspan="6"></uiTableEmpty>
-                  </uiTableBody>
-                </uiTable>
-              </div>
-              <div v-if="ordersLoading" class="portLoadingMask" aria-hidden="true">
-                <icon-loader-2 class="animate-spin" />
-              </div>
-            </div>
-            <el-pagination
-              v-if="!ordersError"
-              class="ordersPagination"
-              :currentPage="page"
-              :pageSize="pageSize"
-              :pageSizes="[10, 20, 50]"
-              :total="total"
-              :disabled="ordersLoading || checking"
-              :pagerCount="5"
-              layout="total, sizes, prev, pager, next"
-              size="small"
-              @update:currentPage="changePage"
-              @update:pageSize="changePageSize" />
-          </div>
-          <uiDialogFooter class="dialogFooter">
-            <uiButton @click="ordersVisible = false" variant="outline" type="button">关闭</uiButton>
-            <uiButton @click="loadOrders()" variant="default" type="button" :disabled="(ordersLoading)"><icon-loader-2 v-if="ordersLoading" class="animate-spin" aria-hidden="true" />刷新</uiButton>
-          </uiDialogFooter>
+        <el-pagination
+          v-if="!ordersError"
+          class="ordersPagination"
+          :currentPage="page"
+          :pageSize="pageSize"
+          :pageSizes="[10, 20, 50]"
+          :total="total"
+          :disabled="ordersLoading || checking"
+          :pagerCount="5"
+          layout="total, sizes, prev, pager, next"
+          size="small"
+          @update:currentPage="changePage"
+          @update:pageSize="changePageSize" />
+      </div>
+      <template #footer>
+        <el-button @click="ordersVisible = false">关闭</el-button>
+        <el-button type="primary" :loading="ordersLoading" @click="loadOrders()">刷新</el-button>
+      </template>
+    </el-dialog>
+
+    <el-dialog v-model="paymentVisible" title="充值支付" width="min(420px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
+      <div v-if="payment" class="paymentDialog">
+        <p class="paymentAmount">{{ formatMoney(payment.amount) }}</p>
+        <div v-if="payment.bonusAmount > 0" class="paymentBonus">
+          <div class="paymentBonusAmount"><icon-gift :size="17" aria-hidden="true" /><span>本次赠送</span><strong>+{{ formatMoney(payment.bonusAmount) }}</strong></div>
+          <dl>
+            <div v-if="payment.bonusActivityName"><dt>赠送活动</dt><dd>{{ payment.bonusActivityName }}</dd></div>
+            <div v-if="bonusExpiry(payment)"><dt>赠送金有效期</dt><dd>{{ bonusExpiry(payment) }}</dd></div>
+          </dl>
         </div>
-      </uiDialogContent>
-    </uiDialog>
-    <uiDialog :open="paymentVisible" @update:open="open => { if (!open) { paymentVisible = false; } }">
-      <uiDialogContent
-        :aria-describedby="undefined"
-        class="uiDialogPanel"
-        :style="{ width: 'min(420px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
-        <uiDialogHeader class="dialogHeader">
-          <uiDialogTitle>充值支付</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="dialogBody">
-          <div v-if="payment" class="paymentDialog">
-            <p class="paymentAmount">{{ formatMoney(payment.amount) }}</p>
-            <div v-if="payment.bonusAmount > 0" class="paymentBonus">
-              <div class="paymentBonusAmount">
-                <icon-gift :size="17" aria-hidden="true" />
-                <span>本次赠送</span>
-                <strong>+{{ formatMoney(payment.bonusAmount) }}</strong>
-              </div>
-              <dl>
-                <div v-if="payment.bonusActivityName">
-                  <dt>赠送活动</dt>
-                  <dd>{{ payment.bonusActivityName }}</dd>
-                </div>
-                <div v-if="bonusExpiry(payment)">
-                  <dt>赠送金有效期</dt>
-                  <dd>{{ bonusExpiry(payment) }}</dd>
-                </div>
-              </dl>
-            </div>
-            <template v-if="payment.kind === 'image'">
-              <img class="paymentQr" :src="payment.payUrl" alt="微信支付二维码" referrerpolicy="no-referrer" @error="qrImageError = true" />
-              <p v-if="!qrImageError" class="paymentHint">请使用微信扫描二维码支付</p>
-              <uiAlert v-else variant="destructive">
-                <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">二维码图片加载失败，请打开付款页面查看</uiAlertTitle>
-              </uiAlert>
-            </template>
-            <uiButton variant="outline" type="button" asChild>
-              <a :href="payment.payUrl" target="_blank" rel="noopener noreferrer">{{ payment.kind === 'image' ? '打开付款页面' : '前往支付宝付款' }}</a>
-            </uiButton>
-            <p class="paymentOrder">订单号：{{ payment.orderNumber }}</p>
-            <uiAlert v-if="paymentNotice">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ paymentNotice }}</uiAlertTitle>
-            </uiAlert>
-            <uiAlert v-if="checkError" variant="destructive">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ checkError }}</uiAlertTitle>
-            </uiAlert>
-          </div>
-          <uiDialogFooter class="dialogFooter">
-            <uiButton @click="paymentVisible = false" variant="outline" type="button">关闭</uiButton>
-            <uiButton @click="checkPayment()" variant="default" type="button" :disabled="(!payment || paymentConfirmed) || (checking)"><icon-loader-2 v-if="checking" class="animate-spin" aria-hidden="true" />已完成支付，刷新</uiButton>
-          </uiDialogFooter>
-        </div>
-      </uiDialogContent>
-    </uiDialog>
+        <template v-if="payment.kind === 'image'">
+          <img class="paymentQr" :src="payment.payUrl" alt="微信支付二维码" referrerpolicy="no-referrer" @error="qrImageError = true" />
+          <p v-if="!qrImageError" class="paymentHint">请使用微信扫描二维码支付</p>
+          <el-alert v-else title="二维码图片加载失败，请打开付款页面查看" type="error" :closable="false" showIcon />
+        </template>
+        <el-button tag="a" :href="payment.payUrl" target="_blank" rel="noopener noreferrer" type="primary" plain>
+          {{ payment.kind === 'image' ? '打开付款页面' : '前往支付宝付款' }}
+        </el-button>
+        <p class="paymentOrder">订单号：{{ payment.orderNumber }}</p>
+        <el-alert v-if="paymentNotice" :title="paymentNotice" :type="paymentConfirmed ? 'success' : 'info'" :closable="false" showIcon />
+        <el-alert v-if="checkError" :title="checkError" type="error" :closable="false" showIcon />
+      </div>
+      <template #footer>
+        <el-button @click="paymentVisible = false">关闭</el-button>
+        <el-button type="primary" :loading="checking" :disabled="!payment || paymentConfirmed" @click="checkPayment()">已完成支付，刷新</el-button>
+      </template>
+    </el-dialog>
   </section>
 </template>
 
 <script setup lang="ts">
-import { uiBadge } from "@/components/ui/badge";
-import { uiTable, uiTableHeader, uiTableHead, uiTableBody, uiTableRow, uiTableCell, uiTableEmpty } from "@/components/ui/table";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
-import { uiTabs, uiTabsList, uiTabsTrigger } from "@/components/ui/tabs";
-import { uiCheckbox } from "@/components/ui/checkbox";
-import { uiNumberField, uiNumberFieldContent, uiNumberFieldInput } from "@/components/ui/numberField";
-import { uiLabel } from "@/components/ui/label";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiInput } from "@/components/ui/input";
-import { uiButton } from "@/components/ui/button";
-import { computed, onBeforeUnmount, onMounted, ref, watch, useId } from "vue";
-import { toast } from "vue-sonner";
+import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { ElMessage } from "element-plus";
 import { t, translate } from "@toonflow/i18n/vue";
 import { IconGift, IconReceipt } from "@tabler/icons-vue";
 import { Marked } from "marked";
@@ -677,7 +503,7 @@ async function exchangeCode() {
     });
     if (request.signal.aborted || props.token !== token) return;
     code.value = "";
-    toast.success("兑换成功");
+    ElMessage.success("兑换成功");
     emit("balanceChanged");
     page.value = 1;
     await Promise.all([loadOrders(true), loadPlans(), bonusPanel.value?.refresh()]);
@@ -860,9 +686,6 @@ onBeforeUnmount(() => {
 });
 
 defineExpose({ refresh });
-
-const passwordVisible1 = ref(false);
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>
@@ -891,7 +714,7 @@ const portFieldId = useId();
       span { color: var(--el-text-color-secondary); font-size: 12px; }
     }
     .balanceAmount { flex: 1; min-width: 0; color: var(--el-text-color-primary); font-size: 26px; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
-    .exchangeForm { display: flex; flex-wrap: wrap; gap: 8px; width: min(100%, 320px); :is(.el-input, [data-slot="input"], .inputGroup) { flex: 1; min-width: 130px; } [data-slot="button"] { margin: 0; } }
+    .exchangeForm { display: flex; flex-wrap: wrap; gap: 8px; width: min(100%, 320px); .el-input { flex: 1; min-width: 130px; } .el-button { margin: 0; } }
     .exchangeError { flex-basis: 100%; }
   }
 
@@ -931,8 +754,8 @@ const portFieldId = useId();
       }
     }
     .customAmountForm {
-      :deep(:is(.el-form-item, .formField)) { margin-bottom: 0; }
-      :is(.el-input-number, .numberField) { width: min(100%, 280px); }
+      :deep(.el-form-item) { margin-bottom: 0; }
+      .el-input-number { width: min(100%, 280px); }
     }
     .bonusRules {
       min-width: 0;
@@ -1007,8 +830,8 @@ const portFieldId = useId();
       strong { color: var(--el-text-color-primary); }
       p { margin: 4px 0 0; color: var(--el-text-color-regular); white-space: pre-wrap; }
     }
-    .agreementActions { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; .el-checkbox { margin: 0; } [data-slot="button"] { height: auto; white-space: normal; text-align: start; line-height: 1.6; } }
-    .paymentActions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; .el-segmented { --el-border-radius-base: var(--ui-radius); } [data-slot="button"] { margin: 0; } }
+    .agreementActions { display: flex; flex-wrap: wrap; align-items: center; gap: 0 6px; .el-checkbox { margin: 0; } .el-button { height: auto; white-space: normal; text-align: start; line-height: 1.6; } }
+    .paymentActions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; .el-segmented { --el-border-radius-base: var(--ui-radius); } .el-button { margin: 0; } }
   }
 }
 .agreementDialog {

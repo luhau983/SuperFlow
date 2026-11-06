@@ -2,122 +2,69 @@
   <section class="walletBonus" aria-label="赠送金额" :aria-busy="loading">
     <div class="bonusSummary">
       <dl class="bonusMetrics">
-        <div>
-          <dt>可用赠送金额</dt>
-          <dd>{{ formatMoney(summary?.availableAmount) }}</dd>
-        </div>
-        <div>
-          <dt>即将到期</dt>
-          <dd>{{ formatMoney(summary?.expiringSoonAmount) }}</dd>
-        </div>
+        <div><dt>可用赠送金额</dt><dd>{{ formatMoney(summary?.availableAmount) }}</dd></div>
+        <div><dt>即将到期</dt><dd>{{ formatMoney(summary?.expiringSoonAmount) }}</dd></div>
       </dl>
-      <uiButton @click="detailsVisible = true" variant="outline" type="button" size="sm"><component :is="IconReceipt" aria-hidden="true" />赠送明细</uiButton>
+      <el-button size="small" :icon="IconReceipt" @click="detailsVisible = true">赠送明细</el-button>
     </div>
-    <uiAlert v-if="errorMessage && !detailsVisible" variant="destructive">
-      <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ errorMessage }}</uiAlertTitle>
-      <uiButton @click="refresh" variant="outline" type="button" :disabled="(loading)" size="sm">重试</uiButton>
-    </uiAlert>
-    <uiDialog :open="detailsVisible" @update:open="open => { if (!open) { detailsVisible = false; } }">
-      <uiDialogContent
-        :aria-describedby="undefined"
-        class="uiDialogPanel"
-        :style="{ width: 'min(1100px, calc(100vw - 32px))', maxWidth: 'calc(100vw - 32px)' }">
-        <uiDialogHeader class="dialogHeader">
-          <uiDialogTitle>赠送明细</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="dialogBody">
-          <div class="bonusDetails" :aria-busy="loading">
-            <uiTabs class="statusSwitch" :modelValue="status" @update:modelValue="value => { status = value as typeof status; }">
-              <uiTabsList :aria-label="'赠送金额状态'">
-                <uiTabsTrigger
-                  v-for="option in statusOptions"
-                  :key="typeof option === 'object' ? option.value : option"
-                  :value="typeof option === 'object' ? option.value : option"
-                  :disabled="(loading) || (typeof option === 'object' && 'disabled' in option && !!option.disabled)">{{ typeof option === 'object' ? option.label : option }}</uiTabsTrigger>
-              </uiTabsList>
-            </uiTabs>
-            <uiAlert v-if="errorMessage" variant="destructive">
-              <uiAlertTitle class="whitespace-normal overflow-visible line-clamp-none">{{ errorMessage }}</uiAlertTitle>
-              <uiButton @click="refresh" variant="outline" type="button" :disabled="(loading)" size="sm">重试</uiButton>
-            </uiAlert>
-            <div :aria-busy="loading" class="bonusList portLoading">
-              <div class="tableViewport" :style="{ maxHeight: 'min(460px, calc(100dvh - 280px))', height: undefined }">
-                <uiTable>
-                  <uiTableHeader>
-                    <uiTableRow>
-                      <uiTableHead :style="{ minWidth: '190px', textAlign: 'left' }">来源 / 活动</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '110px', textAlign: 'left' }">赠送金额</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '110px', textAlign: 'left' }">剩余金额</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '130px', textAlign: 'left' }">已使用 / 已过期</uiTableHead>
-                      <uiTableHead :style="{ minWidth: '175px', textAlign: 'left' }">创建 / 到期时间</uiTableHead>
-                    </uiTableRow>
-                  </uiTableHeader>
-                  <uiTableBody>
-                    <uiTableRow v-for="(row, $index) in batches" :key="row.id">
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <div class="batchIdentity">
-                          <strong>{{ row.activityName || sourceLabel(row.source) }}</strong>
-                          <span v-if="row.activityName">{{ sourceLabel(row.source) }}</span>
-                          <span v-if="row.orderNumber">{{ row.orderNumber }}</span>
-                        </div>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <span class="batchAmount">{{ formatMoney(row.amount) }}</span>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <span class="batchAmount">{{ formatMoney(row.available) }}</span>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <div class="batchFields">
-                          <span>{{ formatMoney(row.used) }}</span>
-                          <span>{{ formatMoney(row.expired) }}</span>
-                        </div>
-                      </uiTableCell>
-                      <uiTableCell :style="{ textAlign: 'left' }">
-                        <div class="batchFields">
-                          <time>{{ formatTime(row.createdAt) }}</time>
-                          <time>{{ formatTime(row.expiresAt) }}</time>
-                        </div>
-                      </uiTableCell>
-                    </uiTableRow>
-                    <uiTableEmpty v-if="!(batches)?.length" :colspan="5"></uiTableEmpty>
-                  </uiTableBody>
-                </uiTable>
-              </div>
-              <div v-if="loading" class="portLoadingMask" aria-hidden="true">
-                <icon-loader-2 class="animate-spin" />
-              </div>
-            </div>
-            <el-pagination
-              v-if="!errorMessage"
-              class="bonusPagination"
-              :currentPage="page"
-              :pageSize="pageSize"
-              :pageSizes="[10, 20, 50]"
-              :total="total"
-              :disabled="loading"
-              :pagerCount="5"
-              layout="total, sizes, prev, pager, next"
-              size="small"
-              @update:currentPage="changePage"
-              @update:pageSize="changePageSize" />
-          </div>
-          <uiDialogFooter class="dialogFooter">
-            <uiButton @click="detailsVisible = false" variant="outline" type="button">关闭</uiButton>
-            <uiButton @click="refresh" variant="default" type="button" :disabled="(loading)"><icon-loader-2 v-if="loading" class="animate-spin" aria-hidden="true" />刷新</uiButton>
-          </uiDialogFooter>
+    <el-alert v-if="errorMessage && !detailsVisible" :title="errorMessage" type="error" :closable="false" showIcon>
+      <el-button size="small" :disabled="loading" @click="refresh">重试</el-button>
+    </el-alert>
+
+    <el-dialog v-model="detailsVisible" title="赠送明细" width="min(1100px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose>
+      <div class="bonusDetails" :aria-busy="loading">
+        <el-segmented v-model="status" class="statusSwitch" :options="statusOptions" :disabled="loading" aria-label="赠送金额状态" />
+        <el-alert v-if="errorMessage" :title="errorMessage" type="error" :closable="false" showIcon>
+          <el-button size="small" :disabled="loading" @click="refresh">重试</el-button>
+        </el-alert>
+        <div v-loading="loading" class="bonusList">
+          <el-table :data="batches" rowKey="id" emptyText="" maxHeight="min(460px, calc(100dvh - 280px))">
+            <el-table-column label="来源 / 活动" minWidth="190">
+              <template #default="{ row }">
+                <div class="batchIdentity">
+                  <strong>{{ row.activityName || sourceLabel(row.source) }}</strong>
+                  <span v-if="row.activityName">{{ sourceLabel(row.source) }}</span>
+                  <span v-if="row.orderNumber">{{ row.orderNumber }}</span>
+                </div>
+              </template>
+            </el-table-column>
+            <el-table-column label="赠送金额" minWidth="110">
+              <template #default="{ row }"><span class="batchAmount">{{ formatMoney(row.amount) }}</span></template>
+            </el-table-column>
+            <el-table-column label="剩余金额" minWidth="110">
+              <template #default="{ row }"><span class="batchAmount">{{ formatMoney(row.available) }}</span></template>
+            </el-table-column>
+            <el-table-column label="已使用 / 已过期" minWidth="130">
+              <template #default="{ row }"><div class="batchFields"><span>{{ formatMoney(row.used) }}</span><span>{{ formatMoney(row.expired) }}</span></div></template>
+            </el-table-column>
+            <el-table-column label="创建 / 到期时间" minWidth="175">
+              <template #default="{ row }"><div class="batchFields"><time>{{ formatTime(row.createdAt) }}</time><time>{{ formatTime(row.expiresAt) }}</time></div></template>
+            </el-table-column>
+          </el-table>
         </div>
-      </uiDialogContent>
-    </uiDialog>
+        <el-pagination
+          v-if="!errorMessage"
+          class="bonusPagination"
+          :currentPage="page"
+          :pageSize="pageSize"
+          :pageSizes="[10, 20, 50]"
+          :total="total"
+          :disabled="loading"
+          :pagerCount="5"
+          layout="total, sizes, prev, pager, next"
+          size="small"
+          @update:currentPage="changePage"
+          @update:pageSize="changePageSize" />
+      </div>
+      <template #footer>
+        <el-button @click="detailsVisible = false">关闭</el-button>
+        <el-button type="primary" :loading="loading" @click="refresh">刷新</el-button>
+      </template>
+    </el-dialog>
   </section>
 </template>
 
 <script setup lang="ts">
-import { uiTable, uiTableHeader, uiTableHead, uiTableBody, uiTableRow, uiTableCell, uiTableEmpty } from "@/components/ui/table";
-import { uiTabs, uiTabsList, uiTabsTrigger } from "@/components/ui/tabs";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle, uiDialogFooter } from "@/components/ui/dialog";
-import { uiAlert, uiAlertTitle } from "@/components/ui/alert";
-import { uiButton } from "@/components/ui/button";
 import { onBeforeUnmount, ref, watch } from "vue";
 import { translate } from "@toonflow/i18n/vue";
 import { IconReceipt } from "@tabler/icons-vue";
@@ -301,7 +248,7 @@ defineExpose({ refresh });
       dt { color: var(--el-text-color-secondary); font-size: 12px; }
       dd { margin: 0; color: var(--el-text-color-primary); font-size: 18px; font-weight: 600; font-variant-numeric: tabular-nums; overflow-wrap: anywhere; }
     }
-    [data-slot="button"] { margin: 0; }
+    .el-button { margin: 0; }
   }
 }
 .bonusDetails {

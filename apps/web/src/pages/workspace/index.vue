@@ -27,129 +27,105 @@
     </keep-alive>
     <workspaceMenu class="workspaceMenu" @openSettings="settingsVisible = true" />
     <div class="workspaceTools">
-      <uiToggleGroup
-        type="single"
-        :modelValue="activePanel"
-        class="panelSwitcher"
-        aria-label="切换面板"
-        @update:modelValue="value => value && switchPanel(value as string)">
-        <uiToggleGroupItem v-for="item in panelOptions" :key="item.value" :value="item.value" class="panelOption" :aria-label="item.label"><component :is="item.icon" :size="15" aria-hidden="true" />{{ item.label }}</uiToggleGroupItem>
-      </uiToggleGroup>
+      <el-segmented :modelValue="activePanel" class="panelSwitcher" :options="panelOptions" size="small" aria-label="切换面板" @change="switchPanel">
+        <template #default="{ item }">
+          <span class="panelOption">
+            <component :is="item.icon" :size="15" aria-hidden="true" />
+            {{ item.label }}
+          </span>
+        </template>
+      </el-segmented>
       <div class="bottomTools">
-        <uiCard v-if="activePanel === 'canvas'" class="toolMenu">
+        <el-card v-if="activePanel === 'canvas'" class="toolMenu" shadow="never" :bodyStyle="{ padding: '2px 4px' }">
           <div class="toolMenuContent" role="toolbar" aria-label="画布工具">
-            <uiTooltip>
-              <uiTooltipTrigger asChild>
-                <uiButton
-                  class="toolButton addNodeButton"
-                  size="icon-sm"
-                  :disabled="!canvasPanelRef?.canvasReady || settingsVisible"
-                  aria-label="添加节点"
-                  aria-haspopup="menu"
-                  @click="canvasPanelRef?.addNodeAtPointer()">
-                  <icon-plus :size="18" aria-hidden="true" />
-                </uiButton>
-              </uiTooltipTrigger>
-              <uiTooltipContent side="top">添加节点</uiTooltipContent>
-            </uiTooltip>
-            <uiTooltip>
-              <uiTooltipTrigger asChild>
-                <uiButton
-                  class="toolButton"
-                  :class="{ activeTool: selectedTool === 'hand' }"
-                  variant="ghost"
-                  size="icon-sm"
-                  :aria-pressed="selectedTool === 'hand'"
-                  aria-label="切换抓手/移动工具"
-                  @click="selectedTool = selectedTool === 'move' ? 'hand' : 'move'">
-                  <component :is="selectedTool === 'move' ? IconPointer : IconHandStop" :size="18" aria-hidden="true" />
-                </uiButton>
-              </uiTooltipTrigger>
-              <uiTooltipContent side="top">{{ selectedTool === 'move' ? '移动工具，点击切换为抓手' : '抓手工具，点击切换为移动' }}</uiTooltipContent>
-            </uiTooltip>
-            <uiTooltip>
-              <uiTooltipTrigger asChild>
-                <uiButton
-                  class="toolButton"
-                  variant="ghost"
-                  size="icon-sm"
-                  :disabled="!canvasPanelRef?.canvasReady || settingsVisible"
-                  aria-label="搜索节点"
-                  @click="canvasPanelRef?.openNodeSearch()">
-                  <icon-search :size="18" aria-hidden="true" />
-                </uiButton>
-              </uiTooltipTrigger>
-              <uiTooltipContent side="top">搜索节点</uiTooltipContent>
-            </uiTooltip>
-            <uiPopover v-model:open="helpVisible">
-              <uiTooltip :disabled="helpVisible">
-                <uiTooltipTrigger asChild>
-                  <uiPopoverTrigger asChild>
-                    <uiButton class="toolButton" variant="ghost" size="icon-sm" aria-label="帮助">
+            <el-tooltip content="添加节点" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+              <el-button class="toolButton addNodeButton" :disabled="!canvasPanelRef?.canvasReady || settingsVisible" aria-label="添加节点" aria-haspopup="menu" @click="canvasPanelRef?.addNodeAtPointer()">
+                <icon-plus :size="18" aria-hidden="true" />
+              </el-button>
+            </el-tooltip>
+            <el-tooltip :content="selectedTool === 'move' ? '移动工具，点击切换为抓手' : '抓手工具，点击切换为移动'" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+              <el-button
+                class="toolButton"
+                text
+                :type="selectedTool === 'hand' ? 'primary' : 'default'"
+                :aria-pressed="selectedTool === 'hand'"
+                aria-label="切换抓手/移动工具"
+                @click="selectedTool = selectedTool === 'move' ? 'hand' : 'move'">
+                <component :is="selectedTool === 'move' ? IconPointer : IconHandStop" :size="18" aria-hidden="true" />
+              </el-button>
+            </el-tooltip>
+            <el-tooltip content="搜索节点" placement="top" :showArrow="false" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+              <el-button class="toolButton" text :disabled="!canvasPanelRef?.canvasReady || settingsVisible" aria-label="搜索节点" @click="canvasPanelRef?.openNodeSearch()">
+                <icon-search :size="18" aria-hidden="true" />
+              </el-button>
+            </el-tooltip>
+            <el-tooltip :showArrow="false" content="帮助" placement="top" :hideAfter="0" :enterable="false" :triggerKeys="[]" :disabled="helpVisible">
+              <span class="toolTrigger">
+                <el-popover v-model:visible="helpVisible" trigger="click" placement="top-end" :width="196">
+                  <template #reference>
+                    <el-button class="toolButton" text aria-label="帮助">
                       <icon-help :size="18" />
-                    </uiButton>
-                  </uiPopoverTrigger>
-                </uiTooltipTrigger>
-                <uiTooltipContent side="top">帮助</uiTooltipContent>
-              </uiTooltip>
-              <uiPopoverContent class="helpMenu" side="top" align="end">
-                <uiButton class="helpAction" variant="ghost" asChild>
-                  <a
-                    href="https://qcn7xdsqgc4z.feishu.cn/docx/RXFqdgR2Xo0dXZxGfd0cZCGgnwf"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    @click="helpVisible = false"><icon-book aria-hidden="true" />使用教程</a>
-                </uiButton>
-                <uiButton class="helpAction" variant="ghost" asChild>
-                  <a
-                    href="https://docs.qq.com/smartsheet/form/EmvmQBrmlPmr%2Fss_vsqk2v%2FvhiGzE?tab=ss_vsqk2v"
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    title="SuperFlow 需求/BUG反馈表"
-                    @click="helpVisible = false"><icon-bug aria-hidden="true" />汇报 BUG</a>
-                </uiButton>
-                <uiButton class="helpAction" variant="ghost" @click="showContact('community')"><icon-brand-wechat aria-hidden="true" />加入交流群</uiButton>
-                <uiButton class="helpAction" variant="ghost" @click="showContact('business')"><icon-briefcase aria-hidden="true" />商务合作</uiButton>
-              </uiPopoverContent>
-            </uiPopover>
+                    </el-button>
+                  </template>
+                  <div class="helpMenu">
+                    <el-button
+                      class="helpAction"
+                      tag="a"
+                      text
+                      :icon="IconBook"
+                      href="https://qcn7xdsqgc4z.feishu.cn/docx/RXFqdgR2Xo0dXZxGfd0cZCGgnwf"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      @click="helpVisible = false">
+                      使用教程
+                    </el-button>
+                    <el-button
+                      class="helpAction"
+                      tag="a"
+                      text
+                      :icon="IconBug"
+                      href="https://docs.qq.com/smartsheet/form/EmvmQBrmlPmr%2Fss_vsqk2v%2FvhiGzE?tab=ss_vsqk2v"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      title="SuperFlow 需求/BUG反馈表"
+                      @click="helpVisible = false">
+                      汇报 BUG
+                    </el-button>
+                    <el-button class="helpAction" text :icon="IconBrandWechat" @click="showContact('community')">加入交流群</el-button>
+                    <el-button class="helpAction" text :icon="IconBriefcase" @click="showContact('business')">商务合作</el-button>
+                  </div>
+                </el-popover>
+              </span>
+            </el-tooltip>
           </div>
-        </uiCard>
-        <uiTooltip v-if="!agentVisible">
-          <uiTooltipTrigger asChild>
-            <button
-              type="button"
-              class="agentButton"
-              :class="{ standalone: activePanel !== 'canvas' }"
-              :aria-expanded="agentVisible"
-              aria-label="SuperFlow Agent"
-              aria-controls="agentPanel"
-              @click="agentVisible = !agentVisible"></button>
-          </uiTooltipTrigger>
-          <uiTooltipContent side="top">SuperFlow Agent</uiTooltipContent>
-        </uiTooltip>
+        </el-card>
+        <el-tooltip v-if="!agentVisible" content="SuperFlow Agent" placement="top" :showArrow="false" :hideAfter="0">
+          <el-button
+            class="agentButton"
+            :class="{ standalone: activePanel !== 'canvas' }"
+            :aria-expanded="agentVisible"
+            aria-label="SuperFlow Agent"
+            aria-controls="agentPanel"
+            @click="agentVisible = !agentVisible"></el-button>
+        </el-tooltip>
       </div>
     </div>
     <floatingAgent v-model="agentVisible" :inert="workspaceStore.projectLoadingVisible" @resize="agentWidth = $event" />
     <settings v-model="settingsVisible" />
-    <uiDialog v-model:open="contactVisible">
-      <uiDialogContent :aria-describedby="undefined" class="sm:max-w-[360px]">
-        <uiDialogHeader>
-          <uiDialogTitle>{{ contactInfo.title }}</uiDialogTitle>
-        </uiDialogHeader>
-        <div class="contactContent">
-          <q-r-code
-            :value="contactInfo.url"
-            :size="192"
-            type="svg"
-            color="#000000"
-            bgColor="#ffffff"
-            borderless
-            role="img"
-            :aria-label="`${contactInfo.title}二维码`" />
-          <p class="contactTip">{{ contactInfo.tip }}</p>
-        </div>
-      </uiDialogContent>
-    </uiDialog>
+    <el-dialog v-model="contactVisible" :title="contactInfo.title" width="min(360px, calc(100vw - 32px))" alignCenter appendToBody>
+      <div class="contactContent">
+        <q-r-code
+          :value="contactInfo.url"
+          :size="192"
+          type="svg"
+          color="#000000"
+          bgColor="#ffffff"
+          borderless
+          role="img"
+          :aria-label="`${contactInfo.title}二维码`" />
+        <p class="contactTip">{{ contactInfo.tip }}</p>
+      </div>
+    </el-dialog>
   </main>
 </template>
 
@@ -158,9 +134,8 @@ import { translate } from "@toonflow/i18n/vue";
 import { computed, defineAsyncComponent, nextTick, onMounted, onScopeDispose, provide, ref, shallowRef, watch, type ComponentPublicInstance } from "vue";
 import { onBeforeRouteLeave } from "vue-router";
 import axios from "axios";
-import { IconVector, IconFileText, IconPointer, IconHandStop } from "@tabler/icons-vue";
-import { toast } from "vue-sonner";
-import messageBox from "@/lib/messageBox";
+import { IconVector, IconFileText, IconPointer, IconHandStop, IconPlus, IconSearch, IconHelp, IconBook, IconBug, IconBrandWechat, IconBriefcase } from "@tabler/icons-vue";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { QRCode } from "tdesign-vue-next";
 import settings from "@/components/settings/index.vue";
 import { useWorkspaceStore } from "@/stores/workspace";
@@ -171,12 +146,6 @@ import canvasPanel from "./panels/canvas/canvasHost.vue";
 import type { DocumentNodeOptions } from "./panels/canvas/canvasFiles";
 import workspaceMenu from "./components/workspaceMenu.vue";
 import floatingAgent from "./components/floatingAgent.vue";
-import { uiButton } from "@/components/ui/button";
-import { uiCard } from "@/components/ui/card";
-import { uiDialog, uiDialogContent, uiDialogHeader, uiDialogTitle } from "@/components/ui/dialog";
-import { uiPopover, uiPopoverContent, uiPopoverTrigger } from "@/components/ui/popover";
-import { uiToggleGroup, uiToggleGroupItem } from "@/components/ui/toggleGroup";
-import { uiTooltip, uiTooltipContent, uiTooltipTrigger } from "@/components/ui/tooltip";
 
 const documentPanel = defineAsyncComponent(() => import("./panels/document/index.vue"));
 
@@ -304,7 +273,7 @@ async function flushSave() {
 
 onBeforeRouteLeave(async () => {
   if (canvasPanelRef.value?.saveBusy) {
-    toast.warning("画布操作尚未完成，请稍后退出");
+    ElMessage.warning("画布操作尚未完成，请稍后退出");
     return false;
   }
   try {
@@ -316,7 +285,7 @@ onBeforeRouteLeave(async () => {
       : error instanceof Error
       ? error.message
       : translate("项目保存失败");
-    const leave = await messageBox.confirm(`无法保存项目：${message}。文件或目录可能已被移动或删除。仍然退出将丢弃尚未保存的修改。`, "项目未保存", {
+    const leave = await ElMessageBox.confirm(`无法保存项目：${message}。文件或目录可能已被移动或删除。仍然退出将丢弃尚未保存的修改。`, "项目未保存", {
       type: "warning",
       confirmButtonText: "仍然退出",
       cancelButtonText: "留在项目",
@@ -343,7 +312,7 @@ async function switchPanel(value: string | number | boolean) {
     if (changed) anonymousData.track(value === "canvas" ? "workspace.canvas" : "workspace.document");
     return true;
   } catch (error) {
-    toast.error(error instanceof Error ? error.message : "文本保存失败");
+    ElMessage.error(error instanceof Error ? error.message : "文本保存失败");
     return false;
   }
 }
@@ -401,18 +370,18 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
   position: relative;
   width: 100%;
   height: 100dvh;
-  background-color: var(--background);
+  background-color: var(--el-bg-color);
 
-  :deep(.workspaceMenu > .menuCard),
+  :deep(.workspaceMenu > .el-card),
   :deep(.canvasMenu),
   :deep(.balanceCard),
   :deep(.canvasControlsCard),
   .panelSwitcher,
   .toolMenu {
-    background: color-mix(in oklch, var(--card) 70%, transparent);
+    background: color-mix(in srgb, var(--el-bg-color-overlay) 70%, transparent);
     backdrop-filter: blur(6px);
-    border-color: var(--border);
-    box-shadow: 0 2px 12px rgb(0 0 0 / 8%);
+    border-color: var(--el-border-color-light);
+    box-shadow: var(--el-box-shadow-light);
   }
 
   .canvasPanel {
@@ -443,29 +412,30 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
     pointer-events: none;
 
     .panelSwitcher {
+      --el-border-radius-base: var(--ui-radius-large);
+      --el-segmented-color: var(--el-text-color-secondary);
+      --el-segmented-item-selected-color: var(--el-color-white);
+      --el-segmented-item-selected-bg-color: var(--el-color-primary);
+      --el-segmented-item-hover-bg-color: color-mix(in srgb, var(--el-color-primary) 10%, transparent);
       position: absolute;
       top: 15px;
       left: 50%;
       z-index: 5;
-      gap: 2px;
+      min-height: 28px;
       padding: 2px;
-      border: 1px solid var(--border);
-      border-radius: var(--radius);
+      border: 1px solid var(--el-border-color-light);
+      font-size: 12px;
       transform: translateX(-50%);
       pointer-events: auto;
 
       .panelOption {
+        display: flex;
+        align-items: center;
+        justify-content: center;
         gap: 4px;
-        height: 24px;
-        min-width: 0;
-        padding: 0 10px;
-        border-radius: calc(var(--radius) - 2px);
-        color: var(--muted-foreground);
-        font-size: 12px;
+        padding: 0 2px;
+        line-height: 22px;
         font-weight: 500;
-
-        &:hover { background: color-mix(in oklch, var(--primary) 10%, transparent); color: var(--foreground); }
-        &[data-state="on"] { background: var(--primary); color: var(--primary-foreground); }
       }
     }
 
@@ -482,9 +452,6 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
 
       .toolMenu {
         flex-shrink: 0;
-        gap: 0;
-        padding: 2px 4px;
-        border-radius: var(--radius);
         transition: none;
 
         .toolMenuContent {
@@ -495,18 +462,23 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
           .toolButton {
             width: 28px;
             height: 28px;
-
-            &.activeTool { color: var(--primary); }
+            margin: 0;
+            padding: 0;
 
             &.addNodeButton {
               margin-right: 6px;
-              color: var(--background);
-              background: var(--foreground);
+              color: var(--el-bg-color);
+              background: var(--el-text-color-primary);
+              border-color: transparent;
 
               &:hover { opacity: 0.85; }
-              &:disabled { opacity: 0.45; }
+              &.is-disabled { opacity: 0.45; }
             }
           }
+
+          .toolTrigger { display: inline-flex; }
+
+          .el-divider { margin: 0; }
         }
       }
 
@@ -518,14 +490,10 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
         flex-shrink: 0;
         margin: 0;
         padding: 0;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        border: 1px solid color-mix(in srgb, #6edfdc 30%, var(--border));
+        border: 1px solid color-mix(in srgb, #6edfdc 30%, var(--el-border-color-light));
         border-radius: 50%;
-        background: linear-gradient(145deg, color-mix(in srgb, #96f9f0 15%, var(--popover)), var(--popover) 65%,
-          color-mix(in srgb, #8588ff 18%, var(--popover)));
-        cursor: pointer;
+        background: linear-gradient(145deg, color-mix(in srgb, #96f9f0 15%, var(--el-bg-color-overlay)), var(--el-bg-color-overlay) 65%,
+          color-mix(in srgb, #8588ff 18%, var(--el-bg-color-overlay)));
         box-shadow: inset 0 1px 0 #ffffff52;
         color: #f4fffe;
         overflow: hidden;
@@ -581,7 +549,7 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
         }
 
         &:focus-visible {
-          outline: 2px solid var(--ring);
+          outline: 2px solid var(--el-color-primary);
           outline-offset: 3px;
         }
 
@@ -661,13 +629,10 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
   display: flex;
   flex-direction: column;
   gap: 4px;
-  width: 196px;
-  padding: 6px;
 
   .helpAction {
     justify-content: flex-start;
-    color: inherit;
-    text-decoration: none;
+    margin-left: 0;
   }
 }
 
@@ -679,7 +644,7 @@ function saveDocumentNode(directory: string, canvasPath: string, nodeId: string,
 
   .contactTip {
     margin: 0;
-    color: var(--muted-foreground);
+    color: var(--el-text-color-secondary);
     font-size: 12px;
     line-height: 1.7;
   }

@@ -1,88 +1,44 @@
 <template>
-  <uiCard v-if="status?.supported" class="codexProvider" style="gap:0; padding:0">
-    <div class="cardBody" :style="{ padding: '20px' }">
-      <div class="providerContent">
-        <div class="providerMark" aria-hidden="true">
-          <icon-brand-openai :size="34" />
+  <el-card v-if="status?.supported" class="codexProvider" shadow="never">
+    <div class="providerContent">
+      <div class="providerMark" aria-hidden="true"><icon-brand-openai :size="34" /></div>
+      <div class="providerInfo">
+        <div class="providerHeading">
+          <el-text class="providerName" tag="strong">Codex</el-text>
+          <el-tag size="small" type="info" effect="plain">ChatGPT</el-tag>
         </div>
-        <div class="providerInfo">
-          <div class="providerHeading">
-            <strong class="providerName" data-ui-text="default">Codex</strong>
-            <uiBadge variant="outline">ChatGPT</uiBadge>
-          </div>
-          <span class="providerStatus" data-ui-text="info">{{ statusText }}</span>
-          <a v-if="status.loginUrl" class="loginLink uiLink" :href="status.loginUrl" target="_blank">未自动打开浏览器时点击这里登录</a>
-        </div>
-        <uiButton v-if="status.linked" @click="unlink" variant="outline" type="button" :disabled="(busy)"><icon-loader-2 v-if="busy" class="animate-spin" aria-hidden="true" />取消链接</uiButton>
-        <uiButton
-          v-else
-          @click="link"
-          variant="default"
-          type="button"
-          :disabled="(!status.installed && !status.hasApiKey) || (busy || status.loggingIn)"><icon-loader-2 v-if="busy || status.loggingIn" class="animate-spin" aria-hidden="true" />{{ status.loggingIn ? "等待登录" : "链接 Codex" }}</uiButton>
+        <el-text class="providerStatus" size="small" type="info">{{ statusText }}</el-text>
+        <el-link v-if="status.loginUrl" class="loginLink" :href="status.loginUrl" target="_blank" type="primary">未自动打开浏览器时点击这里登录</el-link>
       </div>
-      <details class="advancedSettings">
-        <summary>高级设置</summary>
-        <form class="advancedForm uiForm" @submit.prevent="save">
-          <fieldset class="formFields">
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-1'">接口地址</uiLabel>
-              <div class="inputGroup">
-                <uiInput :id="portFieldId + '-1'" v-model="apiUrl" :placeholder="status.defaultApiUrl"></uiInput>
-                <uiButton
-                  @mousedown.prevent
-                  v-if="apiUrl"
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  aria-label="清除"
-                  @click="apiUrl = ''; ($event.currentTarget as HTMLElement).closest('.inputGroup')?.querySelector('input')?.focus()">
-                  <icon-x />
-                </uiButton>
-              </div>
-            </div>
-            <div class="formField">
-              <uiLabel :for="portFieldId + '-2'">访问令牌</uiLabel>
-              <div class="inputGroup">
-                <uiInput
-                  :id="portFieldId + '-2'"
-                  v-model="apiKey"
-                  autocomplete="off"
-                  :placeholder="status.hasApiKey ? '已保存，留空保持不变' : '留空则使用本机 Codex 登录'"
-                  :type="passwordVisible1 ? 'text' : 'password'"></uiInput>
-                <uiButton
-                  @mousedown.prevent
-                  type="button"
-                  variant="ghost"
-                  size="icon-sm"
-                  :aria-label="passwordVisible1 ? '隐藏密码' : '显示密码'"
-                  @click="passwordVisible1 = !passwordVisible1">
-                  <icon-eye-off v-if="passwordVisible1" />
-                  <icon-eye v-else />
-                </uiButton>
-              </div>
-              <span class="fieldHint" data-ui-text="info">需为包含 ChatGPT 账号信息的 Codex 访问令牌（JWT）；普通 API Key 请使用“添加自定义供应商”。图片生成始终使用本机 Codex。</span>
-            </div>
-            <div style="display:flex; flex-wrap:wrap; align-items:center; gap:8px">
-              <uiButton variant="default" type="submit" :disabled="(saving)"><icon-loader-2 v-if="saving" class="animate-spin" aria-hidden="true" />保存</uiButton>
-              <uiButton v-if="status.hasApiKey" @click="clearKey" variant="outline" type="button" :disabled="(saving)">清除访问令牌</uiButton>
-            </div>
-          </fieldset>
-        </form>
-      </details>
+      <el-button v-if="status.linked" plain :loading="busy" @click="unlink">取消链接</el-button>
+      <el-button v-else type="primary" :loading="busy || status.loggingIn" :disabled="!status.installed && !status.hasApiKey" @click="link">
+        {{ status.loggingIn ? "等待登录" : "链接 Codex" }}
+      </el-button>
     </div>
-  </uiCard>
+    <details class="advancedSettings">
+      <summary>高级设置</summary>
+      <el-form class="advancedForm" labelPosition="top" @submit.prevent="save">
+        <el-form-item label="接口地址">
+          <el-input v-model="apiUrl" :placeholder="status.defaultApiUrl" clearable />
+        </el-form-item>
+        <el-form-item label="访问令牌">
+          <el-input v-model="apiKey" type="password" showPassword autocomplete="off"
+            :placeholder="status.hasApiKey ? '已保存，留空保持不变' : '留空则使用本机 Codex 登录'" />
+          <el-text class="fieldHint" size="small" type="info">需为包含 ChatGPT 账号信息的 Codex 访问令牌（JWT）；普通 API Key 请使用“添加自定义供应商”。图片生成始终使用本机 Codex。</el-text>
+        </el-form-item>
+        <el-space>
+          <el-button type="primary" nativeType="submit" :loading="saving">保存</el-button>
+          <el-button v-if="status.hasApiKey" :disabled="saving" @click="clearKey">清除访问令牌</el-button>
+        </el-space>
+      </el-form>
+    </details>
+  </el-card>
 </template>
 
 <script setup lang="ts">
-import { uiInput } from "@/components/ui/input";
-import { uiLabel } from "@/components/ui/label";
-import { uiButton } from "@/components/ui/button";
-import { uiBadge } from "@/components/ui/badge";
-import { uiCard } from "@/components/ui/card";
-import { computed, onBeforeUnmount, onMounted, ref, useId } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import http from "@/lib/http";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import { IconBrandOpenai } from "@tabler/icons-vue";
 import { t, translate } from "@toonflow/i18n/vue";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
@@ -127,12 +83,12 @@ async function loadStatus() {
   try {
     applyStatus(await http<CodexStatus>({ method: "GET", url: "/api/codex/status" }));
   } catch (error) {
-    toast.error(error instanceof Error ? error.message : "读取 Codex 状态失败");
+    ElMessage.error(error instanceof Error ? error.message : "读取 Codex 状态失败");
   }
 }
 
 function showError(error: unknown) {
-  toast.error(error instanceof Error ? error.message : "操作失败");
+  ElMessage.error(error instanceof Error ? error.message : "操作失败");
 }
 
 async function request(path: "link" | "unlink") {
@@ -153,7 +109,7 @@ async function saveSettings(key?: string) {
       method: "PUT", url: "/api/codex/save", data: { apiUrl: apiUrl.value.trim(), ...(key === undefined ? {} : { apiKey: key }) },
     }));
     apiKey.value = "";
-    toast.success("Codex 设置已保存");
+    ElMessage.success("Codex 设置已保存");
   } catch (error) {
     showError(error);
   } finally {
@@ -170,9 +126,6 @@ const unlink = () => request("unlink");
 
 onMounted(loadStatus);
 onBeforeUnmount(() => clearTimeout(pollTimer));
-
-const passwordVisible1 = ref(false);
-const portFieldId = useId();
 </script>
 
 <style lang="scss" scoped>

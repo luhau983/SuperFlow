@@ -1,8 +1,10 @@
 <template>
-  <uiCard
+  <el-card
     v-if="visible"
     ref="toolbar"
     class="selectionToolbar nodrag nopan nowheel"
+    shadow="never"
+    :bodyStyle="{ padding: '4px' }"
     :style="toolbarStyle"
     @pointerdown.stop
     @mousedown.stop
@@ -10,81 +12,67 @@
     @dblclick.stop
     @contextmenu.stop
     @keydown.stop
-    @keydown.esc.prevent="colorMenuVisible = false"
-    style="gap:0; padding:0">
-    <div class="cardBody" :style="{ padding: '4px' }">
-      <div class="toolbarActions">
-        <uiPopover v-if="hasGroup" v-model:open="colorMenuVisible">
-          <uiPopoverTrigger asChild>
-            <uiButton class="colorButton" title="分组背景颜色" aria-label="分组背景颜色" variant="ghost" type="button" :disabled="(busy || disabled)">
-              <span class="colorPreview" :style="{ background: selectedColors[0]?.value }" />
-            </uiButton>
-          </uiPopoverTrigger>
-          <uiPopoverContent
-            class="hoverPanel "
-            side="bottom"
-            align="start"
-            :sideOffset="8"
-            :style="{ width: '274px', maxWidth: 'calc(100vw - 24px)' }">
-            <div
-              class="groupColors nodrag nopan nowheel"
-              role="group"
-              aria-label="分组背景颜色"
-              @pointerdown.stop
-              @mousedown.stop
-              @click.stop
-              @dblclick.stop
-              @keydown.stop
-              @keydown.esc.prevent="colorMenuVisible = false">
-              <button
-                v-for="color in colors"
-                :key="color.value"
-                type="button"
-                class="colorSwatch"
-                :style="{ background: color.value }"
-                :title="color.label"
-                :aria-label="color.label"
-                :aria-pressed="selectedColors.every(item => item.value === color.value && item.opacity === 25)"
-                :disabled="busy || disabled"
-                @click="changeGroupColor(color.value)" />
-              <el-color-picker
-                class="customColor"
-                :modelValue="customColor"
-                showAlpha
-                colorFormat="hex"
-                :clearable="false"
-                :teleported="false"
-                :disabled="busy || disabled"
-                title="自定义颜色和透明度"
-                aria-label="自定义分组颜色和透明度"
-                @change="changeGroupColor" />
-            </div>
-          </uiPopoverContent>
-        </uiPopover>
-        <uiButton
-          v-for="action in layoutActions"
-          :key="action.mode"
-          @click="operate(action.mode)"
-          variant="ghost"
-          type="button"
-          :disabled="(!canArrangeSelection)"><component :is="action.icon" aria-hidden="true" />{{ action.label }}</uiButton>
-        <span class="toolbarDivider" aria-hidden="true" />
-        <uiButton @click="operate('duplicate')" variant="ghost" type="button" :disabled="(busy || disabled)"><component :is="IconCopyPlus" aria-hidden="true" />创建副本</uiButton>
-        <uiButton @click="operate('group')" variant="ghost" type="button" :disabled="(busy || disabled)"><component :is="IconBoxMultiple" aria-hidden="true" />打组</uiButton>
-        <uiButton @click="operate('ungroup')" variant="ghost" type="button" :disabled="(busy || disabled || !hasGroup)"><component :is="IconDeselect" aria-hidden="true" />解组</uiButton>
-      </div>
+    @keydown.esc.prevent="colorMenuVisible = false">
+    <div class="toolbarActions">
+      <el-popover v-if="hasGroup" v-model:visible="colorMenuVisible" trigger="click" placement="bottom-start" :width="274" :showArrow="false" :disabled="busy || disabled">
+        <template #reference>
+          <el-button text class="colorButton" :disabled="busy || disabled" title="分组背景颜色" aria-label="分组背景颜色">
+            <span class="colorPreview" :style="{ background: selectedColors[0]?.value }" />
+          </el-button>
+        </template>
+        <div
+          class="groupColors nodrag nopan nowheel"
+          role="group"
+          aria-label="分组背景颜色"
+          @pointerdown.stop
+          @mousedown.stop
+          @click.stop
+          @dblclick.stop
+          @keydown.stop
+          @keydown.esc.prevent="colorMenuVisible = false">
+          <button
+            v-for="color in colors"
+            :key="color.value"
+            type="button"
+            class="colorSwatch"
+            :style="{ background: color.value }"
+            :title="color.label"
+            :aria-label="color.label"
+            :aria-pressed="selectedColors.every(item => item.value === color.value && item.opacity === 25)"
+            :disabled="busy || disabled"
+            @click="changeGroupColor(color.value)" />
+          <el-color-picker
+            class="customColor"
+            :modelValue="customColor"
+            showAlpha
+            colorFormat="hex"
+            :clearable="false"
+            :teleported="false"
+            :disabled="busy || disabled"
+            title="自定义颜色和透明度"
+            aria-label="自定义分组颜色和透明度"
+            @change="changeGroupColor" />
+        </div>
+      </el-popover>
+      <el-button
+        v-for="action in layoutActions"
+        :key="action.mode"
+        text
+        :icon="action.icon"
+        :disabled="!canArrangeSelection"
+        @click="operate(action.mode)">{{ action.label }}</el-button>
+      <span class="toolbarDivider" aria-hidden="true" />
+      <el-button text :icon="IconCopyPlus" :disabled="busy || disabled" @click="operate('duplicate')">创建副本</el-button>
+      <el-button text :icon="IconBoxMultiple" :disabled="busy || disabled" @click="operate('group')">打组</el-button>
+      <el-button text :icon="IconDeselect" :disabled="busy || disabled || !hasGroup" @click="operate('ungroup')">解组</el-button>
     </div>
-  </uiCard>
+  </el-card>
 </template>
 
 <script setup lang="ts">
-import { uiPopover, uiPopoverTrigger, uiPopoverContent } from "@/components/ui/popover";
-import { uiButton } from "@/components/ui/button";
-import { uiCard } from "@/components/ui/card";
 import { computed, nextTick, ref, watch } from "vue";
 import { getRectOfNodes, useVueFlow, type GraphNode, type Node, type XYPosition } from "@vue-flow/core";
-import { ElCard, ElColorPicker } from "element-plus";
-import { toast } from "vue-sonner";
+import { ElButton, ElCard, ElColorPicker, ElMessage, ElPopover } from "element-plus";
 import {
   IconCopyPlus, IconBoxMultiple, IconDeselect,
   IconLayoutGrid, IconLayoutColumns, IconLayoutRows,
@@ -340,7 +328,7 @@ function startDragCopy(selection: GraphNode[], withEdges: boolean) {
         finishGroupDrag(flow.getNodes.value, created);
       });
     } catch (error) {
-      if (!signal.aborted) toast.error(error instanceof Error ? error.message : "拖动复制失败");
+      if (!signal.aborted) ElMessage.error(error instanceof Error ? error.message : "拖动复制失败");
     } finally {
       signal.removeEventListener("abort", finish);
       busy.value = false;
@@ -386,14 +374,13 @@ async function operate(command: "duplicate" | "group" | "ungroup" | "mergeGroup"
       }
     });
   } catch (error) {
-    if (!signal.aborted) toast.error(error instanceof Error ? error.message : "选区操作失败");
+    if (!signal.aborted) ElMessage.error(error instanceof Error ? error.message : "选区操作失败");
   } finally {
     busy.value = false;
   }
 }
 
 defineExpose({ operate, startDragCopy, busy });
-
 </script>
 
 <style scoped lang="scss">
@@ -410,7 +397,7 @@ defineExpose({ operate, startDragCopy, busy });
     gap: 2px;
     white-space: nowrap;
 
-    [data-slot="button"] {
+    .el-button {
       height: 28px;
       margin: 0;
       padding: 0 8px;

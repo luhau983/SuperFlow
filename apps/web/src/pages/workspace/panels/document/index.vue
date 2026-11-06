@@ -3,20 +3,14 @@
     <dockview-vue class="documentLayout" :theme="theme" :disableAutoResizing="true" :disableFloatingGroups="true" @ready="onLayoutReady" />
     <openWithDialog ref="openWithRef" />
     <quickOpen v-if="directory" ref="quickOpenRef" :directory="directory" @open="selection => openSelection(selection).catch(reportError)" />
-    <workspaceSearch
-      v-if="directory"
-      ref="searchRef"
-      :directory="directory"
-      :active="active"
-      :replaceFile="replaceSearchFile"
-      @open="openSearchResult" />
+    <workspaceSearch v-if="directory" ref="searchRef" :directory="directory" :active="active" :replaceFile="replaceSearchFile" @open="openSearchResult" />
   </section>
 </template>
 
 <script setup lang="ts">
 import { onActivated, onBeforeUnmount, onDeactivated, ref, shallowReactive, shallowRef, watch } from "vue";
 import { DockviewVue, type DockviewApi, type DockviewReadyEvent } from "dockview-vue";
-import { toast } from "vue-sonner";
+import { ElMessage } from "element-plus";
 import type { ExtResource } from "@toonflow/ext-scaffold/runtime";
 import { useWorkspaceStore } from "@/stores/workspace";
 import { settings, settingsStorage } from "@/stores/settings";
@@ -225,7 +219,7 @@ async function onEditorReady({ api }: DockviewReadyEvent) {
   finally { if (!lifetime.signal.aborted) ready.value = true; }
 }
 
-function reportError(error: unknown) { toast.error(documentError(error)); }
+function reportError(error: unknown) { ElMessage.error(documentError(error)); }
 
 function relativePath(path: string) {
   const parts = path.replaceAll("\\", "/").split("/").filter(part => part && part !== ".");
@@ -376,7 +370,7 @@ async function tabAction(id: string, action: TabAction) {
     keepOpen(id);
     if (session.context.resource.kind === "canvasNode") {
       // ACT: 画布节点保留唯一运行实例，分屏只移动，不能复制 Teleport 的挂载目标。
-      if (panel.group.panels.length < 2) { toast.info("画布节点只有一个视图，请先打开另一标签再移动到分屏"); return; }
+      if (panel.group.panels.length < 2) { ElMessage.info("画布节点只有一个视图，请先打开另一标签再移动到分屏"); return; }
       panel.api.moveTo({ group: panel.group, position: action === "splitRight" ? "right" : "bottom" });
     } else {
       const viewId = `${id}:${crypto.randomUUID()}`;
@@ -679,27 +673,27 @@ defineExpose({ ready, flushSave, cancelSave, getDocument, openDocument, writeDoc
   padding-top: 60px;
   padding-right: var(--agentWidth, 0px);
   overflow: hidden;
-  background: var(--background);
-  .documentLayout { width: 100%; height: 100%; border-top: 1px solid var(--border); }
+  background: var(--el-bg-color);
+  .documentLayout { width: 100%; height: 100%; border-top: 1px solid var(--el-border-color); }
   .dockviewToonflow {
-    --dv-background-color: var(--background);
-    --dv-group-view-background-color: var(--background);
-    --dv-tabs-and-actions-container-background-color: var(--muted);
-    --dv-activegroup-visiblepanel-tab-background-color: var(--background);
-    --dv-activegroup-hiddenpanel-tab-background-color: var(--muted);
-    --dv-inactivegroup-visiblepanel-tab-background-color: var(--background);
-    --dv-inactivegroup-hiddenpanel-tab-background-color: var(--muted);
-    --dv-activegroup-visiblepanel-tab-color: var(--foreground);
-    --dv-activegroup-hiddenpanel-tab-color: var(--muted-foreground);
-    --dv-inactivegroup-visiblepanel-tab-color: var(--foreground);
-    --dv-inactivegroup-hiddenpanel-tab-color: var(--muted-foreground);
-    --dv-tab-divider-color: var(--border);
-    --dv-separator-border: var(--border);
+    --dv-background-color: var(--el-bg-color);
+    --dv-group-view-background-color: var(--el-bg-color);
+    --dv-tabs-and-actions-container-background-color: var(--el-fill-color-light);
+    --dv-activegroup-visiblepanel-tab-background-color: var(--el-bg-color);
+    --dv-activegroup-hiddenpanel-tab-background-color: var(--el-fill-color-light);
+    --dv-inactivegroup-visiblepanel-tab-background-color: var(--el-bg-color);
+    --dv-inactivegroup-hiddenpanel-tab-background-color: var(--el-fill-color-light);
+    --dv-activegroup-visiblepanel-tab-color: var(--el-text-color-primary);
+    --dv-activegroup-hiddenpanel-tab-color: var(--el-text-color-secondary);
+    --dv-inactivegroup-visiblepanel-tab-color: var(--el-text-color-regular);
+    --dv-inactivegroup-hiddenpanel-tab-color: var(--el-text-color-secondary);
+    --dv-tab-divider-color: var(--el-border-color);
+    --dv-separator-border: var(--el-border-color);
     --dv-tabs-and-actions-container-height: 35px;
-    --dv-drag-over-background-color: color-mix(in oklch, var(--primary) 20%, transparent);
-    --dv-drag-over-border-color: var(--primary);
+    --dv-drag-over-background-color: var(--el-color-primary-light-8);
+    --dv-drag-over-border-color: var(--el-color-primary);
     .dv-tab { padding: 0; }
-    .dv-tab.dv-active-tab { border-top: 2px solid var(--primary); }
+    .dv-tab.dv-active-tab { border-top: 2px solid var(--el-color-primary); }
   }
 }
 </style>
