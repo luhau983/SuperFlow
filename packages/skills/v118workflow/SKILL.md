@@ -1,102 +1,102 @@
 ---
 name: v118workflow
-description: Kết hợp phương pháp biên kịch, 12 loại kỹ thuật tự sự, 11 phong cách mỹ thuật cùng kiến thức về tài sản, phân cảnh, prompt ảnh và prompt video của Toonflow v1.1.8, để sản xuất tiểu thuyết hoặc kịch bản theo từng giai đoạn và xác nhận. Duy trì thống nhất canvas kịch bản, canvas tài sản và canvas sản xuất của từng tập; dùng để tái hiện quy trình phiên bản cũ, sản xuất theo tập hoặc làm tiếp, khi thảo luận hoặc chỉnh sửa chính skill này thì không khởi động sản xuất.
+description: Combines Toonflow v1.1.8's screenwriting methods, 12 narrative techniques, 11 art styles and knowledge of assets, storyboards, image and video prompts to produce and confirm a novel or script stage by stage. Maintains a unified script canvas, assets canvas and per-episode production canvas; used to reproduce the legacy flow, for episode production or continuing work; does not start production when discussing or editing the skill itself.
 metadata:
   version: "1.1.0"
-  displayName: Quy trình sản xuất theo tập v1.1.8
+  displayName: v1.1.8 Episode Production Workflow
   author: Toonflow
   github: https://github.com/HBAI-Ltd/Toonflow-app
 ---
 
-# Quy trình sản xuất theo tập v1.1.8
+# v1.1.8 Episode Production Workflow
 
-Chuyển "dây chuyền biên kịch + dây chuyền sản xuất + bàn làm việc video" của phiên bản cũ thành các thao tác canvas của Toonflow hiện tại. Thứ tự thực hiện mỗi bước là: **đọc đầu vào đã xác nhận → hoàn thành giai đoạn này → lưu vào canvas chỉ định → đọc lại và kiểm tra → trình bày kết quả → chờ người dùng xác nhận**. Bản tóm tắt trong khung chat không thể thay cho thành quả trên canvas, tác vụ đã khởi động không thể thay cho media thành công.
+Convert the legacy "screenwriting pipeline + production pipeline + video workbench" into current Toonflow canvas operations. The execution order for each step is: **read confirmed inputs -> complete this stage -> save to the designated canvas -> read back and check -> present results -> wait for user confirmation**. A chat summary cannot replace canvas results, and starting a task cannot replace media success.
 
-Skill này đồng thời chứa các quy trình con và kiến thức chuyên môn cần để hoàn thành chúng. Trước tiên đọc reference của giai đoạn hiện tại, rồi theo yêu cầu trong đó đọc phương pháp chung và thể loại/phong cách đã chọn trong `references/knowledge/`; không được chỉ điền vài bản tóm tắt theo bảng quy trình rồi tuyên bố hoàn thành, cũng không áp dụng cùng lúc mọi thể loại và phong cách vẽ. Căn cứ phiên bản cũ và các lựa chọn khi chuyển đổi xem [Ánh xạ nguồn](references/sourceMap.md); không gọi cơ sở dữ liệu cũ, ghi XML hay giao diện dành riêng cho sub-Agent, không tự động áp dụng định tuyến model của workflow khác.
+This skill contains both the sub-flows and the expertise needed to complete them. First read the current stage's reference, then, as it requires, read the general methods in `references/knowledge/` and the selected genre/style; do not declare completion by merely filling in a few summaries from the flow table, and do not apply all genres and drawing styles at once. For legacy basis and migration trade-offs, see [Source mapping](references/sourceMap.md); do not call the legacy database, XML writes or sub-Agent-specific interfaces, and do not automatically apply other workflows' model routing.
 
-Nghiệm thu giai đoạn đối chiếu nội dung, số lượng, ánh xạ nguồn và trạng thái theo [Đối chiếu hợp đồng đầu ra](references/sourceMap.md#đối-chiếu-hợp-đồng-đầu-ra-theo-giai-đoạn). Ở đây giữ các sản phẩm cốt lõi và hai lộ trình sản xuất của phiên bản cũ, còn lưu trữ trên canvas, xác nhận từng bước và nghiệm thu kết quả tạo là yêu cầu của việc chuyển đổi; không được coi việc tên giai đoạn giống nhau hay tệp đã được tạo là đầu ra nhất quán, cũng không cam kết hai lần tạo bằng AI giống nhau từng chữ hay từng khung hình.
+Stage acceptance checks content, quantity, source mapping and status against the [Output contract comparison](references/sourceMap.md#stage-output-contract-comparison). The legacy core outputs and both production routes are kept here, while canvas storage, step-by-step confirmation and generation acceptance are migration requirements; do not treat identical stage names or created files as matching outputs, and do not promise that two AI generations are identical word for word or frame by frame.
 
-## Trước tiên định vị tiến độ và canvas
+## First locate progress and canvases
 
-1. Xác nhận dự án hiện tại, mục tiêu lần này của người dùng, đầu vào đã có và kết quả đã xác nhận. Khi đã có kịch bản bản chốt hoàn chỉnh, trước tiên theo các bước khởi tạo lưu nguyên văn vào node chính thức của canvas tổng kịch bản, rồi mới vào sản xuất tài sản cơ bản hoặc tập mục tiêu, không suy ngược để bịa ra tiểu thuyết, bảng sự kiện hay khung xương; làm tiếp thì tiếp tục từ giai đoạn đầu tiên chưa xác nhận.
-2. Trước tiên đọc [Khởi tạo và lưu trữ dự án](references/projectSetup.md) và [Thực thi trên canvas](references/canvasOperations.md), kiểm chứng công cụ, vị trí tệp và node hiện tại. Tiếp tục dùng cấu hình đã xác nhận, chỉ bổ sung các mục thiếu ảnh hưởng đến bước hiện tại.
-3. Mọi canvas nằm trong **Workspace dự án do người dùng chọn**, không phải thư mục cài đặt skill. Cấu trúc mặc định như dưới đây; dự án đã có có thể tiếp tục dùng thư mục và tên người dùng đã xác nhận, nhưng vẫn giữ một canvas tổng kịch bản, một canvas tổng tài sản, mỗi tập một canvas sản xuất.
+1. Confirm the current project, the user's goal this time, existing inputs and confirmed results. When a complete finalized script already exists, first store it verbatim in the formal nodes of the master script canvas following the initialization steps, then proceed to base assets or target episode production; do not reverse-engineer a fictional novel, event table or skeleton. Continuing work resumes from the first unconfirmed stage.
+2. First read [Project initialization and archiving](references/projectSetup.md) and [Canvas execution](references/canvasOperations.md) to verify tools, file locations and current nodes. Carry forward confirmed configuration, and only fill in missing items that affect the current step.
+3. All canvases are located in the **project workspace selected by the user**, not the skill installation directory. The default structure is as follows; existing projects can keep folders and names the user has confirmed, but still keep one master script canvas, one master assets canvas and one production canvas per episode.
 
 ```text
-Workspace dự án/
+Project workspace/
 └─ Canvas/
-   ├─ Kịch bản.json
-   ├─ Tài sản.json
-   └─ Tập/
-      ├─ Tập 001.json
-      ├─ Tập 002.json
-      └─ …
+   ├─ Script.json
+   ├─ Assets.json
+   └─ Episodes/
+      ├─ Episode 001.json
+      ├─ Episode 002.json
+      └─ ...
 ```
 
-| Canvas | Nội dung chính thức duy nhất |
+| Canvas | Sole formal content |
 | --- | --- |
-| Kịch bản | Cấu hình dự án, chỉ mục nguồn, sự kiện theo chương, khung xương câu chuyện và đề cương theo tập, chiến lược chuyển thể, kịch bản chính thức của các tập, chỉ mục đường dẫn canvas |
-| Tài sản | Tài sản cơ bản và tài sản phái sinh của toàn bộ phim, quan hệ cha con, thiết lập thị giác, prompt, ảnh đã chọn, các tập sử dụng |
-| Tập N | Nguồn kịch bản/ảnh chụp làm việc của tập này, kế hoạch đạo diễn, bảng phân cảnh, node tư liệu tham chiếu, ảnh phân cảnh, video, ghi chép chọn dùng và bàn giao |
+| Script | Project configuration, source index, chapter events, story skeleton and episode outline, adaptation strategy, formal script of each episode, canvas path index |
+| Assets | Series-wide base and derived assets, parent-child relationships, visual settings, prompts, selected images, episodes used in |
+| Episode N | This episode's script source/working snapshot, director plan, storyboard table, reference media nodes, storyboard images, videos, selection and delivery records |
 
-Ảnh trong canvas tập là tham chiếu cục bộ đến cùng tệp tài sản, không phải một kho tài sản chính thức khác. Giữa các canvas không thể nối cạnh trực tiếp; trước tiên chuyển sang đọc đầu ra tài sản thực, rồi tạo node tham chiếu trong tập này. Tệp tư liệu giữ vị trí do host trả về, không được di chuyển kết quả tạo trong `assets/` chỉ để sắp xếp thư mục canvas.
+Images in an episode canvas are local references to the same asset files, not a separate formal asset library. Edges cannot be connected directly across canvases; first switch to read the real asset output, then create reference nodes in this episode. Media files keep the location returned by the host; do not move generated results in `assets/` just to tidy the canvas folder.
 
-`addCanvas` hiện tại không có tham số thư mục. Phải theo [Cách lưu trữ canvas](references/canvasOperations.md#tạo-và-lưu-trữ-canvas) để đưa cây tệp về đúng vị trí, khám phá lại đường dẫn/ID thực rồi mới điền thành quả, không được để mọi canvas ở thư mục gốc rồi tuyên bố đã lưu trữ xong.
+The current `addCanvas` has no directory parameter. You must follow the [canvas archiving method](references/canvasOperations.md#canvas-creation-and-archiving) to place files in the file tree and rediscover the real paths/IDs before filling in results; do not leave all canvases in the root directory and declare archiving complete.
 
-## Quy trình chính và các cửa xác nhận
+## Main flow and confirmation gates
 
-Mỗi hàng là một giai đoạn độc lập, trước khi thực hiện đọc reference của hàng đó và kiến thức mà nó chỉ định. Đầu ra đã được xác nhận rõ ràng có thể tái sử dụng và ghi lại nguồn; "bỏ qua" phải có lý do phù hợp và người dùng lựa chọn rõ ràng. Khi dự án không liên quan đến chuyển thể nguyên tác, sự kiện theo chương, khung xương hoặc chiến lược có thể rút gọn hoặc bỏ qua theo đầu vào đã có, không được bịa ra trải nghiệm từ hư không.
+Each row is an independent stage; before executing, read that row's reference and the knowledge it specifies. Outputs with explicit confirmation can be reused with their source recorded; "skip" must have an applicable reason and the user's explicit choice. When the project does not involve adapting a source work, chapter events, skeleton or strategy can be shortened or skipped based on existing inputs; do not fabricate experiences out of nothing.
 
-| Bước | Quy trình con | Nơi đặt thành quả và kết quả cần xác nhận lần này |
+| Step | Sub-flow | Where results go and what needs confirmation this time |
 | --- | --- | --- |
-| 0 | [Khởi tạo dự án](references/projectSetup.md) | Canvas kịch bản: cấu hình dự án, phạm vi, thư mục và chỉ mục canvas |
-| 1 | [Nguồn và sự kiện theo chương](references/sourceEvents.md) | Canvas kịch bản: chương thực tế và bảng sự kiện; xác nhận độ bao phủ nguồn và sự thật |
-| 2 | [Khung xương câu chuyện](references/storySkeleton.md) | Canvas kịch bản: lõi câu chuyện, cung nhân vật, đề cương theo tập, ghi chép cắt giảm; xác nhận phương án chia tập |
-| 3 | [Chiến lược chuyển thể](references/adaptationStrategy.md) | Canvas kịch bản: nguyên tắc và ranh giới chuyển thể; xác nhận các lựa chọn giữ/bỏ |
-| 4 | [Kịch bản từng tập](references/episodeScript.md) | Canvas kịch bản: kịch bản hoàn chỉnh của tập này; mặc định mỗi tập xác nhận một lần, rồi mới quyết định viết tiếp tập nào |
-| 5 | [Trích xuất tài sản cơ bản](references/baseAssets.md) | Canvas tài sản: nhân vật/bối cảnh/đạo cụ và các tập xuất hiện; xác nhận tái sử dụng, tạo mới và thiết lập thị giác |
-| 6 | [Sản xuất ảnh tài sản](references/generateAssets.md) | Canvas tài sản: prompt và ảnh của tài sản cơ bản; trước tiên xác nhận phương án tạo, rồi xác nhận ảnh được chọn dùng |
-| 7 | [Kế hoạch đạo diễn](references/directorPlan.md) | Canvas tập hiện tại: chia cảnh, thống kê lời thoại, cảm xúc, chuyển tiếp và lưu ý |
-| 8 | [Phân tích tài sản phái sinh](references/deriveAssets.md) | Canvas tài sản: danh sách phái sinh của tập này và tài sản cha; xác nhận toàn bộ, một phần, điều chỉnh hoặc bỏ qua |
-| 9 | [Sản xuất ảnh tài sản](references/generateAssets.md) | Canvas tài sản: ảnh phái sinh đã chọn; khi không có nhu cầu phái sinh thì ghi rõ là bỏ qua |
-| 10 | [Bảng phân cảnh](references/storyboardTable.md) | Canvas tập hiện tại: cảnh → đoạn → shot, ánh xạ tài sản thực và kết quả kiểm tra |
-| 11 | [Đặt bảng phân cảnh lên canvas](references/storyboardPanel.md) | Canvas tập hiện tại: theo chế độ thực tế tạo node văn bản, tham chiếu, ảnh/video; xác nhận số lượng, thời lượng và dây nối |
-| 12 | [Ảnh phân cảnh](references/storyboardImages.md) | Canvas tập hiện tại: ảnh phân cảnh của chế độ khung đầu; chế độ đa tham chiếu thuần văn bản có thể bỏ qua, phải ghi lại lý do |
-| 13 | [Video và bàn giao](references/videoProduction.md) | Canvas tập hiện tại: prompt/cấu hình video → kết quả tạo → chọn dùng và bàn giao, ba cửa xác nhận độc lập |
+| 0 | [Project initialization](references/projectSetup.md) | Script canvas: project configuration, scope, folders and canvas index |
+| 1 | [Sources and chapter events](references/sourceEvents.md) | Script canvas: actual chapters and event table; confirm source coverage and facts |
+| 2 | [Story skeleton](references/storySkeleton.md) | Script canvas: story core, character arcs, episode outline, cut records; confirm the episode plan |
+| 3 | [Adaptation strategy](references/adaptationStrategy.md) | Script canvas: adaptation principles and boundaries; confirm trade-offs |
+| 4 | [Episode scripts](references/episodeScript.md) | Script canvas: this episode's complete script; by default confirm one episode at a time, then decide which episode to continue writing |
+| 5 | [Base asset extraction](references/baseAssets.md) | Assets canvas: characters/locations/props and the episodes they appear in; confirm reuse, new creation and visual settings |
+| 6 | [Asset image production](references/generateAssets.md) | Assets canvas: base asset prompts and images; first confirm the generation plan, then confirm the adopted images |
+| 7 | [Director plan](references/directorPlan.md) | Current episode canvas: scene breakdown, dialogue statistics, emotion, transitions and notes |
+| 8 | [Derived asset analysis](references/deriveAssets.md) | Assets canvas: this episode's derived list and parent assets; confirm all, some, adjust or skip |
+| 9 | [Asset image production](references/generateAssets.md) | Assets canvas: selected derived images; when there is no derived need, explicitly record the skip |
+| 10 | [Storyboard table](references/storyboardTable.md) | Current episode canvas: scene -> segment -> shot, real asset mapping and check results |
+| 11 | [Storyboard panel placement](references/storyboardPanel.md) | Current episode canvas: create text, reference, image/video nodes according to the actual mode; confirm quantity, duration and edges |
+| 12 | [Storyboard images](references/storyboardImages.md) | Current episode canvas: storyboard images for first-frame mode; can be skipped in text-only multi-reference mode, with the reason recorded |
+| 13 | [Video and delivery](references/videoProduction.md) | Current episode canvas: video prompt/configuration -> generation results -> selection and delivery, three independent confirmation gates |
 
-Các bước 7–13 lặp lại cho mỗi tập. Sau khi hoàn thành tập này, để người dùng chọn tiếp tục tập nào; đừng hiểu "một tập hoàn thành" là toàn bộ phim đã hoàn thành. Tài sản cơ bản có thể bổ sung đủ theo lô dựa trên kịch bản đã xác nhận, xuyên tập vẫn duy trì trong cùng một canvas tài sản.
+Steps 7-13 loop per episode. After finishing this episode, let the user choose which episode to continue; do not interpret "one episode done" as the whole series being done. Base assets can be filled in batches according to confirmed scripts, and are still maintained across episodes in the same assets canvas.
 
-## Kiến thức được dùng theo quy trình như thế nào
+## How knowledge is used with the flow
 
-| Nội dung công việc | Kiến thức bắt buộc phải đọc | Thành quả bắt buộc phải thực hiện |
+| Work | Knowledge that must be read | Results that must be implemented |
 | --- | --- | --- |
-| Khung xương câu chuyện, chuyển thể, kịch bản từng tập | [Phương pháp biên kịch](references/knowledge/scriptCraft.md) + thể loại của dự án này trong [Thể loại tự sự](references/knowledge/narrativeGenres.md) | Canvas kịch bản: khát khao và trở ngại của nhân vật, cung nhân vật, tiến triển cảm xúc, giải phóng thông tin, đảo ngược/cài cắm và các lựa chọn chuyển thể cụ thể |
-| Thiết kế và prompt tài sản cơ bản/phái sinh | [Thiết kế tài sản](references/knowledge/assetDesign.md) + phong cách đã chọn trong [Phong cách mỹ thuật](references/knowledge/visualStyles.md) | Canvas tài sản: điểm neo nhận dạng nhân vật, không gian và màu-ánh sáng của bối cảnh, cấu trúc đạo cụ, khác biệt của biến thể, prompt có thể thực thi và phiên bản chọn dùng |
-| Kế hoạch đạo diễn và phân cảnh | [Thiết kế shot](references/knowledge/shotCraft.md) + thể loại tự sự của dự án này; khi liên quan đến biểu đạt thị giác thì đọc phong cách mỹ thuật đã chọn | Canvas tập này: ý đồ shot, phạm vi thông tin có thể thấy, vị trí đứng và trục nhìn, nhịp điệu và tính liên tục, đưa vào kế hoạch đạo diễn và các shot cụ thể |
-| Prompt ảnh phân cảnh và nghiệm thu | [Prompt ảnh](references/knowledge/imagePromptCraft.md) + phong cách mỹ thuật đã chọn | Canvas tập này: trạng thái khung đầu, cỡ cảnh/hướng, ánh xạ tham chiếu thực tế, prompt phù hợp model và kết quả kiểm tra |
-| Prompt video và nghiệm thu | [Prompt video](references/knowledge/videoPromptCraft.md) + phương pháp biểu hiện video của phong cách mỹ thuật đã chọn | Canvas tập này: trình tự/động tác/âm thanh viết theo chế độ đã chọn, gắn tham chiếu thực, tính liên tục động và nghiệm thu từng đoạn |
+| Story skeleton, adaptation, episode scripts | [Screenwriting methods](references/knowledge/scriptCraft.md) + this project's genre in [Narrative genres](references/knowledge/narrativeGenres.md) | Script canvas: character desires and obstacles, character arcs, emotional progression, information release, twists/foreshadowing and specific adaptation trade-offs |
+| Base/derived asset design and prompts | [Asset design](references/knowledge/assetDesign.md) + the selected style in [Art styles](references/knowledge/visualStyles.md) | Assets canvas: character identification anchors, location space and color/light, prop structure, variant differences, executable prompts and adopted versions |
+| Director plan and storyboard | [Shot design](references/knowledge/shotCraft.md) + this project's narrative genre; read the selected art style when visual expression is involved | This episode's canvas: shot intent, visible information range, blocking and eyelines, rhythm and continuity, put into the director plan and specific shots |
+| Storyboard image prompts and acceptance | [Image prompts](references/knowledge/imagePromptCraft.md) + the selected art style | This episode's canvas: first-frame state, shot size/orientation, actual reference mapping, model-adapted prompts and check results |
+| Video prompts and acceptance | [Video prompts](references/knowledge/videoPromptCraft.md) + the video expression methods of the selected art style | This episode's canvas: timing/action/sound written for the selected mode, real reference binding, motion continuity and segment-by-segment acceptance |
 
-Thể loại tự sự quyết định cách tổ chức thông tin, cảm xúc và shot, phong cách mỹ thuật quyết định hình dạng, chất liệu, màu-ánh sáng và cách biểu hiện, hai thứ chọn độc lập, không coi "hồi hộp" là phong cách vẽ hay coi "đất sét" là thể loại cốt truyện. Người dùng đã có lựa chọn rõ ràng thì tiếp tục dùng; chưa chọn thì dựa vào nội dung đề xuất phương án có lý do, xác nhận xong thì ghi vào cấu hình dự án.
+The narrative genre determines how information, emotion and shots are organized, and the art style determines form, material, color/light and mode of expression; the two are chosen independently, so do not treat "suspense" as a drawing style or "clay" as a plot genre. When the user has already made a clear choice, carry it forward; when nothing is chosen, propose a reasoned plan based on the content and write it into the project configuration after confirmation.
 
-Kiến thức không phải là sự ủy quyền thêm về cốt truyện. Giai đoạn biên kịch có thể dùng phương pháp cấu trúc và đảo ngược trong phạm vi chuyển thể người dùng cho phép; sau khi kịch bản là bản chốt, kỹ thuật thể loại chỉ hướng dẫn cách biểu hiện các sự kiện đã xác nhận, không được thêm manh mối đánh lạc hướng (red herring), đổi kết cục, hoán đổi thứ tự sự kiện hay tự thêm cảnh diễn. Ví dụ phong cách cũng không thể ghi đè danh tính nhân vật, thế giới quan và ảnh tham chiếu đã xác nhận.
+Knowledge is not extra plot authorization. During the screenwriting stage, structure and twist methods can be used within the adaptation scope the user allows; after the script is finalized, genre techniques only guide the presentation of confirmed events, and must not add red herrings, change the ending, swap event order or add scenes on their own. Style examples also cannot override confirmed character identities, worldbuilding and reference images.
 
-Khi phương pháp chung, ngoại lệ của thể loại và mẫu model lịch sử xung đột, trước tiên đáp ứng nội dung người dùng đã xác nhận và khả năng thực của công cụ hiện tại, rồi mới áp dụng phương pháp phù hợp với dự án này. Nhịp nhanh một tuyến, độ dài shot cố định, mẫu màu da/chiều cao của phiên bản cũ không ép áp dụng cho mọi dự án; điều kiện áp dụng của phim ngắn thương mại, phim quần tượng, khoảng lặng và các biến thể đặc biệt xem trong từng tệp kiến thức.
+When general methods, genre special cases and historical model templates conflict, first satisfy the user's confirmed content and the current tools' real capabilities, then adopt the method that fits this project. Legacy single-line fast pacing, fixed shot lengths, skin color/height templates and the like are not forced onto every project; for the applicability conditions of commercial short dramas, ensemble casts, negative space and special variants, see each knowledge file.
 
-Mỗi lần chỉ ghi **phương pháp và kết quả mà dự án này thực sự áp dụng** vào canvas tương ứng: ví dụ cảnh này giấu manh mối nào, vì sao nhân vật giữ tư thế nghiêng người, ánh sáng chính của bối cảnh đến từ đâu, những đặc trưng nào của ảnh cha giữ nguyên. Đừng chép cả tài liệu kiến thức thành node, cũng đừng chỉ ghi "đã tham khảo skill nào đó" mà không có quyết định sản xuất có thể duyệt.
+Each time, write only **the methods actually adopted by this project and their results** into the corresponding canvas: for example which clue this scene hides, why a character keeps a side profile, where the location's key light comes from, which features of the parent image stay unchanged. Do not copy whole knowledge documents into nodes, and do not merely record "referenced some skill" without reviewable production decisions.
 
-## Xác nhận từng bước như thế nào
+## How each step is confirmed
 
-- Trước tiên ghi toàn bộ kết quả có thể duyệt của giai đoạn này vào canvas, đọc lại qua công cụ để xác nhận đã lưu; văn bản dài có thể tách node theo chương, tập, cảnh, không cắt bớt nội dung chính thức. Dùng `fitCanvas` để hiển thị kết quả lần này.
-- Trong node văn bản "Nhật ký giai đoạn" của canvas hiện tại, ghi rõ giai đoạn/số tập, phiên bản đầu vào, ID node đầu ra, kết quả kiểm tra, trạng thái và các mục chờ quyết định. Trạng thái phân biệt `Bản nháp`, `Chờ xác nhận`, `Đã xác nhận`, `Đang tạo`, `Thất bại`, `Chờ rà soát lại`, `Đã bỏ qua`.
-- Trình bày tên canvas và đường dẫn tương đối, tóm tắt thành quả, vấn đề cụ thể, nội dung bước tiếp theo. Dùng `askUser` nếu có để người dùng chọn "Xác nhận sang bước tiếp theo / Sửa mục chỉ định / Làm lại bước hiện tại"; khi không có công cụ hỏi thì hỏi trong hội thoại và chờ. Trước khi người dùng trả lời thì kết thúc giai đoạn này, không tạo trước node sản xuất của giai đoạn sau hay kích hoạt tạo media.
-- Sau khi người dùng trả lời thì ghi lại quyết định của họ. Chỉ sửa mục người dùng chỉ định, đọc lại kết quả đã sửa rồi xác nhận; đừng coi kiểm tra đạt, câu hỏi bị hủy, bỏ qua hỏi đáp, hết thời gian hay im lặng là phê duyệt. "Tiếp tục" chỉ đẩy sang giai đoạn tiếp theo đang chờ xác nhận hiện tại.
-- Cấu hình, tài sản hoặc lô tạo cụ thể mà người dùng đã xác nhận rõ ràng tiếp tục có hiệu lực, không đòi lại cùng một sự ủy quyền. Nếu người dùng ủy quyền rõ ràng một lô cùng giai đoạn cho nhiều tập, có thể thực hiện theo phạm vi đó và trình bày tập trung; khi không có ủy quyền như vậy vẫn xác nhận từng tập, không coi mục tiêu của toàn dự án là cho phép toàn bộ quy trình.
-- Phương án tạo phải gồm model/chế độ thực tế, đối tượng và số lượng, prompt, tham chiếu, thời lượng/tỉ lệ khung/độ phân giải và chi phí đã biết; chi phí chưa biết thì ghi là chưa biết. Chỉ gọi tạo sau khi phạm vi lô hiện tại được xác nhận. Sau khi thất bại, trước tiên đối chiếu trạng thái thực, ứng viên thêm, đổi model hay thử lại có tính phí không được vượt quá phạm vi đã xác nhận.
+- First write this stage's complete reviewable results to the canvas and confirm they are saved by reading back through the tools; long text can be split into nodes by chapter, episode or scene, without truncating formal content. Use `fitCanvas` to show this time's results.
+- In the current canvas's "Stage log" text node, write the stage/episode number, input version, output node IDs, check results, status and pending decisions. Statuses are distinguished as `Draft`, `Pending confirmation`, `Confirmed`, `Generating`, `Failed`, `Pending re-review`, `Skipped`.
+- Present the canvas name and relative path, a results summary, specific issues and the next step. Use the available `askUser` to let the user choose "confirm and go to the next step / modify specified items / redo the current step"; when there is no question tool, ask in the conversation and wait. End this stage before the user replies; do not create next-stage production nodes early or trigger media generation.
+- After the user answers, record their decision. Modify only the items the user specified, read back the revised results and confirm again; do not treat passed checks, a cancelled question, a skipped Q&A, a timeout or silence as approval. "Continue" only advances to the next stage currently pending confirmation.
+- Configurations, assets or specific generation batches the user has explicitly confirmed remain valid; do not ask for the same authorization again. If the user explicitly authorizes a batch of the same stage across multiple episodes, you may execute within that scope and present the results together; without such authorization, still confirm episode by episode, and do not treat the whole project goal as clearance for the full flow.
+- A generation plan should include the actual model/mode, targets and quantity, prompts, references, duration/aspect ratio/resolution and known costs; unknown costs are marked as unknown. Call generation only after the current batch scope has been confirmed. After a failure, first verify the real state; extra candidates, model changes or paid retries must not exceed the confirmed scope.
 
-## Làm tiếp, sửa đổi và thất bại
+## Continuing work, modifications and failures
 
-Mỗi lần làm tiếp lấy nội dung canvas và ghi chép xác nhận của người dùng làm chuẩn, không chỉ dựa vào trí nhớ của khung chat. Kết quả đã có nhưng thiếu xác nhận thì trước tiên trình bày kết quả đã có để bổ sung xác nhận, không tạo lại.
+Each continuation is based on canvas content and the user's confirmation records, not only on chat memory. When existing results lack confirmation, first present the existing results for confirmation; do not regenerate.
 
-Sau khi thay đổi thượng nguồn, đánh dấu các hạ nguồn thực sự bị ảnh hưởng: kịch bản thay đổi thì kiểm tra đạo diễn/phân cảnh/video của tập này, phiên bản tài sản thay đổi thì kiểm tra phân cảnh/video tham chiếu tài sản đó. Đánh dấu chúng là chờ rà soát lại, giữ thành quả gốc và ghi chép chọn dùng, không tự động làm lại toàn bộ phim. Các xác nhận không bị ảnh hưởng vẫn tiếp tục có hiệu lực.
+After changing upstream, mark the downstream items actually affected: a script change checks this episode's director plan/storyboard/video, and an asset version change checks the storyboards/videos that reference that asset. Mark them as pending re-review, keep the original results and selection records, and do not automatically redo the whole series. Unaffected confirmations remain valid.
 
-Khi thiếu nguồn, thư mục chưa về đúng vị trí, thiếu công cụ hoặc ghi thất bại, nêu rõ các mục cụ thể chưa hoàn thành và các bước khôi phục. Không được gói văn bản trong chat, node rỗng, đường dẫn tệp giả, đầu ra cũ hay việc tác vụ đã khởi động thành giai đoạn đã hoàn thành. Chỉ xử lý phạm vi người dùng yêu cầu lần này; khi chỉ tư vấn hoặc chỉnh sửa skill thì không tạo dự án sản xuất.
+When sources are missing, directories are not in place, tools are missing or writes fail, state the specific incomplete items and recovery steps. Do not dress up chat text, empty nodes, fake file paths, old outputs or a started task as stage completion. Handle only the scope the user requested this time; when only consulting about or editing the skill, do not create a production project.

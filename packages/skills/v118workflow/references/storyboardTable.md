@@ -1,62 +1,62 @@
-# Bảng phân cảnh từng tập và duyệt
+# Episode storyboard table and review
 
-Chỉ chuyển kịch bản và kế hoạch đạo diễn đã xác nhận thành phân cảnh có thể thực hiện. Thao tác xem [canvasOperations.md](canvasOperations.md).
+Only convert the confirmed script and director plan into an executable storyboard. For operations see [canvasOperations.md](canvasOperations.md).
 
-Trước khi bắt đầu, đọc đầy đủ [Kiến thức thiết kế shot, diễn xuất và duyệt](knowledge/shotCraft.md) và thể loại đã xác nhận trong [Thể loại tự sự](knowledge/narrativeGenres.md), đọc lại phương pháp thể loại mà kế hoạch đạo diễn đã chọn dùng, thực sự dùng các phương pháp cỡ cảnh/góc máy/chuyển động máy, liên tục không gian, tính thời gian lời thoại, tiết lộ thông tin và phân cấp vấn đề trong đó để xử lý tập này. Khi liên quan đến biểu hiện phong cách chỉ tra các mục đã xác nhận trong [Phong cách hình ảnh](knowledge/visualStyles.md); không được thêm các ví dụ trong kiến thức thành cốt truyện.
+Before starting, fully read [shot design, performance, and review knowledge](knowledge/shotCraft.md) and the confirmed genre in [narrative genres](knowledge/narrativeGenres.md), read back the genre methods adopted by the director plan, and actually use their methods for shot size/angle/camera movement, spatial continuity, dialogue timing, information release, and issue grading to handle this episode. When style expression is involved, only consult the confirmed entry in [visual styles](knowledge/visualStyles.md); do not add examples from the knowledge as plot.
 
-## Đầu vào và nơi lưu
+## Input and placement
 
-- Kịch bản chính thức lấy từ `Canvas/Kịch bản.json`; kế hoạch đạo diễn lấy từ canvas của tập hiện tại, ví dụ `Canvas/Tập/Tập 001.json`.
-- Tài sản khả dụng và ảnh đã xác nhận lấy từ `Canvas/Tài sản.json`, kiểm tra tham chiếu node thật, trạng thái cơ bản và trạng thái phái sinh.
-- Bảng phân cảnh đầy đủ, các vấn đề thẩm định và bản ghi xác nhận lưu trên canvas của tập hiện tại; không sửa kịch bản chính thức hay tạo media ở đây.
-- Khi thiếu đầu vào ảnh hưởng tới việc thực hiện về sau, ghi lại chỗ thiếu và quay về giai đoạn tương ứng; không được bịa ID tài sản hoặc coi ảnh còn thiếu là ảnh đã có.
+- The formal script comes from `Canvas/Script.json`; the director plan comes from the current episode canvas, e.g. `Canvas/Episodes/Episode 001.json`.
+- Available assets and confirmed images come from `Canvas/Assets.json`; check real node references, base states, and derived states.
+- The complete storyboard table, review issues, and confirmation records are saved on the current episode canvas; do not modify the formal script or generate media here.
+- When an input that affects later execution is missing, record the gap and return to the corresponding stage; never invent asset IDs or treat a missing image as an existing one.
 
-Khi người dùng đã chọn tạo một phần hoặc bỏ qua phái sinh, theo [Quy tắc bàn giao phái sinh](deriveAssets.md#bàn-giao-sau-khi-tạo-một-phần-hoặc-bỏ-qua) phân biệt ảnh khả dụng và trạng thái chưa tạo. Có thể giữ bản nháp phân cảnh đầy đủ và các trạng thái cần thiết, nhưng tham chiếu chỉ điền phiên bản thực sự khả dụng; các shot bị ảnh hưởng đánh dấu là chờ tư liệu, không đánh giá cả bản nháp là sẵn sàng sản xuất, cũng không tự ý khởi động lại việc tạo đã bỏ qua.
+When the user has chosen partial generation or skipped derivatives, distinguish usable images from not-generated states per the [derived handoff rules](deriveAssets.md#handoff-after-partial-generation-or-skipping). A complete storyboard draft and the required states may be kept, but references are filled only with real usable versions; affected shots are marked awaiting media, the draft as a whole is not judged production-ready, and skipped generation is not restarted on your own.
 
-Năng lực mô hình có thể truy vấn qua `node:getConfig` của node video đã có. Khi chưa có năng lực để truy vấn, viết bản nháp kế hoạch theo mức 15 giây và ghi rõ "Chờ kiểm định mô hình", không tạo trước cả loạt node media chỉ để tra tham số; trước khi chuyển sang node sản xuất phải bổ sung đủ xác nhận mô hình/chế độ, phát hiện xung đột về thời lượng hoặc giới hạn tham chiếu thì sửa các phân cảnh bị ảnh hưởng và xác nhận lại.
+Model capabilities can be queried via `node:getConfig` on an existing video node. When no capability can be queried yet, write the planning draft on a 15-second basis and mark it "Awaiting model validation", without creating a whole batch of media nodes early just to look up parameters; before turning into production nodes, model/mode confirmation must be completed, and when a duration or reference limit conflict is found, revise the affected storyboards and confirm again.
 
-## Phương pháp tách
+## Breakdown method
 
-1. Theo thứ tự kịch bản đã xác nhận bao phủ các cảnh và sự kiện then chốt, đưa khoảnh khắc cảm xúc, neo nhất quán và chuyển tiếp đã xác nhận trong kế hoạch đạo diễn vào shot.
-2. Chia đoạn theo bước ngoặt cảm xúc, chuỗi động tác hoặc chuyển đổi người nói; giới hạn mỗi đoạn lấy giá trị nhỏ hơn giữa 15 giây của v1.1.8 và giới hạn của mô hình hiện tại.
-3. Khi tái hiện SOP v1.1.8, mặc định ước tính thô 4 chữ/giây theo tầng thực thi, rồi theo mức thẩm định cũ thêm khoảng dừng cần thiết và tổng biên đầu cuối khoảng 1 giây. 3/2 chữ/giây trong kiến thức shot là phương pháp tùy chọn cho diễn xuất chậm; khi người dùng đã có yêu cầu về tốc độ nói/diễn xuất thì dùng tiếp, nếu không thì trước tiên trình bày ảnh hưởng của nó tới độ dài shot và số đoạn rồi xác nhận, không lặng lẽ đổi mức mặc định. Thực tế đọc không hết vẫn phải báo ra và điều chỉnh phương án, không được xóa chữ hoặc bỏ qua khoảng dừng để nhồi vào thời lượng.
-4. Khi lời thoại dài hoặc VO trong cùng đoạn vượt quá 20 chữ, ưu tiên tách thành các shot liên tục theo chỗ ngắt nghĩa và thay đổi cỡ cảnh/góc nhìn, có thể dùng shot phản ứng của người nghe để tiếp nối âm thanh.
-5. Ngữ nghĩa không thể cắt thì giữ trọn, gánh bằng diễn tiến động tác hoặc chuyển động máy; vượt dung lượng đoạn thì chia lại đoạn, không kéo dài thời lượng một cách tĩnh.
-6. Chọn cỡ cảnh, góc quan sát và chuyển động máy theo thông tin mà shot này cần truyền đạt, nói rõ phạm vi cắt khung, khung mở đầu, đường đi và khung kết thúc; mô tả hình ảnh viết động tác, tư thế, biểu cảm và thay đổi trạng thái nhìn thấy được, ngoại hình cố hữu của nhân vật do tài sản đã xác nhận đảm nhận.
-7. Mỗi cảnh lập chuẩn trái phải trước sau, hướng quay, ánh mắt và vật cầm của nhân vật, di chuyển/vượt trục ghi rõ căn cứ thay đổi. Giữ vị trí dễ hiểu của các nhân vật có mặt trong shot hoặc đoạn liền kề, cận cảnh không nhồi cả nhóm; các đoạn liền kề ghi rõ sự tiếp nối về động tác, cảm xúc, ánh mắt hoặc âm thanh.
-8. Lời thoại, OS, VO, thông báo hệ thống và chữ trên màn hình cần truyền đạt được giữ nguyên từng chữ, ghi rõ nguồn; không thêm lời thoại hay tình tiết ngoài kịch bản.
-9. Hiệu ứng âm thanh theo nhu cầu ghi âm môi trường và âm động tác cụ thể, không tự ý thêm nhạc nền; dùng tiếp ảnh bối cảnh, không viết thêm ánh sáng xung đột với nó.
+1. Cover scenes and key events in the order of the confirmed script, implementing the director plan's emotional moments, consistency anchors, and confirmed transitions in shots.
+2. Divide segments by emotional turns, action passages, or speaker changes; each segment's upper limit is the smaller of v1.1.8's 15 seconds and the current model's limit.
+3. When reproducing the v1.1.8 SOP, default to the execution layer's rough estimate of 4 characters/second (calibrated for Chinese; adjust for other languages), then add necessary pauses and a combined head-and-tail margin of about 1 second per the legacy review basis. The 3/2 characters/second in the shot knowledge is an optional method for slow performance; when the user already has a speech-rate/performance requirement, follow it, otherwise first show its impact on shot length and segment count and confirm, without silently changing the default basis. If the lines still cannot be delivered in time, report it and adjust the plan; do not delete words or ignore pauses to cram it into the duration.
+4. When long dialogue or VO in the same segment exceeds 20 characters, prefer splitting into consecutive shots at semantic pauses and changing shot size/viewpoint; a listener reaction shot can carry the sound.
+5. Keep semantics that cannot be cut intact, carried by action progression or camera movement; when segment capacity is exceeded, re-divide segments rather than padding duration statically.
+6. Choose shot size, viewing angle, and camera movement by the information this shot must convey, specifying the crop range, start frame, path, and end frame; the image description states visible actions, postures, expressions, and state changes, while characters' inherent appearance is carried by confirmed assets.
+7. For each scene establish a baseline of characters' left/right/front/back, facing, gaze, and held objects; for blocking/crossing the axis, state the basis for the change. Keep understandable positions for characters present in adjacent shots or segments, without forcing everyone into close-ups; spell out the carry-over of action, emotion, gaze, or sound between adjacent segments.
+8. Dialogue, OS, VO, system announcements, and on-screen text that must be conveyed are kept verbatim with their source marked; do not add dialogue or plot beyond the script.
+9. Sound effects describe concrete ambient and action sounds as needed, without adding music on your own; follow the location images, and do not write lighting that conflicts with them.
 
-## Định dạng đầu ra
+## Output format
 
-Tổ chức theo "Cảnh → Đoạn → Shot", tham chiếu tài sản đặt ở cấp đoạn, dùng định danh canvas/node thực tế của host hiện tại.
+Organize as "scene -> segment -> shot", with asset references at segment level, using the current host's actual canvas/node identifiers.
 
 ```markdown
-## Cảnh 1: Tên bối cảnh | Nhân vật tham gia: Nhân vật A, Nhân vật B
-### Đoạn 1 (khoảng 10s)
-Tên tài sản tham chiếu: Nhân vật A, Nhân vật B, Bối cảnh
-Tài sản tham chiếu: tham chiếu canvas/node thật tương ứng
-| STT | Mô tả hình ảnh | Thời lượng | Cỡ cảnh | Chuyển động máy | Lời thoại | Hiệu ứng âm thanh |
+## Scene 1: Scene name | Cast: Character A, Character B
+### Segment 1 (about 10s)
+Referenced asset names: Character A, Character B, location
+Referenced assets: the corresponding real canvas/node references
+| No. | Image description | Duration | Shot size | Camera movement | Dialogue | Sound effects |
 |---|---|---|---|---|---|---|
 ```
 
-Hướng quay, quan hệ không gian, động tác ghi vào mô tả hình ảnh, không yêu cầu các cột độc lập mà bản cũ đã bỏ.
-Thời lượng mỗi shot là giá trị số rõ ràng, thời lượng đoạn bằng tổng thời lượng các shot trong đó, giữ số shot liên tục và ranh giới cảnh rõ ràng.
-Cùng một nhân vật trong một đoạn chọn dùng trạng thái cơ bản hoặc phái sinh khớp với cốt truyện, không được nhầm trạng thái cha con thành hai người.
+Facing, spatial relationships, and actions are written into the image description; the separate columns that the legacy version already removed are not required.
+Each shot's duration is an explicit number, the segment duration equals the sum of its shots' durations, and shot numbers stay continuous with clear scene boundaries.
+Within a segment the same character uses the base or derived state matching the plot; do not mistake parent and child states for two people.
 
-Trong phần ghi chú phân cảnh đã có của tập này bổ sung các căn cứ thiết kế cần thiết: vì sao shot then chốt chọn cỡ cảnh/chuyển động máy đó, thông tin sẵn có mà shot đó cho khán giả biết hoặc tạm chưa biết, nhịp thể loại được thể hiện thế nào, số chữ và ước tính thời gian theo tốc độ nói/khoảng dừng của lời thoại dài, chuẩn không gian và điểm thay đổi mỗi cảnh, trạng thái kết thúc của đoạn đến trạng thái bắt đầu của đoạn sau. Trạng thái cuối chưa tạo đánh dấu là kế hoạch; đây là ghi chú đọc được, không thêm trường schema công cụ, cũng không thay đổi cấu trúc bảng bảy cột.
+Add the necessary design basis to the existing storyboard notes for this episode: why key shots chose that shot size/camera movement, which existing information the shot lets the audience know or withholds for now, how the genre beats are expressed, the character count and speech-rate/pause timing of long dialogue, each scene's spatial baseline and change points, and the end state of a segment leading into the start state of the next. End states not yet generated are marked as planned; these are readable notes, they do not add tool schema fields, and they do not change the seven-column table structure.
 
-## Duyệt sau khi ghi
+## Review after writing
 
-1. Đọc lại bảng phân cảnh thực tế trên canvas, và đối chiếu với kịch bản chính thức, kế hoạch đạo diễn và nguồn tài sản, không được chỉ duyệt tóm tắt chat.
-2. Kiểm tra lời thoại không bị xóa sửa chút nào, sự kiện các cảnh được bao phủ toàn bộ, thứ tự đúng, các trường bắt buộc của mỗi shot đầy đủ.
-3. Kiểm tra tham chiếu tài sản là thật, liên kết nhân vật và bối cảnh nhận diện được là đúng, việc dùng trạng thái phái sinh phù hợp cốt truyện, không hư cấu ảnh khả dụng.
-4. Theo kiến thức shot kiểm tra tổng shot, giới hạn đoạn, dung lượng lời thoại, nhịp diễn xuất và tính liên tục không gian/động tác; các mục vi phạm năng lực thực thi phải chỉ rõ, không được coi heuristic cũ shot đơn 8 giây/shot dài 12 giây là bảo đảm của mô hình hiện tại.
-5. Báo cáo chỉ liệt kê vấn đề, theo mức Nghiêm trọng/Trung bình/Nhẹ định vị từng cảnh/đoạn/số shot, kèm nguyên văn thực tế hoặc tham chiếu, ảnh hưởng và đề xuất sửa; ghi báo cáo ngược vào tập này, không tự ý sửa kịch bản đã xác nhận. Tổng quan A/B/C/D cũ là tùy chọn, không thay được bằng chứng hay xác nhận của người dùng.
+1. Read back the actual storyboard table on the canvas and compare it against the formal script, director plan, and asset sources; do not review only a chat summary.
+2. Check zero deletions or changes to dialogue, full coverage of scene events, correct order, and that every shot's required fields are filled.
+3. Check that asset references are real, associations with identifiable characters and locations are correct, derived states are used in line with the plot, and no usable images are fabricated.
+4. Per the shot knowledge, check shot totals, segment limits, dialogue capacity, performance rhythm, and spatial/action continuity; items that violate execution capability must be pointed out explicitly, and the legacy heuristic of 8 seconds per single shot/12 seconds per long take must not be treated as a guarantee of the current model.
+5. The report lists only problems, graded Severe/Moderate/Minor and located item by item by scene/segment/shot number, with the actual original text or reference, impact, and revision suggestion; write the report back to this episode, and do not change the confirmed script on your own. The legacy A/B/C/D overview is optional and cannot replace evidence or user confirmation.
 
-## Điểm xác nhận
+## Confirmation point
 
-Trình bày bảng phân cảnh và báo cáo vấn đề cho người dùng, ghi lại phạm vi cụ thể của "Thông qua / Sửa theo chỉ định / Làm lại".
-Sau khi sửa, đọc lại và rà soát phần bị ảnh hưởng; sau khi người dùng xác nhận thì lưu bản ghi, rồi dừng giai đoạn này.
-Chưa xác nhận bảng phân cảnh thì không tạo lô media có thể thực thi, không khởi động tạo ảnh phân cảnh hay video.
-Nguồn và khác biệt với cấu trúc bảng cũ xem [sourceMap.md](sourceMap.md).
+Show the storyboard table and issue report to the user, and record the specific scope of "Approve / Fix specified items / Redo".
+After fixes, read back and check the affected parts; after user confirmation, save the record, then stop this stage.
+Without confirmation of the storyboard table, do not create executable media batches, and do not start storyboard image or video generation.
+For sources and differences from the legacy table structure see [sourceMap.md](sourceMap.md).

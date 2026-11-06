@@ -1,195 +1,195 @@
-# Phương pháp biên kịch và chuyển thể
+# Screenwriting and Adaptation Methods
 
-File này gộp khung sườn câu chuyện, chiến lược chuyển thể, biên kịch từng tập và phương pháp giám sát thành kiến thức có thể thực thi trực tiếp. Khi sử dụng, đọc phần này trước, rồi đọc chương tương ứng với giai đoạn hiện tại; phương pháp riêng của từng thể loại xem [Thể loại tự sự](narrativeGenres.md). Không cần truy cập thư mục bản cũ hay gọi skill bản cũ.
+This file merges story skeleton, adaptation strategy, single-episode screenwriting and supervision methods into directly executable knowledge. When using it, read this section first, then the section for the current stage; genre-specific methods are in [Narrative genres](narrativeGenres.md). There is no need to access the old version's directories or call old skills.
 
-## Thứ tự áp dụng
+## Order of application
 
-1. Sự thật câu chuyện, ranh giới chuyển thể, thể loại, kết cục, tỉ lệ khung, thời lượng và yêu cầu phát hành mà người dùng đã xác nhận được ưu tiên.
-2. Chọn phương pháp theo thể loại tự sự: cái thường nhật của gia đình, những mảnh vụn của tuổi trẻ, chân dung tập thể của sử thi, khoảng lặng của tiên hiệp đều có giá trị tự sự, không được bị mẫu nhịp nhanh của phim ngắn thương mại xóa đồng loạt.
-3. Nhịp điệu phim ngắn, số chữ, tỉ lệ điểm treo (cliffhanger) trong file này là tham khảo để xây dựng phương án; chọn dùng những gì, vì sao chọn dùng thì ghi vào quyết định dự án, không được giả làm quy tắc nền tảng hay đảm bảo hiệu quả.
-4. Sáng tác văn bản không thay đổi cốt truyện đã xác nhận để chiều theo điểm yếu giả định của mô hình. Trước khi vào bước tạo, đọc năng lực mô hình thật, rồi mới quyết định có tách shot, thay đổi cách trình bày hay nhờ người dùng điều chỉnh.
-5. Phương pháp phải trở thành quyết định về nhân vật, số tập, cảnh và động tác cụ thể; chỉ viết "tăng cường xung đột, nâng cao mật độ" không tính là thực thi.
+1. Story facts, adaptation boundaries, genre, ending, aspect ratio, duration and distribution requirements the user has confirmed take priority.
+2. Choose methods by narrative genre: the everyday life of family stories, the fragments of youth stories, the ensemble of epics and the negative space of xianxia all have narrative value and must not be uniformly removed by the fast-paced template of commercial short drama.
+3. This file's short-drama rhythm, character counts and paywall-point ratios are references for making a plan; which ones are adopted and why are written into project decisions, and must not pose as platform rules or guaranteed effects.
+4. Text creation does not change the confirmed plot to accommodate assumed model weaknesses. Before generation, read the real model capabilities, then decide whether to split shots, use an alternative presentation or ask the user to adjust.
+5. Methods must become decisions about specific characters, episodes, scenes and actions; writing only "strengthen conflict, increase density" does not count as execution.
 
-## Phán đoán sự kiện và ba loại mật độ
+## Event judgment and three kinds of density
 
-Trước tiên phân biệt sự kiện với tình tiết: sự kiện là điều gì đã xảy ra, tình tiết còn phải nói rõ vì sao xảy ra, thay đổi xung đột thế nào, gây ra biến đổi không thể đảo ngược gì cho nhân vật.
+First distinguish event from plot: an event is what happened; plot must also explain why it happened, how it changes the conflict, and what irreversible change it causes in the characters.
 
-| Chiều phán đoán | Câu hỏi thực thi | Bằng chứng cần ghi |
+| Dimension | Execution question | Evidence to write down |
 |---|---|---|
-| Mật độ cảm xúc | Khán giả lúc này cảm thấy gì? Do hành vi nhìn thấy được nào kích hoạt? Có luôn cùng một cường độ không? | Mục tiêu cảm xúc, động tác kích hoạt, thay đổi cường độ trước sau |
-| Mật độ thông tin | Biết thêm điều gì mới? Vì sao bây giờ phải biết? Một câu có thể đồng thời khắc họa nhân vật, truyền tải xung đột không? | Thông tin mới, người biết chuyện, vị trí giải phóng |
-| Mật độ tình tiết | Kết quả của sự kiện trước trở thành nguyên nhân của sự kiện này thế nào? Xung đột có leo thang/lật ngược không? Hoàn cảnh có thay đổi không? | Tiếp nối nhân quả, hành động, kết quả, áp lực bước tiếp theo |
+| Emotional density | What does the audience feel now? What visible behavior triggers it? Is it always the same intensity? | Emotional goal, triggering action, intensity change before and after |
+| Information density | What is newly known? Why must it be known now? Can one line shape a character and convey conflict at the same time? | New information, who knows, where it is released |
+| Plot density | How does the result of the previous event become the cause of this one? Did the conflict escalate/twist? Did the situation change? | Causal carry-over, action, result, pressure for the next step |
 
-- Bảng sự kiện chỉ ghi nội dung nguồn thực sự có, không bịa ra để thỏa mãn mật độ; chỗ cần tăng cường thì liệt kê riêng thành đề xuất chuyển thể.
-- Quan hệ với tuyến chính: mạnh = trực tiếp thúc đẩy mục tiêu nhân vật chính hoặc cung nhân vật; trung = bổ sung quan hệ, quy tắc hoặc cài cắm cần thiết; yếu = chuyển tiếp, bầu không khí. Yếu không có nghĩa là tự động xóa, phải kết hợp phán đoán theo chức năng thể loại.
-- Chọn lọc thông tin dùng "nhanh, chuẩn, mới, không": kịp thời đưa thông tin cần thiết, diễn đạt chính xác, mỗi đoạn có phần tăng thêm, xóa lặp lại không có tác dụng tự sự. Việc hé lộ chậm của trinh thám và sự im lặng của dòng ấm áp cũng có thể mang phần tăng thêm.
-- Khung nhân quả từng tập: tiếp nối kết quả tập trước → trở ngại mới/thay đổi xung đột → đưa ra lựa chọn và trả giá hoặc nhận được thu hoạch → dẫn ra bước tiếp theo hoặc thực hiện kết cục. Các đoạn thường nhật, chuyển tiếp và khoảng lặng có thể được tiếp nối bằng phần tăng thêm về quan hệ/thông tin/cảm xúc, không ép tạo lựa chọn và xung đột. Tập cuối khép lại theo kết cục đã xác nhận, chỉ khi người dùng yêu cầu kết mở hoặc phần tiếp theo mới để lại treo lửng; đừng dùng chồng chất sự kiện, chồng chất cú lật thay cho thúc đẩy.
+- The event table records only what the source actually has; do not fabricate to satisfy density; places that need strengthening are listed separately as adaptation proposals.
+- Relation to the main line: strong = directly drives the protagonist's goal or character arc; medium = supplements relationships, rules or necessary foreshadowing; weak = transition, atmosphere. Weak does not mean automatic deletion; judge together with the genre function.
+- Information selection uses "fast, accurate, new, none": give necessary information in time, express it accurately, have an increment in each section, delete repetition with no narrative function. Delayed reveals in suspense and silence in heartwarming stories can also carry increments.
+- Single-episode causal skeleton: carry over the previous episode's result -> new obstacle/conflict change -> make a choice and pay a price or gain something -> lead to the next step or pay off the finale. Everyday, transitional and negative-space sections can be carried by increments in relationship/information/emotion, without forcing choices and conflicts. The final episode closes per the confirmed ending, leaving a follow-up hook only when the user asks for an open ending or a sequel season; do not replace progression by piling up events and twists.
 
-## Cốt lõi câu chuyện, mâu thuẫn và cấu trúc
+## Story core, contradiction and structure
 
-Cốt lõi câu chuyện trước tiên viết thành một câu: `Ai vì điều gì, dưới trở ngại nào buộc phải lựa chọn ra sao, vì sao khán giả quan tâm`. Rồi viết vấn đề nội tâm của nhân vật, như báo thù và tha thứ, tự do và trách nhiệm; xung đột bên ngoài nên liên tục buộc nhân vật đối mặt với vấn đề này.
+First write the story core as one sentence: `who, for what, under which obstacle, must choose how, and why the audience cares`. Then write the character's inner question, such as revenge versus forgiveness, freedom versus responsibility; external conflict should keep forcing them to face this question.
 
-Mâu thuẫn là khát vọng và trở ngại tồn tại liên tục, xung đột là hành động nhân vật thực hiện để giải quyết mâu thuẫn. Dùng thang bốn cấp để kiểm tra sự leo thang, chứ không chỉ thêm cãi vã và đánh nhau:
+Contradiction is a persistent desire and obstacle; conflict is the action a character takes to resolve the contradiction. Use a four-level ladder to check escalation, rather than just adding quarrels and fights:
 
-1. Khát vọng và trở ngại được xác lập: muốn có được một thứ, nhưng bên kia kiểm soát nó.
-2. Tăng cường: khát vọng cấp bách, trở ngại mạnh mẽ, tạo thành lựa chọn không thể vẹn cả đôi đường.
-3. Đào sâu: khát vọng của cả hai bên đều có lý do có thể hiểu được, lựa chọn trở nên khó khăn, chứ không viết đối thủ thành công cụ thuần túy.
-4. Leo thang: hành động của nhân vật chính dẫn đến hậu quả nghiêm trọng hơn và không dễ rút lại, xung đột mới đến từ nguyên nhân trước đó.
+1. Desire and obstacle established: wants something, but another party controls it.
+2. Intensification: the desire is urgent, the obstacle strong, forming a choice where both cannot be had.
+3. Deepening: both sides' desires have understandable reasons, making the choice harder, rather than writing the opponent as a pure tool.
+4. Escalation: the protagonist's action leads to more serious consequences that cannot easily be withdrawn, and new conflict comes from prior causes.
 
-- Phim ngắn thương mại tập trung có thể dùng "tam giác lớn": nhân vật chính, đối thủ chính, quan hệ/thế lực then chốt tạo thành mâu thuẫn chính; mâu thuẫn phụ giải quyết từng cái một, rồi mới sang cái tiếp theo. Khoảng 3-4 nhân vật cốt lõi dễ tập trung, nhưng dự án chân dung tập thể tổ chức theo tuyến nhân vật đã xác nhận.
-- Ba hồi sắp xếp theo chức năng: xác lập quy tắc, khát vọng và nguy cơ; phát triển kế hoạch, đối kháng và cái giá; thực hiện lựa chọn, cao trào và kết cục/vấn đề mới. Mỗi hồi ghi lại vấn đề cốt lõi, phạm vi nguồn, số tập, bước ngoặt cuối hồi.
-- Đường cong cảm xúc tránh kéo căng tối đa mà không thay đổi: tích lũy → giải phóng nhỏ → áp lực mạnh hơn → thực hiện then chốt → dư âm lắng đọng. Cảm xúc cốt lõi xuyên suốt, cảm xúc phụ trợ phục vụ nó, không được vì một tình tiết kích thích mà đột ngột đổi sang một loại phim khác.
-- Mẫu cung nhân vật: `Niềm tin/trạng thái ban đầu → sự kiện kích hoạt → hành động theo cách cũ → cái giá buộc phải suy ngẫm → lựa chọn mới → trạng thái cuối cùng`. Mỗi giai đoạn cần có bằng chứng hành động, không được chỉ tuyên bố trưởng thành ở cuối.
+- Focused commercial short drama can use the "big triangle": protagonist, main opponent, and a key relationship/force form the main contradiction; secondary contradictions are resolved one by one before moving to the next. About 3-4 core characters help focus, but ensemble projects are organized by the confirmed character lines.
+- Arrange three acts by function: establish rules, desire and crisis; develop plans, confrontation and cost; pay off the choice, climax and ending/new question. For each act record the core question, source range, episode count and end-of-act turn.
+- Avoid an emotional curve maxed out without change: accumulation -> small release -> stronger pressure -> key payoff -> digesting the aftertaste. The core emotion runs throughout and auxiliary emotions serve it; do not suddenly switch to another kind of drama because of one exciting bit.
+- Character arc template: `initial belief/state -> triggering event -> acting the old way -> cost forces reflection -> new choice -> final state`. Each stage needs action evidence; do not just declare growth at the end.
 
-## Tiểu sử nhân vật, nhập vai và quan hệ
+## Character profiles, identification and relationships
 
-Mỗi nhân vật cốt lõi trước tiên viết năm yếu tố: thân phận (họ tên, nghề nghiệp, quan hệ, vai trò trong câu chuyện); đặc điểm (năng lực, thói quen, điểm dễ nhớ); hoàn cảnh (tình cảnh, mục tiêu, động cơ); hành động (cách làm do động cơ thúc đẩy); hướng kết cục (hành động đó dẫn đến đâu). Chỉ viết thông tin mà tuyến chính sẽ dùng đến.
+For each core character, first write five elements: identity (name, occupation, relationships, story function); traits (abilities, habits, memorable points); circumstances (situation, goal, motivation); action (what motivation drives them to do); ending direction (where that action leads). Write only information the main line will use.
 
-Bổ sung cho nhân vật chính:
+Additions for the protagonist:
 
-- Lối vào nhập vai: hoàn cảnh bình thường, áp lực bên ngoài, tôn nghiêm, tình cảm đáng bảo vệ và sự tương phản. Khi nhân vật có trách nhiệm hoặc vùng xám thì giữ sự phức tạp chân thực, không áp mẫu "phải hoàn toàn vô tội".
-- Hai mặt tương phản: bề ngoài và bên trong là gì, mỗi mặt do sự kiện nào kích hoạt; không được đổi tính cách mà không có chuyển tiếp.
-- Ranh giới năng lực: làm được gì, không làm được gì, điều kiện khởi động, giới hạn số lần/tài nguyên, cái giá khi sử dụng; câu chuyện không có năng lực đặc biệt thì không ép thêm "bàn tay vàng".
-- Cách nói chuyện: độ dài câu, cách dùng từ, kiểu câu, cách né tránh, câu cửa miệng, và giọng điệu thay đổi thế nào dưới áp lực. Che tên đi vẫn phải phân biệt được các nhân vật chính.
-- Bảy lối xuất hiện: chi tiết cục bộ, động tác then chốt, phản ứng của nhân vật phụ, nghe tiếng trước, tương phản môi trường, đạo cụ đặc trưng, dẫn dắt bầu không khí. Chọn lối bộc lộ rõ nhất khát vọng và tính cách nhân vật, viết ra động tác xuất hiện cụ thể.
+- Identification entry points: ordinary situation, external pressure, dignity, feelings worth protecting, and contrast. When a character bears responsibility or has gray areas, keep the real complexity; do not apply the "must be entirely blameless" template.
+- Two sides of contrast: what the surface and the inside are, and what event triggers each; do not switch personality without a transition.
+- Ability boundaries: what they can and cannot do, activation conditions, count/resource limits, cost of use; stories without special abilities do not force in a "golden finger" cheat.
+- Way of speaking: sentence length, word choice, sentence patterns, ways of avoiding, catchphrases, and how the tone changes under pressure. With names covered, the main characters should still be distinguishable.
+- Seven entrance options: a partial detail, a key action, supporting characters' reactions, voice heard first, environmental contrast, a signature prop, atmospheric build-up. Choose the one that best exposes the character's desire and personality, and write the concrete entrance action.
 
-Đối thủ cần có động cơ hợp lý, tài nguyên, giới hạn chót và tổn thất của riêng mình; nhân vật phụ cần nói rõ lựa chọn của họ thúc đẩy tuyến chính thế nào. Sức căng quan hệ đến từ việc vừa cần nhau vừa cản trở nhau, không được dựa vào hiểu lầm tùy tiện để kéo dài lặp đi lặp lại.
+Opponents need reasonable motives, resources, bottom lines and losses of their own; supporting characters need an explanation of how their choices drive the main line. Relationship tension comes from needing each other while obstructing each other; do not rely on random misunderstandings to stall repeatedly.
 
-Cặp đôi tình cảm trước tiên chọn chiều bổ sung hoặc xung đột, rồi viết tương tác: một người thận trọng, một người bốc đồng sẽ cùng đưa ra quyết định thế nào; cùng một nhân vật thể hiện các mặt khác nhau thế nào ở nơi công cộng và trong quan hệ thân mật. Đừng chỉ dán nhãn hình mẫu nhân vật thịnh hành.
+For romantic partners, first choose a complementary or conflicting dimension, then write the interaction: how one cautious and one impulsive person make decisions together; how the same character shows different sides in public and in intimate relationships. Do not just stick on popular persona labels.
 
-Mô hình nhân vật thị trường của bản cũ có thể dùng làm lựa chọn vai: chủ động ẩn mình, năng lực, nghĩa khí, điểm yếu riêng; chủ động thức tỉnh, tự trọng, dám giành lấy, cứng rắn với bên ngoài mềm mỏng với bên trong. Lấy dùng theo nhu cầu thực tế của vai, không phân bổ cưỡng ép theo giới tính.
+The old version's market character models can be character options: actively lying low, capable, loyal, with an exclusive soft spot; actively awakening, self-loving, daring to fight for things, firm outside and soft inside. Take them according to the character's actual needs; they are not assigned by gender.
 
-## Chênh lệch thông tin, móc câu và cú lật
+## Information gaps, hooks and twists
 
-Mỗi đoạn then chốt điền: `Sự thật thực tế | Nhân vật chính biết gì | Đối thủ biết gì | Khán giả biết/lầm tưởng gì | Đoạn này hé lộ gì | Đoạn sau còn nợ gì`.
+For each key section fill in: `real fact | what the protagonist knows | what the opponent knows | what the audience knows/mistakenly believes | what this section reveals | what is still owed in the next section`.
 
-| Quan hệ biết chuyện | Tác dụng chính | Cách triển khai |
+| Knowledge relationship | Main effect | How to land it |
 |---|---|---|
-| Nhân vật chính và khán giả biết, đối thủ không biết | Chờ hành động được thực hiện, thân phận hoặc năng lực được công nhận | Trước tiên đưa ra con bài tẩy thật, rồi xem đối thủ phán đoán sai và hậu quả |
-| Đối thủ và khán giả biết, nhân vật chính không biết | Lo lắng nhân vật tiến gần nguy hiểm | Để khán giả thấy cái bẫy ngoài tầm nhìn của nhân vật chính |
-| Khán giả biết, nhân vật hai bên không biết | Chờ nhận ra nhau, tháo gỡ quan hệ | Cùng một sự thật phân tán trong hành động của hai bên, khán giả nối lại trước |
-| Khán giả theo một bên, chỉ biết một phần | Cùng điều tra, cùng bị lừa | Mỗi lần thêm manh mối có thể đối chiếu, không bổ sung đáp án vô căn cứ |
+| Protagonist and audience know, opponent does not | Waiting for action to pay off, identity or ability to be recognized | First show the real trump card, then watch the opponent's misjudgment and its consequences |
+| Opponent and audience know, protagonist does not | Worry as the character approaches danger | Let the audience see the trap outside the protagonist's view |
+| Audience knows, neither character does | Waiting for recognition, untangling the relationship | Spread the same fact across both sides' actions so the audience connects it first |
+| Audience follows one side, knows only part | Investigating together, being deceived together | Add verifiable clues each time; do not fill in answers out of nothing |
 
-Móc câu có thể đến từ hành động bước tiếp theo, đối thủ phản công, thái độ của bên thứ ba; về chức năng chọn nghi vấn trí tuệ, hồi hộp, tình cảm quan hệ, quy tắc thế giới quan mới. Phim ngắn thương mại cũng có thể dùng đảo lộn thân phận, nghịch chuyển thắng thua, rạn nứt quan hệ hoặc hé lộ sự thật. Giải quyết một vấn đề giai đoạn rồi mới đặt ra vấn đề mới của tuyến chính, không treo khẩu vị bằng việc không bao giờ thực hiện.
+Hooks can come from the next action, the opponent's counterattack, a third party's attitude; by function choose an intellectual question, suspense, relationship emotion, or a new world rule. Commercial short drama can also use identity subversion, reversal of victory and defeat, relationship rupture or truth reveal. After resolving one stage's question, raise a new main-line question; do not tease with something never paid off.
 
-Ba phương pháp cú lật toàn cục:
+Three methods for global twists:
 
-1. Dẫn dắt sai kỳ vọng: trình bày manh mối thật → lợi dụng cách hiểu thông thường để xây dựng kết luận sai → dùng một chi tiết thật khác để lật đổ kết luận; khi xem lại vẫn hợp lý.
-2. Diễn giải lại hình tượng nhân vật: xây dựng nhãn nhân vật → cài vào hành vi không hoàn toàn khớp với nhãn → hé lộ mặt còn lại. Thay đổi giá trị cốt lõi đã xác nhận của nhân vật chính phải được người dùng đồng ý.
-3. Hoán đổi động cơ: hành vi đồng thời khớp với động cơ bề mặt và động cơ sâu xa → cung cấp bằng chứng hai tuyến → hé lộ động cơ sâu xa, khiến hành động cũ có cách giải thích mới.
+1. Expectation misdirection: show real clues -> use common understanding to build a wrong conclusion -> overturn the conclusion with another real detail; it still holds on rewatch.
+2. Persona reinterpretation: establish a character label -> plant behavior that does not fully fit the label -> reveal the other side. Changing the protagonist's confirmed core values requires the user's consent.
+3. Motive substitution: behavior fits both a surface and a deeper motive -> provide two-track evidence -> reveal the deeper motive, giving old actions a new interpretation.
 
-Ba phương pháp cú lật trong một tập: chức năng thật của đạo cụ quen dùng được hiểu lại; kỳ vọng cảm xúc thất bại rồi được hành động nhân vật làm bật trở lại; hình ảnh cục bộ thật gây phán đoán sai, rồi được hé lộ bằng toàn cảnh. Đừng lặp lại liên tục cùng một chiêu, cũng đừng vì cú lật mà thay đổi sự thật khách quan đã trình bày.
+Three methods for single-episode twists: the real function of a common prop is reinterpreted; after emotional expectations fall through, the character's action produces a rebound; a real partial view leads to misjudgment and is then revealed by the full view. Do not repeat the same trick consecutively, and do not change objective facts already shown for the sake of a twist.
 
-Mẫu đăng ký cài cắm:
+Foreshadowing register template:
 
-| Cú lật/thực hiện | Sự thật nguồn | Cách hiểu ban đầu của khán giả | Tập/cảnh cài sẵn và chi tiết | Tập/cảnh hé lộ | Sau khi hé lộ giải thích chi tiết cũ thế nào |
+| Twist/payoff | Source fact | Audience's initial understanding | Planted episode/scene and detail | Reveal episode/scene | How the reveal explains old details |
 |---|---|---|---|---|---|
-| Chuyển biến cụ thể | Nguồn đọc được | Phán đoán hợp lý nhưng chưa đầy đủ | Trước khi hé lộ | Vị trí thực tế | Nhân quả, đạo cụ và hành vi đều tương thích |
+| Specific turn | Readable source | Reasonable but incomplete judgment | Before the reveal | Actual position | Cause and effect, props and behavior all compatible |
 
-Cú lật lớn đăng ký trước rồi mới viết kịch bản; số lượng chọn lọc theo độ dài và thể loại. Khoảng ba cú lật lớn, mỗi tập tập trung một cú lật của bản cũ có thể dùng làm tham khảo để giảm bớt, không ép phim ấm áp không có cú lật phải tạo ra cú lừa.
+Register major twists before writing the script; decide the number by length and genre. The old version's about three big twists and one twist focus per episode can be used as a subtraction reference; do not force a heartwarming story without twists to create a deception.
 
-## Chọn lọc chuyển thể và thế giới quan
+## Adaptation choices and world-building
 
-Biến tám nguyên tắc của bản cũ thành các quyết định có thể duyệt xét: biểu đạt bằng hình ảnh, tinh giản lời thoại, nhịp điệu có biến đổi, đóng góp cho tuyến chính, thông tin dễ hiểu, cảm xúc rõ ràng, kỳ vọng mở đầu, ưu tiên động tác. Cảm xúc và nhịp điệu không được trở thành cái cớ phá vỡ nhân quả đã xác nhận.
+Turn the old version's eight principles into reviewable decisions: visual expression, concise dialogue, varied rhythm, contribution to the main line, understandable information, clear emotion, opening anticipation, action first. Emotion and rhythm cannot be excuses to break confirmed causality.
 
-- Ưu tiên nén: giới thiệu lặp lại, xung đột lặp lại cùng thủ đoạn, tán gẫu không có phần tăng thêm về nhân vật hay quan hệ, đoạn giải thích dài không thể trình bày trực tiếp.
-- Ưu tiên giữ: lựa chọn then chốt của nhân vật, thay đổi quan hệ, phần dẫn dắt nhân quả của cao trào, manh mối chênh lệch thông tin, điểm dễ nhớ của nhân vật, tích lũy cảm xúc trước khi thực hiện, cùng cái thường nhật/sự im lặng không thể thay thế của thể loại.
-- Phương pháp thay thế: quá trình liên tục rút gọn thành montage; bối cảnh đã biết một lần thì bổ sung bằng một câu thoại tự nhiên; hoạt động tâm lý đổi thành hành vi, ánh nhìn, phản hồi môi trường; nội dung hoàn toàn không có chức năng thì xóa.
-- Chuyển thể sáng tạo có thể tìm biến đổi từ yếu tố, góc nhìn, dung hợp thể loại có liên quan, cơ chế xung đột cụ thể. Dự án trung thành với nguyên tác không tự ý sửa thiết lập vì "đổi mới". Không được tuyên bố một tình tiết chưa kiểm chứng đã xuất hiện trên thị trường bao nhiêu lần.
-- Thế giới quan trả lời theo từng đoạn: đoạn này cần quy tắc nào? Nhìn ra từ hậu quả hành động thế nào? Do ai dẫn ra? Giải thích đến mức gợi ý hay rõ ràng? Khán giả theo ai? Lần bổ sung tiếp theo ở tập nào?
-- Đối thoại dùng ngôn ngữ phù hợp với thời đại, nghề nghiệp của nhân vật và phong cách dự án. Sở thích của bản cũ về việc thay thế chung chung chức quan hiện thực, tiền tệ phóng đại và cấm ngôn ngữ thi vị hóa không được coi là sự thật hay yêu cầu tuân thủ.
-- Ràng buộc sản xuất AI ghi lại khó khăn cụ thể và cách biểu đạt ứng viên, như tiếp xúc nhiều người, thay trang phục thường xuyên, tính liên tục không gian phức tạp; trước tiên giữ mục tiêu cốt truyện, rồi chọn phương pháp sản xuất theo mô hình hiện tại.
+- Compress first: repeated exposition, repeated conflicts with the same means, chatter with no character or relationship increment, long explanations that cannot be presented directly.
+- Keep first: characters' key choices, relationship changes, causal set-up for the climax, information-gap clues, characters' memorable points, emotional accumulation before payoff, and the everyday/silence that the genre cannot do without.
+- Substitution methods: compress continuous processes into a montage; supply already-known background once with one natural line of dialogue; turn psychological activity into behavior, eye line, environmental feedback; delete content with no function at all.
+- Original adaptation can find variation in elements, perspective, fusion with related genres, and specific conflict mechanisms. Projects faithful to the source work do not privately change settings for the sake of "innovation". Do not claim how many times an unverified trope has appeared on the market.
+- Answer world-building section by section: which rule does this section need? How is it seen from the consequences of action? Who introduces it? Is it hinted or explained explicitly? Whom does the audience follow? In which episode is the next addition?
+- Dialogue uses language that fits the characters' era, occupation and the project style. The old version's preferences for generically replacing real official titles, exaggerated currency and banning poetic language are not treated as facts or compliance requirements.
+- AI production constraints record specific difficulties and candidate expressions, such as multi-person contact, frequent costume changes, complex spatial continuity; keep the plot goal first, then choose the production method by the current model.
 
-Mẫu chiến lược:
+Strategy template:
 
 ```text
-Nguyên tắc: tên / mức ưu tiên / cách làm tích cực / ranh giới tiêu cực / tập-cảnh tương ứng
-Chọn lọc: chương-cảnh nguồn / giữ hoặc nén hoặc gộp hoặc xóa / lý do / cách thay thế / ảnh hưởng đến cung nhân vật và cài cắm
-Thế giới quan: thiết lập / lần xuất hiện đầu / bằng chứng hành động / mức độ giải thích / nhân vật neo / điểm nhìn khán giả / bổ sung về sau
-Tính liên tục: giọng điệu và hành vi nhân vật / ngoại hình và trạng thái đạo cụ / tông cảm xúc / phương pháp thể loại cần giữ
+Principle: name / priority / positive practice / negative boundary / corresponding episodes and scenes
+Choice: source chapter and scene / keep or compress or merge or delete / reason / substitute / impact on character arc and foreshadowing
+World-building: setting / first appearance / action evidence / degree of explanation / anchor character / audience viewpoint / later additions
+Continuity: character tone and behavior / appearance and prop state / emotional tone / genre methods to keep
 ```
 
-## Cảm xúc, động tác và lời thoại từng tập
+## Single-episode emotion, action and dialogue
 
-- Cảm xúc trước tiên định một cốt lõi và một phụ trợ, rồi định cảm nhận khi kết thúc. Điểm bùng nổ là bất ngờ thay đổi nhận thức, điểm ngược tâm là quan hệ hoặc mục tiêu quan trọng chịu tổn thất, điểm sảng khoái là sự thực hiện năng lực/trật tự/sự thuộc về sau khi tích lũy; khi thể loại cần ngọt ngào, ấm áp, bâng khuâng thì vẫn áp dụng như thường.
-- Cảm xúc có bốn kênh thể hiện: hành động (bàn tay nắm chặt rồi buông ra), ngôn ngữ (đổi lời, ngừng nghỉ, thay đổi nhịp), môi trường (âm thanh hoặc không gian thay đổi), độc thoại cần thiết. Ưu tiên viết động tác nhìn thấy được, không thêm ngoặc cảm xúc vào mỗi câu.
-- Cảm giác sảng khoái thương mại có thể dùng "bị áp chế/bị phán đoán sai → chủ động phản công → thái độ người khác thay đổi → thu hoạch thực tế"; phim tình cảm có thể dùng "hiểu lầm → quan hệ xa cách → sự thật và hành động → hàn gắn"; gia đình có thể dùng "khốn cảnh → cầu cứu bị cản trở → chủ động giúp đỡ → quan hệ gần lại". Đây là mẫu nhân quả, không phải bài bản thay thế lựa chọn của nhân vật.
-- Giằng co phải có căn cứ mới: xây dựng kỳ vọng → tạm thời gần lại → bị cái giá mới hoặc phán đoán sai cắt ngang → nhân vật điều chỉnh hành động → thực hiện sâu hơn. Hiểu lầm lặp lại tại chỗ không tăng sức căng.
-- Mở đầu càng sớm càng tốt để khán giả hiểu hoàn cảnh, mục tiêu, động cơ của nhân vật chính và cam kết thể loại. Dự án nhịp nhanh thương mại có thể đi thẳng vào khốn cảnh cực đoan, tương phản thân phận hoặc cú sốc quan hệ; các thể loại khác dùng một điều bất thường có ý nghĩa, động tác hoặc thay đổi thường nhật để xây dựng kỳ vọng.
+- For emotion, first set one core and one auxiliary, then the feeling at the end. A shock beat is an unexpected change in understanding, a pain beat is loss to an important relationship or goal, a payoff beat is the fulfillment of ability/order/belonging after accumulation; sweet, warm and wistful still work when the genre needs them.
+- Emotion has four channels of expression: action (a hand clenching then loosening), language (correcting oneself, pauses, rhythm changes), environment (sound or space changing), and necessary monologue. Prefer visible action; do not add an emotion parenthetical to every line.
+- Commercial payoff can use "pressured/misjudged -> active counterattack -> others' attitudes change -> real gain"; romance can use "misunderstanding -> estrangement -> truth and action -> repair"; family can use "predicament -> asking for help blocked -> someone actively helps -> relationship grows closer". These are causal templates, not routines replacing characters' choices.
+- Push-and-pull needs new grounds: build expectation -> temporarily get close -> interrupted by a new cost or misjudgment -> character adjusts action -> deeper payoff. Repeated misunderstandings in place add no tension.
+- At the opening, let the audience understand the protagonist's situation, goal, motivation and the genre promise as soon as possible. Commercial fast-paced projects can go straight into an extreme predicament, identity contrast or relationship shock; other genres establish anticipation with a meaningful anomaly, action or change in everyday life.
 
-Năm phép hình ảnh hóa:
+Five ways to make it visual:
 
-1. Viết bối cảnh: thời gian, nội ngoại cảnh, ánh sáng và không gian liên quan đến cốt truyện nhân vật, chứ không phải danh sách đồ đạc.
-2. Viết chi tiết: không dùng "kiên cường", mà viết "nghe thấy con khóc, lau nước mắt gượng cười".
-3. Viết động tác: động tác kích hoạt lời thoại, lời thoại thay đổi hành động tiếp theo, tránh đứng yên giải thích thiết lập.
-4. Viết hình ảnh then chốt: ở mở màn, thực hiện, bước ngoặt cảm xúc, hé lộ sự thật thì nói rõ khán giả phải thấy gì; cỡ cảnh kỹ thuật và chuyển động máy để lại cho đạo diễn.
-5. Viết nghe nhìn cần thiết: viền ngược sáng, âm thanh đến trước, hòa tan hình ảnh... biểu đạt bằng ngôn ngữ hình ảnh có thể thực hiện, không kẹp tham số sản xuất vào văn bản kịch bản.
+1. Write the scene: time, interior/exterior, and the light and space relevant to the characters and plot, not a furniture list.
+2. Write details: not "strong", but "hearing the child cry, wipes away tears and forces a smile".
+3. Write action: action triggers dialogue, dialogue changes the next action; avoid standing around explaining the setting.
+4. Write key visuals: at the opening, payoff, emotional turn and truth reveal, state what the audience must see; technical shot size and camera movement are left to the director.
+5. Write necessary audiovisuals: backlit silhouettes, sound arriving first, image dissolves etc. are expressed in achievable visual language; do not insert production parameters into the script text.
 
-Kiểm tra lời thoại:
+Dialogue check:
 
-- Mỗi câu ít nhất thúc đẩy hành động, khắc họa nhân vật, tạo chênh lệch thông tin hoặc thay đổi cảm xúc; xóa hỏi đáp lặp lại và kiểu tự giới thiệu thân phận để giải thích.
-- Lời bề mặt và ý định thật có thể khác nhau, nhưng khán giả cần đọc hiểu được từ ngữ cảnh hoặc phản ứng; tính đa nghĩa của đấu trí tâm lý được kiểm soát theo phương pháp thể loại.
-- Nói vào đúng điểm yếu và khát vọng thật của nhân vật, không dựa vào việc mọi nhân vật đều gào cùng một kiểu thoại.
-- Sự im lặng quan trọng phải viết rõ ai không nói, vì sao không nói, phản ứng nhìn thấy được là gì; độc thoại chỉ bổ sung thông tin mà hình ảnh không thể truyền đạt hợp lý.
-- Viết ít tu từ tiểu thuyết không thể diễn, giải thích tâm lý dài dòng, chú thích ngoặc mỗi câu và động tác vụn vặt không có hậu quả.
+- Each line at least drives action, shapes a character, creates an information gap or changes emotion; delete repeated question-and-answer and self-introduction-style explanations.
+- Surface words and real intent may differ, but the audience must be able to read it from context or reactions; the ambiguity of psychological games is controlled by the genre method.
+- Speak to the character's real soft spot and desire; do not rely on all characters shouting the same kind of line.
+- For important silences, state who does not speak, why, and what the visible reaction is; monologue only supplies information the image cannot reasonably convey.
+- Write less novelistic rhetoric that cannot be performed, long psychological explanations, parentheticals on every line, and trivial actions without consequences.
 
-## Mẫu kết quả có thể điền trực tiếp
+## Output templates ready to fill in
 
-Node khung sườn: `Cốt lõi câu chuyện → cung nhân vật nội tâm → tiểu sử nhân vật cốt lõi → cấu trúc ba hồi → đề cương các tập → ghi chép chọn lọc → đăng ký chênh lệch thông tin và cú lật → điểm treo phát hành áp dụng`.
+Skeleton nodes: `story core -> inner character arc -> core character profiles -> three-act structure -> episode outline -> choices record -> information gap and twist register -> applicable distribution paywall points`.
 
-Đề cương các tập mỗi tập một dòng: `Số tập | Tiêu đề | Chương-đoạn nguồn và đoạn | Chức năng kịch tính | Mục tiêu/trở ngại/lựa chọn/kết quả | Cảm xúc cốt lõi và phụ trợ | Thông tin mới/chênh lệch biết chuyện | Cách xử lý chương | Kỳ vọng cuối tập`. Một chương có thể chia thành nhiều tập, nhưng các đoạn không được lẫn lộn; tổng quan dự án dài vẫn phải đúng N dòng, đồng thời triển khai riêng tập đầu, cuối hồi, cao trào và các tập người dùng chỉ định.
+Episode outline, one row per episode: `episode number | title | source chapter section and segment | dramatic function | goal/obstacle/choice/result | core and auxiliary emotion | new information/knowledge gap | chapter handling | ending anticipation`. One chapter may be split into several episodes, but segments must not be mixed up; a long project's overview must still have exactly N rows, with the first episode, act-end episodes, climax and user-specified episodes expanded separately.
 
 ```text
-Tên tác phẩm EP001: tiêu đề tập
-Thời lượng mục tiêu / tỉ lệ khung / phong cách
-Tóm tắt cốt truyện: xung đột chính, bước ngoặt then chốt, thay đổi tình cảm (thường khoảng 200-300 chữ, điều chỉnh theo độ phức tạp của tập)
+Title EP001: Episode title
+Target duration / aspect ratio / style
+Synopsis: main conflict, key turns, emotional changes (usually about 200-300 characters, adjusted to this episode's complexity)
 
-1-1 Tên bối cảnh NGÀY/NỘI
-Nhân vật: chỉ liệt kê nhân vật thực sự xuất hiện trong cảnh này
-△Môi trường và động tác liên quan đến cốt truyện, viết rõ cách hành xử, biểu cảm, trạng thái đạo cụ cần thiết.
-Tên nhân vật: lời thoại.
-△Phản ứng của đối phương và hành động tiếp theo.
-OS (nhân vật): độc thoại nội tâm thực sự cần thiết.
-VO: lời giải thích ngoài hình thực sự cần thiết.
-[Cắt cứng/fade in/chớp trắng/chớp đen/hòa tan: chỉ ghi chú khi tự sự cần]
+1-1 Location name DAY/INT
+Characters: list only the characters actually appearing in this scene
+△Environment and action relevant to the plot, stating how they behave, expressions, necessary prop states.
+Character name: dialogue.
+△The other party's reaction and subsequent action.
+OS (character): inner monologue only when truly necessary.
+VO: off-screen narration only when truly necessary.
+[Hard cut/fade in/flash white/flash black/dissolve: note only when the narrative needs it]
 ---
-1-2 Tên bối cảnh tiếp theo ĐÊM/NGOẠI
+1-2 Next location name NIGHT/EXT
 ...
-Điểm kết thúc tập này
+End point of this episode
 ```
 
-Kịch bản chính thức chỉ chứa phần chính văn và phần đầu cần thiết, không kẹp điểm mật độ, phân tích nhịp, tham số mô hình, thống kê số chữ hay báo cáo kiểm duyệt. Những thứ này lưu vào node văn bản quyết định sáng tác/kiểm duyệt độc lập; tiêu đề không vì chỉnh sửa mà thêm "v2/bản chốt" rồi trở thành tập mới.
+The formal script contains only the body and the necessary header, without density scores, beat analysis, model parameters, character counts or review reports. These go into separate creative decision/review text nodes; a title does not become a new episode by appending "v2/finalized" after edits.
 
-## Tham khảo định lượng tùy chọn cho phim ngắn thương mại
+## Optional quantitative references for commercial short drama
 
-Dưới đây giữ lại kinh nghiệm bản cũ để các dự án đã xác nhận chọn dùng nhịp phim ngắn thương mại lựa chọn, không ghi đè [phương pháp thể loại](narrativeGenres.md) hay cấu hình của người dùng:
+The following keeps the old version's experience for projects that have confirmed adopting commercial short-drama rhythm; it does not override [Genre methods](narrativeGenres.md) or user configuration:
 
-| Tham khảo | Phương pháp gốc và cách thực thi |
+| Reference | Original method and how to execute it |
 |---|---|
-| Lời thoại và độ dài | Ước tính lời thoại khoảng 150 chữ/phút; câu ngắn khoảng 20 chữ, mỗi lần phát ngôn khoảng 50 chữ, chính văn gọn khoảng trong 1000 chữ có thể làm mục tiêu cắt giảm. Động tác và ngừng nghỉ ước tính thời gian riêng, không vì giới hạn chữ mà phá vỡ thời lượng mục tiêu hay cốt truyện cần thiết. |
-| Nhịp cấp giây | 3 giây lối vào cảm xúc, 15 giây xuất hiện biến đổi, 45 giây hình thành kỳ vọng mạnh; có thể chuyển đổi theo tỉ lệ "lối vào phía trước - biến đổi đoạn giữa - lựa chọn phần cuối". Không phải mọi thể loại đều phải có xung đột sau mỗi số giây cố định. |
-| Cấu trúc giai đoạn đầu | Đoạn mở đầu trước tiên có xung đột và mục tiêu nhân vật, rồi thêm áp lực nhiều phía, cuối cùng thực hiện một lượt và đặt ra vấn đề tuyến chính lớn hơn; "mười tập đầu" cũ tương ứng khoảng 10%-15% đầu của dự án dài, dự án ngắn không được máy móc nhồi mười tập. |
-| Điểm treo trả phí | Bản cũ đưa ra vị trí ứng viên ở khoảng 10%/30%/50%/70%/90%; vị trí cụ thể theo chiến lược phát hành đã xác nhận. Trước tiên đưa ra sự thực hiện thật, rồi nâng cao kỳ vọng tuyến chính, cuối cùng để lại lựa chọn then chốt chưa quyết. |
-| Thủ pháp điểm treo | Chênh lệch thân phận, lệch pha tình cảm, biến cố số phận, môi trường biến đổi lớn; kiểm tra khoảnh khắc then chốt, thay đổi nhân vật, sự tò mò, cường độ cao trào, dự án tình yêu xem thêm giai đoạn quan hệ. Cảnh hoành tráng không phải bắt buộc. |
-| Đoạn quảng bá | Khi thực sự có nhu cầu quảng bá thì đánh dấu đoạn khoảng 30 giây có thể hiểu độc lập cùng xung đột và sự thực hiện của nó, không yêu cầu mỗi tập máy móc sản xuất một "điểm bùng nổ". |
-| Tỉ trọng cảm xúc | Ngọt sủng có thể tham khảo ngọt 60/ngược nhẹ 30/bất ngờ 10, báo thù đè nén 40/sảng khoái 50/hả giận 10, trọng sinh sảng khoái 50/kỳ vọng 30/ấm áp 20, gia đình đồng cảm 40/uất ức 30/hòa giải 30; chỉ hỗ trợ phán đoán tông, không được dùng tỉ lệ phần trăm thay cho cốt truyện thực tế. |
-| Nén | Bản cũ có "tỉ lệ nén ≤40%" nhưng không định nghĩa cách tính; trước tiên xác nhận tính theo số chữ, thời lượng hay sự kiện, rồi đăng ký chọn lọc, không được dựa vào tỉ lệ chưa định nghĩa để tuyên bố đạt. |
+| Dialogue and length | Estimate dialogue at about 150 characters/minute; short lines of about 20 characters, single speeches of about 50 characters, and a compact body within about 1000 characters can be trimming targets. Action and pauses are timed separately; do not break the target duration or necessary plot to meet character limits. |
+| Second-level beats | Emotional entry at 3 seconds, change by 15 seconds, strong anticipation by 45 seconds; can be migrated as proportions of "front entry - mid change - end choice". Not every genre must have conflict at fixed second intervals. |
+| Early structure | The opening section first has conflict and the character's goal, then adds pressure from multiple sides, finally pays off one round and raises a bigger main-line question; the old "first ten episodes" corresponds to about the first 10%-15% of a long project; short projects must not mechanically cram in ten episodes. |
+| Paywall points | The old version gave candidate positions at about 10%/30%/50%/70%/90%; specific positions follow the confirmed distribution strategy. First give a real payoff, then raise main-line expectations, finally leave a key unresolved choice. |
+| Paywall devices | Identity gap, misaligned feelings, a drastic change of fate, a drastic change of environment; check the key moment, character change, curiosity, climax intensity, and for romance projects also the relationship stage. Grand spectacle is not required. |
+| Ad clips | When there really is an advertising need, mark independently understandable clips of about 30 seconds with their conflict and payoff; do not require every episode to mechanically produce a "shock beat". |
+| Emotion ratios | Sweet romance can reference sweet 60 / mild angst 30 / surprise 10, revenge oppression 40 / payoff beat 50 / catharsis 10, rebirth payoff beat 50 / anticipation 30 / warmth 20, family empathy 40 / grievance 30 / reconciliation 30; these only help judge the tone, and percentages cannot replace the actual plot. |
+| Compression | The old version had "compression ratio <= 40%" without defining the measure; first confirm whether it is measured by characters, duration or events, then register the choices; do not declare a pass based on an undefined ratio. |
 
-Các lựa chọn nhịp theo đề tài của bản cũ: ngọt sủng "ràng buộc - giằng co - bí mật - phá băng - nguy cơ - xác nhận quan hệ"; ngược luyến "tổn thương - hối ngộ - hàn gắn bị cản trở - hòa giải có hành động"; manh bảo (em bé đáng yêu) "trở về - phát hiện quan hệ - gỡ nút thắt lòng - chung tay ứng phó - tái thiết gia đình"; chiến thần "ẩn mình/bị áp chế - thực hiện năng lực hoặc thân phận - giải quyết nguy cơ cốt lõi"; trọng sinh "thất bại lần trước - mang thông tin chọn lại - gánh hậu quả mới - hoàn thành mục tiêu". Khi câu chuyện gốc không thuộc các cấu trúc này thì không áp dụng.
+Old genre beat options: sweet romance "bound together - push and pull - secret - breaking the ice - crisis - relationship confirmed"; angst romance "harm - remorse - repair blocked - reconciliation through action"; cute baby "return - discovering the relationship - untying the knot - joining forces - rebuilding the family"; war god "hidden/oppressed - ability or identity paid off - resolving the core crisis"; rebirth "previous failure - choosing again with information - bearing new consequences - achieving the goal". Do not apply them when the original story does not belong to these structures.
 
-## Phương pháp kiểm duyệt và phân cấp vấn đề
+## Review method and problem grading
 
-Trước khi kiểm duyệt, đọc lại kết quả thật của lần này và các node tiền đề của nó, không được chỉ dựa vào tóm tắt sáng tác để tự đánh giá. Kiểm duyệt đưa ra vấn đề và phương án, không quyết định hướng cốt truyện thay người dùng; lỗi sót chữ, sai số rõ ràng có thể sửa theo phạm vi ủy quyền hiện tại, thay đổi câu chuyện tuân theo bản ghi xác nhận.
+Before reviewing, read back this run's real outputs and their prerequisite nodes; do not self-assess based only on the creative summary. Reviews raise problems and options and do not decide plot direction for the user; clear missing words, wrong numbers etc. can be fixed within current authorization, and story changes follow the confirmation records.
 
-- Khung sườn: cốt lõi câu chuyện và cung nhân vật xuyên suốt; số tập thực tế bằng cấu hình; nguồn đầy đủ và có nơi đến; động cơ nhân vật, bước ngoặt cuối hồi, chênh lệch thông tin và kỳ vọng cuối tập đều hợp lý; cú lật có thể đối chiếu với nguyên văn và bản ghi cài sẵn.
-- Chiến lược: mỗi nguyên tắc có cách làm tích cực và ranh giới; cắt giảm nhất quán với khung sườn; giữ cung nhân vật và điểm dễ nhớ then chốt; thế giới quan tiến dần; không âm thầm sửa thiết lập mà người dùng không cho phép sửa.
-- Từng tập: phạm vi tập hiện tại chính xác; nối tiếp trạng thái tập trước; động tác, lời thoại, thời gian địa điểm, trạng thái đạo cụ có thể thực thi; thời lượng hợp lý; phương pháp thể loại thực sự được đưa vào cảnh; phân tích kiến thức không lẫn vào chính văn.
-- Xuyên giai đoạn: sự thật sự kiện → phân bổ khung sườn → chọn lọc chiến lược → hiện thực hóa kịch bản tương thích từng mục; xung đột định vị đến chương, tập, cảnh, node cụ thể, không được dùng "tổng thể chưa đủ tốt" thay cho bằng chứng.
+- Skeleton: the story core and character arc run throughout; the actual episode count equals the configuration; sources are complete and accounted for; character motives, end-of-act turns, information gaps and ending anticipation hold; twists can be checked against the original text and planting records.
+- Strategy: each principle has a positive practice and a boundary; cuts are consistent with the skeleton; character arcs and key memorable points are kept; world-building is progressive; no settings the user forbade changing are quietly changed.
+- Single episode: the current episode's range is accurate; it connects to the previous episode's state; action, dialogue, time and place, and prop states are executable; duration is reasonable; genre methods actually land in scenes; knowledge analysis is not mixed into the body.
+- Cross-stage: event facts -> skeleton allocation -> strategy choices -> script implementation are compatible item by item; conflicts are located to specific chapters, episodes, scenes and nodes; "not good enough overall" cannot replace evidence.
 
-| Cấp | Tính chất vấn đề | Xử lý |
+| Level | Nature of problem | Handling |
 |---|---|---|
-| Nghiêm trọng | Trái với ý định đã xác nhận, thiếu phạm vi nguồn, đứt gãy nhân quả, sửa thiết lập vô căn cứ, cú lật lật đổ sự thật đã trình bày | Liệt kê vị trí, ảnh hưởng và cách sửa có thể chọn, chờ người dùng quyết định |
-| Trung bình | Dẫn dắt thay đổi nhân vật chưa đủ, giải phóng thông tin không rõ, nhịp thể loại mất cân bằng, thời lượng không khớp cấu hình | Đưa ra phương án điều chỉnh cục bộ có thể thực thi |
-| Nhẹ | Thừa thãi, giọng điệu không nhất quán, một số vấn đề định dạng và diễn đạt | Gộp cùng loại, xử lý theo phạm vi ủy quyền |
+| Severe | Violates confirmed intent, missing source range, causal break, unfounded setting change, twist overturning shown facts | List the location, impact and optional fixes, and wait for the user's decision |
+| Moderate | Insufficient set-up for character change, unclear information release, unbalanced genre rhythm, duration not matching configuration | Give an executable local adjustment plan |
+| Minor | Redundancy, inconsistent tone, minor formatting and expression problems | Merge same-kind items and handle within the authorized scope |
 
-Mẫu báo cáo: `Đối tượng và node | Đánh giá tổng thể một câu | Mức nghiêm trọng | Vị trí cụ thể và bằng chứng | Vấn đề | Phương án | Cần người dùng quyết định`. Chỉ liệt kê vấn đề thực tế, các mục đã đạt không cần thuật lại từng mục. Có thể tiếp tục dùng A/B/C/D: không có nghiêm trọng và trung bình ≤2 là A, không có nghiêm trọng và trung bình ≤5 là B, 1-2 nghiêm trọng là C, ≥3 nghiêm trọng là D; không có nghiêm trọng nhưng nhiều trung bình hơn thì theo ảnh hưởng nói rõ có cần sửa lớn không, không máy móc bỏ sót. Xếp hạng không phải là xác nhận của người dùng.
+Report template: `object and node | one-sentence overall assessment | severity | specific location and evidence | problem | solution | needs user decision`. List only actual problems; passed items need not be restated one by one. A/B/C/D can be kept: no severe and moderate <= 2 is A, no severe and moderate <= 5 is B, 1-2 severe is C, >= 3 severe is D; with zero severe but more moderate, explain by impact whether larger changes are needed, without mechanically leaving anything out. A grade is not user confirmation.

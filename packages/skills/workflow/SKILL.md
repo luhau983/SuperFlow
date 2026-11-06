@@ -1,859 +1,859 @@
 ---
 name: workflow
-description: Trong canvas hiện tại của Toonflow, biến ý tưởng, tiểu thuyết hoặc kịch bản bản chốt thành văn bản, tài sản hình ảnh và đoạn video có thể xem được, hỗ trợ tái sử dụng tư liệu, làm tiếp và sửa cục bộ. Dùng khi thực sự sản xuất hoặc tiếp tục một dự án có sẵn; khi chỉ rõ là chỉ cần văn bản hội thoại thì không thao tác canvas, khi thảo luận hoặc chỉnh sửa chính skill thì không khởi động sản xuất.
+description: Turn an idea, a novel, or a finalized script into viewable text, image assets, and video segments in the current Toonflow canvas, with support for reusing media, sequels, and partial revisions. Use it for actual production or for continuing an existing project; do not operate the canvas when only conversational text is explicitly wanted, and do not start production when discussing or editing the skill itself.
 metadata:
   version: "2.7.0"
-  displayName: Quy trình sản xuất video
+  displayName: Video Production Workflow
   author: Toonflow
   github: https://github.com/HBAI-Ltd/Toonflow-app
 ---
 
-# Quy trình sản xuất trên canvas Toonflow
+# Toonflow Canvas Production Workflow
 
-Tiếp nối từ nội dung người dùng đã có, đặt thành quả vào dự án Toonflow hiện tại. Tổ chức sản xuất dựa trên kịch bản lần này và tư liệu thật, không yêu cầu người dùng phải bổ sung trước một bộ tài liệu sản xuất. Gói này chứa đủ các phương pháp cần thiết, không phụ thuộc vào nhóm Skill đa vị trí trước đây.
+Continue from what the user already has and put the results into the current Toonflow project. Organize production around this script and the real media; do not require the user to first complete a full set of production documents. This package contains the methods it needs and does not depend on the original multi-role Skill group.
 
-## Bắt đầu từ đâu
+## Where to start
 
-Trước tiên xác định sản phẩm cần giao lần này, tư liệu đã có và các giới hạn người dùng nêu rõ; giữ nguyên thời lượng, phong cách, tỉ lệ khung, ngôn ngữ và phiên bản đã biết. Chỉ hỏi những mục còn thiếu có ảnh hưởng đến kết quả mà không thể suy đoán hợp lý.
+First determine this deliverable, the existing materials, and the user's explicit constraints, and carry over the known duration, style, aspect ratio, language, and version. Only ask about gaps that affect the result and cannot be reasonably inferred.
 
-| Đầu vào đã có | Cách xử lý |
+| Existing input | How to handle it |
 |---|---|
-| Ý tưởng hoặc một câu | Bổ sung mục tiêu, trở ngại và kết quả của nhân vật, tạo thành câu chuyện có thể duyệt và kịch bản hoàn chỉnh cho lần này |
-| Tiểu thuyết, câu chuyện hoặc đoạn nguyên tác | Xác nhận phạm vi chuyển thể, giữ nguyên văn gốc, theo dõi sự kiện, nhân vật, lời thoại và thông tin chưa biết, chuyển thành kịch bản nghe nhìn |
-| Kịch bản bản chốt / timeline + mục tiêu hiện tại là sản xuất, tạo, tiếp tục hoặc sửa video | **Bất kể người dùng có nhắc đến "Seedance", "prompt" hay model cụ thể hay không, đều lập tức vào thực thi "SEEDANCE EPISODE DIRECTOR · PART A" được nhúng trong file này.** Khi người dùng chưa chỉ định model, lập tức khóa định tuyến Seedance, và chỉ dùng một câu hỏi ngắn duy nhất để xác nhận "Seedance 2.0 hay 2.5"; khi người dùng đã chỉ định 2.0/2.5 thì định tuyến theo model tương ứng. Việc hỏi model không được chuyển sang cấu hình canvas, quy trình tài sản hay phương pháp prompt khác. |
-| Kịch bản bản chốt / timeline + chỉ yêu cầu tài sản, đọc kịch bản, chẩn đoán hoặc tác vụ không phải video | Chỉ xử lý phạm vi không phải video mà người dùng yêu cầu rõ; không tự động tạo prompt video chỉ vì có kịch bản bản chốt. |
-| Trong tác vụ Seedance, người dùng chưa chỉ định model | **Bắt buộc xác nhận model mục tiêu trước.** Chỉ hỏi một lần "Seedance 2.0 hay 2.5"; bước này thuộc phần xác định đầu vào A0 của PART A, không phải câu hỏi cấu hình thông thường. Sau khi người dùng trả lời, tiếp tục cùng trạng thái thực thi Seedance; các cấu hình thực thi như tỉ lệ khung, độ phân giải, chế độ tham chiếu, âm thanh gốc không thể thay thế, vượt qua hoặc làm gián đoạn định tuyến này. |
-| Trong tác vụ Seedance, người dùng đã chỉ định 2.0/2.5 | Thực thi PART A trực tiếp; 2.0 đi theo A9.1, 2.5 đi theo A9.2. |
-| Phần tiếp theo hoặc sản xuất đã có | Đọc lịch sử được chỉ định, node hiện tại và bản ghi chọn dùng, xác nhận phạm vi lần này, tiếp tục từ tiến độ thực tế |
-| Chỉ định một đoạn, một tài sản hoặc một chỉnh sửa | Chỉ xử lý phạm vi đó và các phụ thuộc thực sự bị ảnh hưởng, không chạy lại toàn bộ chuỗi |
+| An idea or a one-liner | Fill in the characters' goals, obstacles, and outcome to form a reviewable story and the complete script for this deliverable |
+| A novel, story, or source-work excerpt | Confirm the adaptation scope, keep the original text, track events, characters, dialogue, and unknown information, and convert it into an audiovisual script |
+| Finalized script / timeline + the current goal is to produce, generate, continue, or revise video | **Regardless of whether the user mentions "Seedance", "prompts", or a specific model, immediately enter the "SEEDANCE EPISODE DIRECTOR · PART A" embedded in this file and execute it.** If the user has not specified a model, immediately latch the Seedance route and confirm with a single short question, "Seedance 2.0 or 2.5"; if the user has already specified 2.0/2.5, route by the corresponding model. Asking about the model must not divert to canvas configuration, the asset flow, or other prompt methods. |
+| Finalized script / timeline + only asset, script reading, diagnosis, or non-video tasks are requested | Handle only the non-video scope the user explicitly requests; do not automatically generate video prompts just because a finalized script exists. |
+| Seedance task where the user has not specified a model | **The target model must be confirmed first.** Ask only once, "Seedance 2.0 or 2.5"; this step belongs to the A0 input assessment of PART A and is not an ordinary configuration question. After the user answers, continue in the same Seedance execution state; execution settings such as aspect ratio, resolution, reference mode, and native audio cannot replace, bypass, or interrupt this route. |
+| Seedance task where the user has specified 2.0/2.5 | Execute PART A directly; 2.0 goes through A9.1, 2.5 goes through A9.2. |
+| A sequel or existing production | Read the specified history, current nodes, and adoption records, confirm the scope for this round, and continue from the actual progress |
+| A specific segment, asset, or revision | Handle only that scope and the dependencies that are genuinely affected; do not rerun the whole chain |
 
-> **Quy tắc tạo prompt Seedance đã được nhúng trực tiếp vào workflow này, không phải Skill bên ngoài, cũng không phải workflow gọi sang một Skill khác.** Khi tác vụ bước vào giai đoạn "kịch bản đã xác nhận → prompt phân đoạn Seedance 2.0/2.5", bắt buộc thực thi trực tiếp **"SEEDANCE EPISODE DIRECTOR · PART A"** ở bên dưới file này. Quy tắc nhúng này là quy chuẩn thực thi có mức ưu tiên cao nhất của workflow ở giai đoạn tạo prompt Seedance: lấy A0–A12 trong `SKILL-seedance-episode-director.md` do người dùng cung cấp làm cơ sở, và gộp thêm các quy tắc về tính liên tục, độ ổn định khi tạo và kiểm tra lỗi hớ (sạn) mà người dùng đã bổ sung rõ ràng sau đó; nếu các đoạn khác của workflow này, references/methods, storyboard hoặc hướng dẫn cũ xung đột với nó, lấy PART A nhúng hiện tại làm chuẩn. Trừ khi người dùng sau này sửa đổi rõ ràng, không được dùng phương pháp khác để viết lại, làm yếu hoặc thay thế khóa trung thành cốt truyện, quy tắc xác nhận model mục tiêu, quy tắc phân đoạn/thời lượng, Reference binding, mẫu A9, kiểm tra A11 hoặc tối ưu một lần A12 trong đó.
+> **The Seedance prompt generation rules are embedded directly in this workflow; they are not an external Skill, nor does the workflow call another Skill.** When the task enters the "confirmed script → Seedance 2.0/2.5 segmented prompts" stage, you must directly execute the **"SEEDANCE EPISODE DIRECTOR · PART A"** below in this file. These embedded rules are the highest-priority execution specification of this workflow for the Seedance prompt generation stage: they take the user-provided `SKILL-seedance-episode-director.md` A0–A12 as the baseline and incorporate the continuity, generation-stability, and continuity-error check rules the user explicitly added later; if other sections of this workflow, references/methods, storyboard, or old instructions conflict with them, the current embedded PART A prevails. Unless the user explicitly changes them later, do not use other methods to rewrite, weaken, or replace its plot-fidelity lock, target-model confirmation rule, segmentation/duration rules, Reference binding, A9 templates, A11 checks, or A12 single-pass optimization.
 
-### Khóa định tuyến Seedance (quy tắc lối vào có mức ưu tiên cao nhất)
+### Seedance route latch (highest-priority entry rule)
 
-Khi đồng thời thỏa mãn cả hai điều sau, **tự động coi là tác vụ Seedance**, không yêu cầu người dùng phải nói các từ kích hoạt như "Seedance", "2.0/2.5", "tạo prompt":
+When both of the following hold, **automatically treat it as a Seedance task**; do not require the user to say trigger words such as "Seedance", "2.0/2.5", or "generate prompts":
 
-1. Hiện đã có kịch bản bản chốt có thể thực thi, timeline, đoạn cốt truyện theo shot, văn bản đoạn đã xác nhận, hoặc người dùng yêu cầu rõ ràng tiếp tục sản xuất video đã có;
-2. Ý định hiện tại là sản xuất video, tạo video, tiếp tục video, sửa video, chuẩn bị tạo video, biến cốt truyện thành video, hoặc cấu hình cho video sắp tạo.
+1. There is currently an executable finalized script, timeline, shot plot sections, confirmed segment text, or the user explicitly asks to continue an existing video production;
+2. The current intent is to produce video, generate video, continue video, revise video, prepare for video generation, turn the plot into video, or configure the video about to be generated.
 
-Một khi khớp, lập tức khóa thành **trạng thái thực thi Seedance**, và tuân thủ:
+Once matched, immediately latch into the **Seedance execution state** and observe the following:
 
-- **Vào PART A trước, rồi mới xử lý cấu hình thực thi canvas.** Bản thân model mục tiêu thuộc đầu vào bắt buộc của A0, không tính là cấu hình canvas; không được gọi trước các công cụ đọc canvas (`getCanvas/findCanvasNodes/getCanvasNodes/getCanvasEdges/getNodeTools`) hoặc `node:getConfig` của node, không được hỏi trước provider/resolution/ratio/mode, không được làm phân cảnh chung trước, hay vào phương pháp prompt khác trước rồi mới quyết định có dùng Seedance hay không.
-- Khi người dùng chưa chỉ định 2.0/2.5, **bắt buộc sau khi định tuyến Seedance đã được khóa, dùng một câu hỏi ngắn duy nhất để xác nhận "Seedance 2.0 hay 2.5"**. Sau khi hỏi vẫn giữ trạng thái thực thi Seedance, không thoát ra, không chuyển sang workflow thông thường; người dùng trả lời model xong thì lập tức tiếp tục thực thi PART A từ A0.
-- Khi người dùng đã chỉ định 2.0/2.5, dùng trực tiếp thông tin đó làm đầu vào A0; không được hỏi lại.
-- **Tách riêng việc xác nhận model mục tiêu với việc hỏi cấu hình thực thi.** Khi chưa chỉ định 2.0/2.5, trước tiên xác nhận model mục tiêu trong A0; sau khi xác nhận, nếu tầng thực thi còn cần hỏi các cấu hình như tỉ lệ khung, độ phân giải, tạo âm thanh, chế độ tham chiếu, nhà cung cấp, thì các câu hỏi này chỉ là bổ sung tham số thực thi cho cùng một tác vụ Seedance. Sau khi người dùng trả lời vẫn ở cùng trạng thái thực thi Seedance, không được quay về workflow chung, chọn lại phương pháp prompt hoặc bỏ qua A0–A12.
-- Khi người dùng trong phần hỏi đáp cấu hình chỉ trả lời ngắn như "16:9", "1080p", "bật âm thanh gốc", "2.5", các câu trả lời này được coi là **bổ sung cấu hình cho tác vụ Seedance hiện tại**, không phải tác vụ mới; không được giải trừ khóa chỉ vì câu trả lời đó không lặp lại chữ "Seedance/prompt".
-- Nếu người dùng hỏi trước "có những cấu hình nào/dùng cấu hình gì" rồi mới quyết định, việc trả lời câu hỏi cấu hình không hủy định tuyến Seedance; một khi tiếp tục sản xuất video, bắt buộc quay lại/tiếp tục PART A.
-- Chỉ khi người dùng chủ động đổi tác vụ rõ ràng thành "không tạo/sửa prompt video, chỉ làm tài sản, sáng tác kịch bản, tư vấn hoặc công việc khác không phải video", mới giải trừ khóa định tuyến Seedance.
-- Ở giai đoạn tạo media thực tế, nếu node thời gian thực không hỗ trợ model đã chọn ở A0, chỉ được báo cáo xung đột năng lực thực tế và quay lại xử lý các mục bị ảnh hưởng trong PART A; **không được dùng model mặc định của tầng cấu hình để âm thầm thay thế định tuyến Seedance.**
+- **Enter PART A first, then handle canvas execution configuration.** The target model itself is a required A0 input and does not count as canvas configuration; do not first call canvas reading tools (`getCanvas/findCanvasNodes/getCanvasNodes/getCanvasEdges/getNodeTools`) or a node's `node:getConfig`, first ask about provider/resolution/ratio/mode, first do a generic storyboard, or first enter another prompt method before deciding whether to use Seedance.
+- If the user has not specified 2.0/2.5, **after the Seedance route has been latched, you must confirm "Seedance 2.0 or 2.5" with one short question**. After asking, stay in the Seedance execution state; do not exit or switch to the ordinary workflow; once the user answers the model, immediately continue executing PART A from A0.
+- If the user has already specified 2.0/2.5, take that information directly as A0 input; do not ask again.
+- **Keep target-model confirmation separate from execution configuration questions.** If 2.0/2.5 is not specified, first confirm the target model within A0; after confirmation, if the execution layer still needs to ask about aspect ratio, resolution, audio generation, reference mode, provider, or other settings, those questions may only serve as execution-parameter additions to the same Seedance task. After the user answers, you remain in the same Seedance execution state; do not return to the generic workflow, re-choose a prompt method, or skip A0–A12.
+- When the user replies in the configuration Q&A with only short answers such as "16:9", "1080p", "turn on native audio", or "2.5", treat these answers as **configuration additions to the current Seedance task**, not a new task; do not release the latch just because the reply itself does not again contain the words "Seedance/prompt".
+- If the user first asks "what settings are there / what settings to use" and decides later, answering the configuration question does not cancel the Seedance route; once video production continues, you must return to / continue PART A.
+- Only when the user explicitly changes the task to "do not generate/revise video prompts, only do assets, script writing, consulting, or other non-video work" is the Seedance route latch released.
+- If, in the actual media generation stage, the live node does not support the model selected in A0, you may only report the real capability conflict and return to handling the affected items in PART A; **do not silently replace the Seedance route with the configuration layer's default model.**
 
-**Cốt lõi: Seedance là lõi thực thi đạo diễn của giai đoạn sản xuất video, không phải plugin tùy chọn chỉ kích hoạt khi người dùng nói ra một từ khóa nào đó.**
+**Core: Seedance is the directing execution kernel of the video production stage, not an optional plugin triggered only when the user says some keyword.**
 
-### Cách ly cứng giai đoạn Seedance (bắt buộc)
+### Seedance stage hard isolation (mandatory)
 
-Một khi khớp "Khóa định tuyến Seedance" ở trên — tức là đã có đầu vào cốt truyện có thể thực thi và mục tiêu hiện tại bước vào sản xuất/tạo/sửa video — lập tức vào **trạng thái thực thi cách ly cứng**; không yêu cầu người dùng nói thêm "Seedance" hay "prompt":
+Once the "Seedance route latch" above is matched (that is, there is executable plot input and the current goal enters video production/generation/revision), immediately enter the **hard-isolation execution state**; do not require the user to additionally say "Seedance" or "prompt":
 
-- Từ lúc vào PART A cho đến khi hoàn tất xuất prompt cuối cùng, **chỉ thực thi PART A nhúng trong file này**, không được đọc thêm hay áp dụng `references/sourceAndScript.md`, `references/methods/*`, bất kỳ quy tắc storyboard/phân cảnh cũ hay references dạy học cho người, cũng không được lấy từ các file này một bộ quy tắc thứ hai về phân đoạn, thời lượng, shot, vị trí đứng, diễn xuất, chuyển động máy, tính liên tục, âm thanh, Reference binding, mẫu hay QA.
-- Kịch bản, timeline, thiết lập nhân vật/bối cảnh/đạo cụ, node tham chiếu thật/handle tài sản mà người dùng đã cung cấp thuộc đầu vào của PART A, không bị cách ly này hạn chế.
-- **Ngoại lệ duy nhất**: chỉ khi A1.2/A4 của PART A cần rõ ràng "bổ sung tài sản tham chiếu/đề xuất thiết kế cần thiết khi không có ảnh tham chiếu", mới được đọc theo nhu cầu `references/assets.md`, `references/methods/visualDesign.md`, `references/methods/colorAndLight.md`; chỉ lấy nội dung cần cho thiết kế ngoại hình/không gian/chất liệu/ánh sáng, **không được mang các phương pháp về thời lượng, shot, diễn xuất hay tự sự trong các file này trở lại quy tắc prompt Seedance**. Hoàn tất đề xuất tài sản/thiết kế thì lập tức quay về PART A.
-- Sau khi prompt Seedance cuối cùng đã được chốt theo A11/A12, nếu người dùng yêu cầu rõ ràng việc kết nối tham chiếu thực tế, ghi vào node tạo hoặc tạo/nghiệm thu media, mới thoát khỏi cách ly cứng prompt, vào **tầng thực thi** của `canvasExecution.md` / `stateAndDelivery.md`. Tầng thực thi chỉ được chuyển prompt đã chốt, kết nối tham chiếu thật, đặt tham số model thật và kiểm tra kết quả, **không được viết lại phân đoạn, định dạng, cốt truyện, vị trí đứng, diễn xuất, chuyển động máy hay tính liên tục mà PART A đã xác định**.
-- Nếu tầng thực thi phát hiện năng lực thật của model xung đột cứng với prompt đã chốt, chỉ báo cáo xung đột năng lực cụ thể và quay về xử lý mục bị ảnh hưởng trong PART A; quy tắc canvas không được tự chế ra prompt tương thích khác.
+- From entering PART A until the final prompt output is complete, **execute only the PART A embedded in this file**; do not read or apply `references/sourceAndScript.md`, `references/methods/*`, any old storyboard rules, or human-teaching references, and do not pull from these files a second set of rules for segmentation, duration, shots, blocking, performance, camera movement, continuity, sound, Reference binding, templates, or QA.
+- The script, timeline, character/location/prop settings, and real reference nodes/asset handles the user has already given are inputs to PART A and are not subject to this isolation.
+- **The only exception**: when A1.2/A4 of PART A explicitly needs "supplementary reference assets / necessary design proposals when there are no reference images", you may read `references/assets.md`, `references/methods/visualDesign.md`, and `references/methods/colorAndLight.md` as needed; take only the content needed for appearance/space/material/lighting design, and **do not bring the duration, shot, performance, or narrative methods from these files back into the Seedance prompt rules**. Return to PART A immediately after the asset/design proposal is complete.
+- After the final Seedance prompts have been finalized per A11/A12, only when the user explicitly asks to actually connect references, write into generation nodes, or generate/accept media do you exit the prompt hard isolation and enter the **execution layer** of `canvasExecution.md` / `stateAndDelivery.md`. The execution layer may only carry over the finalized prompts, connect real references, set real model parameters, and verify results; it **must not rewrite the segmentation, format, plot, blocking, performance, camera movement, or continuity already determined by PART A**.
+- If the execution layer finds a hard conflict between the model's real capabilities and the finalized prompts, only report the specific capability conflict and return to handling the affected items in PART A; the canvas rules must not invent a compatible prompt on their own.
 
-**Mục đích: giai đoạn Seedance chỉ có một nguồn quy tắc đạo diễn — PART A nhúng trong file này. Tuyên bố ưu tiên không thể thay thế cách ly cứng.**
+**Purpose: the Seedance stage has only one directing rule source, the PART A embedded in this file. A priority declaration cannot replace hard isolation.**
 
-**Chỉ khi kịch bản chưa chốt và thực sự cần sáng tác hoặc chuyển thể** mới đọc [Đầu vào và kịch bản](references/sourceAndScript.md). Một khi vào cách ly cứng prompt Seedance, điều này ngừng hiệu lực.
+**Only when the script is not yet finalized and creation or adaptation is genuinely needed**, read [Input and script](references/sourceAndScript.md). Once Seedance prompt hard isolation is entered, this item stops applying.
 
 
 
-## Lõi thực thi nhúng cho việc tạo prompt Seedance
+## Embedded execution core for Seedance prompt generation
 
-Nội dung dưới đây lấy PART A trong `SKILL-seedance-episode-director.md` do người dùng cung cấp làm cơ sở thực thi, và đã gộp các yêu cầu về tính liên tục, độ ổn định khi tạo và kiểm tra lỗi hớ mà người dùng bổ sung rõ ràng sau đó. **Khi chạy, thực thi trực tiếp mục này, không đọc thêm, không gọi bất kỳ Skill seedance-episode-director độc lập nào.** Khi mục này xung đột với nội dung khác của workflow, mục này được ưu tiên.
+The following content takes the user-provided `SKILL-seedance-episode-director.md` PART A as the execution baseline and has incorporated the continuity, generation-stability, and continuity-error check requirements the user explicitly added later. **At runtime, execute this section directly; do not read or call any standalone seedance-episode-director Skill.** When this section conflicts with other workflow content, this section takes precedence.
 
-# PART A — Quy tắc thực thi
+# PART A — Execution rules
 ═══════════════════════════════════════════
 
-## A0. Xác định đầu vào
+## A0. Input assessment
 
-Nhận đầu vào của người dùng xong, trước tiên tự xác định các mục sau; suy ra được từ văn bản thì thực thi luôn, trừ khi việc thiếu thông tin khiến hướng đi của thành phẩm khác hẳn, nếu không thì đừng hỏi quá 2 câu:
+After receiving the user's input, first assess the following internally; if something can be inferred from the text, just proceed. Unless a gap would lead to a fundamentally different direction for the finished film, do not ask more than 2 questions:
 
-1. **Model mục tiêu** —— người dùng nói 2.5 thì mỗi đoạn tối đa 30s; nói 2.0 thì mỗi đoạn tối đa 15s; **nếu người dùng không nói, bắt buộc dùng một câu hỏi ngắn duy nhất để xác nhận "Seedance 2.0 hay 2.5" rồi mới tiếp tục**. Câu hỏi này thuộc phần xác định đầu vào A0 của tác vụ Seedance này, trước và sau khi hỏi đều giữ khóa định tuyến Seedance; không được vì cần xác nhận model mà chuyển sang workflow thông thường, cấu hình canvas hay phương pháp prompt khác.
-2. **Yêu cầu tổng thời lượng** —— người dùng đưa tổng thời lượng nghiêm ngặt (như "55s") thì lập ngân sách thời lượng theo A3; không đưa thì ước tính tổng độ dài theo nhịp tự nhiên của toàn bộ cốt truyện.
-3. **Quy mô tự sự** —— xác định là một cảnh diễn đơn lẻ, một tập ngắn, hay một tập trọn vẹn dài 2–3 phút hoặc hơn.
-   - Dù dài bao nhiêu, **trước tiên lên kế hoạch toàn phim, rồi mới quyết định chia thành mấy đợt giao**.
-   - Chia đợt chỉ là quản lý dung lượng giao, không có nghĩa là cắt cốt truyện, cũng không có nghĩa là cắt lại cốt truyện.
-4. **Timecode gốc** —— nếu người dùng đã đưa các khối thời gian như [0–10s] [10–25s], coi chúng là nhịp cốt truyện gốc/timeline tham chiếu; trừ khi người dùng nói rõ "khóa cứng nghiêm ngặt", không được máy móc đánh đồng chúng với đoạn tạo.
-5. **Đã có thư viện tài sản tham chiếu chưa** (ảnh nhân vật / ảnh bối cảnh / ảnh đạo cụ / nhãn đặt tên)?
-   - Có → **tham chiếu trực tiếp** (theo A1.2)
-   - Không → trích xuất tài sản từ văn bản cốt truyện, chỉ đăng ký những tài sản thực sự xuất hiện trong tập này; nếu model là 2.5 và cần khóa danh tính, có thể tạo ảnh tham chiếu trước theo "Bổ sung cho Trường hợp hai" trong A1.2.
-6. **Nguồn chữ trên hình** —— phân biệt "phụ đề/tiêu đề hậu kỳ" với "chữ vật thể trong bối cảnh/chữ trên bao bì sản phẩm", xử lý theo A1.3.
+1. **Target model** — if the user says 2.5, a single segment is at most 30s; if they say 2.0, a single segment is at most 15s; **if the user did not say, you must confirm "Seedance 2.0 or 2.5" with one short question before continuing**. This question belongs to the A0 input assessment of this Seedance task, and the Seedance route latch is kept both before and after asking; do not divert to the ordinary workflow, canvas configuration, or other prompt methods because the model needs confirming.
+2. **Total duration requirement** — if the user gave a strict total duration (e.g. "55s"), do duration budgeting per A3; if not, estimate the total length from the natural rhythm of the complete plot.
+3. **Narrative scale** — determine whether it is a single scene, a short episode, or a full episode of 2–3 minutes or even longer.
+   - No matter the length, **plan the whole film first, then decide how many batches to deliver in**.
+   - Batching is only delivery-capacity management; it does not mean cutting plot, nor re-cutting the plot.
+4. **Original timecodes** — if the user has already given time blocks such as [0–10s] [10–25s], treat them as the original plot rhythm/reference timeline; unless the user explicitly says "lock strictly", they cannot be mechanically equated with generation segments.
+5. **Is there an existing asset reference library** (character images / location images / prop images / naming labels)?
+   - Yes → **reference directly** (per A1.2)
+   - No → extract assets from the plot text, registering only assets that actually appear in this episode; if the model is 2.5 and identity needs to be locked, reference images may be generated first per A1.2 "Case 2 supplement".
+6. **Source of on-screen text** — distinguish "post-production subtitles/titles" from "physical in-scene text / product packaging text", and handle per A1.3.
 
-**Ràng buộc cốt lõi: đầy đủ, đúng thứ tự, có thể tạo.**
-- Không làm mất cốt truyện, không bỏ qua các nhịp "khó quay".
-- Không sắp xếp lại thứ tự trước sau của cốt truyện gốc.
-- Không hy sinh lời thoại tự nhiên, quá trình hành động hay thời gian phản ứng chỉ để ép số đoạn xuống mức tối thiểu lý thuyết.
-- Cốt truyện dài thì trước tiên lập "bảng toàn bộ đoạn của phim", rồi theo dung lượng mỗi đợt mà cắt thành Batch 1 / Batch 2 / Batch 3……; mỗi đợt đều giữ số đoạn toàn cục.
+**Core constraint: complete, in order, generatable.**
+- Do not lose plot, and do not skip "hard to shoot" beats.
+- Do not reorder the original plot sequence.
+- Do not sacrifice natural dialogue, action process, or reaction time just to compress the number of segments to the theoretical minimum.
+- For long plots, first build a "full segment table", then cut it into Batch 1 / Batch 2 / Batch 3... by per-batch capacity; every batch keeps the global segment numbers.
 
-### A0.1 Khóa trung thành cốt truyện (mức ưu tiên cao nhất · hiệu lực trong toàn bộ quy trình)
+### A0.1 Plot-fidelity lock (highest priority · applies throughout)
 
-**Tổng cương: chỉ đạo diễn, không biên kịch.**
+**General principle: direct only, do not write the script.**
 
-Skill này được phép: **tách, gộp đoạn, tính giờ, chuyển thành shot, sắp xếp vị trí đứng, viết các hành động đã có sao cho nhìn thấy được, bổ sung chi tiết thực thi vật lý/quay phim không làm thay đổi sự thật cốt truyện.**
+This Skill may: **split, merge segments, time, turn into shots, block positions, make existing actions visible, and add physical/cinematography execution details that do not change plot facts.**
 
-Skill này không được phép: **thêm sự kiện cốt truyện, xóa sự kiện cốt truyện, thay thế sự kiện cốt truyện, đổi thứ tự sự kiện, đổi người thực hiện/người chịu tác động của sự kiện, đổi nguồn gốc hoặc công dụng của đạo cụ, viết thêm tiền sử/nhân quả mà người dùng không cung cấp, tự ý cụ thể hóa nhân vật mơ hồ.**
+This Skill may not: **add plot events, delete plot events, replace plot events, change the order of events, change who performs/receives an event, change a prop's source or use, write backstory/causality the user did not provide, or arbitrarily make a vague character specific.**
 
-#### A0.1.1 Thứ tự ưu tiên nguồn sự thật cốt truyện
+#### A0.1.1 Priority of plot-fact sources
 
-Khi có xung đột, xác định "cái gì mới là sự thật cốt truyện" theo thứ tự sau:
+When conflicts occur, determine "what counts as plot fact" in the following order:
 
-1. **Chỉ thị sửa đổi rõ ràng mới nhất của người dùng**
-2. **Cốt truyện gốc / kịch bản / timeline mà người dùng đang cung cấp**
-3. **Thiết lập tài sản nhân vật, bối cảnh, đạo cụ mà người dùng cung cấp rõ ràng**
-4. **Prompt, tóm tắt, giải thích bổ sung do AI tạo trước đó**
+1. **The user's latest explicit revision instruction**
+2. **The original plot / script / timeline the user currently provides**
+3. **Character, location, and prop asset settings the user explicitly provides**
+4. **Prompts, summaries, and supplementary notes the AI generated earlier**
 
-**Nội dung AI tự bổ sung ở lượt trước vĩnh viễn không được ngược lại nâng cấp thành sự thật cốt truyện.**
+**Content the AI itself filled in during a previous round can never be upgraded back into plot fact.**
 
-Ví dụ: phiên bản trước AI tự thêm "nhân vật A lấy đạo cụ A ra từ hộp đựng trước", nhưng cốt truyện gốc của người dùng chỉ viết "nhân vật A dùng đạo cụ A", phiên bản sau không được vì "tính liên tục" mà tiếp tục kế thừa hành động lấy ra thêm này.
+For example: if the AI's previous version added on its own "Character A first takes Prop A out of a container", but the user's original plot only says "Character A uses Prop A", the next version must not keep inheriting this extra take-out action for the sake of "continuity".
 
-#### A0.1.2 Năm loại tuyệt đối cấm sửa đổi
+#### A0.1.2 Five absolutely forbidden kinds of change
 
-Với mỗi sự kiện trong cốt truyện gốc của người dùng, cấm:
+For every event in the user's original plot, it is forbidden to:
 
-1. **Thêm mới**: nguyên văn không có "mở nắp / rút giấy / đứng dậy / đưa cho / quay đầu / cầm bao bì lên", thì không được tự thêm vào cho trôi chảy.
-2. **Xóa**: hành động, lời thoại, phản ứng, khoảng dừng, shot trống đã có trong nguyên văn, không được xóa vì thời lượng hay vì diễn xuất tiết chế.
-3. **Thay thế**: nguyên văn là hành động A, không được đổi thành hành động B trông hợp lý hơn.
-4. **Đổi người sở hữu hành động**: khi nguyên văn viết "cha mẹ / phụ huynh / người lớn", không được tự ý chỉ định là "bố" hay "mẹ"; ai nói, ai làm, ai cầm, ai được lau đều phải giữ nguyên.
-5. **Đổi thứ tự / đổi nhân quả**: không được vì logic sản phẩm, tính liên tục hay thẩm mỹ shot mà đưa hành vi phía sau lên trước, hoặc thêm cho trạng thái phía sau một hành động tiền đề không có trong nguyên văn.
+1. **Add**: if the original does not have "open the lid / pull out a tissue / stand up / hand over / turn back / pick up the packaging", do not add it yourself for smoothness.
+2. **Delete**: existing actions, dialogue, reactions, pauses, and empty shots in the original must not be deleted for duration or restrained performance.
+3. **Replace**: if the original is action A, do not change it to a seemingly more reasonable action B.
+4. **Change attribution**: when the original says "parents / guardian / adult", do not arbitrarily specify "dad" or "mom"; who speaks, who acts, who holds, and who is wiped must all be preserved.
+5. **Change order / causality**: do not move a later behavior earlier, or add to a later state a preceding action that does not exist in the original, for product logic, continuity, or shot aesthetics.
 
-#### A0.1.3 Ranh giới được phép "cụ thể hóa"
+#### A0.1.3 Boundaries of allowed "specification"
 
-Chỉ khi thỏa mãn các điều kiện sau, mới được viết hành động trong nguyên văn cụ thể hơn:
+An original action may be written more specifically only when the following conditions are met:
 
-- Nội dung cụ thể hóa **nằm trực tiếp trong quá trình thực thi vật lý của hành động gốc**;
-- Không thêm quyết định cốt truyện mới, thay đổi trạng thái đạo cụ hay quan hệ nhân vật;
-- Xóa dòng mô tả cụ thể này đi thì sự thật cốt truyện hoàn toàn không đổi;
-- Không yêu cầu khán giả nhận được thông tin mới mà nguyên văn không có.
+- The specified content is **directly contained in the physical execution of the original action**;
+- It adds no new plot decision, prop state change, or character relationship;
+- If this specific description were deleted, the plot facts would be completely unchanged;
+- It does not require the audience to receive new information that the original does not have.
 
-Ví dụ:
-- Nguyên văn "nhân vật A dùng đạo cụ A lau tay" → có thể viết "đạo cụ A chạm vào lòng bàn tay và lau qua các ngón tay", đây là trực quan hóa hành động đã có.
-- Nguyên văn "nhân vật A dùng đạo cụ A lau tay" → **không được** viết "cầm hộp đựng lên → mở hộp → lấy ra đạo cụ A mới → rồi lau", vì đã thêm nhiều sự kiện cốt truyện.
+For example:
+- Original "Character A wipes their hands with Prop A" → you may write "Prop A touches the palm and wipes across the fingers"; this is visualization of an existing action.
+- Original "Character A wipes their hands with Prop A" → you **cannot** write "pick up the container → open the container → take out a new Prop A → then wipe", because this adds multiple plot events.
 
-Chuyển động máy quay, bố cục, cỡ cảnh, tiêu điểm, kết quả nhìn thấy được của ánh sáng, tiếng động foley tương ứng với va chạm đã có, thuộc về thực hiện kỹ thuật, không coi là thêm cốt truyện; nhưng chúng cũng không được tạo ra sự thật cốt truyện mới.
+Camera movement, composition, shot size, focus, visible lighting results, and foley corresponding to existing collisions are technical implementation and are not regarded as new plot; but they also must not create new plot facts.
 
-#### A0.1.4 Không bổ sung tiền sử, không truy ngược nguồn gốc
+#### A0.1.4 Do not add backstory or trace sources
 
-Nếu khi một khối thời gian bắt đầu, nguyên văn đã đưa ra một trạng thái, thì coi đó là **trạng thái ban đầu đã định** của nhịp đó.
+If, at the start of a time block, the original already gives a state, treat it as the **given initial state** of that beat.
 
-- Nguyên văn viết "nhân vật A đã cầm đạo cụ A trong tay khi bước vào khung hình" → bắt đầu ngay từ "trong tay đã có đạo cụ A".
-- Không được vì "đạo cụ thì phải có nguồn gốc" mà tự thêm "cầm hộp đựng / mở nắp / lấy ra".
-- Nguyên văn viết "nhân vật đã đứng ở một vị trí nào đó" → có thể bắt đầu từ trạng thái ở vị trí đó; trừ khi nguyên văn viết rõ đứng dậy/đi tới, không được thêm toàn bộ quá trình di chuyển.
+- Original "Character A enters the frame already holding Prop A" → start directly from "already has Prop A in hand".
+- Do not add "pick up the container / open the lid / take it out" on your own because "a prop must come from somewhere".
+- Original "the character is already standing at some position" → you may start from that position state; unless the original explicitly writes getting up/walking over, do not add the complete movement process.
 
-**Tính liên tục chỉ duy trì các trạng thái người dùng đã định nghĩa, không có trách nhiệm thay người dùng bổ sung tiền sử chưa được viết ra.**
+**Continuity only maintains states the user has already defined; it is not responsible for filling in backstory the user did not write.**
 
-#### A0.1.5 Thông tin mơ hồ thì giữ mơ hồ
+#### A0.1.5 Keep vague information vague
 
-Nội dung người dùng không nói rõ, mặc định giữ nguyên mức độ trừu tượng ban đầu:
+Content the user did not make explicit keeps its original level of abstraction by default:
 
-- Các cách gọi chung như "cha mẹ / phụ huynh / người lớn / nhân viên / ai đó" giữ nguyên mức độ trừu tượng, không tự ý xác định danh tính, giới tính hay số người;
-- "Một bàn tay" không suy ra cụ thể tay trái/tay phải, trừ khi việc thực thi shot thực sự cần và không tạo thành sự thật cốt truyện về sau;
-- "Cầm đạo cụ A" không tự động suy ra "lấy thêm một cái mới từ hộp đựng";
-- "Dùng đạo cụ A để hoàn thành hành động" không tự động suy ra số lần dùng, số lượng tiêu hao hay là cái thứ mấy;
-- "Ở bên cạnh" không tự ý tạo quan hệ không gian chính xác, trừ khi cần đưa ra tọa độ trung tính để tạo shot, và không làm thay đổi cốt truyện.
+- Generic terms such as "parents / guardian / adult / staff / someone" keep their original level of abstraction; do not arbitrarily determine identity, gender, or number of people;
+- "One hand" is not inferred as specifically left/right hand, unless shot execution genuinely needs it and it will not form a later plot fact;
+- "Holding Prop A" does not automatically imply "a new one taken out of a container";
+- "Using Prop A to complete an action" does not automatically imply the number of uses, quantity consumed, or which item it is;
+- "Beside" does not arbitrarily create a precise spatial relationship, unless neutral coordinates are needed for shot generation and the plot is not changed.
 
-#### A0.1.6 Khi cốt truyện nguồn có chỗ trống/mâu thuẫn
+#### A0.1.6 When the source plot has gaps/contradictions
 
-- **Chỗ trống**: không tự bịa cốt truyện nối cầu; ưu tiên dùng HARD CUT / khối thời gian mới / đoạn mới để bắt đầu từ trạng thái đã biết tiếp theo.
-- **Mâu thuẫn**: không tự chọn một phiên bản để đè lên phiên bản kia; ưu tiên chỉnh sửa rõ ràng mới nhất của người dùng, nếu không thì đánh dấu "xung đột văn bản nguồn" trong tổng quan toàn phim.
-- **Tổng thời lượng nghiêm ngặt xung đột với cốt truyện**: được phép tăng số đoạn hoặc đánh dấu xung đột thời lượng, không được xóa sửa cốt truyện để giải quyết.
-
----
-
-## A1. Ngôn ngữ đầu ra và đặt tên tài sản
-
-### A1.1 Ngôn ngữ đầu ra (bắt buộc)
-**Mặc định toàn bộ tiếng Việt.** Prompt chính thức, danh sách tài sản, giải thích vị trí đứng, tầng diễn xuất, timeline ——
-tất cả đều viết bằng tiếng Việt.
-
-**Những phần giữ nguyên văn gốc không dịch:**
-- Lời thoại (chép nguyên văn gốc, ví dụ "Kimi wa?" "Nani ga?")
-- Giá trị số và đơn vị: `15s` `30s` `24fps` `4K` `2–3mm` `180°` `0:00–0:06`
-- Góc quang học: `29°` `47°` `84°` `107°`
-- Viết tắt kỹ thuật: `HARD CUT`
-
-**Quy tắc tiêu đề cấu trúc:**
-- Seedance 2.0: tiêu đề cấu trúc mặc định bằng tiếng Việt.
-- Seedance 2.5: prompt chính thức cuối cùng cố định dùng các tiêu đề trường tiếng Anh sau: `Objective`, `Reference binding`, `Immutable locks`, `Target duration`, `Timeline`, `Visual direction`, `Audio direction`, `Preserve`, `Avoid`; nội dung trường mặc định vẫn bằng tiếng Việt.
-
-**Ngoại lệ bản toàn tiếng Anh**: chỉ khi người dùng nói rõ "cho tôi bản tiếng Anh / for an international pipeline", mới đổi cả nội dung trường sang tiếng Anh.
-
-### A1.2 Đặt tên tài sản và nhãn tham chiếu
-
-**Chia thành hai trường hợp:**
-
-**Trường hợp một · Người dùng đã xây dựng thư viện nhãn tham chiếu**
-Người dùng dùng nhãn đặt tên trong pipeline của mình (như `@HERO1V2`, `@LâmTrựcNhân_v2`,
-`#PhòngKháchNhàCũ` v.v.) ——
-- **Tham chiếu trực tiếp nguyên dạng**, người dùng đưa gì thì chép y nguyên cái đó, kể cả `@` / `#` / bất kỳ ký hiệu nào
-- Các nhãn này là **handle tham chiếu danh tính của nhân vật/bối cảnh/đạo cụ**,
-  tương ứng với ảnh tham chiếu thật hoặc thư viện tài sản đã xây dựng
-- **Điều bị cấm là: dùng hình ảnh khung cuối của đoạn trước làm tham chiếu vị trí đứng** ——
-  vị trí đứng luôn được dựng lại bằng tọa độ tuyệt đối trong văn bản (xem A5)
-
-**Trường hợp hai · Người dùng không có thư viện nhãn**
-- Tên tài sản **không thêm @**, chỉ dùng tên tiếng Việt
-- Danh sách viết: `Nhân vật | Lâm Trực Nhân` `Bối cảnh | Phòng khách nhà cũ` `Đạo cụ | Chai rượu mơ`
-- Trích dẫn trong phần nội dung: viết trực tiếp "Lâm Trực Nhân" "Phòng khách nhà cũ" "Chai rượu mơ"
-- Nhiều tài sản cùng loại trong cùng một đoạn: dùng tiếng Việt để phân biệt "cốc của Trực Nhân / cốc của Sato"
-
-**Bổ sung cho Trường hợp hai · Không có thư viện tham chiếu nhưng cần khóa danh tính (Seedance 2.5)**
-
-Khi model mục tiêu là 2.5, người dùng không có thư viện nhãn cũng không có ảnh tham chiếu, nhưng đoạn này cần khóa danh tính nhân vật / bối cảnh / đạo cụ:
-- Được phép trước tiên tạo ảnh tham chiếu theo phương pháp tài sản của Toonflow (bảng tham chiếu bốn góc nhìn nhân vật / góc nhìn chính của bối cảnh / bảng 2×2 đạo cụ), rồi mới vào Reference binding của A1.2.1 / A9.2;
-- Ảnh tham chiếu được tạo chỉ khóa các chiều "người dùng chỉ định hoặc có thể xác định rõ": khuôn mặt / kiểu tóc / cảm giác tuổi / vóc dáng / trang phục của nhân vật, cấu trúc và chất liệu bối cảnh, màu chủ đạo / hình dạng / cấu trúc đóng mở của đạo cụ;
-- Ảnh tham chiếu không vượt quyền kiểm soát vị trí đứng, ánh sáng, shot hay cốt truyện thêm (giống phân loại vai trò ảnh tham chiếu và xử lý xung đột trong A1.2.1);
-- Vẫn tuân theo trung thành cốt truyện A0.1: ngoại hình được tạo đều coi là "đề xuất thiết kế", không giả làm sự thật trong nguyên văn; không được vì thế mà thêm sự kiện cốt truyện, nguồn gốc đạo cụ, quan hệ nhân vật hay quy tắc thế giới; nhân vật / đạo cụ / chữ xuất hiện trong ảnh tham chiếu mà nguyên văn không nhắc tới, không được tự động đưa vào cốt truyện.
+- **Gaps**: do not invent bridging plot yourself; prefer starting from the next known state with HARD CUT / a new time block / a new segment.
+- **Contradictions**: do not pick one version yourself to override the other; the user's latest explicit correction takes priority, otherwise mark "source text conflict" in the whole-film overview.
+- **Strict total duration conflicts with the plot**: you may add segments or flag the duration conflict, but you may not resolve it by cutting or changing the plot.
 
 ---
 
-### A1.2.1 Gắn ảnh tham chiếu Seedance 2.5 (bắt buộc)
+## A1. Output language and asset naming
 
-Khi model mục tiêu là **Seedance 2.5**, và người dùng cung cấp ảnh nhân vật, ảnh bối cảnh, ảnh sản phẩm, ảnh đạo cụ, ảnh vị trí đứng hoặc tham chiếu hình ảnh khác, bắt buộc gắn các ảnh tham chiếu này như một phần của prompt chính thức vào từng đoạn tạo có liên quan.
+### A1.1 Output language (mandatory)
+**By default, everything in the user's language.** Formal prompts, asset lists, blocking notes, performance layer, timeline:
+all written in the user's language.
 
-**Quy tắc cứng:**
-- Node ảnh thật / handle tham chiếu do người dùng cung cấp phải được **trích dẫn nguyên dạng**, ví dụ `{{node/image-xxxx}}`, `@TênNhânVật_v2`, `#TênBốiCảnh`; cấm tự đổi tên, viết tắt hay bịa ra Ref không tồn tại.
-- Mỗi đoạn tạo 2.5 đều **tự chứa**: ảnh tham chiếu cần cho đoạn đó phải được liệt kê lại trong `Reference binding` của chính đoạn đó, không được viết "như trên", "dùng lại ảnh tham chiếu đoạn trước".
-- Ảnh nhân vật / ảnh sản phẩm được dùng lặp lại trong toàn phim, cũng phải gắn lặp lại trong mỗi đoạn thực sự liên quan đến chúng.
-- Chỉ gắn ảnh tham chiếu thực sự liên quan đến đoạn này, không nhét toàn bộ ảnh của cả tập vào mọi đoạn một cách không phân biệt.
-- Một ảnh chỉ kiểm soát các chiều được người dùng chỉ định hoặc có thể xác định rõ, cấm vượt quyền kiểm soát các chiều khác.
+**Parts kept in the original and not translated:**
+- Dialogue lines (copied verbatim from the original, e.g. "Who are you?", "What?")
+- Numbers and units: `15s` `30s` `24fps` `4K` `2–3mm` `180°` `0:00–0:06`
+- Optical angles: `29°` `47°` `84°` `107°`
+- Technical abbreviations: `HARD CUT`
 
-**Trích xuất tài sản tham chiếu và định danh đơn giản:**
-- Trước tiên tự động trích xuất từ cốt truyện, shot, hành động và nội dung hình ảnh của đoạn này các tài sản tham chiếu thật **mà đoạn này thực sự liên quan và thực sự cần gọi đến**; ảnh nhân vật, ảnh bối cảnh, ảnh sản phẩm, ảnh đạo cụ, ảnh vị trí đứng, ảnh động tác v.v. đều nhận diện theo công dụng thực tế.
-- Với mỗi tham chiếu thật chỉ làm **định danh ngắn gọn**, nói rõ nó tương ứng với ai / cái gì / loại công dụng nào là đủ, ví dụ "tham chiếu nhân vật Lâm Trực Nhân" "tham chiếu bối cảnh phòng khách nhà cũ" "tham chiếu đạo cụ chai rượu mơ" "tham chiếu vị trí đứng của đoạn này".
-- Không triển khai giải thích dài dòng "kiểm soát gì / không kiểm soát gì" trong `Reference binding` cuối cùng; ranh giới tác dụng bên trong của ảnh tham chiếu vẫn được hiểu theo công dụng rõ ràng của người dùng và nội dung có thể xác định rõ, cấm vượt quyền đưa nhân vật, đạo cụ, phông nền, chữ hay tư thế thừa trong ảnh tham chiếu vào cốt truyện.
-- Khi người dùng nói rõ "chỉ tham chiếu vị trí / chỉ tham chiếu trang phục / chỉ tham chiếu sản phẩm" v.v., giữ giới hạn công dụng "chỉ" này trong định danh đơn giản, ví dụ "chỉ tham chiếu vị trí đứng" "chỉ tham chiếu trang phục".
+**Structure heading rules:**
+- Seedance 2.0: structure headings in the user's language by default.
+- Seedance 2.5: the final formal prompt always uses the following English field headings: `Objective`, `Reference binding`, `Immutable locks`, `Target duration`, `Timeline`, `Visual direction`, `Audio direction`, `Preserve`, `Avoid`; field content is still in the user's language by default.
 
-**Xử lý xung đột:**
-- Khi thiết lập bằng văn bản của người dùng xung đột với ảnh tham chiếu, xử lý theo thứ tự ưu tiên nguồn sự thật của A0.1.1; chỉnh sửa văn bản rõ ràng mới nhất của người dùng được ưu tiên.
-- Khi nhiều ảnh tham chiếu xung đột với nhau, không tự trộn thành thiết lập mới; dùng riêng từng ảnh theo công dụng người dùng nêu rõ.
-- Ảnh tham chiếu có nhân vật, đạo cụ, chữ hay trang trí thừa mà người dùng không nhắc tới, không tự động đưa vào cốt truyện.
+**Full-English exception**: only when the user explicitly says "give me an English version / for an international pipeline" is the field content also changed to English.
 
-**Định dạng Reference binding 2.5 khuyến nghị:**
+### A1.2 Asset naming and reference labels
+
+**There are two cases:**
+
+**Case 1 · The user has established a reference label library**
+The user uses naming labels in their own pipeline (e.g. `@HERO1V2`, `@HayashiNaoto_v2`,
+`#OldHouseLivingRoom`, etc.):
+- **Reference them directly and verbatim**; copy exactly what the user gives, including `@` / `#` / any symbol
+- These labels are **identity reference handles for characters/locations/props**,
+  corresponding to real reference images or an established asset library
+- **What is forbidden is: using the previous segment's last-frame image as a blocking reference**;
+  blocking is always rebuilt in text through absolute coordinates (see A5)
+
+**Case 2 · The user has no label library**
+- Asset names **without @**, using only the plain name in the user's language
+- The list is written as: `Character | Hayashi Naoto` `Location | Old House Living Room` `Prop | Plum Wine Bottle`
+- In-body references: write "Hayashi Naoto", "Old House Living Room", "Plum Wine Bottle" directly
+- Multiple assets of the same type in one segment: distinguish them by name, e.g. "Naoto's cup / Sato's cup"
+
+**Case 2 supplement · No reference library but identity needs to be locked (Seedance 2.5)**
+
+When the target model is 2.5, the user has neither a label library nor reference images, but this segment needs to lock character / location / prop identity:
+- You may first generate reference images using the Toonflow asset methods (character four-view reference sheet / location main view / prop 2×2 sheet), then enter the Reference binding of A1.2.1 / A9.2;
+- The generated reference images only lock dimensions that are "specified by the user or clearly determinable": character face / hairstyle / sense of age / build / costume, location structure and materials, prop main color / form / opening structure;
+- Reference images do not overstep to control blocking, lighting, shots, or extra plot (same as the reference-image role classification and conflict handling in A1.2.1);
+- Still follow A0.1 plot fidelity: generated appearances are always regarded as "design proposals" and do not pose as source facts; do not add plot events, prop sources, character relationships, or world rules because of them; characters / props / text that appear in reference images but are not mentioned in the original must not be automatically brought into the plot.
+
+---
+
+### A1.2.1 Seedance 2.5 reference image binding (mandatory)
+
+When the target model is **Seedance 2.5** and the user has provided character images, location images, product images, prop images, blocking images, or other visual references, these reference images must be bound to every relevant generation segment as part of the formal prompt.
+
+**Hard rules:**
+- Real image nodes / reference handles provided by the user must be **referenced verbatim**, e.g. `{{node/image-xxxx}}`, `@CharacterName_v2`, `#LocationName`; do not rename, abbreviate, or invent nonexistent Refs.
+- Every 2.5 generation segment is **self-contained**: the reference images that segment needs must be listed again in that segment's own `Reference binding`; you cannot write "same as above" or "reuse the previous segment's reference images".
+- Character images / product images used repeatedly across the whole film must also be bound again in every segment that actually involves them.
+- Bind only the reference images genuinely relevant to this segment; do not indiscriminately stuff every image of the whole episode into every segment.
+- An image only controls the dimensions the user specified or that can be clearly determined; it is forbidden to overstep and control other dimensions.
+
+**Reference asset extraction and simple identification:**
+- First automatically extract, from this segment's plot, shots, actions, and visual content, the real reference assets that **this segment actually involves and genuinely needs to call**; character images, location images, product images, prop images, blocking images, action images, etc. are all identified by actual use.
+- For each real reference, give only a **concise identity label** stating whom / what / which kind of use it corresponds to, e.g. "Hayashi Naoto character reference", "Old House Living Room location reference", "Plum Wine Bottle prop reference", "this segment's blocking reference".
+- Do not expand long "what it controls / what it does not control" explanations in the final `Reference binding`; the internal scope of a reference image is still understood per the user's explicit purpose and what can be clearly determined, and it is forbidden to overstep by bringing extra characters, props, backgrounds, text, or poses in the reference image into the plot.
+- When the user explicitly says "location reference only / costume reference only / product reference only", etc., keep that "only" purpose restriction in the simple label, e.g. "blocking reference only", "costume reference only".
+
+**Conflict handling:**
+- When the user's text settings conflict with a reference image, handle per the fact-source priority in A0.1.1; the user's latest explicit text revision takes priority.
+- When multiple reference images conflict with each other, do not fuse them into a new setting yourself; use each according to the user's explicit purpose.
+- Extra characters, props, text, or decorations in a reference image that the user did not mention are not automatically introduced into the plot.
+
+**Recommended 2.5 Reference binding format:**
 ```text
 Reference binding:
-- {{node/image-xxxx}}: tham chiếu nhân vật Lâm Trực Nhân
-- {{node/image-yyyy}}: tham chiếu bối cảnh phòng khách nhà cũ
-- {{node/image-zzzz}}: tham chiếu đạo cụ chai rượu mơ
-- {{node/image-aaaa}}: chỉ tham chiếu vị trí đứng
+- {{node/image-xxxx}}: Hayashi Naoto character reference
+- {{node/image-yyyy}}: Old House Living Room location reference
+- {{node/image-zzzz}}: Plum Wine Bottle prop reference
+- {{node/image-aaaa}}: blocking reference only
 ```
 
-Dạng node trong ví dụ trên chỉ biểu thị **vị trí định dạng**; khi chạy bắt buộc thay bằng ID node / handle tài sản đầy đủ mà người dùng thực sự cung cấp và đoạn này thực sự cần, cấm chép y nguyên hoặc bịa ID mẫu. Nếu đoạn này không có bất kỳ ảnh tham chiếu / handle tài sản thật nào, thì bỏ toàn bộ mục này.
+The node forms in the example above only indicate **format positions**; at runtime they must be replaced with the complete node IDs / asset handles that the user actually provided and that this segment actually needs; do not copy or invent the example IDs. If this segment has no real reference images / asset handles at all, omit the whole section.
 
 
-### A1.3 Chữ trên hình: phụ đề hậu kỳ vs chữ trên tài sản vật thể
+### A1.3 On-screen text: post-production subtitles vs physical asset text
 
-Bắt buộc phân biệt hai loại chữ:
+Two kinds of text must be distinguished:
 
-**A. Chữ kiểu hậu kỳ (mặc định cấm giao cho model tạo)**
-- Phụ đề, tiêu đề, thẻ giải thích, thẻ thuyết minh, chữ trên sticker, chữ chồng UI, watermark
-- Mặc định viết thành: **không phụ đề, không chữ màn hình thêm, không chồng chữ hậu kỳ**
-- Những chữ này nếu cần, mặc định để lại cho khâu dựng hậu kỳ thêm vào
+**A. Post-production text (by default forbidden to hand to the generation model)**
+- Subtitles, titles, caption cards, voiceover cards, sticker copy, UI overlay text, watermarks
+- By default write: **no subtitles, no extra on-screen text, no post-production text overlay**
+- If such text is needed, it is left for post-production editing by default
 
-**B. Chữ vật thể trong cốt truyện / chữ trên tài sản sản phẩm (không phải phụ đề)**
-- Chữ in sẵn trên túi bao bì, biển hiệu, thư, trang sách, giao diện điện thoại v.v.
-- Nếu người dùng cung cấp ảnh tham chiếu/ảnh tài sản: ưu tiên viết "**giữ nghiêm ngặt ngoại hình tài sản tham chiếu, không thêm, không viết lại, không vẽ lại chữ trên bao bì**", đừng yêu cầu model tự tạo chữ rõ nét từ hư không
-- Nếu không có tài sản tham chiếu: trừ khi cốt truyện bắt buộc phải đọc được chữ cụ thể, nếu không đừng đặt "chữ phải rõ ràng dễ đọc" làm nhiệm vụ tạo
-- Chỉ khi người dùng yêu cầu rõ ràng một đoạn nào đó bắt buộc phải đọc được chữ, mới khóa từng chữ; đồng thời nhắc rằng đây là mục tạo rủi ro cao
+**B. Physical in-story text / product asset text (not subtitles)**
+- Original printing on packaging bags, signboards, letters, book pages, phone interfaces, etc.
+- If the user provided reference images/asset images: prefer writing "**strictly keep the reference asset's appearance; do not add, rewrite, or redraw packaging text**"; do not ask the model to generate clear text out of thin air
+- If there is no reference asset: unless the plot must read specific text, do not make "text must be clearly legible" a generation task
+- Lock text word for word only when the user explicitly requires a segment to read it; at the same time, point out that this is a high-risk generation item
 
-**Do đó:** "không phụ đề / không chữ màn hình thêm" không xung đột với "chữ đã có sẵn trên bao bì sản phẩm". Điều bị cấm là AI tự thêm hoặc viết lại chữ, không phải biến bao bì thật thành bao bì không chữ.
+**Therefore:** "no subtitles / no extra on-screen text" does not conflict with "text already on product packaging". What is forbidden is the AI adding or rewriting text on its own, not turning real packaging into text-free packaging.
 
 ---
 
-## A2. Phân tích toàn bộ nhịp và giữ nguyên thứ tự (không lọc bỏ cốt truyện)
+## A2. Full beat parsing and order preservation (do not filter out plot)
 
-Mục tiêu của A2 không phải "chọn vài điểm then chốt", mà là tách cốt truyện gốc thành các **nhịp tự sự đầy đủ, liên tục, có thể tính giờ**. Năm loại nhịp then chốt chỉ dùng để đánh dấu, không làm ngưỡng cắt bỏ.
+The goal of A2 is not to "pick a few key points" but to break the original plot into **complete, continuous, timeable narrative beats**. The five kinds of key beats are only marked; they are not a threshold for cutting.
 
-### A2.1 Nhịp nguyên tử: giữ lại toàn bộ, và lập "sổ cái cốt truyện nguồn"
+### A2.1 Atomic beats: keep them all and build a "source plot ledger"
 
-Trước tiên tách các nhịp nguyên tử theo thứ tự nguyên văn, các loại thường gặp gồm:
+First break out atomic beats in the original order; common types include:
 
-| Nhịp nguyên tử | Định nghĩa | Ví dụ |
+| Atomic beat | Definition | Example |
 |---|---|---|
-| **Lời thoại** | Một câu hoàn chỉnh hoặc một nhóm câu liên tiếp mà nhân vật thực sự nói ra | Hỏi, đáp, ngắt lời, bổ sung |
-| **Hành động** | Hành động làm thay đổi vị trí/đồ vật/trạng thái cơ thể | Cầm lên, đặt xuống, đứng dậy, đi tới cửa |
-| **Phản ứng** | Phản hồi phát sinh do sự kiện trước, nhưng không nhất thiết phải nói | Dừng cốc, lùi né, nhìn cổ tay, im lặng |
-| **Thông tin** | Khán giả/nhân vật nhận được sự thật mới | Nhìn thấy vật gì đó, nhận ra sản phẩm, phát hiện vết thương |
-| **Chuyển tiếp/khoảng trống** | Chuyển tiếp không gian, thời gian hoặc cảm xúc mà nguyên văn của người dùng yêu cầu rõ | Shot trống, âm thanh môi trường, khoảng dừng, nối bối cảnh |
+| **Dialogue** | A complete sentence or a group of consecutive sentences actually spoken by a character | Question, answer, interruption, addition |
+| **Action** | An action that changes position/objects/body state | Pick up, put down, stand up, walk to the door |
+| **Reaction** | Feedback caused by the previous event, not necessarily spoken | Stop the cup, flinch back, look at the wrist, silence |
+| **Information** | The audience/character gains a new fact | See something, recognize the product, discover a wound |
+| **Transition/pause** | A spatial, temporal, or emotional transition the user's original explicitly requires | Empty shot, ambient sound, pause, scene transition |
 
-**Mọi nhịp nguyên tử đều phải đăng ký.** Các hành động bình thường không thuộc "cao trào/bước ngoặt" cũng không được vì thế mà biến mất.
+**All atomic beats must be registered.** Ordinary actions that are not "climax/turning point" must not disappear for that reason.
 
-Nội bộ đánh số mỗi nhịp nguồn `E01 / E02 / E03 ...`, ít nhất ghi lại:
-- Sự kiện trong nguyên văn do ai làm / ai nói;
-- Hành động hoặc lời thoại là gì;
-- Đối tượng tác động / đạo cụ là gì;
-- Thứ tự gốc so với các sự kiện trước sau;
-- Người dùng có nêu rõ các sự thật như thời gian, vị trí, số lượng, tay trái/phải, nguồn gốc đạo cụ hay không.
+Internally number each source beat `E01 / E02 / E03 ...`, recording at least:
+- Who does / says the original event;
+- What the action or dialogue is;
+- What the target object / prop is;
+- Its original order relative to the events before and after;
+- Whether the user explicitly gave facts such as time, position, quantity, left/right hand, or prop source.
 
-Sau đó mỗi **câu làm thay đổi trạng thái cốt truyện** trong mọi Timeline đều phải ánh xạ ngược về được một `E##`. Nội dung được phép không có `E##` chỉ giới hạn ở: quay phim, bố cục, kết quả nhìn thấy được của ánh sáng, chi tiết vật lý/foley tương ứng trực tiếp với hành động đã có, và các mô tả mang tính thực thi không làm thay đổi sự thật cốt truyện.
+Every **sentence that changes plot state** in any later Timeline must map back to an `E##`. Content allowed without an `E##` is limited to: cinematography, composition, visible lighting results, physical details/foley directly corresponding to existing actions, and executional descriptions that do not change plot facts.
 
-**Nếu một câu làm thay đổi nhân vật, đạo cụ, vị trí, số lượng, quan hệ, thông tin hay nhân quả, mà không tìm thấy nhịp nguồn tương ứng → coi là AI thêm cốt truyện, bắt buộc xóa.**
+**If a sentence changes a character, prop, position, quantity, relationship, information, or causality but no corresponding source beat can be found → treat it as AI-added plot; it must be deleted.**
 
-### A2.2 Năm loại nhãn then chốt: chỉ đánh dấu mức quan trọng, không đổi thứ tự
+### A2.2 Five kinds of key tags: mark importance only, do not change order
 
-Trên các nhịp nguyên tử gắn thêm nhãn:
-- **Điểm bước ngoặt**: quan hệ / quyền lực / thông tin đảo chiều
-- **Đỉnh cảm xúc**: lúc cảm xúc bộc lộ mạnh nhất của đoạn/cảnh này
-- **Điểm tăng thông tin**: thông tin mới làm thay đổi cách hiểu
-- **Điểm quyết định**: nhân vật đưa ra lựa chọn và gánh hậu quả
-- **Điểm im lặng**: khoảng trống có hiệu quả sau phần dẫn dắt
+Additionally tag atomic beats:
+- **Turning point**: relationship / power / information reverses
+- **Emotional peak**: the strongest emotional leak of this segment/scene
+- **Information increment**: new information changes understanding
+- **Decision point**: a character makes a choice and bears the consequences
+- **Silence point**: effective pause after setup
 
-**Quy tắc cứng:**
-- Các nhãn có thể chồng lên nhau, một nhịp có thể đồng thời thuộc nhiều loại.
-- Nhịp không có bất kỳ nhãn then chốt nào vẫn được giữ lại.
-- **Nghiêm cấm "sắp xếp cốt truyện theo đường cong cảm xúc".** Đường cong cảm xúc chỉ được đánh dấu theo thứ tự thời gian của cốt truyện gốc: thấp → áp lực → đỉnh → giải tỏa; nó là biểu đồ phân tích, không phải chỉ thị dựng lại.
+**Hard rules:**
+- Tags can overlap; one beat can belong to several kinds at once.
+- Beats without any key tag are still kept.
+- **"Sorting the plot by emotional curve" is strictly forbidden.** The emotional curve may only be marked in the original plot's time order: low → pressure → peak → release; it is an analysis chart, not a re-editing instruction.
 
-### A2.3 Lập ngân sách thời gian cho từng nhịp trước
+### A2.3 Budget time for every beat first
 
-Với mỗi nhịp nguyên tử, ước tính thời lượng tự nhiên tối thiểu:
+Estimate the minimum natural duration for each atomic beat:
 
-`Thời lượng tối thiểu của nhịp = thời gian lời thoại tự nhiên + khoảng dừng cần thiết + thời gian hành động/phản ứng bắt buộc phải hoàn thành tuần tự`
+`Beat minimum duration = natural dialogue time + necessary pauses + action/reaction time that must be completed serially`
 
-Lưu ý:
-- "Nói + động tác nhỏ" có thể xảy ra đồng thời một cách tự nhiên thì có thể tính giờ chồng lên nhau;
-- Các hành động nhân quả bắt buộc xảy ra trước sau thì phải cộng dồn;
-- Lời thoại dài không được xử lý thô bạo kiểu "câu dài cố định 3–3.5s"; phải ước tính thời gian đọc tự nhiên theo độ dài văn bản thực tế, khoảng dừng, ngữ điệu;
-- Khi không chắc chắn, thà chừa khoảng 10%–20% dư địa để thở, chứ đừng nhồi bằng tốc độ nói nhanh bất thường;
-- Các khoảng dừng, phản ứng, quay người, di chuyển then chốt không được bị lời thoại nuốt mất hoàn toàn.
+Note:
+- "Speech + small actions" that can naturally happen at the same time may be timed overlapping;
+- Causal actions that must happen one after another must be added together;
+- Long dialogue cannot be crudely handled as "a long sentence is a fixed 3–3.5s"; estimate natural reading time from the actual text length, pauses, and tone;
+- When unsure, rather leave about 10%–20% breathing margin than force things in with abnormally fast speech;
+- Key pauses, reactions, turns, and movements must not be completely swallowed by dialogue.
 
-### A2.4 Nhịp → shot → đoạn tạo
+### A2.4 Beat → shot → generation segment
 
-Chỉ gộp các nhịp **liền kề về thời gian**, không ghép vượt qua cốt truyện ở giữa. **Gộp đoạn chỉ thay đổi cách chứa đựng, không thay đổi nội dung, người thực hiện, đối tượng, thứ tự hay số lượng của bất kỳ `E##` nào. Một nhịp nguồn có thể được thể hiện trải qua nhiều shot, nhưng không được viết lại thành một sự kiện khác.**
+Only merge beats that are **adjacent in time**; do not stitch across intervening plot. **Merging segments only changes how content is carried; it does not change any `E##`'s content, performer, target, order, or quantity. One source beat can be shown across multiple shots, but cannot be rewritten into another event.**
 
-Một đoạn có thể chứa nhiều nhịp, nhưng "1–4 nhịp" chỉ là tham chiếu kinh nghiệm, không phải giới hạn cứng. Có tiếp tục gộp hay không, căn cứ vào các điều kiện sau:
-1. Tổng thời lượng sau khi gộp ≤ giới hạn mỗi đoạn của model;
-2. Mọi lời thoại đều nói hết được với tốc độ tự nhiên;
-3. Hành động nhân quả then chốt có quá trình đầy đủ;
-4. Ít nhất còn chừa được phản ứng và nhịp thở cần thiết;
-5. Không vì nhồi quá đầy mà cứ mỗi 1–2 giây lại bị buộc cắt shot;
-6. Cuối đoạn có thể hình thành trạng thái rõ ràng, có thể khai báo lại ở đoạn sau.
+One segment can hold multiple beats, but "1–4 beats" is only an empirical reference, not a hard upper limit. Whether to keep merging is decided by the following conditions:
+1. Total duration after merging ≤ the model's single-segment limit;
+2. All dialogue can be finished at a natural speaking pace;
+3. Key causal actions have a complete process;
+4. At least the necessary reactions and breathing room remain;
+5. It is not so packed that a shot cut is forced every 1–2 seconds;
+6. The end of the segment can form a clear state that can be re-declared in the next segment.
 
-Xuất hiện bất kỳ tình huống nào sau đây, nên chủ động mở đoạn mới, kể cả khi về lý thuyết vẫn nhồi được:
-- Lời thoại đã gần chạm giới hạn ngân sách thời gian;
-- Cùng một đoạn cần quá nhiều hành động/phản ứng tranh chấp lẫn nhau;
-- Cảm xúc hoặc mục tiêu chuyển giai đoạn rõ rệt;
-- Bối cảnh/thời gian thay đổi;
-- Tiếp tục gộp sẽ phá vỡ khả năng tạo độc lập giữa các đoạn;
-- Cần tốc độ nói bất thường, hành động dịch chuyển tức thời hoặc lược bỏ phản ứng mới nhồi vừa.
+If any of the following occurs, proactively start a new segment, even if more could theoretically be squeezed in:
+- Dialogue is already close to the upper limit of the time budget;
+- The same segment needs too many competing actions/reactions;
+- Emotion or goal undergoes a clear phase switch;
+- The scene/time switches;
+- Further merging would break independent generatability between segments;
+- Fitting it in would require abnormal speech speed, teleporting actions, or omitted reactions.
 
-### A2.5 Cách chia đợt cho cốt truyện dài
+### A2.5 How to batch long plots
 
-**Hoàn thành quy hoạch toàn bộ đoạn của phim trước, rồi mới giao theo đợt.**
+**Complete the whole-film segment plan first, then deliver in batches.**
 
-Ví dụ một tập 180s:
-- Seedance 2.0 lý thuyết tối thiểu 12 đoạn, nhưng thực tế có thể thành 13, 14, 15…… đoạn do mật độ lời thoại;
-- Số đoạn toàn phim cố định trước là G01, G02, G03……;
-- Sau đó giao theo mỗi đợt tối đa 6 đoạn: Batch 1 = G01–G06, Batch 2 = G07–G12, Batch 3 = các đoạn còn lại;
-- Seedance 2.5 tương tự, mỗi đợt tối đa 3 đoạn.
+For example, a 180s episode:
+- Seedance 2.0 theoretically needs at least 12 segments, but in practice dialogue density may make it 13, 14, 15... segments;
+- The whole-film segment numbers are fixed first as G01, G02, G03...;
+- Then deliver at most 6 segments per batch: Batch 1 = G01–G06, Batch 2 = G07–G12, Batch 3 = remaining segments;
+- Seedance 2.5 works the same way, at most 3 segments per batch.
 
-**Ranh giới đợt chỉ ảnh hưởng đến số đoạn xuất ra trong một lần, không thay đổi thứ tự, số đoạn và tính liên tục của toàn phim.**
+**Batch boundaries only affect how many segments are output at once; they do not change the whole-film order, segment numbers, or continuity.**
 
-### A2.6 Phương án dự phòng
+### A2.6 Fallback
 
-Nếu cốt truyện không có bước ngoặt/đỉnh rõ ràng, cũng đừng cố tạo ra năm loại điểm then chốt. Theo thứ tự nguyên văn, lấy "một đơn vị hành động/lời thoại/phản ứng có thể thực thi trọn vẹn" làm nhịp để tiếp tục quy hoạch là được.
+If the plot has no obvious turn/peak, do not force the five kinds of key points. Continue planning in the original order, using "one fully executable action/dialogue/reaction unit" as a beat.
 
 ---
 
-## A3. Phân đoạn và ngân sách thời lượng
+## A3. Segmentation and duration budget
 
-### A3.0 Trước tiên phân biệt "số đoạn tối thiểu lý thuyết" và "số đoạn thực tế"
+### A3.0 First distinguish the "theoretical minimum number of segments" from the "actual number of segments"
 
-**Giới hạn cứng mỗi đoạn:**
-- Seedance 2.0: mỗi đoạn ≤ 15s
-- Seedance 2.5: mỗi đoạn ≤ 30s
+**Single-segment hard limit:**
+- Seedance 2.0: each segment ≤ 15s
+- Seedance 2.5: each segment ≤ 30s
 
-Khi người dùng đưa tổng thời lượng nghiêm ngặt, có thể tính trước số đoạn tối thiểu lý thuyết:
+When the user gives a strict total duration, you can first calculate the theoretical minimum number of segments:
 
 ```text
-Số đoạn tối thiểu lý thuyết = ⌈tổng thời lượng / giới hạn mỗi đoạn⌉
+Theoretical minimum segments = ⌈total duration / single-segment limit⌉
 ```
 
-Công thức này chỉ trả lời "cần ít nhất mấy đoạn", **không có nghĩa là thực tế bắt buộc chỉ làm bấy nhiêu đoạn**.
+This formula only answers "how many segments are needed at minimum"; it **does not mean you must make only that many segments**.
 
-Ví dụ: 55s / Seedance 2.0:
-- Tối thiểu lý thuyết = 4 đoạn;
-- Nếu lời thoại/hành động rất nhẹ, có thể làm 15 + 15 + 15 + 10;
-- Nếu mật độ cốt truyện cao, cũng có thể làm 12 + 11 + 11 + 11 + 10 = 55s;
-- Chỉ cần mỗi đoạn ≤ 15s, tổng khớp với tổng thời lượng của người dùng, cốt truyện đầy đủ là được.
+Example: 55s / Seedance 2.0:
+- Theoretical minimum = 4 segments;
+- If dialogue/action is very light, you can do 15 + 15 + 15 + 10;
+- If plot density is high, you can also do 12 + 11 + 11 + 11 + 10 = 55s;
+- As long as every segment is ≤ 15s, the sum matches the user's total duration, and the plot is complete.
 
-**Nguyên tắc: cân bằng giữa "không quá dày" và "không vụn vặt", chứ không theo đuổi số đoạn ít nhất.**
+**Principle: strike a balance between "not too dense" and "not fragmented", rather than chasing the fewest segments.**
 
-### A3.1 Thứ tự xác định số đoạn thực tế
+### A3.1 Order for determining the actual number of segments
 
-Quyết định theo thứ tự sau:
-1. Hoàn thành toàn bộ nhịp và ngân sách thời lượng tối thiểu của A2 trước;
-2. Gộp các nhịp liền kề từ trước ra sau;
-3. Mỗi khi gần chạm giới hạn mỗi đoạn, kiểm tra xem lời thoại, hành động, phản ứng còn tự nhiên không;
-4. Nếu không tự nhiên, cắt sớm và mở đoạn mới;
-5. Thu được **số đoạn thực tế của toàn phim**;
-6. Cuối cùng mới chia Batch theo A3.4.
+Decide in the following order:
+1. First complete A2's full beat list and minimum duration budget;
+2. Merge adjacent beats from front to back;
+3. Each time you approach the single-segment limit, check whether the dialogue, actions, and reactions are still natural;
+4. If not natural, cut early and start a new segment;
+5. Obtain the **actual number of segments for the whole film**;
+6. Finally split into Batches per A3.4.
 
-Đừng quyết định trước "bắt buộc 4 đoạn", rồi ép ngược cốt truyện nhồi vào 4 đoạn.
+Do not first decide "it must be 4 segments" and then force the plot into 4 segments.
 
-### A3.2 Kiểm tra thời lượng lời thoại (ngưỡng cứng)
+### A3.2 Dialogue duration check (hard threshold)
 
-Mỗi câu thoại bắt buộc phải thực sự nói hết được trong shot/khung thời gian tương ứng.
+Every line of dialogue must actually be finishable within its corresponding shot/time window.
 
-Cách thực thi:
-- Trước tiên mô phỏng thời gian đọc theo khẩu ngữ tự nhiên;
-- Rồi cộng thêm các khoảng dừng, nói lắp, thở dốc, muốn nói lại thôi mà kịch bản yêu cầu rõ;
-- Nếu trong lúc nói còn có động tác nhỏ có thể song song, thì có thể chồng lên;
-- Nếu hành động bắt buộc phải hoàn thành trước/sau lời thoại, thì chiếm thời gian riêng;
-- **Cấm dùng tốc độ nói nhanh bất thường để giải quyết thiếu thời lượng;**
-- **Cấm vì thiếu thời lượng mà xóa từ, đổi từ, nuốt đuôi câu.**
+How to execute:
+- First simulate reading time at natural spoken pace;
+- Then add the pauses, stutters, gasps, and hesitations the script explicitly requires;
+- If there are small actions that can run in parallel while speaking, they may overlap;
+- If an action must be completed before/after the line, it takes its own time;
+- **Do not use abnormally fast speech to solve insufficient duration;**
+- **Do not cut words, change words, or swallow sentence endings because duration is insufficient.**
 
-Nếu "tổng thời lượng nghiêm ngặt" người dùng đưa ra xung đột với thời lượng tự nhiên tối thiểu của "toàn bộ lời thoại nguyên văn + hành động bắt buộc":
-- Ưu tiên nén các shot trống, khoảng dừng không mang thông tin, chuyển động máy thừa **do AI tự thêm**; shot trống, khoảng dừng, khoảng trống mà nguyên văn của người dùng yêu cầu rõ không được nén hay xóa;
-- Vẫn không đủ thì đánh dấu rõ "xung đột ràng buộc thời lượng" trong tổng quan toàn phim;
-- Không tự ý xóa lời thoại hay sửa cốt truyện để giả vờ đáp ứng.
+If the user's "strict total duration" conflicts with the minimum natural duration of "all original dialogue + required actions":
+- First compress empty shots, information-free pauses, and redundant camera movements **that the AI added itself**; empty shots, pauses, and breathing room explicitly required by the user's original must not be compressed or deleted;
+- If it is still not enough, clearly flag "duration constraint conflict" in the whole-film overview;
+- Do not arbitrarily cut dialogue or change the plot to pretend it is satisfied.
 
-### A3.3 Cách viết timeline
+### A3.3 How to write the timeline
 
-- Timecode mỗi đoạn bắt đầu lại từ `00:00`, tiện cho việc đưa riêng lẻ trực tiếp vào model;
-- Tổng quan toàn phim ghi riêng **khoảng thời gian toàn cục** tương ứng của đoạn đó;
-- Timecode hành động trong đoạn không được mâu thuẫn nhau;
-- Hành động song song có thể chồng khung thời gian, nhưng phải ghi rõ "đồng thời";
-- Hành động tuần tự phải nối tiếp trước sau, không được dựa vào cùng một giây để hoàn thành nhiều hành động không thể đồng thời.
+- Each segment's timecode restarts from `00:00`, so it can be fed to the model directly and separately;
+- The whole-film overview separately records the **global time range** corresponding to that segment;
+- In-segment action timecodes must not contradict each other;
+- Parallel actions may have overlapping time windows, but "simultaneously" must be stated explicitly;
+- Serial actions must connect one after another; you cannot rely on the same second to complete multiple actions that cannot be completed at the same time.
 
-### A3.4 Cốt truyện dài và dung lượng mỗi đợt
+### A3.4 Long plots and per-batch capacity
 
-**Giới hạn giao mỗi đợt (giới hạn dung lượng, không phải giới hạn toàn phim):**
-- Seedance 2.0: mỗi đợt tối đa 6 đoạn
-- Seedance 2.5: mỗi đợt tối đa 3 đoạn
+**Per-batch delivery limit (a capacity limit, not a whole-film limit):**
+- Seedance 2.0: at most 6 segments per batch
+- Seedance 2.5: at most 3 segments per batch
 
-Khi vượt quá:
-- Số đoạn toàn phim giữ liên tục;
-- Chỉ tách thành nhiều Batch;
-- Không tính lại số đoạn phía trước;
-- Không gọi nội dung chưa giao là "bị cắt bỏ", thống nhất gọi là "đoạn chờ giao ở đợt sau".
+When exceeded:
+- Whole-film segment numbers stay continuous;
+- Only split into multiple Batches;
+- Do not renumber earlier segments;
+- Do not call undelivered content "cut"; uniformly call it "segments pending in the next batch".
 
-Cốt truyện 2–3 phút hoàn toàn được phép có 2, 3, 4 đợt hoặc nhiều hơn.
+A 2–3 minute plot is fully allowed to have 2, 3, 4, or even more batches.
 
-### A3.5 Mật độ shot mỗi đoạn (khuyến nghị, không phải giới hạn cứng)
+### A3.5 Shot density per segment (recommended, not a hard limit)
 
-- Seedance 2.0: thường 1–2 shot chính; nội dung cực nhẹ có thể 3, nhưng tránh cắt vụn
-- Seedance 2.5: thường 2–4 shot chính
+- Seedance 2.0: usually 1–2 main shots; 3 when the content is extremely light, but avoid choppy cutting
+- Seedance 2.5: usually 2–4 main shots
 
-Nếu một đoạn để chứa hết cốt truyện mà cần HARD CUT tần suất cao liên tục, ưu tiên tách đoạn, chứ không tiếp tục nhồi shot.
+If a segment needs sustained high-frequency HARD CUTs to fit the plot, prefer splitting the segment rather than continuing to stuff in shots.
 
-### A3.6 Cấm chung và quy tắc chữ
+### A3.6 General prohibitions and text rules
 
-Mặc định cấm:
-- Không dissolve, không chớp trắng, không whip pan, không thay đổi tốc độ không có căn cứ cốt truyện;
-- Không thêm VO, lời dẫn, lời thoại mà người dùng không cung cấp;
-- Không tự động thêm BGM, âm báo cảm xúc;
-- Không thêm nhân vật mới, đạo cụ mới, hành động cốt truyện mới;
-- **Không tạo phụ đề hậu kỳ, tiêu đề, thẻ giải thích, chữ chồng UI, watermark hay chữ màn hình thêm khác.**
+Forbidden by default:
+- No dissolves, no white flashes, no whip pans, no speed changes without plot basis;
+- No added VO, voiceover, or dialogue the user did not provide;
+- No automatically added BGM or emotional cue sounds;
+- No added new characters, new props, or new plot actions;
+- **No generated post-production subtitles, titles, caption cards, UI overlay text, watermarks, or other extra on-screen text.**
 
-Nhưng chữ vật thể đã có trong bối cảnh / chữ trên bao bì sản phẩm thì theo A1.3:
-- Có tài sản tham chiếu thì giữ ngoại hình tham chiếu, không thêm, không viết lại, không vẽ lại;
-- Không viết nhầm "bao bì bắt buộc xuất hiện" thành "yêu cầu AI tạo chữ rõ ràng chính xác".
+But physical in-scene text / product packaging text follows A1.3:
+- When there is a reference asset, keep the reference appearance; do not add, rewrite, or redraw;
+- Do not miswrite "the packaging must appear" as "require the AI to generate clear, accurate text".
 
 ---
 
-## A4. Quy hoạch tài sản và trạng thái xuất hiện trên hình (viết theo timeline)
+## A4. Asset and on-screen state planning (written along the timeline)
 
-A4 là **quy tắc quy hoạch nội bộ** dùng chung cho mọi model. Nếu trạng thái xuất hiện trên hình của nhân vật trong cùng một đoạn khác nhau ở các khối thời gian/shot khác nhau, bắt buộc đăng ký riêng theo timeline, không được chỉ viết một trạng thái tổng thể mơ hồ.
+A4 is an **internal planning rule** shared by all models. If a character's on-screen state differs across different time blocks/shots within the same segment, it must be registered separately along the timeline; you cannot write only one vague overall state.
 
-**Bổ sung A4 · Đề xuất thiết kế khi thiếu ngoại hình và ánh sáng**
+**A4 supplement · Design proposals when appearance and lighting are missing**
 
-Khi kịch bản / người dùng không cung cấp ngoại hình của một nhân vật, hoặc thiếu ánh sáng và tông môi trường của một bối cảnh, nhưng hình ảnh của tập này thực sự cần:
-- Được phép suy ra "đề xuất thiết kế" theo phương pháp thiết kế hình ảnh / màu sắc và ánh sáng của Toonflow (visualDesign / colorAndLight), điền vào danh tính + neo ngoại hình hoặc ánh sáng bối cảnh của đoạn này;
-- Mọi đề xuất đều đánh dấu "đề xuất thiết kế", không coi là sự thật cốt truyện; không vì thế mà thêm cốt truyện, nguồn gốc đạo cụ, quan hệ nhân vật hay quy tắc thế giới;
-- Nếu không ảnh hưởng đến việc tạo đoạn này, thì giữ mức độ trừu tượng của nguyên văn, không cố bổ sung thiết kế (tuân theo A0.1.5).
+When the script / user has not provided a character's appearance, or a location's lighting and environmental tone are missing, but this episode's visuals genuinely need them:
+- You may derive a "design proposal" using Toonflow's visual design / color-and-lighting methods (visualDesign / colorAndLight), filling in this segment's identity + appearance anchors or location lighting;
+- All proposals are always marked "design proposal" and are not regarded as plot fact; do not add plot, prop sources, character relationships, or world rules because of them;
+- If it does not affect this segment's generation, keep the original level of abstraction and do not force a design (following A0.1.5).
 
-**Ánh xạ đầu ra cuối cùng:**
-- Seedance 2.0: vẫn xuất rõ "định danh tài sản" trước phần nội dung mỗi đoạn.
-- Seedance 2.5: không xuất thêm khối "định danh tài sản" lặp lại; thông tin A4 lần lượt được ánh xạ vào `Reference binding`, `Immutable locks`, `Timeline` và `Preserve`. Chỉ khi người dùng yêu cầu rõ ràng liệt kê riêng danh sách tài sản mới xuất thêm.
+**Final output mapping:**
+- Seedance 2.0: still explicitly output "Asset identification" before each segment's body.
+- Seedance 2.5: do not output an extra duplicated "Asset identification" block; A4 information is mapped into `Reference binding`, `Immutable locks`, `Timeline`, and `Preserve` respectively. Output it additionally only when the user explicitly asks for a separate asset list.
 
-Quy hoạch nội bộ có thể dùng định dạng sau:
+Internal planning may use the following format:
 
 ```text
-## Định danh tài sản
+## Asset identification
 
-### Nhân vật liên quan
+### Characters involved
 
-Nhân vật A | Tổng quan trạng thái xuất hiện trên hình
-- Khối thời gian / Shot 1 | 00:00–00:XX | chỉ tay / xuất hiện thực tế / hoàn toàn ngoài khung hình…… | nói / không nói
-- Khối thời gian / Shot 2 | 00:XX–00:XX | ……
+Character A | On-screen state overview
+- Time block / Shot 1 | 00:00–00:XX | hands only / actually on screen / fully off screen... | speaking / not speaking
+- Time block / Shot 2 | 00:XX–00:XX | ...
 
-Danh tính + neo ngoại hình: chỉ trích dẫn thông tin người dùng đã đưa.
-Tọa độ thế giới: chỉ viết quan hệ không gian trung tính mà cốt truyện nguồn đã xác định hoặc cần thiết cho việc tạo.
-Tọa độ khung hình: mô tả theo vị trí máy hiện tại, không làm thay đổi sự thật về vị trí trong thế giới.
-Trạng thái đặc biệt: chỉ đăng ký các trạng thái bẩn / vết thương / độ ẩm / cầm vật v.v. đã có trong cốt truyện nguồn.
-Diễn xuất trọng tâm của đoạn này: viết các hành động cốt truyện đã có sao cho nhìn thấy được, không thêm hành động.
-Lời thoại thu đồng bộ giữ nghiêm ngặt nguyên văn:
-"……"
+Identity + appearance anchors: only cite information the user has already given.
+World coordinates: only write neutral spatial relationships already established by the source plot or required for generation.
+Frame coordinates: describe per the current camera position, without changing world-position facts.
+Special states: only register states already present in the source plot such as dirt / injuries / wetness / held items.
+Key performance in this segment: make existing plot actions visible; do not add actions.
+Synchronous dialogue strictly kept as in the original:
+"..."
 
-Nhân vật B | Tổng quan trạng thái xuất hiện trên hình
-- Khối thời gian / Shot 1 | 00:00–00:XX | hoàn toàn ngoài khung hình | chỉ có lời thoại đồng bộ
-- Khối thời gian / Shot 2 | 00:XX–00:XX | xuất hiện thực tế | không nói
-……
+Character B | On-screen state overview
+- Time block / Shot 1 | 00:00–00:XX | fully off screen | synchronous dialogue only
+- Time block / Shot 2 | 00:XX–00:XX | actually on screen | not speaking
+...
 
-### Bối cảnh liên quan
-Bối cảnh A | thời gian
-(neo bối cảnh + vị trí/hướng/độ cao máy quay + tiền cảnh, trung cảnh, hậu cảnh + quan hệ không gian)
+### Locations involved
+Location A | Time
+(location anchor + camera position/direction/height + foreground/midground/background + spatial relationships)
 
-### Đạo cụ then chốt
-Đạo cụ A
-(trạng thái đầu đoạn do cốt truyện nguồn đưa ra + hành động theo timeline đã có trong cốt truyện nguồn + trạng thái cuối đoạn + cách xử lý chữ/bao bì; không truy ngược nguồn gốc chưa được nói rõ)
+### Key props
+Prop A
+(segment-start state given by the source plot + timeline actions already in the source plot + segment-end state + text/packaging handling; do not trace unstated sources)
 ```
 
-### A4.1 Bảng từ trạng thái xuất hiện trên hình của nhân vật
+### A4.1 Character on-screen state vocabulary
 
-Chọn dùng theo phạm vi nhìn thấy thực tế của mỗi shot:
-- Xuất hiện thực tế và nói
-- Xuất hiện thực tế nhưng không nói
-- Chỉ xuất hiện một phần khuôn mặt
-- Chỉ xuất hiện tay
-- Chỉ xuất hiện phía sau vai
-- Chỉ xuất hiện bóng lưng
-- Chỉ xuất hiện chân
-- Hoàn toàn ngoài khung hình | chỉ có lời thoại đồng bộ
-- Hoàn toàn ngoài khung hình | không có âm thanh
+Choose per the actual visible range of each shot:
+- Actually on screen and speaking
+- Actually on screen but not speaking
+- Only part of the face on screen
+- Only hands on screen
+- Only from behind the shoulder on screen
+- Only back view on screen
+- Only feet on screen
+- Fully off screen | synchronous dialogue only
+- Fully off screen | no sound
 
-**Cùng một nhân vật có từ hai trạng thái trở lên trong một đoạn → bắt buộc liệt kê timeline.**
+**A character with two or more states within one segment → a timeline must be listed.**
 
-### A4.2 Mục nhân vật bắt buộc có 6 loại thông tin
-1. Danh tính + neo ngoại hình
-2. Timeline trạng thái xuất hiện theo từng shot
-3. Tọa độ thế giới + tọa độ khung hình
-4. Trạng thái đặc biệt (những gì sẽ thay đổi trong đoạn này: bẩn / vết thương / độ ẩm / cảm xúc biểu lộ ra ngoài v.v.)
-5. Diễn xuất trọng tâm của đoạn này + 3–5 yêu cầu diễn xuất nhìn thấy được
-6. Nguyên văn lời thoại đồng bộ (nếu có)
+### A4.2 Character entries must contain 6 kinds of information
+1. Identity + appearance anchors
+2. Per-shot on-screen state timeline
+3. World coordinates + frame coordinates
+4. Special states (those that change in this segment: dirt / wounds / wetness / visible emotion, etc.)
+5. Key performance in this segment + 3–5 visible performance requirements
+6. Original synchronous dialogue (if any)
 
-### A4.3 Mục bối cảnh bắt buộc có 4 loại thông tin
-1. Neo bối cảnh
-2. Vị trí + hướng + độ cao máy quay
-3. Tiền cảnh / trung cảnh / hậu cảnh
-4. Quan hệ không gian và trục giữa nhân vật/mốc định vị
+### A4.3 Location entries must contain 4 kinds of information
+1. Location anchor
+2. Camera position + direction + height
+3. Foreground / midground / background
+4. Spatial relationships and axis of characters/landmarks
 
-### A4.4 Mục đạo cụ bắt buộc có 4 loại thông tin
-1. Vị trí tuyệt đối / người sử dụng / trạng thái đầu đoạn
-2. Hành động theo timeline của đoạn này (ai, khi nào, cử động thế nào)
-3. Trạng thái cuối đoạn
-4. Mục cấm; nếu có chữ trên bao bì, ghi chú theo A1.3 "giữ tài sản tham chiếu, không thêm/viết lại/vẽ lại chữ"
+### A4.4 Prop entries must contain 4 kinds of information
+1. Absolute position / user / state at segment start
+2. Timeline actions in this segment (who, when, how it moves)
+3. Segment-end state
+4. Prohibitions; if there is packaging text, note per A1.3 "keep the reference asset; do not add/rewrite/redraw text"
 
-### A4.5 Cấm
-- Không sao chép cả bộ hồ sơ nhân vật, chỉ giữ neo cần cho đoạn này
-- Không viết tài sản không xuất hiện
-- Không viết định danh tài sản thành lặp lại toàn bộ cốt truyện
-- Không dùng cách viết tổng quát mâu thuẫn kiểu "đoạn này xuất hiện thực tế và nói (nhưng shot 1 lại ngoài khung hình)"
-- Không yêu cầu AI tự tạo từ hư không chữ bao bì chính xác để thay thế tài sản tham chiếu
-
----
-
-## A5. Vị trí đứng: tọa độ thế giới + tọa độ khung hình (hai tầng · tự chứa)
-
-**Tiền đề cốt lõi: khi tạo mỗi đoạn, model không nhìn thấy bất kỳ hình ảnh nào của đoạn trước, cũng không dựa vào tham chiếu khung cuối của đoạn trước.**
-
-### A5.1 5 khối thông tin mỗi đoạn bắt buộc tự chứa
-
-1. **Tọa độ thế giới · trục và mốc định vị**: vị trí thật của nhân vật so với cửa, bàn, cửa sổ, hành lang v.v.; không liên quan đến vị trí máy.
-2. **Tọa độ khung hình · trái/phải/trước/sau/che khuất trong shot hiện tại**: khai báo lại theo vị trí máy hiện tại.
-3. **Hướng nguồn sáng · tầng thế giới + tầng khung hình**: chỉ kế thừa trong cùng một điều kiện chiếu sáng liên tục.
-4. **Vị trí tuyệt đối và trạng thái đạo cụ**: gồm đường di chuyển trong đoạn này.
-5. **Trạng thái kết thúc của đoạn này**: đoạn sau bắt buộc viết lại nó thành "trạng thái ban đầu tuyệt đối", chứ không viết "tiếp nối đoạn trước".
-
-### A5.2 Chuỗi trạng thái của cảnh liên tục
-
-Trong cùng một địa điểm, cùng một khoảng thời gian liên tục:
-
-`Trạng thái kết thúc đoạn trước → đoạn sau viết lại thành trạng thái ban đầu tuyệt đối → hành động đoạn này → trạng thái kết thúc đoạn này`
-
-Nội dung kế thừa gồm:
-- Vị trí thế giới thực tế và hướng cơ thể của nhân vật
-- Vị trí, người cầm, số lượng, mực chất lỏng, vết bẩn/hao mòn của đạo cụ
-- Các trạng thái kéo dài như vết thương, trang phục, độ ẩm, vết máu, khói bụi
-- Hướng ánh sáng chính, nhiệt độ màu và điều kiện môi trường
-
-### A5.3 Di chuyển của nhân vật chỉ tuân theo cốt truyện nguồn, không thêm hành động vì tính liên tục
-
-Điều bị cấm là AI tự tạo thay đổi vị trí không có căn cứ, cũng cấm vì "giải thích thay đổi vị trí" mà ngược lại bổ sung cốt truyện.
-
-- Nguyên văn viết rõ "đứng dậy đi tới cửa" → bắt buộc giữ quá trình đứng dậy, đi, đến nơi, không được dịch chuyển tức thời.
-- Nhịp tiếp theo trong nguyên văn viết thẳng "nhân vật đã đứng ở cửa", nhưng không viết đã qua đó thế nào → lấy "đứng ở cửa" làm trạng thái ban đầu đã định của nhịp đó, được phép vào bằng HARD CUT / đoạn mới; **không được tự thêm "đứng dậy, đi qua".**
-- Nguyên văn viết rõ hai người đổi chỗ → thực thi theo quá trình trong nguyên văn; nguyên văn không viết đổi chỗ → không được vì bố cục mà để hai người hoán đổi vị trí thế giới.
-- Trái phải trong khung hình có thể thay đổi do đổi vị trí máy hợp lệ, nhưng vị trí thế giới không được thay đổi khi không có nguồn.
-
-### A5.4 Quy tắc trục
-
-- Cùng một đoạn đối thoại liên tục mặc định duy trì trục 180° đã có;
-- Nếu người dùng yêu cầu rõ shot ngược/vượt trục, hoặc cốt truyện cần đổi trục, nên dùng vị trí máy trung tính, di chuyển qua trục hoặc shot thiết lập để thay đổi không gian dễ hiểu;
-- Cấm nhảy trục không báo trước;
-- **"Không vượt trục" không có nghĩa là máy quay vĩnh viễn không được đổi vị trí.**
-
-### A5.5 Neo lại khi đổi cảnh / nhảy thời gian
-
-Khi bối cảnh, thời gian, thời tiết hoặc nguồn sáng chính thay đổi rõ rệt:
-- Bối cảnh mới thiết lập lại tọa độ thế giới, tọa độ khung hình, trục và ánh sáng;
-- Không cưỡng ép kế thừa vị trí máy hay hướng ánh sáng của cảnh trước;
-- Trang phục, vết thương, đạo cụ mang theo người của nhân vật có kế thừa hay không, quyết định theo tính liên tục thời gian của cốt truyện.
-
-Như vậy có thể hỗ trợ cốt truyện nhiều bối cảnh dài 2–3 phút hoặc hơn, mà không khóa cứng quy tắc vị trí đứng của cảnh đầu tiên cho cả tập.
+### A4.5 Prohibitions
+- Do not copy the whole character profile; keep only the anchors this segment needs
+- Do not write assets that do not appear
+- Do not write asset identification as a repeat of the whole plot
+- Do not use contradictory summary wording such as "actually on screen and speaking in this segment (but off screen in Shot 1)"
+- Do not require the AI to generate precise packaging text out of thin air to replace the reference asset
 
 ---
 
-## A6. Tầng diễn xuất
+## A5. Blocking: world coordinates + frame coordinates (two layers · self-contained)
 
-### A6.1 Cảm xúc = sản phẩm phụ của hành vi
-Không viết "anh ấy rất buồn", hãy viết anh ấy **đang làm gì**. Cảm xúc rò rỉ từ những sai lệch nhỏ trong hành động.
+**Core premise: when each segment is generated, the model cannot see any frame of the previous segment and does not rely on the previous segment's last-frame reference.**
 
-### A6.2 Mục tiêu hướng tới đối tượng
-Chỉ khi cốt truyện gốc của người dùng đã có thể thấy rõ mục tiêu của nhân vật, mới sắp xếp nó thành mục tiêu có thể thực thi, và hướng tới người / vật / nhiệm vụ cụ thể. **Không được vì diễn xuất trọn vẹn mà tự suy diễn động cơ, mục đích ẩn hay ý đồ quan hệ của nhân vật.**
+### A5.1 5 blocks of information every segment must contain on its own
 
-### A6.3 Ưu tiên trạng thái, nhưng hành động nhân quả then chốt bắt buộc giữ quá trình
-Hành động nhân quả then chốt (cầm lấy / đặt xuống / rót chất lỏng / mở cửa / đổi tay / ngồi xuống / đứng dậy / di chuyển) không được dịch chuyển tức thời.
+1. **World coordinates · axis and landmarks**: the real positions of characters relative to doors, tables, windows, corridors, etc.; independent of camera position.
+2. **Frame coordinates · left/right/front/back/occlusion in the current shot**: re-declared with the current camera position.
+3. **Light source direction · world layer + frame layer**: only inherited under the same continuous lighting conditions.
+4. **Absolute prop positions and states**: including this segment's movement paths.
+5. **End state of this segment**: the next segment must rewrite it as an "absolute initial state" rather than writing "continue from the previous segment".
 
-### A6.4 Vi biểu cảm bắt buộc có căn cứ cốt truyện nguồn + trigger
-Chỉ khi cốt truyện nguồn đã có phản ứng/biểu lộ cảm xúc tương ứng, mới được viết vi biểu cảm, và viết thành `[vi biểu cảm nhìn thấy được của phản ứng đã có] + [điều kiện kích hoạt trong nguyên văn]`. **Không được vì shot gần mà tự thêm các phản ứng mới như nhíu mày, mím môi, đỏ mặt, nuốt khan, cười gượng.**
+### A5.2 State chain for continuous scenes
 
-### A6.5 mask + crack (chỉ khi cốt truyện nguồn hỗ trợ)
-- **mask**: chỉ sắp xếp trạng thái bề mặt mà người dùng đã đưa ra, không tự gán cho nhân vật "ngụy trang".
-- **crack**: chỉ cụ thể hóa phản ứng đã có của người dùng thành một sơ hở nhìn thấy được, không thêm phản ứng.
-- Cùng một shot đừng chồng liên tiếp nhiều crack; khi cốt truyện nguồn không có crack thì có thể hoàn toàn không dùng.
+Within the same place and the same continuous time:
 
-### A6.6 Thích ứng kênh diễn xuất (bắt buộc viết)
+`End state of previous segment → rewritten in the next segment as absolute initial state → this segment's actions → this segment's end state`
 
-| Shot nhìn thấy | Kênh diễn xuất chính |
+Inherited content includes:
+- Characters' actual world positions and body orientations
+- Prop positions, holders, quantities, liquid levels, stains/wear
+- Persistent states such as injuries, costumes, wetness, bloodstains, smoke and dust
+- Key light direction, color temperature, and environmental conditions
+
+### A5.3 Character movement obeys only the source plot; do not add actions for continuity
+
+What is forbidden is the AI creating unfounded position changes itself, and also adding plot in reverse to "explain a position change".
+
+- The original explicitly writes "gets up and walks to the door" → the process of getting up, walking, and arriving must be kept; no teleporting.
+- The original's next beat directly writes "the character is already standing at the door" without saying how they got there → treat "standing at the door" as that beat's given initial state, which may be entered through HARD CUT / a new segment; **do not add "gets up, walks over" on your own.**
+- The original explicitly writes two people swapping places → execute per the original process; the original does not write a swap → do not have the two swap world positions for composition.
+- Left/right in frame may change because of legitimate camera repositioning, but world positions must not change without a source.
+
+### A5.4 Axis rules
+
+- The same continuous conversation keeps the established 180° axis by default;
+- If the user explicitly requests a reverse shot/crossing the axis, or the plot requires changing the axis, make the spatial change understandable through a neutral camera position, a move across the axis, or an establishing shot;
+- Unsignaled axis jumps are forbidden;
+- **"Do not cross the axis" does not mean the camera can never change position.**
+
+### A5.5 Re-anchor on scene change / time jump
+
+When the scene, time, weather, or main light source clearly changes:
+- The new scene re-establishes world coordinates, frame coordinates, axis, and lighting;
+- Do not force inheritance of the previous scene's camera position or light direction;
+- Whether character costumes, injuries, carried props, etc. are inherited is decided by the plot's temporal continuity.
+
+This supports multi-scene plots of 2–3 minutes or even longer, without locking the first scene's blocking rules onto the whole episode.
+
+---
+
+## A6. Performance layer
+
+### A6.1 Emotion = a by-product of behavior
+Do not write "he is very sad"; write **what he is doing**. Emotion leaks through tiny deviations in action.
+
+### A6.2 Goal directed at an object
+Only when the user's original plot already makes a character's goal clearly visible, organize it into an executable goal directed at a specific person / thing / task. **Do not infer character motives, hidden purposes, or relationship intentions yourself for the sake of performance completeness.**
+
+### A6.3 State first, but key causal actions must keep their process
+Key causal actions (taking / putting down / pouring liquid / opening a door / switching hands / sitting down / getting up / moving) cannot teleport.
+
+### A6.4 Micro-expressions must have a source-plot basis + trigger
+Only when the source plot already contains a corresponding reaction/visible emotion may a micro-expression be written, and it is written as `[visible micro-expression of an existing reaction] + [original trigger condition]`. **Do not add new reactions such as frowning, pursing lips, blushing, swallowing, or a bitter smile on your own just because the shot is close.**
+
+### A6.5 mask + crack (only when supported by the source plot)
+- **mask**: only organize the surface state the user has already given; do not assign the character a "disguise" yourself.
+- **crack**: only make an existing user reaction concrete as one visible crack; do not add reactions.
+- Do not pile multiple cracks consecutively in the same shot; when the source plot has no crack, you may skip it entirely.
+
+### A6.6 Performance channel adaptation (must be written)
+
+| Visible in shot | Main performance channel |
 |---|---|
-| Thấy mặt | Ánh mắt + thay đổi cực nhỏ trên mặt |
-| Chỉ thấy tay | Lực nắm + nhịp động tác + chạm |
-| Thấy bóng lưng | Trọng tâm + vai cổ + hơi thở |
-| Thấy chân | Dáng đi + chuyển trọng lượng |
-| Toàn thân viễn cảnh | Tư thế + chiếm lĩnh không gian |
+| Face visible | Gaze + extremely small facial changes |
+| Only hands visible | Grip + action rhythm + touch |
+| Back view visible | Center of gravity + shoulders and neck + breathing |
+| Feet visible | Gait + weight transfer |
+| Full-body long shot | Posture + occupation of space |
 
-**Chỉ viết kênh diễn xuất thực sự nhìn thấy được trong shot này.**
+**Only write the performance channels actually visible in this shot.**
 
-### A6.7 Thời điểm tương đối giữa phản ứng và lời thoại
-Phản ứng có thể bắt đầu trước khi lời thoại của đối phương kết thúc, nhưng bắt buộc phải có từ kích hoạt/hành động kích hoạt rõ ràng; đừng quy định máy móc "mọi phản ứng đều đợi nói xong" hoặc "mọi phản ứng đều đi trước".
+### A6.7 Relative timing of reactions and lines
+A reaction may start before the other party's line ends, but it must have a clear trigger word/trigger action; do not mechanically require "all reactions wait until the line is finished" or "all reactions come early".
 
-### A6.8 Bùng nổ kiểu kìm nén
-Cảm xúc mạnh có thể làm phép trừ với **các trang trí diễn xuất do AI tự thêm**, ví dụ bớt một lần nhíu mày thêm, bớt một tiếng thở dài thừa; **không được xóa, thay thế hay lùi lại hành động/lời thoại/phản ứng trong cốt truyện gốc của người dùng.** Có thể dùng biên độ nhẹ hơn, sự kiện diễn xuất ngắn hơn để thể hiện sự kìm nén, nhưng bản thân sự kiện cốt truyện bắt buộc tồn tại nguyên dạng.
+### A6.8 Restrained outbursts
+Strong emotion may subtract from **performance decorations the AI added itself**, e.g. one less extra frown, one less redundant sigh; **do not delete, replace, or delay the user's original plot actions/dialogue/reactions.** Restraint may be expressed with lighter amplitude and shorter performance events, but the plot events themselves must exist as in the original.
 
-### A6.9 Số sự kiện vi biểu cảm (tham chiếu giới hạn trên, không phải định mức tối thiểu)
-- Đoạn ≤15s: thường không quá 1–2 vi phản ứng đã có trong cốt truyện nguồn
-- Đoạn 16–30s: thường không quá 2–3 vi phản ứng đã có trong cốt truyện nguồn
+### A6.9 Number of micro-expression events (upper-limit reference, not a minimum quota)
+- ≤15s segments: usually no more than 1–2 micro-reactions already in the source plot
+- 16–30s segments: usually no more than 2–3 micro-reactions already in the source plot
 
-**0 cái hoàn toàn được phép. Không được thêm vi biểu cảm để đạt số lượng.** Nếu shot chỉ thấy tay/bóng lưng, thì đừng cố viết vi biểu cảm khuôn mặt.
+**0 is fully allowed. Do not add micro-expressions to reach a count.** If the shot only shows hands/back view, do not force facial micro-expressions.
 
 ---
 
-## A7. Chuyển động máy và nối giữa các đoạn
+## A7. Camera movement and inter-segment transitions
 
-### A7.1 Đường cong cảm xúc
+### A7.1 Emotional curve
 
 ```text
-Thấp ──→ Trung ──→ Cao ──→ Giải tỏa
-Khởi      Áp lực     Đỉnh      Tiếp đất
+Low ──→ Mid ──→ High ──→ Release
+Start   Pressure Peak    Landing
 ```
 
-Đường cong cảm xúc được ghi theo thứ tự thời gian của cốt truyện gốc, không được dùng để sắp xếp lại cốt truyện.
+The emotional curve is recorded in the original plot's time order and cannot be used to reorder the plot.
 
-### A7.2 Vị trí cảm xúc → chuyển động máy
-Đỉnh có thể chia thành ba loại: nội tâm, đảo chiều thông tin, hành động bên ngoài; chuyển động máy bắt buộc tuân theo phong cách người dùng chỉ định, không được vì "đỉnh" mà tự động đẩy vào gần hay tự động đặc tả lớn.
+### A7.2 Emotional position → camera movement
+Peaks can be divided into three kinds: internal, information reversal, and external action; camera movement must obey the user-specified style and cannot automatically push in or go to an extreme close-up just because of a "peak".
 
-### A7.3 Quy tắc nối giữa các đoạn (ưu tiên tạo độc lập)
+### A7.3 Inter-segment transition rules (independent generation first)
 
-**Phạm vi xét: chỉ xét "shot cuối của đoạn N" và "shot đầu của đoạn N+1".**
+**Scope of judgment: look only at "the last shot of segment N" and "the first shot of segment N+1".**
 
-Thuộc tính shot chia làm ba loại:
-- **Chủ thể quay**: hai người / một người / cận bộ phận / shot trống / nhóm đông
-- **Cỡ cảnh**: toàn cảnh / trung cảnh / cận cảnh / đặc tả / đại đặc tả
-- **Góc máy**: chính diện / nghiêng / phía sau / qua vai / nhìn từ trên xuống / nhìn từ dưới lên
+Shot attributes fall into three categories:
+- **Subject**: two-person / single person / partial / empty shot / group
+- **Shot size**: wide / medium / close / close-up / extreme close-up
+- **Angle**: front / side / back / over-the-shoulder / high angle / low angle
 
-Để tránh hai đoạn tạo độc lập trông như khung nối tiếp lỗi ở điểm dựng, việc nối giữa các đoạn mặc định phải thỏa mãn ít nhất một trong các điều:
-1. Loại chủ thể quay khác nhau;
-2. Cỡ cảnh chênh ≥ 2 bậc;
-3. Góc quay chênh ≥ 90°.
+To prevent two independently generated segments from looking like an erroneous continuation at the edit point, inter-segment transitions by default satisfy at least one of:
+1. Different subject type;
+2. Shot size difference ≥ 2 steps;
+3. Camera angle difference ≥ 90°.
 
-Khi cả ba đều không thỏa mãn, chỉ được điều chỉnh **chủ thể quay/cỡ cảnh/góc/bố cục** của shot đầu đoạn sau, không được thay đổi sự kiện cốt truyện nguồn, sự thật về vị trí nhân vật, hành động, đạo cụ hay lời thoại tương ứng với shot đầu đó.
+When none of the three is satisfied, you may only adjust the next segment's first shot's **subject/shot size/angle/composition**; do not change the source plot event, character position facts, actions, props, or dialogue corresponding to that first shot.
 
-**Khuyến nghị:**
-- Trung cảnh hai người → đặc tả một người/cận bộ phận
-- Trung cảnh hai người → shot trống
-- Trung cảnh một người → trung cảnh hai người
-- Đặc tả cận bộ phận → trung cảnh hai người
-- Shot trống → trung cảnh hai người
-- Trung cảnh nghiêng một người → đặc tả chính diện một người
+**Recommended:**
+- Two-person medium shot → single-person/partial close-up
+- Two-person medium shot → empty shot
+- Single-person medium shot → two-person medium shot
+- Partial close-up → two-person medium shot
+- Empty shot → two-person medium shot
+- Single-person side medium shot → single-person front close-up
 
-**Rủi ro cao:**
-- Cùng chủ thể + cùng cỡ cảnh + góc gần giống nhau nối thẳng qua đoạn
-- Cùng một động tác tay nối cứng giữa hai đoạn tạo độc lập
+**High risk:**
+- Same subject + same shot size + similar angle directly across segments
+- The same hand action hard-joined between two independently generated segments
 
-Lưu ý: không tồn tại bộ quy tắc thứ hai kiểu "cận bộ phận → cận bộ phận đều cấm" mâu thuẫn với ba điều kiện trên. Nếu chủ thể/cỡ cảnh/góc đã đủ khác biệt thì dùng được; nhưng vẫn phải đảm bảo tính liên tục dễ đọc.
+Note: there is no second set of rules such as "partial → partial is always forbidden" that conflicts with the three conditions above. If subject/shot size/angle already differ enough, it is usable; but continuity must still be easy to read.
 
-### A7.4 Dựng liên tục theo hành động
+### A7.4 Continuous action editing
 
-Match-on-action của cùng một hành động chưa hoàn thành **ưu tiên chỉ đặt trong cùng một đoạn tạo**:
-- Hành động ở khung cuối shot A đang diễn ra;
+A match-on-action for the same unfinished action is **preferably placed within the same generation segment only**:
+- Shot A's last frame has the action in progress;
 - HARD CUT;
-- Khung đầu shot B tiếp tục hoàn thành.
+- Shot B's first frame continues to complete it.
 
-Khi vượt qua đoạn tạo, ưu tiên để đoạn trước hoàn thành hành động, đoạn sau bắt đầu lại từ "trạng thái ổn định sau khi hành động hoàn thành", để giảm sự không liên tục giữa các lần chạy model.
+Across generation segments, prefer letting the previous segment complete the action and having the next segment restart from "the stable state after the action is completed", to reduce discontinuity between model runs.
 
-### A7.5 Bảng định tuyến phong cách
+### A7.5 Style routing table
 
-| Phong cách | Chuyển động máy | Diễn xuất | Ánh sáng | Âm thanh |
+| Style | Camera movement | Performance | Lighting | Sound |
 |---|---|---|---|---|
-| **Kiểu kìm nén** | Chủ yếu cố định / đỉnh cũng có thể không động | Cảm xúc rò rỉ từ sai lệch hành động | Ánh sáng tự nhiên / tương phản thấp | Âm thanh môi trường chủ đạo |
-| **Kiểu hồi hộp** | Chủ yếu vị trí máy ổn định / khi cần thì đột ngột shot ngược | Lõi là chênh lệch thông tin / phản ứng có thể chậm nửa nhịp | Bóng đổ cứng / ngược sáng chéo | Im lặng có thể hiệu quả hơn nhạc |
-| **Kiểu hài** | Vị trí máy cố định / toàn cảnh đứng hình thường hiệu quả | Nhân vật diễn nghiêm túc, tương phản tạo tiếng cười | Ánh sáng bình thường đều | Âm thanh môi trường chủ đạo |
+| **Restrained** | Mostly static / may stay still even at the peak | Emotion leaks through deviations in action | Natural light / low contrast | Ambient sound dominant |
+| **Suspense** | Mostly stable camera / sudden reverse shot when necessary | Information gap is the core / reactions may lag half a beat | Hard shadows / side backlight | Silence can be more effective than music |
+| **Comedy** | Static camera / wide-shot freeze is often effective | Characters act seriously; contrast creates the comedy | Even, normal light | Ambient sound dominant |
 
-Khi người dùng đã có phong cách rõ ràng, phong cách của người dùng có mức ưu tiên cao nhất.
-
----
-
-## A8. Kiểm tra tính liên tục giữa các đoạn (xác định liên hệ trước, rồi mới kiểm tra)
-
-A7.3 là **nguồn quy tắc duy nhất cho việc chuyển loại shot giữa các đoạn**; A8 chỉ chịu trách nhiệm về tính liên tục của nhân vật, đạo cụ, môi trường và trạng thái kéo dài. **Không được cưỡng ép xâu mọi đoạn tạo liền kề thành cùng một không gian liên tục. Trước tiên xác định hai đoạn có thực sự có quan hệ liên tục không, rồi mới quyết định kế thừa gì.**
-
-### A8.1 Trước tiên xác định quan hệ liên tục của các đoạn liền kề
-
-Với mỗi `trạng thái cuối đoạn N → trạng thái đầu đoạn N+1`, nội bộ chỉ đánh dấu một trong ba loại sau:
-
-1. **Liên hệ liên tục**: cùng địa điểm, cùng khoảng thời gian liên tục, hoặc cốt truyện nguồn nói rõ là "tiếp tục / ngay sau đó / nối tiếp / cùng một lượt đối thoại / cùng một chuỗi hành động", trạng thái đầu đoạn sau phụ thuộc trạng thái cuối đoạn trước.
-2. **Liên hệ trạng thái cục bộ**: bối cảnh hoặc thời gian đã thay đổi, nhưng cốt truyện nguồn yêu cầu rõ một số trạng thái kéo dài tiếp tục tồn tại, ví dụ cùng một đạo cụ mang theo người, trang phục rách, vết thương, độ ẩm, vết bẩn, lượng sản phẩm còn lại v.v. Lúc này chỉ kế thừa các trạng thái kéo dài này, **không cưỡng ép kế thừa vị trí nhân vật, vị trí máy hay trái phải khung hình của cảnh trước**.
-3. **Không có liên hệ liên tục / neo lại**: bối cảnh, thời gian hoặc đơn vị tự sự đã chuyển, và đoạn sau không phụ thuộc vào vị trí nhân vật hay trạng thái cuối đạo cụ của đoạn trước. Lúc này chỉ kiểm tra trạng thái khởi đầu, hành động và trạng thái cuối của chính đoạn này có hợp lý không; vị trí nhân vật, vị trí máy, ánh sáng thiết lập lại theo đoạn này.
-
-Căn cứ xác định chỉ đến từ chỉ thị rõ ràng mới nhất của người dùng, kịch bản nguồn và trạng thái đã xác nhận. **Không được vì "cho nó nối được" mà tự tạo liên hệ.** Nếu cốt truyện nguồn đưa thẳng trạng thái đã định mới của đoạn sau mà không có quá trình chuyển tiếp, theo A0.1.4 coi trạng thái đó là trạng thái đầu mới, có thể vào bằng HARD CUT / khối thời gian mới, không bổ sung tiền sử di chuyển hay bàn giao.
-
-### A8.2 Kiểm tra quan hệ vị trí nhân vật (bắt buộc với đoạn có liên hệ liên tục)
-
-Với mỗi nhân vật thực sự có liên hệ liên tục, nội bộ duy trì một chuỗi trạng thái ngắn gọn:
-
-`vị trí/tư thế tuyệt đối đầu đoạn → hành động trong cốt truyện nguồn → vị trí/tư thế tuyệt đối cuối đoạn → vị trí/tư thế ban đầu tuyệt đối của đoạn sau`
-
-Ít nhất đối chiếu:
-1. **Vị trí thế giới**: vị trí so với các mốc như cửa, bàn, cửa sổ, hành lang, xe cộ, đồ nội thất cố định có nhất quán không;
-2. **Quan hệ tương đối giữa các nhân vật**: ai ở phía nào của ai, khoảng cách trước sau, có cách nhau bởi bàn/cửa/quầy v.v. hay không, các quan hệ này có bị thay đổi vô cớ không;
-3. **Trạng thái cơ thể**: đứng / ngồi / ngồi xổm / nằm, hướng cơ thể, đối tượng đang hướng mặt về có liên tục không;
-4. **Tay đang bận**: nếu nhân vật đang cầm đạo cụ then chốt, tay nào/hai tay có còn bị hành động đó chiếm không; nguyên văn không khóa tay trái/phải và shot không cần thì đừng cưỡng ép chỉ định, nhưng một khi đã xác định rõ để thực thi, thì không được đổi tay mà không có quá trình trong các shot liên quan;
-5. **Trong khung và ngoài khung**: cắt khung hay đổi vị trí máy có thể khiến nhân vật từ trong khung thành ngoài khung, nhưng điều này không có nghĩa là nhân vật biến mất hay đổi chỗ trong không gian thế giới;
-6. **Căn cứ di chuyển**: khi vị trí thay đổi, bắt buộc phải tương ứng với các sự kiện di chuyển/đứng dậy/ngồi xuống/quay người đã có trong `E##` của cốt truyện nguồn, hoặc trạng thái đầu mới do cốt truyện nguồn đưa trực tiếp; không có căn cứ thì không được dựa vào việc cắt shot để nhân vật dịch chuyển tức thời.
-
-**Trái/phải khung hình có thể thay đổi do đổi vị trí máy hợp lệ, vị trí thế giới không được vì thế mà thay đổi.** Khi shot ngược trước tiên kiểm tra tọa độ thế giới, rồi tính lại tọa độ khung hình; cấm vì muốn giữ "luôn ở bên trái/phải khung hình" mà lén dời nhân vật.
-
-### A8.3 Kiểm tra chuỗi trạng thái đạo cụ (bắt buộc trong đoạn + qua đoạn liên tục)
-
-Với đạo cụ then chốt của cốt truyện, sản phẩm và vật nhỏ tham gia hành động, nội bộ duy trì:
-
-`người cầm / tay dùng (nếu đã xác định rõ) / vị trí tuyệt đối / nhìn thấy hay bị che / số lượng / trạng thái đóng mở / vật chứa bên trong hoặc mực chất lỏng / vết bẩn độ ẩm hao mòn / hành động đoạn này / trạng thái cuối đoạn`
-
-Quy tắc cứng:
-- Một người trong các shot liên tục vốn đang cầm một cây bút, và không có sự kiện "đặt xuống / đưa ra / cất đi / rơi / rời khỏi khung hình" v.v. trong cốt truyện nguồn, thì khoảnh khắc tiếp theo **không được tự nhiên biến mất**;
-- Nếu shot sau cắt mất tay hay đạo cụ, bị cơ thể/đồ nội thất che, được phép "tạm thời không nhìn thấy", nhưng trạng thái thế giới của nó vẫn giữ nguyên, **không được hiểu "không quay tới" thành "đạo cụ biến mất"**;
-- Nếu cùng bàn tay cầm vật ở shot sau vẫn nhìn thấy rõ, mà không có sự kiện thay đổi trạng thái, thì đạo cụ đó phải tiếp tục ở trong tay;
-- Đạo cụ đã đặt xuống không được quay lại tay mà không có quá trình, đạo cụ đã giao cho B thì shot sau không được đồng thời xuất hiện trong tay A;
-- Số lượng, kích cỡ, hình dạng, màu sắc, cách đóng mở, mực chất lỏng, hao mòn và vết bẩn không được nhân bản, khôi phục hay thay đổi vô cớ;
-- Đạo cụ đi vào hay rời khỏi mép khung hình không có nghĩa là trạng thái đạo cụ thay đổi, trừ khi cốt truyện nguồn thực sự có di chuyển.
-
-### A8.4 Tính liên tục của bối cảnh và môi trường vật lý
-
-Chỉ kiểm tra khi có "liên hệ liên tục" hoặc "liên hệ trạng thái cục bộ":
-- Cửa ra vào/cửa sổ đóng mở, sự di chuyển đã xảy ra của ghế/bộ đồ ăn/đồ nội thất;
-- Các trạng thái kéo dài như vệt nước trên sàn, vết bẩn, hư hỏng, khói, lượng thức ăn còn lại;
-- Hướng ánh sáng chính, thời gian, thời tiết và việc bật tắt nguồn sáng thực tế;
-- Trong gương, kính, bề mặt phản chiếu không được xuất hiện bản sao thừa mâu thuẫn với trạng thái nhân vật/đạo cụ hiện tại;
-- Nhân vật và môi trường cố định không được xuyên vật thể, xuyên tường hay vượt qua chướng ngại kín mà không có căn cứ.
-
-### A8.5 Ranh giới chỉnh sửa giữa các đoạn
-
-Khi phát hiện vấn đề tính liên tục, chỉ được phép:
-- Sửa xung đột văn bản về tọa độ thế giới/tọa độ khung hình;
-- Sửa mô tả xuất hiện/che khuất;
-- Sửa việc cầm giữ, khả năng nhìn thấy và khóa trạng thái của đạo cụ then chốt;
-- Điều chỉnh cách chứa shot, cỡ cảnh hoặc điểm cắt, để hành động đã có dễ được thể hiện trọn vẹn hơn;
-- Khi cần thiết, phân cảnh/phân đoạn lại tại **ranh giới `E##` đã có**.
-
-**Cấm vì sửa tính liên tục mà thêm các hành động nối cầu người dùng không viết như "đặt bút xuống / lại cầm lên / đi sang phía bên kia / lấy lại một cái".** Nếu xung đột đến từ chính cốt truyện nguồn, theo A0.1.6 đánh dấu "xung đột văn bản nguồn", không tự ý sửa thành một câu chuyện khác.
-
-**Đừng viết "như trên", "tiếp nối vị trí đứng đoạn trước". Đoạn sau cần kế thừa thì bắt buộc viết lại kết quả kế thừa thành trạng thái ban đầu tuyệt đối; đoạn không có quan hệ liên tục thì chỉ kiểm tra chính đoạn đó.**
+When the user already has an explicit style, the user's style takes the highest priority.
 
 ---
 
-## A9. Mẫu prompt phân đoạn (định tuyến theo model)
+## A8. Cross-segment continuity check (determine the relationship first, then verify)
 
-A9 chỉ định nghĩa **lớp vỏ giao nộp cuối cùng**, không thay đổi bất kỳ logic thực thi nào của A2–A8.
+A7.3 is the **sole rule source for shot-type switching between segments**; A8 is only responsible for the continuity of characters, props, environment, and persistent states. **Do not force all adjacent generation segments into one continuous space. First determine whether two segments are actually continuous, then decide what to inherit.**
 
-- Seedance 2.0 → dùng A9.1
-- Seedance 2.5 → dùng A9.2
+### A8.1 First determine the continuity relationship between adjacent segments
 
-Nếu cách diễn đạt của A9 xung đột với quy tắc thực thi của A2–A8, A11–A12, lấy quy tắc thực thi làm chuẩn.
+For each `segment N end state → segment N+1 initial state`, internally mark only one of the following three kinds:
 
-### A9.1 Mẫu prompt phân đoạn Seedance 2.0 (định danh tài sản + prompt chính thức)
+1. **Continuous relationship**: same place, same continuous time, or the source plot explicitly says "continue / then / follow on / same round of conversation / same action chain"; the next segment's initial state depends on the previous segment's end state.
+2. **Partial state relationship**: the scene or time has changed, but the source plot explicitly requires certain persistent states to continue, e.g. the same carried prop, costume damage, injuries, wetness, stains, remaining product amount, etc. In that case, only inherit these persistent states, and **do not force inheritance of the previous scene's character positions, camera position, or frame left/right**.
+3. **No continuity relationship / re-anchor**: the scene, time, or narrative unit has already switched, and the next segment does not depend on the previous segment's character positions or prop end states. In that case, only check whether this segment's own start state, actions, and end state are reasonable; character positions, camera position, and lighting are re-established for this segment.
+
+The basis for judgment comes only from the user's latest explicit instruction, the source script, and confirmed states. **Do not create relationships yourself "to make it connect".** If the source plot directly gives the next segment a new given state without a transition process, treat that state as the new initial state per A0.1.4; it may be entered through HARD CUT / a new time block, without adding movement or handoff backstory.
+
+### A8.2 Character position relationship check (mandatory for continuously related segments)
+
+For each character that actually has a continuous relationship, internally maintain a concise state chain:
+
+`Segment-start absolute position/posture → source plot action → segment-end absolute position/posture → next segment's absolute initial position/posture`
+
+Verify at least:
+1. **World position**: whether the position relative to landmarks such as doors, tables, windows, corridors, vehicles, and fixed furniture is consistent;
+2. **Relative character relationships**: whether who is on which side of whom, front/back distance, and whether separated by a table/door/counter, etc. have changed without cause;
+3. **Body state**: whether standing / sitting / crouching / lying, body orientation, and the object faced are continuous;
+4. **Hand occupancy**: if a character is holding a key prop, whether which hand/both hands are still occupied by that action; when the source does not lock left/right hand and the shot does not need it, do not force a specification, but once it has been made explicit for execution, the hand cannot be switched in related shots without a process;
+5. **On screen and off screen**: frame cropping or camera repositioning can move a character from in-frame to off-screen, but this does not mean the character disappears or changes position in world space;
+6. **Basis for movement**: when a position changes, it must correspond to an existing movement/getting up/sitting down/turning event in the source plot's `E##`, or a new initial state given directly by the source plot; without a basis, a character cannot teleport through a shot change.
+
+**Frame left/right can change through legitimate camera repositioning; world position cannot change because of it.** For reverse shots, first check world coordinates, then recompute frame coordinates; do not secretly move characters to keep them "always frame left/right".
+
+### A8.3 Prop state chain check (mandatory within a segment + across continuous segments)
+
+For key plot props, products, and small objects that take part in actions, internally maintain:
+
+`Holder / hand used (if explicit) / absolute position / visible or occluded / quantity / open-closed state / contents or liquid level / stain, wetness, wear / this segment's action / segment-end state`
+
+Hard rules:
+- If a person is holding a pen in continuous shots and the source plot has no event such as "put down / hand over / put away / drop / leave the frame", it **cannot vanish out of nowhere** at the next moment;
+- If the next shot crops out the hand or prop, or it is occluded by the body/furniture, "temporarily invisible" is allowed, but its world state remains; **do not interpret "not filmed" as "the prop disappeared"**;
+- If the same hand holding the item is still clearly visible in the next shot and there is no state-change event, the prop should still be in the hand;
+- A prop that has been put down cannot return to the hand without a process, and a prop already handed to B cannot also appear in A's hand in the next shot;
+- Quantity, size, form, color, opening mechanism, liquid level, wear, and stains cannot be duplicated, restored, or changed without cause;
+- A prop entering or leaving the frame edge does not equal a prop state change, unless the source plot actually involves movement.
+
+### A8.4 Location and physical environment continuity
+
+Check only for "continuous relationship" or "partial state relationship":
+- Doors and windows open/closed, movements of chairs/tableware/furniture that have already happened;
+- Persistent states such as water marks on the floor, stains, damage, smoke, and remaining food;
+- Key light direction, time, weather, and whether actual light sources are on or off;
+- Mirrors, glass, and reflective surfaces must not show extra copies contradicting the current character/prop states;
+- Characters must not clip through the fixed environment, pass through walls, or cross closed obstacles without basis.
+
+### A8.5 Boundaries for cross-segment correction
+
+When a continuity problem is found, only the following are allowed:
+- Correct textual conflicts in world coordinates/frame coordinates;
+- Correct on-screen/occlusion descriptions;
+- Correct the holding, visibility, and state locks of key props;
+- Adjust shot carrying, shot size, or cut points so existing actions are easier to present completely;
+- When necessary, re-storyboard/re-segment at **existing `E##` boundaries**.
+
+**Do not add bridging actions the user did not write, such as "put the pen down / pick it up again / walk to the other side / take a new one", to fix continuity.** If the conflict comes from the source plot itself, mark "source text conflict" per A0.1.6; do not arbitrarily fix it into a different story.
+
+**Do not write "same as above" or "continue the previous segment's blocking". A next segment that needs to inherit must rewrite the inherited result as an absolute initial state; a segment without a continuity relationship only checks itself.**
+
+---
+
+## A9. Segment prompt templates (routed by model)
+
+A9 only defines the **final delivery shell**; it does not change any execution logic of A2–A8.
+
+- Seedance 2.0 → use A9.1
+- Seedance 2.5 → use A9.2
+
+If A9's way of expression conflicts with the execution rules of A2–A8 and A11–A12, the execution rules prevail.
+
+### A9.1 Seedance 2.0 segment prompt template (asset identification + formal prompt)
 
 ```text
 ═══════════════════════════════════════════
-G0N | Batch X / Đoạn N | Model mục tiêu: Seedance 2.0 | Thời lượng đoạn: Xs | Thời gian toàn cục: MM:SS–MM:SS
+G0N | Batch X / Segment N | Target model: Seedance 2.0 | Segment duration: Xs | Global time: MM:SS–MM:SS
 ═══════════════════════════════════════════
 
-## Định danh tài sản
+## Asset identification
 
-### Nhân vật liên quan
-Tên nhân vật | Tổng quan trạng thái xuất hiện trên hình
-- Shot N-1 | 00:00–00:XX | chỉ tay / xuất hiện thực tế / hoàn toàn ngoài khung hình…… | nói / không nói
-- Shot N-2 | 00:XX–00:XX | ……
-(danh tính + neo ngoại hình + tọa độ thế giới + tọa độ khung hình + trạng thái đặc biệt + diễn xuất trọng tâm của đoạn này + yêu cầu diễn xuất + nguyên văn lời thoại đồng bộ)
+### Characters involved
+Character name | On-screen state overview
+- Shot N-1 | 00:00–00:XX | hands only / actually on screen / fully off screen... | speaking / not speaking
+- Shot N-2 | 00:XX–00:XX | ...
+(identity + appearance anchors + world coordinates + frame coordinates + special states + key performance in this segment + performance requirements + original synchronous dialogue)
 
-### Bối cảnh liên quan
-Tên bối cảnh | thời gian
-(neo bối cảnh + vị trí, hướng, độ cao máy quay + tiền, trung, hậu cảnh + quan hệ không gian)
+### Locations involved
+Location name | Time
+(location anchor + camera position, direction, height + foreground/midground/background + spatial relationships)
 
-### Đạo cụ then chốt
-Tên đạo cụ
-(vị trí tuyệt đối đầu đoạn + hành động theo timeline + trạng thái cuối đoạn + mục cấm; chữ trên bao bì theo A1.3)
+### Key props
+Prop name
+(segment-start absolute position + timeline actions + segment-end state + prohibitions; packaging text per A1.3)
 
 ─────────────────────────────────────────
-[Prompt chính thức]
+[Formal prompt]
 
-Tạo một phim ngắn điện ảnh người thật có tổng thời lượng nghiêm ngặt là Xs.
-(phong cách hình ảnh / mô tả tổng quát máy quay / mô tả tổng quát nguồn sáng)
+Generate a live-action cinematic short with a total duration of strictly Xs.
+(visual style / camera overview / light source overview)
 
-## Quan hệ không gian nhân vật
-(tọa độ thế giới + tọa độ khung hình · hai tầng; cấm chỉ viết "tiếp nối đoạn trước")
+## Character spatial relationships
+(world coordinates + frame coordinates · two layers; do not write only "continue the previous segment")
 
-## Shot N-1 | 00:00–00:XX | XXs | chủ thể + cỡ cảnh + góc
-Máy quay và bố cục: ……
-Khóa khung đầu: ……
-Timeline hành động: ……
-Diễn xuất: ……
-Vật lý: ……
+## Shot N-1 | 00:00–00:XX | XXs | subject + shot size + angle
+Camera and composition: ...
+First-frame lock: ...
+Action timeline: ...
+Performance: ...
+Physics: ...
 
 ## 00:XX | HARD CUT
 
-## Shot N-2 | 00:XX–00:XX | XXs | chủ thể + cỡ cảnh + góc
-……
+## Shot N-2 | 00:XX–00:XX | XXs | subject + shot size + angle
+...
 
-## Ánh sáng
-(hướng thế giới của nguồn sáng chính + hướng khung hình + logic phơi sáng + tính liên tục với đoạn trước/shot trước)
+## Lighting
+(world direction of key light + frame direction + exposure logic + continuity with the previous segment/shot)
 
-## Âm thanh
-(âm thanh môi trường thật + nguyên văn lời thoại đồng bộ; có BGM hay không tuân theo yêu cầu của người dùng)
+## Sound
+(real ambient sound + original synchronous dialogue; whether there is BGM follows the user's requirement)
 
-## Khóa thuận
-(vị trí tuyệt đối của nhân vật / việc cầm đạo cụ / ánh nhìn / trạng thái liên tục / nhân vật không nên xuất hiện trong shot này)
+## Positive locks
+(characters' absolute positions / prop holding / eyelines / continuous states / characters who should not appear in this shot)
 
-## Khóa chữ
-Không phụ đề, không chữ màn hình thêm, không chồng chữ hậu kỳ; chữ trên bao bì/biển hiệu vật thể chỉ giữ theo tài sản tham chiếu, không thêm, không viết lại, không vẽ lại.
+## Text lock
+No subtitles, no extra on-screen text, no post-production overlay text; physical packaging/signboard text only keeps the reference asset; do not add, rewrite, or redraw.
 ```
 
-### A9.2 Mẫu prompt phân đoạn Seedance 2.5 (kiến trúc Objective)
+### A9.2 Seedance 2.5 segment prompt template (Objective architecture)
 
-Giao nộp cuối cùng của Seedance 2.5 dùng cấu trúc gọn hơn, có thể đưa trực tiếp vào model. **Đừng lặp lại cả bộ định danh tài sản A4 trước mỗi đoạn nữa.** Thông tin A4 bắt buộc đã được nén vào `Reference binding`, `Immutable locks`, `Timeline`, `Preserve`.
+The final delivery for Seedance 2.5 uses a more compact structure that can be fed directly. **Do not repeat a whole set of A4 asset identification before each segment.** A4's information must already have been compressed into `Reference binding`, `Immutable locks`, `Timeline`, and `Preserve`.
 
-#### A9.2.0 Cổng cứng định dạng cuối cùng (bắt buộc)
+#### A9.2.0 Final format hard gate (mandatory)
 
-Khi model mục tiêu là **Seedance 2.5**, giao nộp cuối cùng chỉ được dùng cấu trúc trường của mục A9.2 này. Ngoài thông tin đầu đoạn, các trường cấp cao nhất được phép chỉ gồm:
+When the target model is **Seedance 2.5**, the final delivery may only use the field structure of this section A9.2. Apart from the segment header, the only allowed top-level fields are:
 - `Objective`
-- `Reference binding` (chỉ xuất hiện khi có tài sản tham chiếu thật; không có tham chiếu thật thì bỏ cả mục)
+- `Reference binding` (appears only when real reference assets exist; omit the whole section when there is no real reference)
 - `Immutable locks`
 - `Target duration`
 - `Timeline`
@@ -862,488 +862,488 @@ Khi model mục tiêu là **Seedance 2.5**, giao nộp cuối cùng chỉ đư�
 - `Preserve`
 - `Avoid`
 
-**Cấm dùng trực tiếp bất kỳ bản nháp quy hoạch trung gian, mẫu của model khác hay lớp vỏ không phải A9.2 làm giao nộp cuối cùng cho 2.5.** Ngoài thông tin đầu đoạn và các trường trong danh sách trắng ở trên, phần nội dung cuối cùng của 2.5 không được xuất hiện bất kỳ trường cấp cao nhất nào khác, chương phân cảnh kiểu đánh số hay khối phân tích thêm.
+**Do not deliver any intermediate planning draft, another model's template, or a non-A9.2 shell directly as the 2.5 final delivery.** Apart from the segment header and the whitelisted fields above, the 2.5 final body must not contain any other top-level fields, numbered storyboard chapters, or extra analysis blocks.
 
-`Timeline` cuối cùng của 2.5 bắt buộc theo A9.2.1 dùng khối thời gian `[0:00-0:XX]` + ngôn ngữ tự nhiên liên tục. Thay đổi shot nếu thực sự cần, chỉ được lồng trong ngôn ngữ tự nhiên của khối thời gian tương ứng, không được lập riêng hệ thống đánh số shot làm cấu trúc chính.
+The 2.5 final `Timeline` must use `[0:00-0:XX]` time blocks + continuous natural language per A9.2.1. If shot changes are genuinely needed, they may only be embedded in the natural language of the corresponding time block; do not set up a separate shot numbering system as the main structure.
 
-Nếu bản nháp nội bộ hoặc đầu vào thượng nguồn dùng cấu trúc khác, bắt buộc chỉ coi nó là **tư liệu nguồn** chứ không phải mẫu cuối cùng: trước tiên phân tích theo A0–A8/A11, rồi trước khi giao sắp xếp lại vào các trường danh sách trắng của A9.2. Chỉ cần phần nội dung cuối cùng xuất hiện cấu trúc cấp cao nhất ngoài danh sách trắng, lập tức bị coi là lỗi định dạng, **không được giao, bắt buộc viết lại ngay trong lượt này thành A9.2**.
+If an internal draft or upstream input uses another structure, treat it only as **source material**, not the final template: first parse it per A0–A8/A11, then rearrange it into the A9.2 whitelisted fields before delivery. As soon as the final body contains a top-level structure outside the whitelist, it is judged a format failure; **it must not be delivered and must be rewritten directly into A9.2 in this round**.
 
 ```text
 ═══════════════════════════════════════════
-G0N | Batch X / Đoạn N | Model mục tiêu: Seedance 2.5 | Thời lượng đoạn: Xs | Thời gian toàn cục: MM:SS–MM:SS
+G0N | Batch X / Segment N | Target model: Seedance 2.5 | Segment duration: Xs | Global time: MM:SS–MM:SS
 ═══════════════════════════════════════════
 
 Objective:
-Dùng 1–2 câu nói rõ: vị trí của đoạn này trong cả tập, thời lượng/tỉ lệ khung/chất cảm tổng thể, và mục tiêu kịch tính cốt lõi mà đoạn này cần hoàn thành. Đừng thuật lại toàn bộ Timeline.
+In 1–2 sentences, state: this segment's position in the whole episode, its duration/aspect ratio/overall texture, and the core dramatic goal this segment must accomplish. Do not restate the full Timeline.
 
 Reference binding:
-- Tự động đọc và phân tích cốt truyện, shot, hành động và nội dung hình ảnh của đoạn này, từ đó trích xuất các tài sản tham chiếu mà đoạn này thực sự liên quan và cần gọi đến, gồm ảnh nhân vật, ảnh bối cảnh, ảnh sản phẩm, ảnh đạo cụ, ảnh vị trí đứng v.v.
-- Định danh đơn giản cho các tài sản đã trích xuất, chỉ cần nói rõ đối tượng hoặc công dụng tương ứng của tài sản, ví dụ: "tham chiếu nhân vật nam chính" "tham chiếu bối cảnh quán trọ" "tham chiếu bao bì sản phẩm" "tham chiếu đạo cụ dây đỏ".
-- Mọi ảnh tham chiếu thật hoặc handle tài sản mà người dùng đã cung cấp và đoạn này thực sự cần dùng, bắt buộc liệt kê từng cái, và giữ nguyên dạng ID node, handle tài sản hoặc định danh trích dẫn khác của nó, không được viết lại, viết tắt hay đánh số lại.
-- Cùng một tài sản tham chiếu dù đã dùng ở đoạn trước, chỉ cần đoạn này vẫn liên quan, thì bắt buộc trích xuất và liệt kê lại trong đoạn này; cấm các cách viết lược như "như trên", "dùng lại tham chiếu đoạn trước".
-- Chỉ trích xuất tài sản đoạn này thực sự liên quan, đừng máy móc thêm vào các tài sản không xuất hiện trong cốt truyện hay hình ảnh của đoạn này.
-- Không cần giải thích chi tiết mỗi ảnh tham chiếu "kiểm soát gì / không kiểm soát gì", chỉ cần định danh tài sản ngắn gọn, rõ ràng.
-- Nếu đoạn này không có bất kỳ ảnh tham chiếu thật, ID node hay handle tài sản nào, có thể bỏ cả mục.
-- Nghiêm cấm tự bịa {{node/image-...}}, mã tài sản, nhãn trích dẫn hay tư liệu tham chiếu không tồn tại dựa trên cốt truyện.
+- Automatically read and analyze this segment's plot, shots, actions, and visual content, and extract from them the reference assets this segment actually involves and needs to call, including character images, location images, product images, prop images, blocking images, etc.
+- Give the extracted assets a simple label stating the object or use the asset corresponds to, e.g. "male lead character reference", "inn location reference", "product packaging reference", "red cord prop reference".
+- Every real reference image or asset handle that the user has provided and that this segment actually needs must be listed one by one, keeping its node ID, asset handle, or other reference identifier verbatim; do not rewrite, abbreviate, or renumber it.
+- Even if the same reference asset was used in the previous segment, as long as this segment still involves it, it must be extracted and listed again in this segment; omissions such as "same as above" or "reuse the previous segment's reference" are forbidden.
+- Extract only assets this segment actually involves; do not mechanically add assets that do not appear in this segment's plot or visuals.
+- No need to explain in detail "what it controls / what it does not control" for each reference image; a concise, explicit asset identity label is enough.
+- If this segment has no real reference image, node ID, or asset handle at all, the whole section may be omitted.
+- It is strictly forbidden to invent {{node/image-...}}, asset numbers, reference labels, or nonexistent reference media from the plot.
 
 Immutable locks:
-- Chỉ viết các điều kiện bất biến ảnh hưởng trực tiếp đến độ ổn định khi tạo: danh tính/trang phục nhân vật, vị trí thế giới then chốt và quan hệ trái phải, logic ánh sáng của cảnh liên tục, trạng thái đạo cụ then chốt, cấu trúc sản phẩm, nguyên văn lời thoại và khẩu hình, khóa ngoài khung hình cần thiết v.v.
-- Không chép lại cả cốt truyện của đoạn.
-- Khi cảnh liên tục vượt qua đoạn, viết lại trạng thái kết thúc của đoạn trước thành trạng thái ban đầu tuyệt đối của đoạn này, không viết "tiếp nối đoạn trước".
+- Only write immutable conditions that directly affect generation stability: character identity/costume, key world positions and left/right relationships, lighting logic of continuous scenes, key prop states, product structure, original dialogue and lip sync, necessary off-screen locks, etc.
+- Do not copy the whole segment's plot again.
+- When a continuous scene spans segments, rewrite the previous segment's end state as this segment's absolute initial state; do not write "continue the previous segment".
 
 Target duration: X seconds
 
 Timeline:
-[0:00-0:XX] Dùng một đoạn văn tiếng Việt tự nhiên liên tục mô tả hình ảnh thực sự nhìn thấy trong khối thời gian này: bối cảnh/vị trí đứng cần thiết, trạng thái xuất hiện hiện tại, cỡ cảnh hoặc cắt shot, thứ tự hành động, phản ứng diễn xuất then chốt, lời thoại đồng bộ, thay đổi đạo cụ then chốt và chi tiết vật lý cần thiết. Viết giống như mô tả thành phẩm, không tách thành các tiêu đề con "máy quay / hành động / diễn xuất / lời thoại / vật lý".
+[0:00-0:XX] In one paragraph of continuous natural language (in the user's language), describe what is actually seen in this time block: the necessary location/blocking, current on-screen states, shot size or cuts, order of actions, key performance reactions, synchronous dialogue, key prop changes, and necessary physical details. Write it like a description of the finished film; do not split it into subheadings such as "camera / action / performance / dialogue / physics".
 
-[0:XX-0:XX] Tiếp tục dùng một đoạn ngôn ngữ tự nhiên liên tục mô tả hình ảnh tiếp theo.
+[0:XX-0:XX] Continue describing the following visuals in one paragraph of continuous natural language.
 
-[0:XX-0:XX] Tiếp tục theo nhu cầu cốt truyện; số khối thời gian không cố định.
+[0:XX-0:XX] Continue as the plot requires; the number of time blocks is not fixed.
 
 Visual direction:
-Dùng 1 đoạn văn tự nhiên gọn để khái quát chất cảm quay phim tổng thể, ánh sáng, nhiệt độ màu, độ sâu trường ảnh, quan hệ hình ảnh giữa nhân vật/sản phẩm và chất cảm vật lý cần thiết. Chỉ viết các yêu cầu hình ảnh thực sự ảnh hưởng đến đoạn này.
+In 1 compact paragraph, summarize the overall cinematographic texture, lighting, color temperature, depth of field, visual relationship between characters/products, and necessary physical texture. Only write visual requirements that genuinely affect this segment.
 
 Audio direction:
-- Foley vật lý / âm thanh môi trường: ……
-- Giọng lời thoại: ……
-- Chỉ khi người dùng yêu cầu rõ nhạc nền mới viết nhạc nền; người dùng không yêu cầu thì mặc định "không nhạc nền, chỉ giữ âm thanh đồng bộ thật và âm thanh môi trường".
+- Physical foley / ambient sound: ...
+- Dialogue voices: ...
+- Write a score only when the user explicitly requests one; when the user has not requested it, default to "no background music; keep only real synchronous sound and ambient sound".
 
 Preserve:
-Dùng một dòng hoặc một đoạn văn tự nhiên ngắn liệt kê tạo hình nhân vật, neo bối cảnh, cấu trúc sản phẩm, trạng thái đạo cụ then chốt, quan hệ không gian hoặc logic hành động bắt buộc giữ lại.
+In one line or a short paragraph, list the character looks, location anchors, product structure, key prop states, spatial relationships, or action logic that must be kept.
 
 Avoid:
-Dùng một dòng hoặc một đoạn văn tự nhiên ngắn liệt kê các vấn đề dễ sai nhất và liên quan trực tiếp đến đoạn này; đừng chất một chuỗi dài từ phủ định chung chung.
+In one line or a short paragraph, list the issues most likely to go wrong that are directly related to this segment; do not pile up a long string of generic negative terms.
 ```
 
-#### A9.2.1 Cách viết Timeline (bắt buộc)
+#### A9.2.1 How to write the Timeline (mandatory)
 
-`Timeline` bắt buộc tham chiếu phong cách prompt thành phẩm Seedance 2.5 người dùng hay dùng: **khối thời gian + mô tả hình ảnh bằng ngôn ngữ tự nhiên liên tục**.
+`Timeline` must follow the style of the Seedance 2.5 finished prompts the user commonly uses: **time blocks + continuous natural-language visual description**.
 
-Minh họa đúng:
+Correct illustration:
 
 ```text
 Timeline:
 
 [0:00-0:06]
-Trong bối cảnh mà cốt truyện nguồn đã xác định rõ, nhân vật A thực hiện hành động gốc của E01. Shot theo nhu cầu cắt từ shot thiết lập sang trung cảnh nhân vật A; nếu nhân vật B ở nhịp này theo nguyên văn giữ ngoài khung hình, thì viết rõ "nhân vật B giữ ngoài khung hình". Chỉ bổ sung tư thế, tiếp xúc, phản hồi vật lý nhìn thấy trực tiếp được, không thêm các sự kiện mà cốt truyện nguồn không có như cầm lấy, mở nắp, di chuyển.
+In the location the source plot has already made explicit, Character A performs the original action of E01. The shot cuts as needed from an establishing shot to a medium shot of Character A; if Character B stays off screen in this beat per the original, explicitly write "Character B stays off screen". Only add directly visible posture, contact, and physical feedback; do not add events not in the source plot such as taking, opening lids, or moving.
 
 [0:06-0:12]
-Tiếp nối E02–E03. Nhân vật A nói lời thoại theo nguyên văn, nhân vật B có phản ứng đã có theo nguyên văn. Có thể viết phản ứng đã có thành hành động cụ thể nhìn thấy được, nhưng không được mở rộng "phản ứng" thành hành vi cốt truyện mới. Khi cần cắt sang cận cảnh hoặc đặc tả cận bộ phận, thứ tự sự kiện cốt truyện không đổi.
+Follows E02–E03. Character A speaks the line per the original, and Character B makes the existing reaction per the original. Existing reactions may be written as concrete visible actions, but a "reaction" cannot be expanded into new plot behavior. Cut to a close shot or partial close-up when necessary; the order of plot events does not change.
 
 [0:12-0:18]
-Tiếp nối E04. Nếu khung đầu của khối thời gian này cốt truyện nguồn đã quy định một đạo cụ nằm trong tay nhân vật, thì bắt đầu ngay từ trạng thái đó, không truy ngược hay viết thêm việc đạo cụ được cầm vào tay như thế nào. Shot chỉ chịu trách nhiệm thể hiện, không chịu trách nhiệm bổ sung tiền sử.
+Follows E04. If the source plot already specifies that a prop is in a character's hand at the first frame of this time block, start directly from that state; do not trace back or write how the prop got into the hand. The shot is only responsible for presenting, not for filling in backstory.
 ```
 
-**Yêu cầu thực thi:**
-- Mỗi khối thời gian thường là 1 đoạn văn tự nhiên, thông tin đủ dùng là được.
-- Số khối thời gian do cốt truyện quyết định tự nhiên, không cố định là 3 hay 4 khối.
-- Có thể viết thẳng "cắt cận cảnh nam chính / cắt đặc tả tay / về trung cảnh hai người", không cần lập thêm số shot.
-- Chỉ viết vị trí đứng, trái phải, trạng thái ngoài khung hình và tính liên tục có ảnh hưởng thực tế đến khối thời gian hiện tại, không lặp lại máy móc `Immutable locks`.
-- Khi nhân vật không nên xuất hiện, viết ngắn "nữ chính giữ ngoài khung hình, không tự động đưa vào shot" là đủ.
-- Lời thoại lồng thẳng vào vị trí hành động tương ứng xảy ra, không lặp lại một lần nữa sau Timeline.
-- Chi tiết vật lý chỉ viết những gì liên quan trực tiếp đến hành động hiện tại, như chất lỏng sóng sánh, vải chạm vào, bề mặt đạo cụ ẩm ướt, trọng lượng vật thể, phản hồi va chạm.
-- Mỗi khối thời gian ưu tiên giữ một chuỗi hành động rõ ràng, không vì theo đuổi đầy đủ thông tin mà nhồi kín từng giây.
-- **Trọng tâm mô tả là "khoảnh khắc này thành phẩm thực sự nhìn thấy gì", không phải giải thích lại quy tắc.**
-- Mỗi hành động trong Timeline làm thay đổi nhân vật/đạo cụ/vị trí/số lượng/quan hệ/thông tin, đều bắt buộc đến từ nhịp nguồn `E##` của A2.
-- Không vì "trôi chảy hơn" "đầy đủ hơn" "có nhân quả hơn" mà bổ sung các hành vi cốt truyện nguồn không có như cầm lấy, đóng mở, rút ra, trao tay, đứng dậy, di chuyển, quay đầu, số lần sử dụng, tiêu hao đạo cụ.
-- Nếu cốt truyện nguồn bắt đầu thẳng từ một trạng thái đã định, thì viết thẳng trạng thái đó; đừng truy hỏi hay quay bù việc trước đó nó đã xảy ra như thế nào.
-- Khi nguyên văn dùng các cách gọi chung như "cha mẹ / phụ huynh / người lớn / ai đó", Timeline giữ nguyên cách gọi chung đó, trừ khi chỉ thị rõ ràng mới nhất của người dùng đã chỉ định nhân vật cụ thể.
+**Execution requirements:**
+- Each time block is usually 1 paragraph; enough information is enough.
+- The number of time blocks is decided naturally by the plot, not fixed at 3 or 4.
+- You may directly write "cut to male lead close shot / cut to hand close-up / back to two-person medium shot" without setting up shot numbers.
+- Only write the blocking, left/right, off-screen states, and continuity that actually affect the current time block; do not mechanically repeat `Immutable locks`.
+- When a character should not appear, briefly writing "the female lead stays off screen and is not automatically added to the shot" is enough.
+- Dialogue is embedded directly where the corresponding action happens and is not repeated again after the Timeline.
+- Physical details only cover what is directly related to the current action, such as liquid sloshing, fabric contact, a wet prop surface, object weight, and collision feedback.
+- Each time block should preferably keep one clear action chain; do not cram every second for the sake of complete information.
+- **The focus of the description is "what the finished film actually shows at this moment", not re-explaining the rules.**
+- Every action in the Timeline that changes characters/props/positions/quantities/relationships/information must come from an A2 source beat `E##`.
+- Do not add behaviors not in the source plot, such as taking, opening/closing, pulling out, handing over, getting up, moving, turning back, number of uses, or prop consumption, to make it "smoother", "more complete", or "more causal".
+- If the source plot starts directly from a given state, write that state directly; do not question or add shots of how it happened before.
+- When the original uses generic terms such as "parents / guardian / adult / someone", the Timeline keeps the same generic term, unless the user's latest explicit instruction has already specified a particular person.
 
-#### A9.2.2 Reference binding (quy tắc cứng về tài sản tham chiếu thật của 2.5)
+#### A9.2.2 Reference binding (hard rules for real 2.5 reference assets)
 
-- Tự động đọc cốt truyện, shot, hành động và nội dung hình ảnh của đoạn này, chỉ trích xuất các tài sản tham chiếu thật như ảnh nhân vật, ảnh bối cảnh, ảnh sản phẩm, ảnh đạo cụ, ảnh vị trí đứng, ảnh động tác **mà đoạn này thực sự liên quan và cần gọi đến**.
-- Chỉ trích dẫn node tham chiếu, nhãn ảnh hoặc handle tài sản mà người dùng thực sự cung cấp, và **giữ nguyên dạng node / handle đầy đủ**; cấm đổi tên, viết tắt, đánh số lại hoặc bịa ra trích dẫn không tồn tại dựa trên cốt truyện.
-- Mỗi tham chiếu thật liệt kê riêng một dòng, theo cách viết "**node / handle thật: định danh tài sản ngắn gọn**"; định danh chỉ nói rõ đối tượng hoặc công dụng tương ứng, ví dụ "tham chiếu nhân vật nam chính" "tham chiếu bối cảnh quán trọ" "tham chiếu bao bì sản phẩm" "tham chiếu đạo cụ dây đỏ".
-- Không yêu cầu triển khai giải thích dài "kiểm soát gì / không kiểm soát gì" cho từng ảnh; nhưng nội bộ vẫn phải tuân theo công dụng rõ ràng của người dùng, không được để ảnh nhân vật vượt quyền thay đổi vị trí đứng, để ảnh vị trí đứng đè lên danh tính nhân vật, để ảnh bối cảnh đưa thêm nhân vật hay đạo cụ vào.
-- Khi người dùng nói rõ "chỉ tham chiếu vị trí / chỉ tham chiếu trang phục / chỉ tham chiếu sản phẩm" v.v., định danh ngắn gọn bắt buộc giữ giới hạn công dụng, ví dụ "chỉ tham chiếu vị trí đứng" "chỉ tham chiếu trang phục".
-- **Mỗi đoạn tự chứa**: tham chiếu đã dùng ở đoạn trước, nếu đoạn này vẫn cần thì bắt buộc liệt kê lại; cấm viết "như trên", "dùng lại tham chiếu đoạn trước".
-- Chỉ liệt kê tài sản đoạn này thực sự cần, không máy móc nhét cả thư viện tham chiếu của toàn tập vào mỗi đoạn.
-- Khi không có tham chiếu thật, bỏ toàn bộ `Reference binding`; cấm làm giả `{{Ref}}`, `{{node/image-...}}`, mã tài sản hay tên tài sản không tồn tại.
+- Automatically read this segment's plot, shots, actions, and visual content, and extract only the real reference assets, such as character images, location images, product images, prop images, blocking images, and action images, that **this segment actually involves and needs to call**.
+- Only cite reference nodes, image labels, or asset handles the user actually provided, and **keep the complete node / handle verbatim**; do not rename, abbreviate, renumber, or invent nonexistent references from the plot.
+- List each real reference on its own line, written as "**real node / handle: concise asset label**"; the label only states the object or use it corresponds to, e.g. "male lead character reference", "inn location reference", "product packaging reference", "red cord prop reference".
+- Do not require a long "what it controls / what it does not control" explanation for each image; but internally you must still follow the user's explicit purpose: do not let a character image overstep to change blocking, let a blocking image override character identity, or let a location image bring in extra characters or props.
+- When the user explicitly says "location reference only / costume reference only / product reference only", etc., the concise label must keep the purpose restriction, e.g. "blocking reference only", "costume reference only".
+- **Every segment is self-contained**: a reference already used in the previous segment must be listed again when this segment still needs it; do not write "same as above" or "reuse the previous segment's reference".
+- Only list the assets this segment actually needs; do not mechanically stuff the whole episode's reference library into every segment.
+- When there is no real reference, omit the whole `Reference binding`; do not forge `{{Ref}}`, `{{node/image-...}}`, asset numbers, or nonexistent asset names.
 
 #### A9.2.3 Immutable locks
 
-Chỉ giữ thông tin **không được trôi**, ví dụ:
-- Nam chính áo trắng, nữ chính áo đỏ;
-- Nữ chính ở phía nam bàn/bên trái khung hình, nam chính ở phía bắc bàn/bên phải khung hình;
-- Cấu trúc nắp lật màu xanh của sản phẩm;
-- Một nhân vật giữ ngoài khung hình trong một khối thời gian nào đó;
-- Lời thoại nguyên văn không đổi từ, không nuốt chữ;
-- Hướng ánh đèn và trạng thái đạo cụ của cảnh liên tục không bị đặt lại.
+Only keep information that **must not drift**, for example:
+- Male lead in white, female lead in red;
+- Female lead on the south side of the table/frame left, male lead on the north side of the table/frame right;
+- The product's blue flip-top structure;
+- A certain character stays off screen in a certain time block;
+- Original dialogue with no words changed or swallowed;
+- Lighting direction and prop states of continuous scenes are not reset.
 
-Đừng viết mọi hành động thành lock; hành động sẽ thay đổi trong Timeline thì nên để trong Timeline.
+Do not write every action as a lock; actions that change within the Timeline should stay in the Timeline.
 
 #### A9.2.4 Audio direction
 
-- Người dùng yêu cầu rõ BGM / nhạc nền → viết theo yêu cầu người dùng.
-- Người dùng không yêu cầu → mặc định không BGM, không âm báo cảm xúc, chỉ giữ âm thanh môi trường thật, foley vật lý và lời thoại đồng bộ.
-- Không vì trong ví dụ từng xuất hiện nhạc nền mà biến nhạc nền thành hành vi mặc định của 2.5.
+- The user explicitly requests BGM / score → write it as the user requests.
+- The user has not requested it → default to no BGM and no emotional cue sounds; keep only real ambient sound, physical foley, and synchronous dialogue.
+- Do not make a score the default behavior of 2.5 just because a score appeared in an example.
 
 #### A9.2.5 Preserve / Avoid
 
-`Preserve` và `Avoid` bắt buộc phục vụ việc thực thi đoạn hiện tại:
-- `Preserve` viết tạo hình, không gian, sản phẩm, đạo cụ, logic hành động thực sự không được trôi;
-- `Avoid` viết các lỗi tạo dễ xảy ra nhất ở đoạn hiện tại;
-- Cả hai đều giữ ngắn, không viết hàng chục nhãn chung chung.
+`Preserve` and `Avoid` must serve the execution of the current segment:
+- `Preserve` lists the looks, space, products, props, and action logic that genuinely must not drift;
+- `Avoid` lists the generation errors most likely to occur in the current segment;
+- Keep both short; do not write dozens of generic tags.
 
 ---
 
-## A10. Cấu trúc đầu ra toàn phim
+## A10. Whole-film output structure
 
-Cốt truyện dài bắt buộc đồng thời phân biệt "quy hoạch toàn phim" và "giao nộp đợt hiện tại". Tổng quan toàn phim tiếp tục dùng tiếng Việt; phần nội dung của mỗi đoạn tạo thì định tuyến theo model mục tiêu tới A9.1 hoặc A9.2.
+Long plots must distinguish "whole-film planning" from "current batch delivery" at the same time. The whole-film overview continues in the user's language; each generation segment's body is routed to A9.1 or A9.2 per the target model.
 
 ```text
 ═══════════════════════════════════════════
-Tổng quan toàn phim
+Whole-film overview
 ═══════════════════════════════════════════
-· Model mục tiêu: Seedance 2.X
-· Tổng thời lượng mục tiêu của người dùng: (nghiêm ngặt / tham chiếu / chưa chỉ định)
-· Giới hạn cứng mỗi đoạn: 15s / 30s
-· Số đoạn tối thiểu lý thuyết: ⌈tổng thời lượng / giới hạn mỗi đoạn⌉ (chỉ là cận dưới)
-· Số đoạn thực tế toàn phim: X đoạn (xác định theo mật độ nội dung)
-· Bảng đoạn toàn phim: G01 … GXX (gồm thời lượng mỗi đoạn + khoảng thời gian toàn cục + nhịp cốt lõi)
-· Phương án đợt: Batch 1 = G01–G0X; Batch 2 = ……
-· Đợt xuất hiện tại: Batch X
-· Đoạn chờ giao ở đợt sau: GXX–GXX (nếu không có thì ghi "không có")
-· Bảng tổng tài sản
-· Bảng tổng ảnh tham chiếu (chỉ khi 2.5 và người dùng thực sự cung cấp ảnh tham chiếu): liệt kê nguyên dạng từng node ảnh / handle tài sản + công dụng; dùng cho quy hoạch toàn phim, không thay thế Reference binding riêng của từng đoạn
-· Bảng thay đổi bối cảnh/thời gian
-· Trục thế giới của từng cảnh liên tục
-· Đường cong cảm xúc theo thứ tự thời gian gốc
-· Nhãn nhịp then chốt
-· Phong cách
-· Phổ nhịp chuyển động máy
-· Xung đột ràng buộc thời lượng (nếu không có ghi "không có")
-· Trạng thái trung thành cốt truyện nguồn: phải là "đạt"; nếu chính văn bản nguồn có chỗ trống/xung đột, chỉ đánh dấu vấn đề, không tự bổ sung cốt truyện
+· Target model: Seedance 2.X
+· User's target total duration: (strict / reference / unspecified)
+· Single-segment hard limit: 15s / 30s
+· Theoretical minimum segments: ⌈total duration / single-segment limit⌉ (lower bound only)
+· Actual number of segments for the whole film: X segments (determined by content density)
+· Whole-film segment table: G01 … GXX (including each segment's duration + global time range + core beats)
+· Batch plan: Batch 1 = G01–G0X; Batch 2 = ...
+· Current output batch: Batch X
+· Segments pending in the next batch: GXX–GXX (write "none" if none)
+· Master asset list
+· Master reference image list (only for 2.5 when the user actually provided reference images): list each image node / asset handle verbatim + its use; used for whole-film planning, does not replace each segment's own Reference binding
+· Location/time change table
+· World axis of each continuous scene
+· Emotional curve in original time order
+· Key beat tags
+· Style
+· Camera movement rhythm map
+· Duration constraint conflicts (write "none" if none)
+· Source plot fidelity status: should be "passed"; if the source text itself has gaps/conflicts, only flag the issue; do not fill in plot yourself
 
 ─────────────────────────────────────────
-Nếu model mục tiêu là Seedance 2.0:
-[G01] dùng A9.1 "định danh tài sản + prompt chính thức"
-[G02] dùng A9.1
-……
+If the target model is Seedance 2.0:
+[G01] Use A9.1 "Asset identification + formal prompt"
+[G02] Use A9.1
+...
 
-Nếu model mục tiêu là Seedance 2.5:
-[G01] dùng trực tiếp kiến trúc Objective của A9.2, không lặp lại thêm cả khối định danh tài sản
-[G02] dùng A9.2
-……
+If the target model is Seedance 2.5:
+[G01] Use the A9.2 Objective architecture directly; do not repeat an extra block of asset identification
+[G02] Use A9.2
+...
 ─────────────────────────────────────────
 ```
 
-**Quy tắc tập dài:** dù hiện tại chỉ giao Batch 1, cũng nên quy hoạch trước các đoạn toàn cục phía sau và vị trí của đợt hiện tại trong toàn phim, tránh việc mỗi đợt cắt đoạn lại dẫn đến logic trước sau bị trôi.
+**Long-episode rule:** even if only Batch 1 is being delivered now, first plan the later global segments and the current batch's position in the whole film, to avoid re-segmenting every batch and causing logic drift between batches.
 
-**Quy tắc gọn cho 2.5:** tổng quan toàn phim chịu trách nhiệm giải thích "tại sao chia như vậy"; prompt từng đoạn chịu trách nhiệm "đoạn này cụ thể tạo như thế nào". Đừng nhồi lặp nội dung tổng quan vào mỗi `Objective` hay `Timeline` của 2.5.
-
----
-
-## A11. Kiểm tra cấu trúc (giai đoạn sửa cấu trúc duy nhất trước A12)
-
-A11 chịu trách nhiệm các vấn đề cấu trúc "có tạo được không, cốt truyện có bị chèn ép hỏng không"; A12 chỉ đánh bóng tầng chữ và tầng thể hiện.
-
-### A11.1 Danh sách kiểm tra
-- [ ] Đã lập sổ cái cốt truyện nguồn `E01 / E02 / E03...`, và lấy chỉ thị rõ ràng mới nhất của người dùng / cốt truyện gốc làm nguồn sự thật?
-- [ ] Mỗi sự kiện làm thay đổi trạng thái cốt truyện trong Timeline cuối cùng đều ánh xạ được tới một `E##` nào đó, không có hành động mới không nguồn gốc?
-- [ ] Không thêm, xóa, thay thế, đổi người sở hữu hay đổi thứ tự bất kỳ sự kiện cốt truyện nào của người dùng?
-- [ ] Không tự ý cụ thể hóa nhân vật mơ hồ như "cha mẹ / phụ huynh / người lớn" thành bố/mẹ/người thứ hai?
-- [ ] Không vì tính liên tục mà truy ngược nguồn gốc đạo cụ, bổ sung tiền sử mở nắp/rút ra/cầm lấy/di chuyển v.v.?
-- [ ] Đã đăng ký toàn bộ nhịp nguyên tử theo thứ tự nguyên văn, không chỉ giữ lại năm loại điểm then chốt?
-- [ ] Đường cong cảm xúc không bị dùng để sắp xếp lại cốt truyện?
-- [ ] Số đoạn tối thiểu lý thuyết chỉ được dùng làm cận dưới, không ép số đoạn thực tế bằng nó?
-- [ ] Mỗi đoạn ≤ giới hạn cứng mỗi đoạn của model?
-- [ ] Tổng thời lượng các đoạn toàn phim khớp với tổng thời lượng nghiêm ngặt của người dùng; nếu không thể đồng thời thỏa mãn, đã đánh dấu rõ xung đột chưa?
-- [ ] Mọi lời thoại đều có thể nói hết trọn vẹn với tốc độ tự nhiên trong khung thời gian của nó?
-- [ ] Hành động tuần tự, phản ứng và khoảng dừng cần thiết có thời gian thực, không dựa vào dịch chuyển tức thời hay tốc độ nói nhanh bất thường?
-- [ ] Cốt truyện dài có bảng đoạn toàn phim đầy đủ trước, rồi mới giao theo dung lượng Batch không?
-- [ ] Trạng thái xuất hiện của nhân vật A4 có được quy hoạch theo timeline, và nhất quán với phần nội dung cuối cùng không?
-- [ ] Đã xác định cho từng đoạn tạo liền kề là "liên hệ liên tục / liên hệ trạng thái cục bộ / không có liên hệ liên tục" chưa, không cưỡng ép kế thừa cho các đoạn không liên quan?
-- [ ] Vị trí thế giới, quan hệ tương đối, tư thế, hướng và tay đang bận của nhân vật trong mọi đoạn có liên hệ liên tục có thể đi từ trạng thái cuối đoạn trước vào trạng thái đầu đoạn sau mà không mâu thuẫn không?
-- [ ] Mọi đạo cụ then chốt đã hoàn thành kiểm tra chuỗi "người cầm / vị trí / số lượng / trạng thái / khả năng nhìn thấy" chưa, không có biến mất, nhân bản, đổi tay, khôi phục hay dịch chuyển tức thời không nguồn gốc?
-- [ ] Các trạng thái đã thay đổi trong bối cảnh như cửa, đồ nội thất, vết bẩn, mực chất lỏng, hư hỏng, thời tiết và nguồn sáng có được kế thừa hợp lý trong các đoạn liên quan không?
-- [ ] Đã làm kiểm tra trước độ ổn định khi tạo chưa, tránh nhồi đồng thời tương tác cơ thể/tay/đạo cụ rủi ro cao, chuyển động máy phức tạp, che khuất và xung đột đa tham chiếu vào cùng một shot?
-- [ ] Nếu model mục tiêu là 2.0, có dùng A9.1 "định danh tài sản + prompt chính thức" không?
-- [ ] Nếu model mục tiêu là 2.5, có dùng kiến trúc `Objective / Reference binding / Immutable locks / Target duration / Timeline / Visual direction / Audio direction / Preserve / Avoid` của A9.2 không?
-- [ ] Nếu model mục tiêu là 2.5, phần nội dung cuối cùng có qua cổng cứng định dạng A9.2.0 không: ngoài đầu đoạn và các trường danh sách trắng A9.2, không có bất kỳ cấu trúc cấp cao nhất nào khác hay khối phân tích thêm?
-- [ ] Nếu model mục tiêu là 2.5, `Timeline` có chỉ dùng khối thời gian + ngôn ngữ tự nhiên liên tục không, không lập riêng hệ thống đánh số shot làm cấu trúc tổ chức chính?
-- [ ] Nếu người dùng cung cấp ảnh tham chiếu, mỗi đoạn liên quan của 2.5 có đều liệt kê nguyên dạng node ảnh thật / handle tài sản cần thiết trong `Reference binding` của chính nó không?
-- [ ] `Reference binding` có chỉ liệt kê tài sản tham chiếu đoạn này thực sự cần, và theo dạng "node / handle thật + định danh tài sản ngắn gọn" không; giới hạn công dụng rõ ràng của người dùng như "chỉ vị trí đứng / chỉ trang phục / chỉ sản phẩm" có được giữ không?
-- [ ] Có tránh dùng "như trên / dùng lại ảnh tham chiếu đoạn trước" thay cho việc gắn lại trong đoạn này không?
-- [ ] `Timeline` của 2.5 có là "khối thời gian + ngôn ngữ tự nhiên liên tục" không, không thoái hóa thành một đống tiêu đề con máy quay/hành động/diễn xuất?
-- [ ] 2.5 có tránh xuất lặp lại nguyên khối danh sách tài sản A4, mà nén thông tin cần thiết vào trường tương ứng không?
-- [ ] Mỗi đoạn đều có tọa độ thế giới + tọa độ khung hình tự chứa, chứ không phải "như trên/tiếp nối đoạn trước"?
-- [ ] Kế thừa trạng thái cảnh liên tục, neo lại khi đổi cảnh có đúng không?
-- [ ] Nối giữa các đoạn thỏa mãn A7.3?
-- [ ] Dựng liên tục theo hành động có cố gắng giữ trong cùng một đoạn tạo không?
-- [ ] Lời thoại chép nguyên văn?
-- [ ] Phụ đề/chữ chồng hậu kỳ có không giao cho model tạo không? Chữ trên tài sản vật thể có xử lý theo A1.3 không?
-- [ ] Khi không có thư viện tham chiếu mà tạo ảnh tham chiếu, có chỉ dùng cho Reference binding, ngoại hình đánh dấu là đề xuất thiết kế, và không vượt quyền kiểm soát vị trí đứng/ánh sáng/cốt truyện không? (bổ sung cho Trường hợp hai của A1.2)
-
-### A11.2 Cơ chế sửa có giới hạn (chống vòng lặp vô hạn)
-
-Sau lần kiểm tra đầu tiên nếu phát hiện vấn đề:
-1. Tổng hợp tất cả các mục không đạt trong một lần;
-2. **Chỉ làm một vòng sửa cấu trúc tập trung**; sửa cấu trúc chỉ được điều chỉnh ranh giới phân đoạn, cách chứa shot, ngân sách thời gian, cách diễn đạt quay phim và thông tin khóa, **không được sửa nội dung sự kiện, người thực hiện, đối tượng, số lượng, thứ tự hay lời thoại của bất kỳ `E##` nào**;
-3. Sau khi sửa chỉ đối chiếu lại các mục bị ảnh hưởng và tính liên tục trực tiếp của chúng;
-4. Sau đó vào kiểm toán trung thành cốt truyện A11.3 và kiểm tra trước độ ổn định khi tạo A11.4; tất cả đạt thì vào A12.
-
-**Cấm đệ quy qua lại A11 ↔ A12.**
-
-Nếu sau một vòng sửa tập trung vẫn còn xung đột cứng kiểu "các yêu cầu của người dùng không thể đồng thời thỏa mãn" (ví dụ nghiêm ngặt 30s nhưng lời thoại nguyên văn đọc tự nhiên đã vượt 30s), giữ nguyên văn của người dùng và nói rõ trong "Tổng quan toàn phim | Xung đột ràng buộc thời lượng", không tiếp tục tính lại vô hạn.
-
-### A11.3 Kiểm toán trung thành cốt truyện (bắt buộc làm trước khi vào A12)
-
-Làm một lần đối chiếu một chiều, không hiển thị sổ cái nội bộ cho người dùng:
-
-1. Đọc theo thứ tự `E01 → E02 → ...` từ sổ cái cốt truyện nguồn;
-2. Xác nhận mỗi `E##` đều xuất hiện trong một đoạn tạo cuối cùng nào đó, và người thực hiện / đối tượng / lời thoại / thứ tự không thay đổi;
-3. Quét ngược mọi hành động làm thay đổi trạng thái thế giới trong Timeline cuối cùng; nếu không tìm thấy `E##` nguồn, xóa hành động AI thêm đó;
-4. Quay phim, bố cục, cỡ cảnh, lấy nét, kết quả vật lý trực tiếp và foley của hành động đã có có thể không có `E##`, nhưng không được tạo ra sự thật cốt truyện mới;
-5. Nếu sau khi xóa hành động AI thêm phát sinh câu hỏi "trạng thái từ đâu ra", xử lý theo A0.1.4: lấy thẳng trạng thái người dùng đưa ra làm trạng thái ban đầu của nhịp đó, không bổ sung tiền sử;
-6. Nếu chính văn bản nguồn có chỗ hổng hay mâu thuẫn, giữ nguyên chỗ hổng/mâu thuẫn và đánh dấu trong tổng quan toàn phim, không tự bắc cầu.
-
-**Mục tiêu kiểm toán không phải làm cốt truyện trôi chảy hơn, mà là xác nhận prompt cuối cùng và cốt truyện của người dùng là cùng một chuyện.**
-
-### A11.4 Kiểm tra trước độ ổn định khi tạo (giảm xác suất hình ảnh bị vỡ · bắt buộc)
-
-Mục này chỉ giảm rủi ro khi tạo, **không thể cam kết đầu ra của model tuyệt đối không vỡ**. Mục tiêu là loại bỏ trước gánh nặng prompt dễ gây biến dạng nhân vật, lỗi tay, đạo cụ biến mất/nhân bản, cấu trúc hình ảnh tan chảy và trôi danh tính nhất; không được lấy lý do "ổn định" để xóa cốt truyện hay sửa sự kiện.
-
-#### A11.4.1 Các mục kích hoạt rủi ro cao
-
-Khi bất kỳ shot nào xuất hiện các tình huống sau, đánh dấu là rủi ro cao và chủ động giảm độ phức tạp:
-- 3 chủ thể trở lên đồng thời di chuyển biên độ lớn, che khuất lẫn nhau hoặc tiếp xúc nhau;
-- Hai tay/nhiều người đồng thời thao tác đạo cụ nhỏ, trao tay, cài khuy, rót chất lỏng, lau chùi và các tiếp xúc tinh tế khác, đồng thời còn yêu cầu chuyển động máy phức tạp;
-- Các động tác cơ thể biên độ lớn như nhân vật quay người nhanh, ngồi xuống đứng lên, tiếp đất, mặc cởi, nhiều người đổi chỗ xảy ra đồng thời với chi tiết tay ở cận cảnh;
-- Gương, kính, phản xạ mạnh, vật chứa trong suốt, nhiều bóng đổ và các bố cục dễ nhân bản nhân vật/chi thể/đạo cụ;
-- Bao bì sản phẩm, chữ nhỏ, ngón tay, chất lỏng hay cấu trúc cơ khí vừa phải chính xác ở khoảng cách gần, vừa phải di chuyển/xoay tốc độ cao;
-- Cùng một shot đồng thời yêu cầu độ sâu trường ảnh cực nông, che khuất mạnh, chuyển động máy nhanh, tiếp xúc tinh tế và diễn xuất nhiều nhân vật;
-- Đoạn này trích dẫn quá nhiều ảnh tham chiếu, và nhiều ảnh có xung đột tiềm ẩn về cùng nhân vật, trang phục, cấu trúc bối cảnh hay hình dạng sản phẩm;
-- Bản thân prompt có các yêu cầu loại trừ nhau, ví dụ "nhân vật hoàn toàn cố định" đồng thời "nhanh chóng đổi chỗ", "tay luôn cầm bút" đồng thời "cùng shot tay không hoàn thành một hành động khác".
-
-#### A11.4.2 Thứ tự giảm rủi ro
-
-Gặp rủi ro cao, xử lý theo thứ tự sau, cho đến khi prompt không còn quá tải:
-1. **Xóa các kiểm soát không liên quan, không xóa cốt truyện.** Xóa thuật ngữ shot, từ phủ định chung chung, chi tiết chất liệu không liên quan và tham chiếu vô dụng không ảnh hưởng đến shot này; chỉ giữ các khóa shot hiện tại thực sự cần.
-2. **Đơn giản hóa máy quay trước.** Khi có tiếp xúc tay/đạo cụ tinh tế, ưu tiên cố định hoặc một chuyển động đơn nhất ổn định; không chồng cùng lúc push/pull, quay vòng, lia nhanh, chuyển nét mạnh.
-3. **Để tiếp xúc then chốt nhìn thấy trọn vẹn.** Các hành động trao tay, cầm lấy, lau chùi, đóng mở, chọn cỡ cảnh có thể đồng thời thấy tay và đạo cụ liên quan, tránh tại điểm tiếp xúc then chốt nhất bị mép khung, cơ thể hay tiền cảnh che hoàn toàn.
-4. **Giảm xung đột độ sâu trường ảnh.** Khi tay, đạo cụ và bề mặt tiếp xúc then chốt đều phải nhận rõ được, không dùng độ sâu trường ảnh cực nông làm mờ hoàn toàn một bên.
-5. **Hành động phức tạp và quay phim phức tạp đừng tranh cùng một khoảnh khắc.** Nếu cốt truyện nguồn cho phép tách shot, thì tại ranh giới `E##` đã có chia các tương tác phức tạp khác nhau ra các shot; nếu cốt truyện nguồn yêu cầu rõ xảy ra đồng thời, thì giữ đồng thời, nhưng giảm chuyển động máy, động thái phông nền và độ phức tạp diễn xuất không liên quan.
-6. **Ảnh tham chiếu chỉ giữ những gì đoạn này thực sự cần.** Nhiều tham chiếu cho cùng một đối tượng nếu công dụng khác nhau, nói rõ phạm vi từng cái; xung đột nhau thì xử lý theo A1.2.1, không để model tự trộn.
-7. **Thêm Avoid có định hướng cho đoạn rủi ro cao, chứ không chất từ phủ định cho toàn phim.** Có thể thêm theo rủi ro thực tế của shot này: không xuất hiện cánh tay/ngón tay thừa, dính chi, trôi danh tính khuôn mặt, đạo cụ nhân bản/biến mất, vật xuyên tay/xuyên bàn, cơ thể xuyên vật thể, hình học tan chảy, gương phản chiếu thừa nhân vật v.v.; không có rủi ro này thì không thêm máy móc.
-8. **Vẫn quá tải mới phân cảnh lại/phân đoạn lại.** Chỉ được dùng ranh giới nhịp nguồn đã có, không xóa, không thêm, không đổi thứ tự, không thay đổi quan hệ xảy ra đồng thời.
-
-#### A11.4.3 Tiêu chuẩn đạt độ ổn định
-
-Trước khi vào A12 xác nhận:
-- Mỗi shot có nhiệm vụ quan sát chính rõ ràng;
-- Số lượng nhân vật, tiếp xúc chi thể, số lượng đạo cụ và nhân quả hành động có thể được cỡ cảnh hiện tại thể hiện rõ trọn vẹn;
-- Máy quay không có lệnh chuyển động mâu thuẫn nhau;
-- Không tồn tại yêu cầu gương/phản chiếu không cần thiết dễ gây lặp chủ thể;
-- Các Reference binding không tranh giành cùng một chiều;
-- Danh tính nhân vật then chốt, trang phục, cấu trúc sản phẩm và đạo cụ then chốt đều đã được khóa ở trường thích hợp;
-- `Avoid` của đoạn rủi ro cao chỉ nhắm vào rủi ro thực tế, không phải hàng chục từ phủ định chung chung.
+**2.5 conciseness rule:** the whole-film overview is responsible for explaining "why it is split this way"; the single-segment prompt is responsible for "how exactly this segment is generated". Do not repeatedly stuff overview content into every 2.5 `Objective` or `Timeline`.
 
 ---
 
-## A12. Tối ưu trước khi giao (đánh bóng cuối cùng · thực thi một lần)
+## A11. Structural check (the only structural correction stage before A12)
 
-**A12 chỉ thực thi một lần.** Nó không phải vòng phân cảnh thứ hai, cũng không chịu trách nhiệm tính lại số đoạn, cắt lại nhịp hay quay lui A11.
+A11 is responsible for structural issues of "can it be generated, has the plot been squeezed out of shape"; A12 only polishes wording and presentation.
 
-Tối ưu không phải viết lại, mà là trên cấu trúc có sẵn kiểm tra tính thể hiện và khả năng thực thi của A12.1–A12.18. Phát hiện vấn đề diễn đạt thông thường thì sửa luôn; phát hiện xung đột cứng cấp cấu trúc thì xử lý theo A12.19, không đệ quy quay lại.
+### A11.1 Checklist
+- [ ] Has the `E01 / E02 / E03...` source plot ledger been built, with the user's latest explicit instruction / original plot as the fact source?
+- [ ] Can every plot-state-changing event in the final Timeline be mapped to some `E##`, with no sourceless new actions?
+- [ ] Have no user plot events been added, deleted, replaced, reattributed, or reordered?
+- [ ] Have vague roles such as "parents / guardian / adult" not been arbitrarily made specific as dad/mom/a second person?
+- [ ] Has no prop source been traced back, and no backstory such as opening lids/pulling out/taking/moving been added for continuity?
+- [ ] Have all atomic beats been registered in the original order, rather than keeping only the five kinds of key points?
+- [ ] Has the emotional curve not been used to reorder the plot?
+- [ ] Is the theoretical minimum number of segments used only as a lower bound, without forcing the actual number of segments to equal it?
+- [ ] Is every segment ≤ the model's single-segment hard limit?
+- [ ] Does the sum of all segment durations match the user's strict total duration; if both cannot be satisfied, is the conflict explicitly flagged?
+- [ ] Can all dialogue be finished completely at a natural pace within its time window?
+- [ ] Do serial actions, reactions, and necessary pauses have real time, without relying on teleporting or abnormally fast speech?
+- [ ] For long plots, is there first a complete whole-film segment table, then delivery by Batch capacity?
+- [ ] Is A4 character on-screen state planned along the timeline and consistent with the final body?
+- [ ] Has every pair of adjacent generation segments been judged as "continuous relationship / partial state relationship / no continuity relationship", without forcing inheritance onto unrelated segments?
+- [ ] For all continuously related segments, can characters' world positions, relative relationships, postures, orientations, and hand occupancy enter the next segment's initial state from the previous segment's end state without contradiction?
+- [ ] Have all key props completed the "holder / position / quantity / state / visibility" chain check, with no sourceless disappearance, duplication, hand switch, restoration, or teleporting?
+- [ ] Are changed in-scene states of doors and windows, furniture, stains, liquid levels, damage, weather, and light sources reasonably inherited in related segments?
+- [ ] Has the generation-stability pre-check been done, avoiding stuffing high-risk body/hand/prop interactions, complex camera movement, occlusion, and multiple reference conflicts into one shot at the same time?
+- [ ] If the target model is 2.0, is A9.1 "Asset identification + formal prompt" used?
+- [ ] If the target model is 2.5, is the A9.2 `Objective / Reference binding / Immutable locks / Target duration / Timeline / Visual direction / Audio direction / Preserve / Avoid` architecture used?
+- [ ] If the target model is 2.5, does the final body pass the A9.2.0 format hard gate: apart from the segment header and the A9.2 whitelisted fields, no other top-level structure or extra analysis block?
+- [ ] If the target model is 2.5, does `Timeline` use only time blocks + continuous natural language, without setting up a separate shot numbering system as the main organizing structure?
+- [ ] If the user provided reference images, does every relevant 2.5 segment list the required real image nodes / asset handles verbatim in its own `Reference binding`?
+- [ ] Does `Reference binding` list only the reference assets this segment genuinely needs, using "real node / handle + concise asset label"; are the user's explicit purpose restrictions such as "blocking only / costume only / product only" kept?
+- [ ] Is "same as above / reuse the previous segment's reference images" avoided in place of rebinding in this segment?
+- [ ] Is the 2.5 `Timeline` "time blocks + continuous natural language", without degenerating into a pile of camera/action/performance subheadings?
+- [ ] Does 2.5 avoid repeating the A4 asset list as a whole block, instead compressing the necessary information into the corresponding fields?
+- [ ] Does every segment contain its own world coordinates + frame coordinates, rather than "same as above / continue the previous segment"?
+- [ ] Are continuous-scene state inheritance and re-anchoring on scene change correct?
+- [ ] Do inter-segment transitions satisfy A7.3?
+- [ ] Is continuous action editing kept within the same generation segment wherever possible?
+- [ ] Is the original dialogue copied verbatim?
+- [ ] Are post-production subtitles/overlay text not handed to the generation model? Is physical asset text handled per A1.3?
+- [ ] If reference images were generated without a reference library, are they used only for Reference binding, with appearance marked as a design proposal, and without overstepping to control blocking/lighting/plot? (A1.2 Case 2 supplement)
 
-### A12.1 Khóa khung đầu
-Với khung đầu của mỗi shot, viết rõ theo "các mục áp dụng":
-- Shot này có nhân vật không; nếu không có người, nói rõ "shot trống, không có nhân vật"
-- Nhân vật đứng / ngồi / ngồi xổm / nằm
-- Nhân vật ở trái hay phải khung hình
-- Khoảng cách tương đối giữa các nhân vật
-- Hướng cơ thể
-- Điểm rơi ban đầu của ánh nhìn (cốt truyện nguồn có đối tượng chú ý rõ thì viết theo; không có thì chỉ dùng điểm rơi trung tính không mang thông tin mới, không suy diễn hứng thú/thù địch/mập mờ mới)
-- Trong tay cầm gì
-- Đạo cụ then chốt đặt ở đâu
-- Khoảng cách và độ cao máy quay
-- Tiền cảnh / trung cảnh / hậu cảnh
+### A11.2 Limited correction mechanism (prevents infinite loops)
 
-Các mục không áp dụng thì đừng cố bịa.
+If problems are found after the first check:
+1. Collect all failed items at once;
+2. **Do only one round of consolidated structural correction**; structural correction may only adjust segment boundaries, shot carrying, time budget, cinematographic expression, and lock information, and **must not modify the event content, performer, target, quantity, order, or dialogue of any `E##`**;
+3. After correction, only re-verify the affected items and their direct continuity;
+4. Then enter the A11.3 plot-fidelity audit and the A11.4 generation-stability pre-check; enter A12 after all pass.
 
-### A12.2 Khóa xuất hiện thực thi theo shot
-Lấy quy hoạch trạng thái theo timeline nội bộ của A4 làm chuẩn; 2.5 dù không liệt kê riêng định danh tài sản, cũng bắt buộc thể hiện cùng ràng buộc xuất hiện đó trong Timeline / Immutable locks.
+**Recursion back and forth between A11 ↔ A12 is forbidden.**
 
-Nhân vật không nên xuất hiện trong shot này, viết rõ:
-- Hoàn toàn không xuất hiện;
-- Không xuất hiện mặt / cơ thể / vai / tay / bóng phản chiếu / bóng đổ / hình người ngoài vùng nét (chọn theo nhu cầu);
-- Nếu chỉ có lời thoại đồng bộ ngoài khung hình, phải nói rõ "chỉ có giọng nói".
+If, after one round of consolidated correction, a hard conflict of "user requirements that cannot be satisfied at the same time" still exists (e.g. a strict 30s but the natural reading of the original dialogue already exceeds 30s), keep the user's original and explain it clearly in "Whole-film overview | Duration constraint conflicts"; do not keep recalculating endlessly.
 
-Đặc biệt là shot chủ quan, shot cận bộ phận, shot sau vai, shot một người, tránh để model tự động thêm ra một nhân vật khác.
+### A11.3 Plot-fidelity audit (mandatory before entering A12)
 
-### A12.3 Quang học: viết kết quả nhìn thấy được, không dựa vào model ống kính
+Do one one-way comparison, without showing the internal ledger to the user:
+
+1. Read `E01 → E02 → ...` in order from the source plot ledger;
+2. Confirm every `E##` appears in some final generation segment, with no change to performer / target / dialogue / order;
+3. Reverse-scan all actions in the final Timeline that change world state; if no source `E##` can be found, delete that AI-added action;
+4. Cinematography, composition, shot size, focus, and direct physical results and foley of existing actions may have no `E##`, but must not produce new plot facts;
+5. If deleting an AI-added action raises the question "where did this state come from", handle per A0.1.4: take the state the user gave directly as that beat's initial state, without adding backstory;
+6. If the source text itself has gaps or contradictions, keep the gaps/contradictions and flag them in the whole-film overview; do not invent bridges yourself.
+
+**The goal of the audit is not to make the plot smoother but to confirm that the final prompts and the user's plot are the same thing.**
+
+### A11.4 Generation-stability pre-check (reduces the probability of visual breakdown · mandatory)
+
+This section only reduces generation risk; **it cannot promise that the model output will never break**. The goal is to remove in advance the prompt burdens most likely to cause character deformation, hand errors, prop disappearance/duplication, melting image structure, and identity drift; do not cut plot or change events in the name of "stability".
+
+#### A11.4.1 High-risk triggers
+
+When any shot has the following, mark it high risk and proactively reduce complexity:
+- 3 or more subjects moving significantly, occluding each other, or making contact at the same time;
+- Both hands/multiple people simultaneously handling small props, handing over, fastening buttons, pouring liquid, wiping, or other fine contact, while complex camera movement is also required;
+- Large body actions such as a character turning quickly, crouching and rising, landing, dressing/undressing, or multiple people swapping places happening at the same time as close-up hand details;
+- Compositions with mirrors, glass, strong reflections, transparent containers, or multiple shadows that easily duplicate characters/limbs/props;
+- Product packaging, small text, fingers, liquids, or mechanical structures that must be accurate up close while also moving/rotating at high speed;
+- The same shot simultaneously requiring extremely shallow depth of field, heavy occlusion, fast camera movement, fine contact, and multi-character performance;
+- This segment cites too many reference images, and several of them potentially conflict on the same character, costume, location structure, or product form;
+- The prompt itself contains mutually exclusive requirements, e.g. "the character is completely fixed" together with "quickly swaps places", or "the hand always holds the pen" together with "completes another action empty-handed in the same shot".
+
+#### A11.4.2 Risk-reduction order
+
+When high risk is encountered, handle it in the following order until the prompt is no longer overloaded:
+1. **Delete irrelevant controls, not plot.** Delete shot terminology, generic negative terms, irrelevant material details, and useless references that do not affect this shot; keep only the locks the current shot genuinely needs.
+2. **Simplify the camera first.** For fine hand/prop contact, prefer a static camera or a single smooth movement; do not stack push/pull, orbit, fast pan, and strong focus pull at the same moment.
+3. **Keep key contact fully visible.** For actions such as handing over, taking, wiping, and opening/closing, choose a shot size where the relevant hands and props are visible together, avoiding the most critical contact point being completely blocked by the frame edge, the body, or the foreground.
+4. **Reduce depth-of-field conflicts.** When the key hands, props, and contact surfaces must all be discernible, do not use an extremely shallow depth of field that would completely blur one of them.
+5. **Do not let complex action and complex cinematography compete for the same moment.** If the source plot allows splitting shots, carry different complex interactions in separate shots at existing `E##` boundaries; if the source plot explicitly requires them to happen simultaneously, keep them simultaneous but reduce the complexity of camera movement, background motion, and irrelevant performance.
+6. **Keep only the reference images this segment genuinely needs.** If multiple references of the same object have different purposes, make each one's scope explicit; when they conflict, handle per A1.2.1 and do not let the model fuse them on its own.
+7. **Add targeted Avoid items to high-risk segments instead of piling negative terms across the whole film.** Add per this shot's actual risk: no extra arms/fingers, limb fusion, facial identity drift, prop duplication/disappearance, objects passing through hands/tables, body clipping, geometry melting, extra people in mirrors, etc.; do not add them mechanically when there is no such risk.
+8. **Only re-storyboard/re-segment when it is still overloaded.** Only existing source beat boundaries may be used; do not delete, add, reorder, or change simultaneity relationships.
+
+#### A11.4.3 Stability pass criteria
+
+Before entering A12, confirm:
+- Every shot has a clear main viewing task;
+- The number of characters, limb contact, number of props, and action causality can be seen completely at the current shot size;
+- The camera has no mutually contradictory movement commands;
+- There are no unnecessary mirror/reflection requirements that would induce duplicated subjects;
+- Reference bindings do not compete for the same dimension;
+- Key character identity, costume, product structure, and key props are all locked in the appropriate fields;
+- The `Avoid` of high-risk segments targets only real risks, not dozens of generic negative terms.
+
+---
+
+## A12. Pre-delivery optimization (final polish · executed once)
+
+**A12 is executed only once.** It is not a second round of storyboarding, and it is not responsible for recalculating the number of segments, re-cutting beats, or rolling back A11.
+
+Optimization is not rewriting; it checks the presentation and executability of A12.1–A12.18 on the existing structure. Fix ordinary expression problems directly; handle structural hard conflicts per A12.19, without recursing back.
+
+### A12.1 First-frame lock
+For each shot's first frame, spell out the "applicable items":
+- Whether this shot has characters; if no one, state explicitly "empty shot, no characters"
+- Character standing / sitting / crouching / lying
+- Character frame left/right
+- Relative distance between characters
+- Body orientation
+- Initial gaze point (copy it when the source plot has an explicit object of attention; when not, use only a neutral point that carries no new information, without inferring new interest/hostility/ambiguity)
+- What is held in the hand
+- Where key props are placed
+- Camera distance and height
+- Foreground / midground / background
+
+Do not force-invent items that do not apply.
+
+### A12.2 On-screen lock executed per shot
+The A4 internal timeline state plan prevails; even when 2.5 does not list asset identification separately, the same on-screen constraints must be reflected in the Timeline / Immutable locks.
+
+For characters who should not appear in this shot, write explicitly:
+- Not on screen at all;
+- No face / body / shoulder / hand / reflection / shadow / out-of-focus human shape (choose as needed);
+- If there is only off-screen synchronous dialogue, state clearly "voice only".
+
+Especially for POV shots, partial shots, behind-the-shoulder shots, and single-person shots, prevent the model from automatically adding another character.
+
+### A12.3 Optics: write the visible result, do not rely on lens model
 - ❌ "85mm f/1.4"
-- ✅ "góc nhìn cảm giác chân dung tiêu cự ngắn, phối cảnh khuôn mặt tự nhiên, phông nền mờ nhẹ"
+- ✅ "short-telephoto portrait feel, natural facial perspective, slightly blurred background"
 
-Model ống kính có thể hỗ trợ, nhưng trọng tâm là kết quả hình ảnh cuối cùng.
+The lens model can help, but the focus is the final visual result.
 
-### A12.4 Kiểm tra mâu thuẫn máy quay
-Mỗi shot chỉ giữ một logic chuyển động máy chính.
-- ❌ "shot hoàn toàn cố định, đồng thời lia ngang chậm"
-- ✅ "máy quay cố định, chỉ chuyển nét một lần cực chậm"
+### A12.4 Camera contradiction check
+Keep only one main camera movement logic per shot.
+- ❌ "the camera is completely fixed while slowly trucking sideways"
+- ✅ "the camera is fixed, with only one very slow focus pull"
 
-### A12.5 Quay phim né tránh (chỉ áp dụng cho phong cách kìm nén/hàm súc)
-Khi phong cách người dùng thuộc loại kìm nén, hàm súc, có thể ưu tiên:
-- Đặc tả tay / cốc / dây đỏ / mép sàn nhà
-- Sau vai / cột che / tiền cảnh mất nét
-- Trung cảnh hai người / viễn cảnh cố định
+### A12.5 Avoidant cinematography (only for restrained/understated styles)
+When the user's style is restrained or understated, prefer:
+- Hand close-ups / cups / a red cord / floor edges
+- Behind the shoulder / pillar occlusion / out-of-focus foreground
+- Two-person medium shot / static long shot
 
-Đừng cưỡng ép áp dụng điều này cho các phong cách khác như phim hành động, hài mạnh, thử nghiệm sản phẩm.
+Do not force this onto other styles such as action films, broad comedy, or product experiments.
 
-### A12.6 Diễn xuất: hành vi chứ không phải cảm xúc trừu tượng
-- ❌ "anh ấy rất buồn"
-- ✅ "anh ấy vốn đang nâng cốc, động tác dừng khoảng 0.4 giây, sau đó tiếp tục uống"
+### A12.6 Performance: behavior, not abstract emotion
+- ❌ "he is very sad"
+- ✅ "he was raising his cup; the motion pauses about 0.4 seconds, then he keeps drinking"
 
-Ưu tiên viết **phản ứng đã tồn tại trong cốt truyện nguồn** thành hành động nhìn thấy được. Ánh nhìn dừng lại / ngón tay siết chặt / cốc khựng lại / môi hé rồi khép / hơi thở thay đổi / trọng tâm thay đổi chỉ được dùng khi nhất quán với phản ứng trong cốt truyện nguồn, không được dùng làm sự kiện diễn xuất mới do AI tự thêm.
+Prefer writing **reactions that already exist in the source plot** as visible actions. Gaze pauses / fingers tightening / a cup pausing / lips parting then closing / breathing changes / shifts of weight may only be used when consistent with a source plot reaction, and cannot be used as new performance events the AI adds on its own.
 
-### A12.7 Mật độ vi biểu cảm
-Mỗi nhân vật mỗi shot thường 0–2 sự kiện vi biểu cảm rõ ràng. Khi shot không thấy mặt, không viết phản ứng khuôn mặt.
+### A12.7 Micro-expression density
+Usually 0–2 explicit micro-expression events per character per shot. When the shot cannot see the face, do not write facial reactions.
 
-### A12.8 Cụ thể hóa mục tiêu ánh nhìn
-Chỉ khi cốt truyện nguồn đã viết rõ nhân vật đang nhìn ai đó/vật gì đó/hướng nào đó, mới viết mục tiêu cụ thể. Nếu nguyên văn không có đối tượng chú ý, không được tự chọn một mục tiêu mang hàm ý cốt truyện.
+### A12.8 Make gaze targets specific
+Only when the source plot already states that a character is looking at someone/something/some direction is the target written specifically. If the original has no object of attention, do not choose a target with plot meaning yourself.
 
-Thứ tự hành vi tự nhiên có thể viết thành "mắt động trước → đầu theo sau", nhưng chỉ dùng để thể hiện động tác nhìn đã có trong nguyên văn, không thêm một lần nhìn.
+A natural behavior order can be written as "eyes move first → head follows", but only to present a looking action already in the original, not to add a new look.
 
-### A12.9 Hành động hai người tránh đồng bộ máy móc
-Nếu bản thân cốt truyện nguồn có hai hành động đã có có thể song song nhưng không khóa đồng bộ chính xác, có thể lệch nhịp nhẹ với điều kiện không thay đổi thứ tự sự kiện và nhân quả. **Không được vì "tự nhiên" mà thêm hành động cho bất kỳ nhân vật nào, lùi sự kiện then chốt hay thay đổi quan hệ xảy ra đồng thời vốn đã rõ ràng.**
+### A12.9 Avoid mechanical sync in two-person actions
+If the source plot itself contains two existing actions that can run in parallel but are not locked to precise sync, they may be slightly offset in rhythm without changing event order and causality. **Do not add actions to any character, delay key events, or change an explicitly simultaneous relationship for the sake of "naturalness".**
 
-### A12.10 Chuỗi nhân quả hành động
-Ưu tiên tổ chức **các nhịp nguồn đã có** thành chuỗi nhân quả rõ ràng; nếu nguyên văn của người dùng thực sự có nhiều hành động, thì giữ lại toàn bộ, chỉ phân bổ trên cách chứa shot, không được vì "mỗi shot một hành động cốt lõi" mà xóa bất kỳ sự kiện nguồn nào. Các hành động trang trí do AI tự thêm nên xóa.
+### A12.10 Action causal chain
+Prefer organizing **existing source beats** into a clear causal chain; if the user's original genuinely contains multiple actions, keep them all and only distribute them across shots; do not delete any source event for the sake of "one core action per shot". Decorative actions the AI added itself should be deleted.
 
-### A12.11 Tính liên tục đạo cụ (trong đoạn + qua đoạn liên quan)
+### A12.11 Prop continuity (within a segment + related cross-segment)
 
-Với mỗi đạo cụ then chốt ít nhất kiểm tra: **người cầm, tay dùng (nếu đã xác định rõ), vị trí tuyệt đối, trạng thái nhìn thấy/bị che, số lượng, hướng, đóng mở, mực chất lỏng/vật chứa bên trong, hao mòn, vết bẩn/độ ẩm, nơi đến cuối đoạn**.
+For each key prop, check at least: **holder, hand used (if explicit), absolute position, visible/occluded state, quantity, orientation, open/closed, liquid level/contents, wear, stains/wetness, where it ends up at segment end**.
 
-- Trong đoạn quét từng khối thời gian theo "trạng thái đầu → hành động cốt truyện nguồn → trạng thái cuối"; đoạn có liên hệ liên tục thì so sánh thêm trạng thái cuối đoạn trước với trạng thái đầu đoạn sau theo A8.3.
-- Một cây bút nếu vẫn do nhân vật cầm, và không có việc đặt xuống, trao tay, cất đi hay rơi tương ứng với `E##` nguồn, thì khoảnh khắc tiếp theo không được tự nhiên biến mất.
-- Shot sau vì cắt khung hay che khuất mà không quay tới đạo cụ, không có nghĩa là đạo cụ đã biến mất; trạng thái thế giới tiếp tục được giữ.
-- Nếu cùng một bàn tay vẫn nhìn thấy rõ mà đạo cụ không có nguồn gốc lại mất, coi là lỗi tính liên tục; nếu tay và đạo cụ đều ngoài khung, chỉ ghi "vẫn do nhân vật đó cầm/vẫn ở vị trí cũ", đừng tự thay đổi trạng thái.
-- Đạo cụ đã đặt xuống không được quay lại tay mà không có quá trình; vật đã giao cho B không được đồng thời lại xuất hiện trong tay A; số lượng không được tăng giảm vô cớ.
-- Nguyên văn không chỉ định tay trái/phải và shot không cần thì không cưỡng ép khóa tay; một khi prompt đã xác định rõ một tay nào đó để thực thi, thì trong các shot liên tục liên quan không được đổi tay mà không có quá trình.
+- Within a segment, scan time block by time block along "initial state → source plot action → end state"; for continuously related segments, also compare the previous segment's end state with the next segment's initial state per A8.3.
+- If a pen is still held by a character and there is no put-down, hand-over, put-away, or drop corresponding to a source `E##`, it cannot vanish out of nowhere at the next moment.
+- The next shot not showing the prop because of cropping or occlusion does not mean the prop has disappeared; the world state continues.
+- If the same hand is still clearly visible and the prop is gone without a source, treat it as a continuity failure; if both the hand and the prop are off screen, only record "still held by that character / still in its original position", and do not change the state out of nowhere.
+- A prop that has been put down cannot return to the hand without a process; an object already handed to B cannot also appear in A's hand; quantities cannot increase or decrease without cause.
+- When the source does not specify left/right hand and the shot does not need it, do not force-lock the hand; once the prompt has specified a hand for execution, the hand cannot be switched without a process in related continuous shots.
 
-Cấm khôi phục hay đặt lại vô cớ: cốc đã uống đột nhiên đầy, vết bẩn đã lau đột nhiên trở lại, cửa đã mở đóng lại không có hành động, đạo cụ hư tự động lành, vật đã tiêu hao khôi phục số lượng.
+Uncaused restoration or reset is forbidden: a cup that was drunk from suddenly full, a stain that was wiped off suddenly restored, an opened door closing without action, a damaged prop becoming intact on its own, consumed items restoring their quantity.
 
-### A12.12 Tính chân thực vật lý
-Kiểm tra trọng tâm quán tính chất lỏng, nếp gấp vải, tiếp xúc tay và đạo cụ, trọng lượng vật thể, rung mặt bàn, phản hồi va chạm, khúc xạ/phản xạ kính v.v.
+### A12.12 Physical realism
+Focus on checking liquid inertia, fabric folds, hand-prop contact, object weight, table vibration, collision feedback, glass refraction/reflection, etc.
 
-### A12.13 Nhất quán ánh sáng
-Cùng một cảnh liên tục giữ hướng ánh sáng chính, nhiệt độ màu và logic phơi sáng. Đổi cảnh/nhảy thời gian thì thiết lập lại theo A5.5, không cưỡng ép kế thừa.
+### A12.13 Lighting consistency
+The same continuous scene keeps the key light direction, color temperature, and exposure logic. On a scene change/time jump, re-establish them per A5.5 without forced inheritance.
 
-Cấm chỉ vì cốt truyện quan trọng mà đột nhiên thêm ánh sáng viền, tăng ánh sáng mắt hay thay đổi phơi sáng, trừ khi phong cách người dùng yêu cầu rõ.
+Do not suddenly add rim light, strengthen catchlights, or change exposure just because the plot is important, unless the user's style explicitly requires it.
 
-### A12.14 Âm thanh
-Mặc định chỉ giữ lời thoại đồng bộ thật và âm thanh môi trường/hành động. BGM, nhạc nền, hiệu ứng âm thanh cảm xúc có tồn tại hay không, lấy yêu cầu người dùng làm chuẩn; người dùng không yêu cầu thì không tự động thêm, mặc định không nhạc nền.
+### A12.14 Sound
+By default, keep only real synchronous dialogue and ambient/action sounds. Whether BGM, score, or emotional sound effects exist follows the user's requirements; if the user has not requested them, do not add them automatically; default to no background music.
 
-### A12.15 Nguyên văn lời thoại + thời lượng
-Lời thoại người dùng cung cấp bắt buộc:
-- Chép nguyên văn
-- Không đổi từ / không đổi cấu trúc câu / không thêm từ cảm thán / không lặp lại / không ứng tác
+### A12.15 Original dialogue + duration
+Dialogue provided by the user must be:
+- Copied verbatim from the original
+- Not changing words / not changing sentence patterns / not adding filler words / not repeating / not improvising
 
-A12 **không được** giải quyết vấn đề lời thoại không vừa bằng "tăng tốc độ nói"; loại vấn đề này đáng lẽ đã được xử lý ở A11. A12 chỉ tinh chỉnh cách diễn đạt khoảng dừng không làm thay đổi cấu trúc.
+A12 **must not** solve dialogue not fitting by "speeding up speech"; such problems should already have been handled in A11. A12 only fine-tunes wording about pauses without changing the structure.
 
-### A12.16 Ưu tiên khóa thuận
-Ưu tiên viết trạng thái có thể thực thi:
-- "Nhân vật A trong shot này luôn ở bên trái khung hình"
-- "Cốc do tay phải nhân vật A cầm"
-- "Nhân vật B trong shot này hoàn toàn ngoài khung hình"
+### A12.16 Positive locks first
+Prefer writing executable states:
+- "Character A stays on frame left throughout this shot"
+- "The cup is held in Character A's right hand"
+- "Character B is fully off screen in this shot"
 
-Sau đó bổ sung các mục cấm cần thiết.
+Then add the necessary prohibitions.
 
-### A12.17 Khóa chữ
-Mặc định viết:
-- Không phụ đề
-- Không chữ màn hình thêm
-- Không tiêu đề/thẻ giải thích/chữ chồng UI/watermark hậu kỳ
+### A12.17 Text lock
+Write by default:
+- No subtitles
+- No extra on-screen text
+- No post-production titles/caption cards/UI overlay text/watermarks
 
-Nếu shot có chữ trên tài sản vật thể như bao bì sản phẩm, biển hiệu, thư từ:
-- Có ảnh tham chiếu → giữ tài sản tham chiếu, không thêm, không viết lại, không vẽ lại chữ;
-- Không yêu cầu model tạo thêm "chữ mới rõ ràng chính xác";
-- Chỉ khi người dùng yêu cầu rõ chữ đọc được mới khóa từng chữ.
+If the shot contains physical asset text such as product packaging, signboards, or letters:
+- With a reference image → keep the reference asset; do not add, rewrite, or redraw text;
+- Do not require the model to additionally generate "clear, accurate new text";
+- Lock text word for word only when the user explicitly requires readable text.
 
-### A12.17.1 Tính đầy đủ của việc gắn ảnh tham chiếu (Seedance 2.5)
-Khi người dùng cung cấp ảnh tham chiếu, A12 chỉ kiểm tra việc gắn có đầy đủ không, công dụng có rõ không, không được thay, xóa, gộp hay tự thêm ảnh tham chiếu ở giai đoạn tối ưu.
+### A12.17.1 Reference image binding completeness (Seedance 2.5)
+When the user provides reference images, A12 only checks whether the binding is complete and the purposes are clear; it must not swap, delete, merge, or add reference images itself during the optimization stage.
 
-- Mỗi đoạn liên quan đều bắt buộc giữ node tham chiếu thật / handle tài sản mà đoạn đó cần;
-- Không được vì "đoạn trước đã gắn" mà xóa khỏi đoạn sau;
-- Không được mở rộng "chỉ tham chiếu vị trí đứng" thành tham chiếu ngoại hình nhân vật;
-- Không được đưa phông nền, nhân vật lạ hay đạo cụ thừa trong ảnh tham chiếu nhân vật vào cốt truyện;
-- Không được viết lại chữ phức tạp trong ảnh tham chiếu sản phẩm thành nội dung bao bì mới.
+- Every relevant segment must keep the real reference nodes / asset handles that segment needs;
+- Do not remove them from the next segment because "the previous segment already bound them";
+- Do not expand "blocking reference only" into a character appearance reference;
+- Do not bring backgrounds, strangers, or extra props from a character reference image into the plot;
+- Do not rewrite complex text in a product reference image into new packaging copy.
 
-### A12.18 Thêm giới hạn thống nhất theo nhu cầu
-Có thể chọn dùng theo dự án hiện tại:
-- Không thêm nhân vật / đạo cụ / lời thoại / hành động cốt truyện
-- Không vượt trục vô cớ / không hoán đổi vị trí nhân vật mà không có quá trình
-- Không cắt nhanh kiểu MV
-- Không bổ sáng / làm mịn da kiểu quảng cáo không có căn cứ phong cách
-- Không phóng đại độ sâu trường ảnh / không dùng slow motion thiếu tự nhiên
+### A12.18 Add general restrictions as needed
+Choose per the current project:
+- Do not add characters / props / dialogue / plot actions
+- Do not cross the axis without reason / do not swap character positions without a process
+- No MV-style fast cutting
+- No advertising-style fill light / skin smoothing without stylistic basis
+- No exaggerated depth of field / no unnatural slow motion
 
-**Đừng dán máy móc các giới hạn không liên quan đến shot hiện tại.**
+**Do not mechanically paste restrictions unrelated to the current shot.**
 
-### A12.18.1 Kiểm toán cuối cùng về tính liên tục và rủi ro lỗi hớ (bắt buộc trước khi giao)
+### A12.18.1 Final continuity and continuity-error risk audit (mandatory before delivery)
 
-Sau khi A12 hoàn tất đánh bóng chữ, trước khi xuất cuối cùng, làm thêm một lần **kiểm toán một chiều**, không quay về A11, không kích hoạt vòng A12 thứ hai:
+After A12 finishes the text polish and before the final output, do one more **one-way audit**, without returning to A11 or triggering a second round of A12:
 
-1. **Lập ảnh chụp trạng thái đầu / trạng thái cuối của mỗi đoạn**: vị trí thế giới, tư thế, hướng, trạng thái xuất hiện, tay đang bận của nhân vật; người cầm/vị trí/số lượng/trạng thái của đạo cụ then chốt; các trạng thái kéo dài như cửa/đồ nội thất/vết bẩn/nguồn sáng của bối cảnh.
-2. **Chỉ so sánh các cặp đoạn được A8 xác định là "liên hệ liên tục / liên hệ trạng thái cục bộ"**. Các đoạn liền kề không có quan hệ liên tục thì không cưỡng ép so vị trí nhân vật, chỉ kiểm tra bản thân đoạn đó có hợp lý không.
-3. **Kiểm tra lỗi hớ nhân vật**: dịch chuyển tức thời không nguồn gốc, đổi bên không nguồn gốc, đứng↔ngồi không có quá trình, cùng một nhân vật ở cùng một vị trí thế giới bị nhân thành hai người, trong khung/ngoài khung mâu thuẫn với mô tả vị trí máy.
-4. **Kiểm tra lỗi hớ đạo cụ**: biến mất, nhân bản, đổi tay, quay lại tay, thay đổi số lượng, đặt lại trạng thái đóng mở, khôi phục mực chất lỏng/vết bẩn/hư hỏng không nguồn gốc; đặc biệt kiểm tra tình huống "giây trước còn cầm, giây sau cùng bàn tay đó nhìn thấy rõ mà lại trống trơn".
-5. **Kiểm tra lỗi hớ không gian**: đồ nội thất cố định bị dời chỗ, trạng thái cửa nhảy cóc, nhân vật xuyên tường/xuyên bàn, đồ vật xuyên tay, tỉ lệ nhân vật và bàn ghế đột biến, trong phản chiếu/gương có thêm nhân vật hay đạo cụ không tồn tại.
-6. **Kiểm tra rủi ro vỡ khi tạo**: shot rủi ro cao đã được giảm chuyển động máy, che khuất, độ sâu trường ảnh, tiếp xúc đồng thời và xung đột tham chiếu theo A11.4 chưa; đã thêm Avoid có định hướng cần thiết nhắm vào rủi ro thực tế của shot này chưa.
-7. **Rà soát lại trung thành cốt truyện**: mọi chỉnh sửa chỉ được thay đổi cách diễn đạt quay phim, thông tin khóa, mô tả che khuất/khả năng nhìn thấy và cách chứa shot; không được thêm các hành động nối cầu như "đặt bút xuống" "cầm bút lại" "đi về chỗ cũ" để che lỗi hớ.
+1. **Build start-state / end-state snapshots for each segment**: characters' world positions, postures, orientations, on-screen states, hand occupancy; key props' holders/positions/quantities/states; persistent location states such as doors and windows/furniture/stains/light sources.
+2. **Only compare segment pairs judged by A8 as "continuous relationship / partial state relationship"**. Adjacent segments without a continuity relationship are not forced to compare character positions; only check whether each segment itself is reasonable.
+3. **Character continuity-error check**: sourceless teleporting, sourceless side switching, standing↔sitting without a process, the same character duplicated into two people at the same world position, in-frame/off-screen contradicting the camera description.
+4. **Prop continuity-error check**: sourceless disappearance, duplication, hand switching, returning to the hand, quantity changes, open/closed resets, restoration of liquid level/stains/damage; especially check for "held a second ago, and the next second the same hand is clearly visible but empty".
+5. **Spatial continuity-error check**: fixed furniture moving, door/window states jumping, characters passing through walls/tables, objects passing through hands, sudden scale changes between characters and tables/chairs, extra nonexistent characters or props in reflections/mirrors.
+6. **Generation-breakdown risk check**: have high-risk shots already reduced camera movement, occlusion, depth of field, concurrent contact, and reference conflicts per A11.4; have the necessary targeted Avoid items been added for this shot's real risks?
+7. **Plot-fidelity re-check**: all corrections may only change cinematographic expression, lock information, occlusion/visibility descriptions, and shot carrying; bridging actions such as "put the pen down", "pick the pen up again", or "walk back to the original position" must not be added to cover up continuity errors.
 
-Nếu phát hiện là mâu thuẫn của chính bản nháp AI, sửa trực tiếp trong lần A12 này cho nhất quán với trạng thái đã xác nhận; nếu phát hiện chính cốt truyện nguồn mâu thuẫn, giữ nguyên văn và đánh dấu "xung đột văn bản nguồn" trong tổng quan toàn phim.
+If what is found is a contradiction within the AI draft itself, fix it directly in this A12 to match the confirmed state; if the source plot itself is contradictory, keep the original and flag "source text conflict" in the whole-film overview.
 
-**Mục này là kiểm toán rủi ro lỗi hớ ở phía prompt, không có nghĩa là video được tạo thực tế đã không có lỗi hớ. Video thực tế có xuất hiện nhiều tay nhiều ngón, dính chi, nhân vật đổi mặt, đạo cụ chợt hiện/biến mất, xuyên vật thể, lỗi gương phản chiếu v.v. hay không, bắt buộc nghiệm thu kết quả riêng khi media thực sự đọc được.**
+**This section is a prompt-side continuity-error risk audit; it does not mean the actually generated video has no continuity errors. Whether the real video shows extra hands/fingers, limb fusion, character face changes, props flashing in/out, clipping, mirror errors, etc. must be checked separately in result acceptance once the media can actually be read.**
 
-### A12.19 Ranh giới tối ưu và điều kiện dừng (chống vòng lặp vô hạn)
+### A12.19 Optimization boundaries and termination conditions (prevents infinite loops)
 
-A12 không được phép thay đổi:
-- Lời thoại nguyên văn của người dùng
-- **Hành động, phản ứng, số lượng sự kiện, người thực hiện, người chịu tác động, đạo cụ, thông tin và quan hệ nhân quả của bất kỳ `E##` nào trong cốt truyện nguồn**
-- **Mức độ danh tính mơ hồ trong nguyên văn của người dùng (như "cha mẹ/phụ huynh/người lớn" không được tự ý cụ thể hóa)**
-- Ý đồ cốt lõi của cốt truyện
-- Thứ tự nhịp đã xác nhận ở A11
-- Số đoạn thực tế toàn phim / thời lượng các đoạn
-- Số đoạn toàn cục / quy hoạch Batch
-- Danh tính tài sản then chốt
-- Logic tọa độ thế giới đã xác nhận
+A12 may not change:
+- The user's original dialogue
+- **The actions, reactions, number of events, performers, recipients, props, information, and causal relationships of any source plot `E##`**
+- **Vague identity levels in the user's original (e.g. "parents/guardian/adult" must not be arbitrarily made specific)**
+- The core intent of the plot
+- The beat order already confirmed in A11
+- The actual number of segments for the whole film / each segment's duration
+- Global segment numbers / Batch planning
+- Key asset identities
+- Confirmed world-coordinate logic
 
-A12 chỉ được phép:
-- Viết mô tả cụ thể hơn, có thể thực thi hơn
-- Bổ sung đầy đủ khóa khung đầu/khóa xuất hiện
-- Giảm diễn xuất quá đà
-- Bổ sung diễn đạt về vật lý, ánh sáng, âm thanh và tính liên tục
-- Dọn dẹp các cách diễn đạt mâu thuẫn nhau
+A12 may only:
+- Make descriptions more specific and executable
+- Complete first-frame/on-screen locks
+- Reduce over-acting
+- Add physics, lighting, sound, and continuity wording
+- Clean up mutually contradictory wording
 
-**Phân biệt nguồn xung đột:**
-- Nếu xung đột là lỗi diễn đạt do chính bản nháp AI gây ra (như cùng một shot đồng thời viết tay trái/tay phải cầm cốc) → sửa trực tiếp trong A12 cho nhất quán với trạng thái đã xác nhận ở A11;
-- Nếu xung đột đến từ chính kịch bản nguồn của người dùng (như cùng một thời điểm viết rõ hai vị trí loại trừ nhau) → không tự ý sửa cốt truyện, đánh dấu "xung đột văn bản nguồn" trong tổng quan toàn phim.
+**Distinguish the source of conflicts:**
+- If the conflict is a wording error made by the AI draft itself (e.g. the same shot says both left hand and right hand hold the cup) → fix it directly in A12 to match the state confirmed in A11;
+- If the conflict comes from the user's source script itself (e.g. two mutually exclusive positions explicitly written for the same moment) → do not arbitrarily change the plot; flag "source text conflict" in the whole-film overview.
 
-**Quy tắc dừng:** A12 hoàn tất một lần thì chỉ làm đánh dấu kiểm cuối cùng, không quay lại A11, không kích hoạt lần A12 thứ hai.
+**Termination rule:** after A12 is completed once, only do the final checklist; do not return to A11 and do not trigger a second A12.
 
-Đánh dấu kiểm cuối cùng:
-- [ ] Mọi `E##` của cốt truyện nguồn đều xuất hiện và thứ tự, người thực hiện, đối tượng, lời thoại không thay đổi
-- [ ] Trong Timeline không tồn tại hành động cốt truyện thêm mới không có `E##` nguồn
-- [ ] Không bổ sung tiền sử, bổ sung nguồn gốc đạo cụ, tự ý cụ thể hóa nhân vật mơ hồ
-- [ ] Các mục áp dụng của khung đầu đầy đủ
-- [ ] Trạng thái xuất hiện của mỗi shot nhất quán với A4
-- [ ] Không có mâu thuẫn máy quay
-- [ ] Diễn xuất nhìn thấy được và không quá tải
-- [ ] Mục tiêu ánh nhìn cụ thể
-- [ ] Đạo cụ / vật lý / ánh sáng liên tục
-- [ ] Mọi đoạn liền kề đã được xác định loại liên hệ theo A8; đoạn có quan hệ liên tục thì vị trí/tư thế/hướng nhân vật nhất quán, đoạn không có quan hệ thì không bị khóa cứng sai
-- [ ] Đạo cụ then chốt không tồn tại biến mất, nhân bản, đổi tay, quay lại tay, thay đổi số lượng hay đặt lại trạng thái không nguồn gốc; việc cắt khung/che khuất không bị phán đoán nhầm thành thay đổi trạng thái thế giới
-- [ ] Đã hoàn thành kiểm toán rủi ro lỗi hớ về không gian/cửa/đồ nội thất/phản xạ/gương/xuyên vật thể v.v.
-- [ ] Shot rủi ro cao đã qua kiểm tra trước độ ổn định khi tạo A11.4 và đã giảm độ phức tạp có định hướng
-- [ ] Lời thoại nguyên văn không bị sửa
-- [ ] Không có phụ đề/chữ chồng do AI thêm
-- [ ] Chữ vật thể được xử lý theo tài sản tham chiếu
-- [ ] Không quay lui cấu trúc / không vòng lặp
-- [ ] Nếu model mục tiêu là 2.5, giao nộp cuối cùng chỉ chứa các trường A9.2 cho phép, và không tồn tại bất kỳ vỏ ba phần kiểu cũ, vỏ 2.0 hay cấu trúc chính đánh số shot nào
-- [ ] Ảnh tham chiếu được tạo (nếu có) chỉ dùng cho Reference binding, ngoại hình đánh dấu là đề xuất thiết kế, không vượt quyền đưa vào vị trí đứng/ánh sáng/cốt truyện (bổ sung cho Trường hợp hai của A1.2)
+Final checklist:
+- [ ] All source plot `E##` appear, with order, performer, target, and dialogue unchanged
+- [ ] The Timeline contains no added plot actions without a source `E##`
+- [ ] No backstory added, no prop sources added, no vague roles arbitrarily made specific
+- [ ] Applicable first-frame items are complete
+- [ ] Each shot's on-screen states are consistent with A4
+- [ ] No camera contradictions
+- [ ] Performance is visible and not overloaded
+- [ ] Gaze targets are specific
+- [ ] Props / physics / lighting are continuous
+- [ ] All adjacent segments have had their relationship type judged per A8; segments with a continuity relationship have consistent character positions/postures/orientations, and unrelated segments have not been wrongly force-locked
+- [ ] Key props have no sourceless disappearance, duplication, hand switching, returning to the hand, quantity change, or state reset; frame cropping/occlusion has not been misjudged as a world-state change
+- [ ] The continuity-error risk audit for space/doors and windows/furniture/reflections/mirrors/clipping has been completed
+- [ ] High-risk shots have passed the A11.4 generation-stability pre-check with targeted complexity reduction
+- [ ] Original dialogue is unchanged
+- [ ] No AI-added subtitles/overlay text
+- [ ] Physical text is handled per the reference asset
+- [ ] No structural rollback / no loops
+- [ ] If the target model is 2.5, the final delivery contains only the fields allowed by A9.2, with no old three-part shell, 2.0 shell, or shot-numbered main structure
+- [ ] Generated reference images (if any) are used only for Reference binding, with appearance marked as a design proposal, without overstepping to introduce blocking/lighting/plot (A1.2 Case 2 supplement)
 
-**Đánh dấu kiểm xong → xuất bản cuối cùng.**
+**Checklist complete → output the final version.**
 
 ---
 
@@ -1351,56 +1351,56 @@ A12 chỉ được phép:
 
 ---
 
-## Tiến hành trên canvas
+## Moving forward on the canvas
 
-Sản xuất thực tế mặc định được thể hiện trên canvas hiện tại, nhưng **định tuyến Seedance được ưu tiên hơn việc khám phá và cấu hình canvas**: nếu đã có kịch bản/timeline có thể thực thi và mục tiêu hiện tại là sản xuất, tạo, tiếp tục hoặc sửa video, bắt buộc trước tiên hoàn thành quy hoạch/bản chốt prompt Seedance tương ứng theo PART A của file này, rồi mới vào [Thực thi trên canvas](references/canvasExecution.md) để đọc theo nhu cầu tổng quan canvas, node mục tiêu, kết nối cục bộ, cấu hình model, cổng và hàm node. Không được vì cần `getConfig`, chọn độ phân giải/tỉ lệ khung/chế độ hoặc host bật hỏi cấu hình mà bỏ qua PART A. Chỉ khi chưa vào giai đoạn sản xuất video, mới khám phá canvas trước theo quy trình thông thường. "Hoàn thành kịch bản và phương án tài sản trước" chỉ giới hạn giai đoạn, vẫn dùng node văn bản, không kích hoạt tạo media; chỉ khi người dùng nói rõ muốn văn bản hội thoại, tư vấn hoặc không thao tác canvas thì mới bỏ qua thao tác node. Workspace dùng dự án hiện tại của host; khi chưa mở canvas thì nói rõ điều kiện cụ thể, tiếp tục phần văn bản có thể hoàn thành.
+Actual production is presented on the current canvas by default, but **the Seedance route takes priority over canvas discovery and configuration**: if there is an executable script/timeline and the current goal is video production, generation, continuation, or revision, first complete the corresponding Seedance prompt planning/finalization per PART A of this file, then enter [Canvas execution](references/canvasExecution.md) to read the canvas overview, target nodes, local connections, model configuration, ports, and node functions as needed. Do not skip PART A because `getConfig` is needed, resolution/aspect ratio/mode must be chosen, or the host pops up a configuration question. Only when the video production stage has not yet been entered, discover the canvas first per the normal flow. "Finish the script and asset plan first" only restricts the stage; text nodes are still used and media generation is not triggered; omit node operations only when the user explicitly wants conversational text, consulting, or no canvas operations. The workspace uses the host's current project; when no canvas is open, explain the specific conditions and continue with the text parts that can be completed.
 
-| Giai đoạn đạt tới | Thành quả hiện tại | Cần đọc |
+| Stage reached | Current output | What to read |
 |---|---|---|
-| 1. Nội dung và phạm vi | Node văn bản nguyên văn hoặc kịch bản; bản tóm tắt sản xuất cần thiết | [Đầu vào và kịch bản](references/sourceAndScript.md) |
-| 2. Tài sản | Danh sách nhân vật, bối cảnh, đạo cụ của phạm vi hiện tại và ảnh thực tế được chọn dùng | [Sản xuất tài sản](references/assets.md) |
-| 3. Prompt Seedance | Quy hoạch toàn phim, phân đoạn và prompt chính thức bao phủ cốt truyện lần này; **chỉ thực thi PART A nhúng trong file này** (2.0 đi theo A9.1, 2.5 đi theo A9.2), giai đoạn này không đọc storyboard hay methods | **Chỉ PART A nhúng trong file này** |
-| 4. Tạo và chọn dùng | Node tạo đoạn hiện tại, đầu ra thật, phản hồi và bản ghi chọn dùng | [Thực thi trên canvas](references/canvasExecution.md), [Trạng thái và giao nộp](references/stateAndDelivery.md) |
-| 5. Giao nộp hoặc tiếp tục | Kịch bản hiệu lực, chỉ mục tư liệu và đoạn, phạm vi thực tế đã hoàn thành và bước tiếp theo | [Trạng thái và giao nộp](references/stateAndDelivery.md) |
+| 1. Content and scope | Source-text or script text nodes; a production brief if necessary | [Input and script](references/sourceAndScript.md) |
+| 2. Assets | Character, location, and prop lists for the current scope and the actually adopted images | [Asset production](references/assets.md) |
+| 3. Seedance prompts | Whole-film planning, segmentation, and formal prompts covering this plot; **execute only the PART A embedded in this file** (2.0 goes through A9.1, 2.5 goes through A9.2); this stage does not read storyboard or methods | **Only the PART A embedded in this file** |
+| 4. Generation and adoption | Generation nodes, real outputs, feedback, and adoption records for the current segment | [Canvas execution](references/canvasExecution.md), [State and delivery](references/stateAndDelivery.md) |
+| 5. Deliver or continue | Index of valid scripts, media, and segments, the actually completed scope, and next steps | [State and delivery](references/stateAndDelivery.md) |
 
-Chỉ tạo các node mà giai đoạn hiện tại đã đạt tới cần dùng. Một đoạn cốt truyện có thể có nhiều shot, mặc định tương ứng với một prompt hoàn chỉnh, một node tạo video; không mặc định tạo khung hình then chốt cho từng shot trước. Nối dây truyền tư liệu thực tế, không có nghĩa là phê duyệt hay điều phối tự động.
+Only create the nodes needed for the stage currently reached. One plot segment can have multiple shots and by default corresponds to one complete prompt and one video generation node; do not generate keyframes for every shot first by default. Edges pass actual media; they do not represent approval or automatic scheduling.
 
-Tài sản chính thức trong sản xuất cốt truyện căn cứ vào kịch bản hoàn chỉnh đã xác nhận lần này; khi thiết kế riêng nhân vật, bối cảnh hay đạo cụ, căn cứ vào yêu cầu thiết kế người dùng đã xác nhận và tư liệu có sẵn, không yêu cầu viết bổ sung kịch bản. Khi người dùng đồng thời yêu cầu kịch bản và phương án tài sản, có thể trong cùng một lượt trích xuất danh sách tài sản và bản nháp thiết kế, ghi rõ kịch bản chờ xác nhận mà chúng phụ thuộc, không coi bản nháp là sự cho phép tạo. Nhân vật không cần có tiểu sử đầy đủ trước, nhân vật chỉ có giọng nói thì không tạo chân dung vô dụng. Phong cách, diễn xuất, hành động và tính liên tục được hiện thực trực tiếp vào tư liệu sản xuất và shot, không bắt buộc viết báo cáo độc lập cho từng mục; khi không có nhu cầu đánh nhau, đạo cụ đặc biệt v.v. thì không tạo tài liệu rỗng.
+Formal assets in plot production are based on the complete script confirmed for this round; when designing a character, location, or prop on its own, base it on the design requirements the user confirmed and the existing media, without requiring a script to be written. When the user asks for both the script and the asset plan, you may extract the asset list and design drafts in the same round, marking the pending script they depend on, and do not treat the drafts as generation authorization. Characters do not need a full life story first, and voice-only characters do not get useless portraits generated. Style, performance, action, and continuity are applied directly to production materials and shots, without forcing separate reports for each; do not create empty documents when there are no needs such as fights or special props.
 
-## Đọc phương pháp theo vấn đề sáng tác hiện tại
+## Reading methods by the current creative problem
 
-Quy tắc thực thi quyết định cách lưu, tạo và tiếp tục trong Toonflow; các phương pháp dưới đây **chỉ dùng cho sáng tác/chuyển thể/thiết kế tài sản trước giai đoạn prompt Seedance, hoặc thực thi media sau khi có thành phẩm Seedance**. Sau khi vào cách ly cứng prompt Seedance, không đọc bất kỳ phương pháp sáng tác nào trong mục này; trước và sau khi chốt prompt không được để các phương pháp này đè lên PART A.
+The execution rules decide how to save, generate, and continue in Toonflow; the following methods are **only used for creation/adaptation/asset design before the Seedance prompt stage, or for media execution after the finished Seedance prompts**. After entering Seedance prompt hard isolation, do not read any creative method in this section; before and after prompt finalization, these methods must not override PART A.
 
-| Vấn đề đang giải quyết | Phương pháp cần đọc | Hiện thực phán đoán vào đâu |
+| Problem being solved | Method to read | Where to apply the judgment |
 |---|---|---|
-| Tách kịch bản đã xác nhận thành prompt phân đoạn Seedance 2.0/2.5 (nhịp, thời lượng, vị trí đứng, diễn xuất, chuyển động máy, tính liên tục, mẫu) | **"SEEDANCE EPISODE DIRECTOR · PART A" nhúng trong file này** | Quy hoạch phân đoạn, prompt chính thức từng đoạn (A9.1/A9.2), khóa trung thành cốt truyện |
-| Ý tưởng, động lực nhân vật, nhân quả, đại cương hoặc phần tiếp theo | [Phát triển câu chuyện](references/methods/storyDevelopment.md) | Mệnh đề hành động, chuỗi sự kiện, lựa chọn và kết quả |
-| Nghe nhìn hóa tiểu thuyết, bối cảnh, tâm lý, lời thoại và thời lượng | [Chuyển thể kịch bản](references/methods/screenAdaptation.md) | Các cảnh, hành động và âm thanh hoàn chỉnh, đề xuất chuyển thể và ước tính thời gian |
-| Ngoại hình, không gian, cấu trúc đạo cụ và trạng thái kéo dài | [Thiết kế hình ảnh](references/methods/visualDesign.md) | Neo tài sản, bản gốc không gian và biến thể |
-| Phong cách, màu gốc chất liệu, cách nhận sáng và chỉnh màu | [Màu sắc và ánh sáng](references/methods/colorAndLight.md) | Căn cứ hình ảnh dùng chung, ánh sáng bối cảnh và ràng buộc đoạn |
-| Sáng tác/chuyển thể cốt truyện ở giai đoạn chưa chốt | Chỉ dùng các phương pháp phát triển câu chuyện và chuyển thể kịch bản ở trên | Hình thành kịch bản có thể xác nhận; một khi đã chốt và vào Seedance, lập tức ngừng dùng các phương pháp này |
-| Thực thi và nghiệm thu media sau prompt thành phẩm Seedance | [Thực thi trên canvas](references/canvasExecution.md), [Trạng thái và giao nộp](references/stateAndDelivery.md) | Chỉ thực thi prompt đã chốt, kết nối tham chiếu thật, kiểm tra kết quả thật; không được viết thêm quy tắc prompt khác |
+| Break a confirmed script into Seedance 2.0/2.5 segment prompts (beats, duration, blocking, performance, camera movement, continuity, templates) | **The "SEEDANCE EPISODE DIRECTOR · PART A" embedded in this file** | Segment planning, formal prompt for each segment (A9.1/A9.2), plot-fidelity lock |
+| Idea, character drive, causality, outline, or sequel | [Story development](references/methods/storyDevelopment.md) | Action premise, event chain, choices and outcomes |
+| Audiovisualizing a novel, scenes, psychology, dialogue, and duration | [Screen adaptation](references/methods/screenAdaptation.md) | Scenes, complete actions and sound, adaptation proposal and time estimate |
+| Appearance, space, prop structure, and persistent states | [Visual design](references/methods/visualDesign.md) | Asset anchors, spatial master and variants |
+| Style, inherent material color, light response, and color grading | [Color and lighting](references/methods/colorAndLight.md) | Shared visual basis, location lighting, and segment constraints |
+| Plot creation/adaptation in the non-finalized stage | Use only the story development and screen adaptation methods above | Form a confirmable script; once finalized and Seedance is entered, stop using these methods immediately |
+| Media execution and acceptance after the finished Seedance prompts | [Canvas execution](references/canvasExecution.md), [State and delivery](references/stateAndDelivery.md) | Only execute the finalized prompts, connect real references, and verify real results; do not write separate prompt rules |
 
-Kết luận của các phương pháp này chỉ đi vào thành quả kịch bản/thiết kế tài sản **trước Seedance**; sau khi vào cách ly cứng prompt Seedance, bất kỳ kết luận phương pháp nào cũng không được ghi trực tiếp vào hay viết lại prompt cuối cùng, bắt buộc do PART A xử lý lại từ đầu vào đã xác nhận. Ví dụ phương pháp, nhịp theo thể loại và các phong cách ứng viên không được tự động trở thành sự thật của dự án này.
+The conclusions of these methods only go into the script/asset design outputs **before Seedance**; after entering Seedance prompt hard isolation, no method conclusion may be written directly into or rewrite the final prompt; it must be reprocessed by PART A from the confirmed input. Method examples, genre rhythms, and style candidates cannot automatically become facts of this project.
 
-Chỉ khi chi phí bàn giao và gộp thấp hơn khối lượng phân tích độc lập, mới có thể dùng `subAgent` để chia sẻ việc trích xuất sự thật nguyên văn dài hoặc sắp xếp tư liệu **trước Seedance**. **Ở giai đoạn cách ly cứng prompt Seedance cấm để subAgent độc lập soạn thảo, viết lại hay tối ưu prompt phân đoạn**; A0–A12 bắt buộc do cùng một chuỗi thực thi chính hoàn thành thống nhất, tránh tác vụ con mang vào bộ quy tắc thứ hai về shot/diễn xuất/tính liên tục.
+Only when the cost of handoff and merging is lower than the independent analysis workload may `subAgent` be used to share long source-text fact extraction or material organization **before Seedance**. **In the Seedance prompt hard-isolation stage, it is forbidden to let a subAgent independently draft, rewrite, or optimize segment prompts**; A0–A12 must be completed uniformly by the same main execution chain, to avoid subtasks bringing in a second set of shot/performance/continuity rules.
 
-Văn bản ít, kiểm kê tài sản, nối dây và bố cục thì hoàn thành trực tiếp, không bố trí vị trí cố định hay vòng duyệt thêm. Phân công chỉ giới hạn ở xử lý nội dung độc lập, không thay đổi quy trình xác nhận, tạo và chọn dùng về sau; việc tạo phần sau phụ thuộc vào kết quả thật của phần trước vẫn phải chờ kết quả đó.
+Do small amounts of text, asset inventory, connections, and layout directly, without arranging fixed roles or extra review rounds. Division of labor is limited to independent content processing and does not change the subsequent confirmation, generation, and adoption flow; later-stage generation that depends on real earlier results still waits for those results.
 
-## Xác nhận và thực thi
+## Confirmation and execution
 
-- Trình bày thành quả giai đoạn thực chất và xác nhận có điều chỉnh không; nội dung người dùng đã phê duyệt rõ và phạm vi sản xuất liên tục thì dùng tiếp trực tiếp. Không biến mỗi lần gọi công cụ, phân tích nội bộ hay bước con không cần thiết thành câu hỏi.
-- Xác nhận nội dung, cho phép tiêu hao credit tính toán, chọn dùng kết quả được ghi riêng. Trước khi tạo trình bày phương án cụ thể có thể duyệt: đối tượng và số lượng, model, prompt hoàn chỉnh, tham chiếu thực tế, quy cách và số lần thực thi. Với người dùng thống nhất gọi là "tiêu hao credit tính toán", không tra được thì ghi "mức tiêu hao credit tính toán chưa rõ".
-- Nhận sự cho phép qua `askUser` của host hoặc trả lời rõ ràng. Cùng một phương án cụ thể hoặc đợt đã được phê duyệt thì không hỏi lặp lại theo từng node; khi thêm số lượng, thay đổi phương án thực tế hoặc thử lại thêm thì đối chiếu xem sự cho phép có bao phủ không. "Tiếp tục" thông thường, im lặng và biểu mẫu lỗi không cấu thành sự cho phép tạo mới.
-- Model mục tiêu Seedance chỉ xác định theo A0 của PART A; **khi chưa chỉ định bắt buộc trước tiên dùng một câu hỏi ngắn duy nhất để xác nhận 2.0 hay 2.5.** Câu hỏi này thuộc A0 của Seedance, không thuộc cấu hình canvas, và không được giải trừ khóa định tuyến. Tầng canvas chỉ sau khi model mục tiêu đã xác nhận và vào PART A, mới thông qua cấu hình thời gian thực để kiểm tra model/chế độ đó có thực sự thực thi được không. Giá trị mặc định của node, giá trị mặc định của host, biểu mẫu cấu hình, cấu hình lịch sử hay câu trả lời của người dùng về các cấu hình như độ phân giải/tỉ lệ khung, đều không được ngược lại đè lên hay giải trừ định tuyến model của A0; hỏi đáp cấu hình kết thúc thì tiếp tục trạng thái thực thi Seedance hiện tại.
-- Có lời thoại không có nghĩa là bắt buộc phải có mẫu giọng bên ngoài. Cách viết âm thanh trong prompt chỉ tuân theo PART A; khi thực thi thực tế chỉ thông qua [Thực thi trên canvas](references/canvasExecution.md) đối chiếu model có hỗ trợ âm thanh gốc và đầu vào âm thanh thật không, không được dựa vào đó viết lại quy tắc lời thoại/âm thanh của PART A.
+- Show substantive stage outputs and confirm whether to adjust; content the user has already explicitly approved and continuous production scope are carried over directly. Do not turn every tool call, internal analysis, or unrequested substep into a question.
+- Content confirmation, authorization to consume compute credits, and result adoption are recorded separately. Before generation, show a reviewable concrete plan: targets and quantities, model, complete prompts, actual references, specifications, and number of runs. To the user, uniformly call it "consuming compute credits"; when it cannot be queried, write "compute credit consumption unknown".
+- Obtain authorization through the host's `askUser` or an explicit reply. Do not re-ask node by node for the same approved concrete plan or batch; when adding quantities, changing the actual plan, or doing extra retries, check whether the authorization covers it. An ordinary "continue", silence, and form failures do not constitute new generation authorization.
+- The Seedance target model is determined only per PART A A0; **when not specified, you must first confirm 2.0 or 2.5 with one short question.** This question belongs to Seedance A0, not canvas configuration, and must not release the route latch. The canvas layer only verifies through live configuration whether that model/mode is actually executable after the target model is confirmed and PART A is entered. Node defaults, host defaults, configuration forms, historical configuration, or the user's answers about resolution/aspect ratio and other settings must not override or release A0's model route in reverse; after the configuration Q&A ends, continue in the current Seedance execution state.
+- Having dialogue does not mean an external voice sample is required. How sound is written in the prompt follows only PART A; during actual execution, only check through [Canvas execution](references/canvasExecution.md) whether the model supports native sound and real audio input, and do not rewrite PART A's dialogue/sound rules based on that.
 
-## Ranh giới tối thiểu của hoàn thành và khôi phục
+## Baseline for completion and recovery
 
-Nội dung node văn bản được lưu qua hàm node, đường dẫn file đọc từ `data.textPath` thực tế. Sản xuất qua nhiều lượt dùng một bản ghi trạng thái gọn và một node tổng quan; dùng tiếp sổ theo dõi hiện có, không vì thiếu mẫu cố định mà yêu cầu làm lại.
+Text node bodies are saved through node functions, and file paths are read from the actual `data.textPath`. Cross-round production uses one concise status record and one overview node; carry over the existing ledger and do not redo it because a fixed template is missing.
 
-Văn bản chờ xác nhận hoặc đã chọn dùng cần căn cứ phiên bản cố định, việc tạo cần giữ prompt, tham số, tham chiếu và đầu ra cũ của lần này. Sau khi xác nhận đối chiếu lại node thực tế, tránh việc chỉnh sửa của người dùng trong lúc chờ bị coi là đã phê duyệt; tư liệu đã chọn dùng ưu tiên cố định ở node tư liệu, bản sửa thì tạo ứng viên mới. Cách làm cụ thể xem [Trạng thái và giao nộp](references/stateAndDelivery.md).
+Pending or adopted text needs a fixed version basis, and generation needs to keep this round's prompts, parameters, references, and old outputs. After confirmation, recheck the actual nodes to prevent the user's changes during the wait from being treated as approved; adopted media is preferably pinned in media nodes, and revisions create separate candidates. See [State and delivery](references/stateAndDelivery.md) for specifics.
 
-Node media gốc hiện tại trả về `generating` chỉ biểu thị đã bắt đầu, không được tuyên bố hoàn thành. Nếu lượt này không có trạng thái thật hay công cụ chờ, sau khi hoàn thành việc khởi động và phần văn bản đã được cho phép và không phụ thuộc của lượt này, ghi nhận và báo người dùng trả lời khi xong, rồi đọc lại node tương ứng; không bịa ra việc tự động đánh thức hay thăm dò nền. Việc tạo phần sau của các đoạn liên tục phải chờ đoạn trước được chọn dùng và lấy được trạng thái chỗ nối thật, quy hoạch văn bản có thể liệt kê trước trạng thái dự kiến; tài sản hoặc đoạn không phụ thuộc có thể bố trí theo đợt đã được cho phép rõ ràng.
+A current native media node returning `generating` only means it has started; you cannot claim it is complete. If this round has no real status or wait tool, after completing this round's authorized, dependency-free launches and text work, record it and tell the user to reply when it is done, then read back the corresponding node; do not invent automatic wake-ups or background polling. For consecutive segments, later-segment generation must wait for the earlier segment to be adopted and its real boundary state obtained; text planning may list the expected state first; dependency-free assets or segments may be scheduled in explicitly authorized batches.
 
-Đường dẫn video không có nghĩa là Agent đã xem video. Chỉ kiểm tra theo năng lực đọc media thực tế, khi năng lực không đủ thì để người dùng xem trước và báo cáo vấn đề, trạng thái chỗ nối và quyết định chọn dùng, nói rõ phần Agent chưa kiểm tra. Giao nộp phân biệt đoạn đã tạo, đoạn người dùng chọn dùng, thành phẩm đã ghép và bản sao đã thu gom; không có công cụ tương ứng thì giao trung thực thành quả hiện có và các mục còn thiếu.
+A video path does not mean the Agent has watched the video. Verify only according to actual media reading capability; when capability is insufficient, the user previews and reports issues, boundary states, and adoption decisions, and the parts the Agent has not verified are stated clearly. Delivery distinguishes generated segments, user-adopted segments, composited finished films, and collected copies; when there is no corresponding tool, truthfully deliver the existing outputs and what is missing.

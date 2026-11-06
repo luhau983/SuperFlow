@@ -1,57 +1,57 @@
-# Nguyên văn và sự kiện chương
+# Source text and chapter events
 
-Giai đoạn này sắp xếp tiểu thuyết hoặc câu chuyện người dùng cung cấp thành bảng sự kiện có thể truy nguồn, làm căn cứ cho khung xương câu chuyện.
+This stage organizes the novel or story provided by the user into a traceable event table that serves as the basis for the story skeleton.
 
-## Đầu vào
+## Input
 
-- Cấu hình dự án đã xác nhận, cùng các giới hạn như phạm vi chuyển thể, mức trung thành với nguyên tác, nội dung được phép điều chỉnh.
-- Nguyên văn các chương, văn bản câu chuyện hoặc kịch bản sẵn có do người dùng cung cấp; giữ nguồn thật và đánh số gốc.
-- Chỉ mục nguyên văn, bảng sự kiện và bản ghi xác nhận đã có trên canvas kịch bản; các xác nhận đã có tiếp tục dùng.
+- The confirmed project config, plus limits such as the adaptation scope, faithfulness to the source work, and what may be adjusted.
+- The chapter source text, story text, or existing script provided by the user; keep the real source and original numbering.
+- The source index, event table, and confirmation records already on the script canvas; existing confirmations continue to apply.
 
-## Bắt buộc đọc trước khi thực hiện
+## Required reading before execution
 
-- Phải đọc các phần "Thứ tự áp dụng", "Đánh giá sự kiện và ba mức mật độ" của [Phương pháp biên kịch](knowledge/scriptCraft.md), rồi mới trích xuất nguyên văn; không được dùng đề xuất chuyển thể thay cho sự thật nguyên văn.
-- Khi thể loại đã được xác nhận, phải đọc phần "Sử dụng và đưa lên canvas" của [Thể loại tự sự](knowledge/narrativeGenres.md) và thể loại tương ứng, nhận diện những đời thường, im lặng, quan hệ, manh mối hoặc hành động cần giữ lại; khi thể loại chưa định thì chỉ trích xuất sự thật và ghi lại các ứng viên, không tự ý định giọng điệu.
+- You must read "Order of application" and "Event judgment and the three densities" in [screenwriting methods](knowledge/scriptCraft.md) before extracting from the source text; an adaptation proposal cannot replace source-text facts.
+- When the genre is confirmed, you must read "Usage and writing to the canvas" and the corresponding genre in [narrative genres](knowledge/narrativeGenres.md), to identify the everyday moments, silences, relationships, clues, or actions that must be kept; when the genre is not yet set, only extract facts and record candidates, without setting the tone on your own.
 
-## Phương pháp thực hiện
+## Method
 
-1. Theo [Thao tác canvas](canvasOperations.md) đọc workspace và canvas kịch bản, định vị các kết quả đã có.
-2. Kiểm tra nguyên văn thực sự đọc được và phạm vi chương; khi thiếu chương hoặc tệp đính kèm không đọc được, nêu rõ chỗ thiếu, trước tiên bổ sung đầu vào cần thiết cho giai đoạn này.
-3. Khi nguyên văn dài thì xử lý theo chương, giữ đường dẫn nguồn và chỉ mục chương; không được chỉ dựa vào tóm tắt mà tuyên bố đã đọc toàn bộ nguyên văn.
-4. Đầu vào tiểu thuyết theo thứ tự chương gốc, mỗi chương đúng một dòng sự kiện tổng hợp; trích xuất sự kiện có ảnh hưởng lớn nhất tới nhân vật chính và tuyến chính, các sự kiện khác chỉ giữ nhân quả, quan hệ nhân vật hoặc phục bút cần thiết. Chi tiết nhiều sự kiện viết riêng vào phần bổ sung của chương đó, không tăng số dòng của bảng tổng hợp, cũng không gộp các chương khác nhau.
-5. Sự kiện cốt lõi viết rõ "ai thực hiện hành động gì, gây ra kết quả gì", khoảng 30–60 chữ; không thuật lại cả đoạn hội thoại.
-6. Thống nhất cách gọi chính của cùng một nhân vật và ghi lại tên khác; không coi tên khác là nhân vật mới.
-7. Đánh dấu quan hệ với tuyến chính, mật độ thông tin, cảm xúc và thời lượng chuyển thể dự kiến. Dùng tiếp mức tham chiếu ước tính thời gian cũ: mật độ cao và cảm xúc cao khoảng 45–60 giây, trung bình khoảng 35–45 giây, mật độ thấp khoảng 25–35 giây; mỗi dòng ghi giá trị ước tính cụ thể kèm "giây", cảm xúc dùng nhãn chữ nối bằng "+". Giá trị này là ước tính chuyển thể cho nội dung chương, không có nghĩa một chương một tập, cũng không phải thời lượng của yêu cầu video phía sau.
-8. Khi người dùng chỉ cung cấp ý tưởng câu chuyện nguyên bản, có thể sắp xếp theo các đoạn hoặc đơn vị tình tiết đã xác nhận; nội dung sáng tác mới phải đánh dấu rõ là đề xuất, không được ngụy trang thành sự thật nguyên văn.
+1. Following [canvas operations](canvasOperations.md), read the workspace and script canvas and locate existing results.
+2. Check the source text and chapter range that are actually readable; when chapters are missing or attachments cannot be read, state the gap clearly and first fill in the inputs this stage requires.
+3. When the source text is long, process it chapter by chapter, keeping the source path and chapter index; do not claim to have read the full source text based only on a synopsis.
+4. For novel input, follow the original chapter order with exactly one summary-event row per chapter; extract the events with the greatest impact on the protagonist and main plot, and keep other events only for necessary causality, character relationships, or foreshadowing. Write multi-event details in a supplementary note for that chapter, without adding rows to the summary table and without merging different chapters.
+5. Write the core event as "who takes what action, with what result", about 30-60 characters; do not retell whole passages of dialogue.
+6. Unify the main form of address for each character and record aliases; do not treat an alias as a new character.
+7. Mark the main-plot relationship, information density, emotion, and estimated adaptable duration. Use the legacy timing reference: high density with high emotion about 45-60 seconds, medium about 35-45 seconds, low density about 25-35 seconds; write a concrete estimate in each row with "seconds", and join emotion text labels with "+". This value is an adaptation estimate of the chapter content; it does not mean one chapter per episode, nor is it the duration of later video requests.
+8. When the user only provides an original story idea, it may be organized by confirmed passages or plot units; mark newly created content clearly as a proposal and never pass it off as source-text fact.
 
-## Ghi vào canvas kịch bản
+## Writing to the script canvas
 
-Vị trí mặc định là `Canvas/Kịch bản.json` trong workspace; đường dẫn thực tế và thao tác node theo [Thao tác canvas](canvasOperations.md).
+The default location is `Canvas/Script.json` in the workspace; actual paths and node operations follow [canvas operations](canvasOperations.md).
 
-- Lưu nguồn, phạm vi bao phủ, tiêu đề chương và tình trạng thiếu trong node "Chỉ mục nguyên văn".
-- Lưu bảng sự kiện trong node "Bảng sự kiện chương"; khi nội dung dài thì nhóm theo chương thực tế, vẫn đặt trên cùng canvas kịch bản.
-- Dòng tổng hợp giữ bảy trường dưới đây; chi tiết mục tiêu/trở ngại, thông tin mới và người biết, đạo cụ quan trọng, thay đổi quan hệ và phục bút đính kèm riêng trong phần bổ sung của chương, giữ nguồn thật. Phần bổ sung lưu cùng node với dòng tổng hợp của chương tương ứng, khi đọc sự kiện chương ở bước sau thì đọc cùng lúc, không chỉ đọc bảng bảy trường. Mật độ hoặc biểu đạt thể loại cần tăng cường viết riêng trong node văn bản "Ứng viên chuyển thể", không sửa bảng sự thật.
-- Khi nguyên văn đã có tệp đọc được thì ưu tiên đăng ký nguồn và cách định vị, tránh chất đống toàn văn lặp lại.
-- Cập nhật node tương ứng đã có; không được vì vào lại giai đoạn này mà tạo lặp canvas kịch bản hoặc cả bộ bảng sự kiện.
+- In the "Source index" node save the source, coverage range, chapter titles, and anything missing.
+- In the "Chapter event table" node save the event table; when the content is long, group it by actual chapter, still on the same script canvas.
+- Summary rows keep the seven fields below; details of goal/obstacle, new information and who knows it, important props, relationship changes, and foreshadowing go in a supplementary note for the chapter, keeping the real source. The supplementary note is saved in the same node as the corresponding chapter summary, and later reads of chapter events read both together, not just the seven-field table. Density or genre expression that needs strengthening goes in a separate "Adaptation candidates" text node, without rewriting the fact table.
+- When the source text already has a readable file, prefer registering the source and how to locate it, to avoid piling up duplicate full text.
+- Update existing corresponding nodes; do not recreate the script canvas or the whole event table just because this stage is re-entered.
 
-Bảng tổng hợp sự kiện tiểu thuyết cố định bảy trường, một chương một dòng; có thể thêm tiêu đề bảng để dễ đọc trên canvas. Ý tưởng nguyên bản không có chương gốc thì theo đơn vị tình tiết đã xác nhận, một đơn vị một dòng, và nói rõ không phải chương nguyên tác:
+The novel event summary table has fixed seven fields and one row per chapter; a header may be added for canvas readability. When an original idea has no source chapters, use one row per confirmed plot unit and state clearly that these are not source-work chapters:
 
-| Chương/đoạn nguồn | Nhân vật liên quan | Sự kiện cốt lõi | Quan hệ tuyến chính và lý do | Mật độ thông tin | Thời lượng dự kiến (giây) | Cảm xúc |
+| Source chapter/passage | Characters involved | Core event | Main-plot relationship and reason | Information density | Estimated duration (seconds) | Emotion |
 |---|---|---|---|---|---|---|
-| Số và tiêu đề thật | Cách gọi chuẩn | Hành động và kết quả | Mạnh/Trung bình/Yếu (lý do ngắn) | Cao/Trung bình/Thấp | Ước tính cụ thể như 50 giây | Nhãn chữ như Xung đột+Bước ngoặt |
+| Real number and title | Standard form of address | Action and result | Strong/Medium/Weak (brief reason) | High/Medium/Low | A concrete estimate such as 50 seconds | Text labels such as Conflict+Turn |
 
-## Cổng chất lượng và xác nhận
+## Quality gate and confirmation
 
-- Mỗi dòng đều định vị được về nguồn đã đọc; không có chương hư cấu hoặc nội dung vượt phạm vi đã xác nhận.
-- Phạm vi đã xác nhận không bị bỏ sót; số dòng tổng hợp tiểu thuyết bằng số chương đã xử lý, đánh số khớp từng mục, không được tách ba chương thành nhiều dòng sự kiện rồi tuyên bố vẫn là định dạng tổng hợp cũ. Các chương không đọc được hoặc chưa xử lý phải đánh dấu rõ là chưa hoàn thành, không ngụy tạo sự kiện để đủ số dòng.
-- Sự kiện trung thành với nguyên văn; cách gọi nhân vật nhất quán; độ mạnh yếu tuyến chính có căn cứ; trích xuất hội thoại phải đi đến kết quả.
-- Rà soát theo phương pháp đã đọc: có nhầm "sự kiện xảy ra" thành tình tiết có biến đổi nhân quả không, có vì dòng nào đó tuyến chính yếu mà bỏ sót đời thường cảm xúc, manh mối hoặc thông tin môi trường quan trọng với thể loại này không.
-- Sau khi ghi, đọc lại node, kiểm tra bảng sự kiện và chỉ mục nguồn thực sự tồn tại và nội dung đầy đủ.
-- Trình bày cho người dùng phạm vi bao phủ, tóm tắt sự kiện và các chỗ thiếu cần quyết định, chờ xác nhận rõ ràng.
-- Khi người dùng yêu cầu sửa, chỉ sửa các chương liên quan và kiểm tra lại; không chạy lại các chương khác đã xác nhận.
+- Every row can be traced to a source that was read; there are no fictitious chapters or content beyond the confirmed scope.
+- Nothing in the confirmed scope is omitted; for novels the number of summary rows equals the number of chapters processed, numbers correspond one to one, and you cannot split three chapters into many event rows and still claim the legacy summary format. Chapters that cannot be read or have not yet been processed are clearly marked incomplete; do not fabricate events to fill out the row count.
+- Events are faithful to the source; character addresses are consistent; main-plot strength is justified; dialogue extraction lands on results.
+- Review against the methods read: whether a "thing that happens" was mistaken for a plot point with causal change, and whether an important emotional everyday moment, clue, or environmental information for this genre was dropped because a row's main-plot link is weak.
+- After writing, read the nodes back and check that the event table and source index actually exist and are complete.
+- Show the user the coverage range, event summary, and gaps requiring decisions, and wait for explicit confirmation.
+- When the user asks for changes, only modify the chapters involved and re-check; do not rerun other confirmed chapters.
 
-Sau khi xác nhận vào [Khung xương câu chuyện](storySkeleton.md); không được coi việc trích xuất sự kiện hoàn tất là khung xương câu chuyện đã được chấp thuận.
+After confirmation, proceed to [story skeleton](storySkeleton.md); completing event extraction does not mean the story skeleton has been approved.
 
-## Căn cứ bản cũ
+## Legacy basis
 
-`eventExtraction` trong `src/routes/novel/event/generateEvents.ts`, `src/utils/cleanNovel.ts`, `src/lib/initDB.ts`.
+`eventExtraction` in `src/routes/novel/event/generateEvents.ts`, `src/utils/cleanNovel.ts`, `src/lib/initDB.ts`.

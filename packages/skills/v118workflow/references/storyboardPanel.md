@@ -1,54 +1,54 @@
-# Đưa bảng phân cảnh thành node trên canvas
+# Turning the storyboard table into canvas nodes
 
-Đầu vào là bảng phân cảnh đã xác nhận, đầu ra là các đơn vị sản xuất có thể kiểm tra trên canvas của tập hiện tại; giai đoạn này không khởi động tác vụ ảnh hay video.
-Công cụ node và trường cụ thể xem [canvasOperations.md](canvasOperations.md), không được sao chép XML bảng phân cảnh cũ.
+Input is the confirmed storyboard table; output is verifiable production units on the current episode canvas. This stage does not start image or video tasks.
+For specific node tools and fields see [canvasOperations.md](canvasOperations.md); do not copy the legacy storyboard panel XML.
 
-## Điều kiện tiên quyết
+## Prerequisites
 
-- Từ canvas của tập hiện tại đọc lại kế hoạch đạo diễn, bảng phân cảnh và bản ghi xác nhận sau khi xác nhận, ví dụ `Canvas/Tập/Tập 001.json`.
-- Từ `Canvas/Tài sản.json` kiểm tra tài sản được chọn dùng và ảnh thật, khi cần rà lại lời thoại chính thức thì quay về `Canvas/Kịch bản.json`.
-- Đọc năng lực mô hình và node thời gian thực, xác nhận hiện tại chọn dùng tuyến văn bản đa tham chiếu hay khung đầu; không bắt buộc chọn theo một thương hiệu cố định.
-- Mô hình, tham số và phạm vi đã xác nhận giữ hiệu lực; thay đổi tuyến phải trước tiên nói rõ ảnh hưởng tới số lượng node và đầu vào rồi xác nhận.
-- Khi phân cảnh có mục "Chờ tư liệu/Chờ xác nhận phương án", chỉ lập đơn vị có thể thực thi cho tập con mà người dùng đã xác nhận và phụ thuộc đầy đủ, giữ nguyên từng số shot/số đoạn gốc; các mục chưa giải quyết giữ văn bản đầy đủ và bản ghi chỗ thiếu, không tính là bảng đã hoàn thành. Khi bất kỳ shot cần thiết nào trong đoạn đa tham chiếu bị chặn, cả đoạn chờ xử lý, không được xóa shot đó rồi tạo các shot còn lại.
+- Read back the confirmed director plan, storyboard table, and confirmation records from the current episode canvas, e.g. `Canvas/Episodes/Episode 001.json`.
+- Check adopted assets and real images against `Canvas/Assets.json`; when the formal dialogue needs re-checking, go back to `Canvas/Script.json`.
+- Read live model and node capabilities and confirm whether the text multi-reference or first-frame route is currently adopted; do not force a choice by a fixed brand.
+- Confirmed models, parameters, and scope remain valid; a route change must first explain its impact on node count and inputs, and be confirmed.
+- When the storyboard contains "Awaiting media/Awaiting plan confirmation" items, create executable units only for the subset the user has confirmed and whose dependencies are complete, keeping the original shot/segment numbers item by item; unresolved items keep their full text and gap record and do not count as completed panels. When any necessary shot inside a multi-reference segment is blocked, the whole segment is pending; do not delete that shot and generate the rest.
 
-Đọc kiến thức theo tuyến rồi mới chuyển thành node: tuyến A đọc phần chọn chế độ và ràng buộc chung của [Chế độ video và mẫu](knowledge/videoPromptCraft.md), xác minh đoạn đã xác nhận có thể được chế độ hiện tại đáp ứng; tuyến B đọc đầy đủ [Kiến thức prompt ảnh phân cảnh và khung đầu](knowledge/imagePromptCraft.md), theo mô hình ảnh thực tế chọn mẫu chính văn đoạn văn tiếng Việt hoặc JSON tiếng Anh. Cả hai tuyến đều dùng phần không gian và tính liên tục của [Kiến thức shot](knowledge/shotCraft.md) để kiểm tra sự tiếp nối; phong cách chỉ lấy mục đã xác nhận của [Phong cách hình ảnh](knowledge/visualStyles.md). Giai đoạn này chỉ chuẩn bị node và ghi chú, không vì đọc thấy mẫu tạo mà khởi động tác vụ.
+Read knowledge by route before converting to nodes: route A reads mode selection and shared constraints in [video modes and templates](knowledge/videoPromptCraft.md), verifying that the confirmed segments can be carried by the current mode; route B fully reads [storyboard image prompts and first-frame knowledge](knowledge/imagePromptCraft.md) and, based on the actual image model, chooses the prose-paragraph template (in the user's language) or the English JSON body template. Both routes use space and continuity from [shot knowledge](knowledge/shotCraft.md) to check carry-over; style only takes the confirmed entry from [visual styles](knowledge/visualStyles.md). This stage only prepares nodes and notes; reading a generation template is no reason to start tasks.
 
-## Tuyến A: Văn bản đa tham chiếu
+## Route A: Text multi-reference
 
-1. Mỗi đoạn đã xác nhận lập một đơn vị sản xuất video, giữ thứ tự đoạn và thời lượng định sẵn ban đầu, không gộp hay tách lại; khi mô hình/chế độ không đáp ứng được đoạn nhiều shot ban đầu thì quay lại xác nhận phân cảnh/chế độ, không được ép đổi sang Seedance hoặc xóa shot.
-2. Lưu toàn bộ văn bản shot, lời thoại, hiệu ứng âm thanh và trình tự thời gian của đoạn đó trong ghi chú đọc được; không được dùng tóm tắt thay cho phân cảnh gốc.
-3. Tham chiếu các ảnh tài sản đã xác nhận của đoạn đó, và chuẩn bị các đầu vào tham chiếu khác theo mức hỗ trợ của mô hình; không phải tài sản nào cũng bắt buộc tải lên.
-4. Sự nối tiếp giữa các đoạn cùng cảnh chọn dùng trạng thái kết thúc/bắt đầu của bảng phân cảnh đã xác nhận; khi đổi cảnh không gán thêm động tác liên tục vô căn cứ.
-5. Không bắt buộc tạo ảnh phân cảnh; chỉ khi người dùng chọn rõ ràng và mô hình hỗ trợ cách tham chiếu tương ứng mới chuẩn bị thêm.
+1. Create one video production unit for each confirmed segment, keeping segment order and original duration, without re-merging or splitting; when the model/mode cannot carry an original multi-shot segment, return to storyboard/mode confirmation, and do not force a switch to Seedance or delete shots.
+2. Save all of the segment's shot text, dialogue, sound effects, and timing in a readable note; do not replace the original storyboard with a summary.
+3. Reference the segment's confirmed asset images, and prepare other reference inputs as the model supports; not every asset has to be uploaded.
+4. Carry-over between segments in the same scene uses the end/start states in the confirmed storyboard table; on a scene change, do not invent continuous action.
+5. Storyboard images are not mandatory; prepare them additionally only when the user explicitly chooses to and the model supports the corresponding reference method.
 
-## Tuyến B: Khung đầu
+## Route B: First frame
 
-1. Mỗi shot đã xác nhận lập một đơn vị sản xuất video độc lập, thứ tự số shot và thời lượng mỗi shot nhất quán với bảng phân cảnh.
-2. Chuẩn bị node ảnh khung đầu cho shot đó: khoảnh khắc tĩnh giữ theo mô tả gốc, động tác liên tục lấy khoảnh khắc bắt đầu thật, không được đổi hết các trạng thái sẵn có như đứng, nhìn chăm chú, cười lạnh thành "sắp xảy ra"; ghi chú video giữ toàn bộ quá trình động tác.
-3. Cỡ cảnh phức hợp như "Toàn cảnh→Cận cảnh" lấy cỡ cảnh bắt đầu làm khung đầu, không được vẽ thẳng trạng thái kết quả làm khung đầu.
-4. Dùng mẫu đầy đủ cho mô hình áp dụng trong kiến thức ảnh để ghi prompt, giữ từng mục chủ thể hình ảnh, vật then chốt, quan hệ không gian, hướng quay, cảm xúc và bối cảnh, gắn đầu vào ảnh thực tế của tài sản đã xác nhận. Nanobanana JSON là chính văn prompt, không được coi role/shot/negative v.v. trong đó là tham số công cụ node.
-5. Chỉ khi mô hình hiện tại hỗ trợ khung đầu và khung cuối và người dùng chọn chế độ đó mới chuẩn bị khung cuối; không mặc định mỗi shot thêm tác vụ khung cuối.
+1. Create one independent video production unit for each confirmed shot, with shot order and single-shot duration matching the storyboard table.
+2. Prepare a first-frame image node for the shot: a static moment keeps its original description, a continuous action takes its real starting instant, and existing states such as standing, staring, or sneering must not all be turned into "about to happen"; the video note keeps the complete action process.
+3. For a compound shot size such as "wide -> close-up", take the starting shot size for the first frame; do not draw the resulting state directly as the first frame.
+4. Write the prompt using the complete template for the applicable model from the image knowledge, keeping item by item the visual subject, key objects, spatial relationships, facing, emotion, and location, and bind the actual image inputs of the confirmed assets. Nanobanana JSON is the prompt body; do not treat its role/shot/negative etc. as node tool parameters.
+5. Prepare a last frame only when the current model supports first and last frames and the user has chosen that mode; do not add a last-frame task to every shot by default.
 
-## Quy tắc tham chiếu và prompt
+## Reference and prompt rules
 
-- Mỗi dấu tham chiếu tương ứng với một đầu vào media thực tế, số thứ tự của ảnh, video hoặc âm thanh lấy theo thứ tự đầu vào thật của node hiện tại làm chuẩn; `@ảnhN` không phải cú pháp chung của mọi mô hình.
-- Khi thiếu ảnh, trước tiên sửa đầu vào hoặc xác nhận lại phạm vi tham chiếu, không được xóa một ảnh nào đó mà vẫn giữ số thứ tự bị lệch.
-- Vị trí đứng và hướng quay của nhân vật trong cùng cảnh liên tục theo mô tả phân cảnh đã xác nhận; thay đổi cần thiết phải có căn cứ tự sự hoặc động tác.
-- Prompt ảnh phân cảnh không mang lời thoại và hiệu ứng âm thanh, nhưng ghi chú video của đơn vị này phải giữ chúng đầy đủ.
-- Phong cách và ánh sáng mà ảnh bối cảnh đã đảm nhận giữ nhất quán, không đưa thêm thiết lập xung đột.
-- Node đầu vào và node tạo giữ quan hệ rõ ràng, tránh nhầm thẻ ghi chú thành tác vụ tạo đã cấu hình.
+- Each reference marker corresponds to one actual media input, and image, video, or audio numbering follows the real input order of the current node; `@imageN` (originally written with the Chinese word for image) is not a universal syntax for all models.
+- When an image is missing, first fix the input or reconfirm the reference scope; do not delete an image and still keep misaligned numbering.
+- Character positions and facing within the same scene stay continuous with the confirmed storyboard description; necessary changes must have a narrative or action basis.
+- Storyboard image prompts do not carry dialogue and sound effects, but this unit's video note must keep them in full.
+- Keep the style and lighting already carried by the location images consistent, without introducing conflicting settings.
+- Keep a clear relationship between input nodes and generation nodes, to avoid mistaking a note card for a configured generation task.
 
-## Đầu ra kiểm chứng được
+## Verifiable output
 
-Trên canvas của tập này nhìn thấy được số shot/số đoạn, văn bản phân cảnh gốc, thời lượng, tuyến, tham chiếu tài sản thật và node chờ tạo của mỗi đơn vị.
-Số đơn vị video của văn bản đa tham chiếu bằng số đoạn được xác nhận lần này và phụ thuộc đầy đủ; số đơn vị video của tuyến khung đầu bằng số dòng shot được xác nhận lần này và phụ thuộc đầy đủ. Liệt kê riêng tổng số kế hoạch ban đầu và số chờ xử lý; chỉ khi bao phủ toàn bộ mới bằng số đoạn/số dòng shot của cả tập.
-Các đơn vị cần ảnh có prompt chỉnh sửa được và đầu vào tham chiếu thật; các đơn vị không cần ảnh đánh dấu rõ lựa chọn đó.
-Ghi chú tập này của mỗi đơn vị đồng thời lưu: lý do chọn mẫu/chế độ, phán đoán ngữ nghĩa khung đầu hoặc khung cuối, cỡ cảnh và trạng thái bắt đầu, chuẩn/thay đổi không gian cùng cảnh, thứ tự tham chiếu thật và ánh xạ mục đích. Phân cảnh gốc đầy đủ và âm thanh giữ trong ghi chú đọc được; bước chuẩn bị video sau đó mới viết prompt thực thi video đầy đủ của chế độ đó.
-Bố cục sắp theo thứ tự đọc và sản xuất, tài sản vẫn lưu trên canvas tài sản thống nhất, không được lập kho tài sản chính thức thứ hai.
+This episode's canvas shows, for each unit, the shot/segment number, original storyboard text, duration, route, real asset references, and pending generation nodes.
+The number of text multi-reference video units equals the number of segments confirmed this time with complete dependencies; the number of first-frame route video units equals the number of shot rows confirmed this time with complete dependencies. Also list the originally planned total and the pending count; only when everything is covered do they equal the whole episode's segment count/shot row count.
+Units that need images have editable prompts and real reference inputs; units that do not need images clearly mark that choice.
+Each unit's episode note also saves: the reason for the template/mode choice, the semantic judgment of the first or last frame, the starting shot size and state, the same-scene spatial baseline/changes, and the real reference order with a usage mapping. The complete original storyboard and sound stay in the readable note; the later video preparation then writes the full video execution prompt for that mode.
+Lay out in reading and production order; assets stay on the unified assets canvas, and no second formal asset library may be created.
 
-## Đọc lại và xác nhận
+## Read-back and confirmation
 
-Đọc lại các node thực tế, kiểm tra từng mục số lượng, số shot/số đoạn, thời lượng, thứ tự tham chiếu và các trường công cụ đã được lưu đúng chưa.
-Trình bày canvas của tập hiện tại, tuyến chọn dùng và phạm vi tạo dự kiến, chờ người dùng xác nhận đơn vị sản xuất và prompt.
-Sau khi xác nhận, ghi trạng thái và dừng; cần ảnh phân cảnh thì vào [storyboardImages.md](storyboardImages.md), nếu không thì vào chuẩn bị video.
-Các trường còn sót của bảng phân cảnh cũ và khác biệt chế độ xem [sourceMap.md](sourceMap.md).
+Read back the actual nodes and check item by item whether count, shot/segment numbers, duration, reference order, and tool fields are saved correctly.
+Show the current episode canvas, the route adopted, and the expected generation scope, and wait for the user to confirm the production units and prompts.
+After confirmation, record the status and stop; when storyboard images are needed, proceed to [storyboardImages.md](storyboardImages.md), otherwise proceed to video preparation.
+For leftover legacy panel fields and mode differences see [sourceMap.md](sourceMap.md).

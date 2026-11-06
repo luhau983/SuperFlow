@@ -1,76 +1,76 @@
-# Đầu vào và kịch bản
+# Input and script
 
-> **Cách ly cứng với Seedance:** File này chỉ dùng cho việc sáng tác/chuyển thể khi kịch bản chưa chốt, hoặc cho sản xuất văn bản không phải Seedance. Khi người dùng đã đưa kịch bản/timeline bản chốt và yêu cầu prompt Seedance 2.0/2.5, **không được đọc hoặc áp dụng file này**, mà trực tiếp thực hiện PART A nhúng trong `SKILL.md` chính. Đặc biệt không được dùng thời lượng, tính liên tục hay phương pháp chuyển thể của file này để ghi đè PART A.
+> **Seedance hard isolation:** This file is used only for writing/adaptation while the script is not yet finalized, or for non-Seedance text production. When the user has already provided a finalized script/timeline and asks for Seedance 2.0/2.5 prompts, **do not read or apply this file**; execute PART A embedded in the main `SKILL.md` directly. In particular, never let this file's duration, continuity, or adaptation methods override PART A.
 
-Đọc khi viết, chuyển thể tiểu thuyết, tiếp nhận kịch bản bản chốt hoặc làm phần tiếp theo. Kịch bản hoàn chỉnh của lần này là căn cứ cốt truyện cho tài sản và video về sau; "hoàn chỉnh" nghĩa là trong phạm vi đã thỏa thuận, không yêu cầu viết trước cả mùa hay cả cuốn tiểu thuyết.
+Read this when writing, adapting a novel, taking in a finalized script, or continuing a work. The complete script for this round is the story basis for later assets and videos; "complete" means the agreed scope, not writing a whole season or the whole novel first.
 
-Khi phát triển ý tưởng, chẩn đoán, lập dàn ý hoặc lên ý tưởng cho phần tiếp theo, đọc [phương pháp phát triển câu chuyện](methods/storyDevelopment.md), dùng lựa chọn của nhân vật và nhân quả sự kiện để chống đỡ nội dung; khi viết câu chuyện thành kịch bản, chuyển thể tâm lý và lời thoại hoặc giải quyết thời lượng, đọc [phương pháp chuyển thể kịch bản](methods/screenAdaptation.md). Kết quả suy luận theo phương pháp viết thẳng vào các thành phẩm bên dưới. Nếu đã có bản chốt và chỉ trích xuất cho sản xuất, chỉ tra cứu theo điểm nghi vấn thực tế, không khởi động viết lại.
+Read [Story development methods](methods/storyDevelopment.md) for creative development, diagnosis, outlines, or sequel ideation, and support the content with character choices and event causality; read [Screen adaptation methods](methods/screenAdaptation.md) when turning a story into a script, adapting inner thoughts and dialogue, or solving duration. Write the method's conclusions directly into the outputs below. When a finalized script only needs production extraction, consult them only for actual doubts and do not start a rewrite.
 
-## Khóa phạm vi lần này trước
+## Lock the scope for this round first
 
-Trích xuất từ tin nhắn và file hiện có: lần này cần giao gì, chọn dùng phiên bản nào, phạm vi chuyển thể hoặc sửa đổi, yêu cầu cứng về thời lượng hoặc tỉ lệ khung, ngôn ngữ, phong cách và yêu cầu về âm thanh. Thông tin đã có thì dùng tiếp; chỉ hỏi khi thực sự thiếu và sẽ làm thay đổi tác phẩm.
+Extract from existing messages and files: what is to be delivered this round, which version is adopted, the adaptation or revision scope, hard duration or aspect ratio requirements, language, style, and voice requirements. Reuse information that already exists; ask only about what is truly missing and would change the work.
 
-Khi sản xuất thực tế, theo [thực thi canvas](canvasExecution.md) lưu nguyên văn, kịch bản hiện tại và bản tóm tắt cần thiết; nhận được tài liệu không có nghĩa là được phạm vi chuyển thể tùy ý. Nếu chỉ làm đến giai đoạn văn bản vẫn có thể giao trong node văn bản trên canvas; khi người dùng nói rõ chỉ cần chữ trong hội thoại hoặc góp ý đọc thì trả lời trực tiếp, không thao tác canvas.
+For actual production, save the source text, current script, and necessary brief as described in [Canvas execution](canvasExecution.md); receiving material does not grant unlimited adaptation scope. When the work only goes as far as the text stage, it can still be delivered in canvas text nodes; when the user explicitly wants only conversational text or reading advice, reply directly without touching the canvas.
 
-## Chuyển thể tiểu thuyết hoặc câu chuyện
+## Novel or story adaptation
 
-1. Đọc hết nguyên văn trong phạm vi đã thỏa thuận. Khi đọc văn bản dài theo từng đợt, ghi lại phạm vi chương hoặc đoạn đã đọc, phần chưa đọc và điểm bắt đầu chính xác cho lần sau; không tuyên bố đã đọc xong dựa trên bản tóm tắt hoặc nội dung bị cắt. Với cả bộ tiểu thuyết dài, trước tiên xác định đoạn chọn hoặc mục tiêu chia tập cho lần này, giữ chỉ mục nhân vật toàn cục và thông tin chưa được giải đáp.
-2. Trích xuất thứ tự sự kiện, quan hệ nhân vật, động cơ, lời thoại quan trọng, thời gian địa điểm, biến đổi của vật và các câu hỏi chưa giải đáp có ảnh hưởng đến chuyển thể. Câu chuyện ngắn có thể ghi thẳng vào bản tóm tắt sản xuất, câu chuyện phức tạp dùng bảng dưới đây để theo dõi, tránh tạo ra một bộ báo cáo dài dòng khác.
-3. Chuyển phần tường thuật và tâm lý thành hành động nhìn thấy được, lời thoại nghe được, lời dẫn đã có trong nguyên văn hoặc chữ trong khung hình cần thiết. Khi thêm lời thoại mới, xóa/gộp sự kiện, đổi góc nhìn tự sự hoặc hé lộ điều bí ẩn, trình bày dưới dạng đề xuất chuyển thể; chưa được xác nhận thì không giả làm sự thật của nguyên tác.
-4. Kiểm tra nhân quả và độ phủ thông tin theo mức trung thành đã thỏa thuận cho lần này. Không được để bối cảnh quan trọng chỉ nằm trong thẻ nhân vật hậu trường mà lại tuyên bố phim đã thể hiện; cũng không vì muốn thể hiện bối cảnh mà bịa thêm nhân vật thực thể hoặc giải thích cơ chế chưa biết.
+1. Read the complete source text within the agreed scope. When reading long text in batches, record the chapters or paragraphs covered, the unread parts, and the exact starting point for next time; never claim to have finished reading from a summary or truncated content. For a whole long novel, first determine this round's selected section or episode target, and keep an index of global characters and unresolved information.
+2. Extract the event order, character relationships, motivations, important dialogue, time and place, object changes, and unresolved questions that affect the adaptation. A short story can go directly into the production brief; track a complex story with the table below instead of inventing a separate lengthy report.
+3. Turn narration and inner thoughts into visible actions, audible dialogue, voiceover already present in the source, or necessary on-screen text. Present new dialogue, removed or merged events, changed narrative perspective, or revealed mysteries as adaptation proposals; do not pass them off as source-work facts without confirmation.
+4. Check causality and information coverage against the fidelity agreed for this round. Do not leave important background only on a behind-the-scenes character card while claiming the finished film expresses it; and do not invent new physical characters or explain unknown mechanisms out of nothing just to show background.
 
-| Vị trí hoặc sự thật trong nguyên văn | Lần này có chọn dùng không | Cách thể hiện nghe nhìn trong kịch bản | Bổ sung chuyển thể hoặc mục cần xác nhận |
+| Source location or fact | Adopted this round? | Audiovisual expression in the script | Adaptation additions or items to confirm |
 |---|---|---|---|
-| Điền chương, sự kiện hoặc lời thoại thực tế | Giữ lại, nén lại sau khi xác nhận, hoặc ngoài phạm vi | Cảnh tương ứng, hành động, lời thoại, chữ trong khung hình hoặc lời dẫn | Chỉ ghi thay đổi thực chất |
+| Fill in actual chapters, events, or dialogue | Kept, compressed with confirmation, or out of scope | Corresponding scene, action, dialogue, on-screen text, or voiceover | Record only substantive changes |
 
-Khi người dùng yêu cầu chẩn đoán, chỉ ra vấn đề nội dung cụ thể và đưa cách sửa có thể thực hiện; những gì giải quyết được trong phạm vi được ủy quyền thì tiếp tục xử lý, không đặt ra cửa ải kiểu "chẩn đoán không đạt thì dừng việc vĩnh viễn".
+When the user asks for a diagnosis, point out specific content problems and give actionable fixes; keep going on whatever can be solved within the authorized scope, and do not set a gate of "if the diagnosis fails, stop forever".
 
-## Kịch bản đã chốt đi thẳng vào sản xuất
+## Finalized script goes straight into production
 
-Lưu và cố định phiên bản bản gốc người dùng chỉ định, giữ số cảnh, sự kiện, lời thoại, OS/VO và các yêu cầu sản xuất rõ ràng. Trích xuất thẳng tư liệu sản xuất, không quay lại lên ý tưởng từ đầu, lập kế hoạch, dàn ý hoặc viết lại kịch bản.
+Save and pin the source version the user specified, keeping scene numbers, events, dialogue, OS/VO, and explicit production requirements. Extract production material directly; do not go back to ideation from scratch, planning, outlining, or rewriting.
 
-Các sự thật cốt truyện có thể trích từ bản gốc tương đương với việc đáp ứng đầu vào nội dung cho sản xuất về sau; bản tóm tắt sản xuất chịu trách nhiệm bổ sung các lựa chọn thực thi thực tế, không yêu cầu bổ sung các file thượng nguồn không tồn tại. Nếu mục tiêu là Seedance, sau khi chốt đi thẳng vào PART A chính, không qua một bộ quy tắc phân cảnh khác. Khi nhân vật không được ghi giới tính, nghề nghiệp, động cơ, tiểu sử thì giữ nguyên là chưa đề cập; những chỗ thiếu về ngoại hình, chất giọng hoặc không gian chỉ bổ sung thiết kế mà hình ảnh lần này thực sự cần.
+Story facts that can be extracted from the source are equivalent to the content input required for later production; the production brief fills in the actual execution choices and does not require producing upstream files that do not exist. If the target is Seedance, go directly to the main PART A after finalization, without passing through another set of storyboard rules. When a character's gender, occupation, motivation, or backstory is not written, keep it unmentioned; for missing appearance, voice, or space details, design only what this round's visuals actually need.
 
-| Tư liệu sản xuất | Trích xuất hoặc xử lý từ bản chốt |
+| Production material | Extract or handle from the finalized script |
 |---|---|
-| Cốt truyện và âm thanh | Giữ theo nguyên văn các cảnh, sự kiện, lời thoại đầy đủ và người nói, phân biệt lời thoại trong khung hình, âm thanh ngoài khung hình và lời dẫn |
-| Nhân vật và trạng thái | Phạm vi xuất hiện, thân phận đã biết, tạo hình, vật mang theo và các thay đổi do cốt truyện kích hoạt |
-| Bối cảnh và đạo cụ | Không gian thực tế, quan hệ bài trí, trạng thái đầu/cuối và người nắm giữ của vật then chốt |
-| Thông số và hình ảnh | Dùng tiếp thời lượng, tỉ lệ khung, phong cách vẽ đã nêu rõ; lựa chọn cần thiết còn thiếu thì đưa đề xuất ngắn gọn |
-| Tư liệu sẵn có | Hình ảnh, video, âm thanh được chỉ định và mục đích chọn dùng, xác minh file và phạm vi áp dụng |
+| Story and sound | Keep scenes, events, complete dialogue, and speakers as in the source, distinguishing on-screen dialogue, off-screen voice, and voiceover |
+| Characters and states | Range of appearances, known identity, look, carried items, and story-triggered changes |
+| Locations and props | Actual space, arrangement of furnishings, start and end states and holders of key objects |
+| Specs and visuals | Reuse the explicit duration, aspect ratio, and drawing style; give a brief proposal for necessary choices that are missing |
+| Existing media | Specified images, videos, audio, and their adopted uses; verify files and applicable scope |
 
-Ví dụ khi chỉ có kịch bản bản chốt và hai ảnh nhân vật đã xác nhận, bước tiếp theo là kiểm tra những ảnh này có bao phủ tạo hình hay không, trích xuất nhu cầu môi trường và đạo cụ; không phải yêu cầu người dùng bổ sung bản kế hoạch. Khi ảnh tham chiếu không bao phủ trang phục hoặc toàn thân, nêu chỗ thiếu thực tế, chỉ bổ sung phần cần thiết, giữ nguyên thân phận.
+For example, when there is only a finalized script and two confirmed character images, the next step is to check whether these images cover the looks and to extract environment and prop needs; not to ask the user for a planning document. When the reference images do not cover the costume or full body, state the actual gap, fill only the necessary part, and keep the identity.
 
-Nếu thời lượng cứng của bản gốc xung đột rõ ràng với lời thoại và hành động đầy đủ, đưa ra căn cứ cùng các lựa chọn tách đoạn, kéo dài hoặc điều chỉnh. Khi chưa được ủy quyền sửa bản thảo thì không xóa lời thoại hay đổi kết thúc, cũng không coi thời lượng mô hình hỗ trợ là bằng chứng cốt truyện có thể chứa vừa.
+If the source's hard duration clearly conflicts with the complete dialogue and actions, give the basis and the options of splitting, extending, or adjusting. Without authorization to revise the script, do not delete lines or change the ending, and do not treat the duration a model supports as proof that the story can fit.
 
-## Từ ý tưởng viết thành kịch bản có thể sản xuất
+## From idea to producible script
 
-Bổ sung câu chuyện xoay quanh "ai muốn gì, gặp trở ngại gì, hành động ra sao, trả giá gì, kết quả thay đổi điều gì". Thể loại, cấu trúc và cú lật phục vụ tác phẩm lần này, không bắt buộc cấu trúc năm phần, điểm bùng nổ cố định, đề tài cố định hay cảnh nào cũng phải có cú lật.
+Build the story around "who wants what, what obstacle they meet, how they act, what they pay, and what the result changes". Genre, structure, and twists serve this work; do not force a five-act structure, fixed hook beats, fixed subject matter, or a twist in every scene.
 
-Viết câu chuyện thành văn bản nghe nhìn được, có cảnh, không gian và thời đoạn, nhân vật, hành động liên tục, lời thoại và âm thanh. Làm rõ sự kiện hoặc thông tin mà mỗi cảnh đẩy tới, dùng hành vi có thể quay được để thể hiện cảm xúc; tiểu sử nhân vật chỉ bổ sung phần cần để giải thích hành vi, không để nó và kịch bản chờ lẫn nhau.
+Write the story as audiovisual text with scenes, space and time of day, characters, continuous action, dialogue, and sound. Make clear the event or information each scene advances, and express emotion with filmable behavior; character bios fill in only what is needed to explain behavior, and the bios and the script do not wait on each other.
 
-Định dạng giao gọn được khuyến nghị:
+Recommended compact delivery format:
 
 ```text
-Phạm vi và mục tiêu lần này:
-Yêu cầu đã xác định về hình ảnh, ngôn ngữ và âm thanh:
-Ước tính tổng thời lượng và ràng buộc cứng:
+Scope and goal for this round:
+Confirmed visual, language, and voice requirements:
+Total duration estimate and hard constraints:
 
-Cảnh 01 | Không gian và thời đoạn | Nhân vật xuất hiện
-Vị trí, trạng thái ban đầu, hành động, lực cản và kết quả nhìn thấy được của nhân vật.
-Tên nhân vật: lời thoại đầy đủ.
-OS/VO, âm nhạc, hiệu ứng âm thanh, phụ đề hoặc chữ trong khung hình cần thiết.
-Trạng thái kết thúc cảnh này và chuyển cảnh.
+Scene 01 | Space and time of day | Characters present
+Characters' positions, starting states, actions, resistance, and visible results.
+Character name: complete dialogue.
+Necessary OS/VO, music, sound effects, subtitles, or on-screen text.
+End state of this scene and transition.
 ```
 
-Kịch bản đã có thì giữ nguyên định dạng của nó; mẫu không phải lý do để yêu cầu người dùng trình bày lại. Khi người dùng đồng thời yêu cầu phương án tài sản, có thể dựa trên bản nháp kịch bản hiện tại để trích xuất nhu cầu [tài sản](assets.md) và đề xuất thiết kế, nộp cùng để duyệt, ghi rõ chúng vẫn phụ thuộc vào bản nháp đó. Sau khi các lựa chọn then chốt được xác nhận và phiên bản kịch bản được cố định, mới làm tài sản chính thức.
+Keep an existing script's format; the template is no reason to ask the user to reformat. When the user also asks for an asset plan, extract [asset](assets.md) needs and design proposals from the current script draft and submit them together for review, marking that they still depend on that draft. Produce formal assets only after key choices are confirmed and the script version is pinned.
 
-## Thời lượng và tính liên tục
+## Duration and continuity
 
-Thời lượng ước tính dựa trên tốc độ nói tự nhiên của lời thoại, hành động đầy đủ, việc đọc thông tin trong khung hình, khoảng dừng phản ứng và chuyển cảnh; âm thanh và hành động có thể diễn ra song song thì không cộng dồn lặp lại. Nêu rõ ước tính và giới hạn cứng, chỉ khi có sự đánh đổi thực chất mới so sánh bản đầy đủ và bản nén, không bắt buộc lần nào cũng nộp hai phương án.
+Estimate duration from the natural speech rate of dialogue, complete actions, time to read on-screen information, reaction pauses, and transitions; do not double-count sound and action that can happen in parallel. State the estimate and hard limits; compare a full version and a compressed version only when there is a substantive trade-off, and do not force two plans every time.
 
-Thời lượng cốt truyện, thời lượng mô hình hỗ trợ cho mỗi lần, tổng thời lượng tư liệu và thời lượng dựng cuối cùng được ghi riêng. Dựa theo năng lực mô hình thời gian thực để chia các sự kiện hoàn chỉnh vào các đoạn, không cố định số giây mỗi đoạn, số đoạn hay giới hạn trên/dưới thống nhất; khi mô hình không hỗ trợ thì đưa phương án tương thích, không lặng lẽ bỏ sự kiện.
+Record story duration, single-generation duration supported by the model, total media duration, and final edit duration separately. Assign complete events to segments based on real-time model capability, without fixing seconds per segment, number of segments, or uniform upper/lower limits; when the model does not support something, give a compatible plan instead of silently dropping events.
 
-Với phần tiếp theo, đọc lịch sử và các phiên bản đã chọn dùng do người dùng chỉ định, trích xuất sự kiện đã xảy ra, trạng thái nhân vật, quyền sở hữu đạo cụ, thay đổi không gian và các móc câu chưa giải. Đề xuất mới không được ghi nhận là sự thật lịch sử; khi kịch bản cũ và video đã chọn dùng không nhất quán thì liệt kê khác biệt, không tự chọn một bên để viết lại tính liên tục.
+For a sequel, read the history and adopted versions the user specified, and extract events that have happened, character states, prop ownership, space changes, and unresolved hooks. Do not register new proposals as historical fact; when an old script and an adopted video disagree, list the differences and do not pick one on your own to rewrite continuity.
 
-Sửa đổi cục bộ thì kiểm tra theo quan hệ sử dụng thực tế các tài sản, đoạn, âm thanh và trạng thái chỗ giao nối bị ảnh hưởng. Giữ lại các xác nhận không bị ảnh hưởng; khi sửa sự kiện và tạo hình, trước tiên cập nhật kịch bản có thẩm quyền hoặc tư liệu sản xuất, rồi mới cập nhật các prompt liên quan. Lưu và khôi phục phiên bản xem [trạng thái và giao nộp](stateAndDelivery.md).
+For partial revisions, check the affected assets, segments, sound, and boundary states along actual usage relationships. Keep unaffected confirmations; when changing events or looks, update the authoritative script or production material first, then the related prompts. Version saving and restoring are covered in [State and delivery](stateAndDelivery.md).

@@ -1,150 +1,150 @@
-# Kiến thức về thiết kế shot, diễn xuất và duyệt xét
+# Shot Design, Performance and Review Knowledge
 
-Dùng cho quy hoạch đạo diễn, bảng phân cảnh và kiểm tra tính liên tục trong cùng cảnh. Giai đoạn đạo diễn chỉ áp dụng "Phân cảnh quay và căn cứ diễn xuất", các phương pháp còn lại áp dụng ở giai đoạn phân cảnh; file này không cho phép tạo trước node sản xuất hay viết lại cốt truyện đã chốt. Tham số, node thật và năng lực tạo vẫn đọc theo [Thực thi canvas](../canvasOperations.md).
+Used for the director plan, storyboard table and same-scene continuity checks. The director stage applies only "Scene breakdown and performance basis"; the other methods are applied in the storyboard stage; this file does not authorize creating production nodes early or rewriting the finalized plot. Parameters, real nodes and generation capability are still read per [Canvas execution](../canvasOperations.md).
 
-Thứ tự đọc: Phân cảnh quay và căn cứ diễn xuất → Ngữ pháp shot → Không gian và tính liên tục → Lời thoại và thời lượng → Duyệt xét. Khi liên quan đến phong cách vẽ cụ thể, đọc phong cách đã xác nhận hiện tại trong [Phong cách thị giác](visualStyles.md), không biến ví dụ phong cách thành sự thật cốt truyện.
+Reading order: Scene breakdown and performance basis -> Shot grammar -> Space and continuity -> Dialogue and duration -> Review. When a specific drawing style is involved, read the currently confirmed style in [Visual styles](visualStyles.md); do not turn style examples into plot facts.
 
-## Phân cảnh quay và căn cứ diễn xuất
+## Scene breakdown and performance basis
 
-Một cảnh là một đoạn diễn liên tục trong cùng thời gian và không gian. Ưu tiên tiếp tục dùng dấu cảnh của kịch bản chính thức; khi không có dấu cảnh thì chuyển cảnh theo thay đổi địa điểm, nhảy thời gian, hoặc đoạn diễn liên tục khép lại. Ghi lại từng cảnh:
+A scene is continuous action in the same time and space. Prefer the formal script's scene headings; without them, cut scenes at location changes, time jumps, or the close of a continuous action. Record per scene:
 
-- Số câu lời thoại và số chữ nguyên văn, gồm đối thoại, độc thoại, OS, VO; không có lời thoại thì ghi không. Giai đoạn đạo diễn chỉ thống kê, không định trước số shot; giai đoạn phân cảnh đọc lại nguyên văn để tính thời gian, không coi bản tóm tắt thống kê là lời thoại đầy đủ.
-- Độ đậm cảm xúc 0-10, tông cảm xúc và biến đổi, như "dò xét→thất vọng→quyết đoán". Cường độ là phán đoán quy hoạch, không phải diễn viên phải cường điệu đến một mức điểm nào đó.
-- Khoảnh khắc cảm xúc khán giả cần thấy nhất, danh tính nhân vật và trạng thái đạo cụ, khoảng cách không gian then chốt, nguồn âm môi trường cụ thể và điểm khó khi quay.
-- Chỉ đề xuất cầu nối động tác, shot trống hoặc fade in/fade out cho những chỗ giữa các cảnh thực sự cần nối. Đoạn chuyển cảnh mới thêm phải được đánh dấu là dự kiến bổ sung và chờ xác nhận, không máy móc thêm shot trống giữa mỗi hai cảnh.
+- Number of dialogue lines and original character count, including dialogue, monologue, OS, VO; record zero when there is no dialogue. The director stage only counts and does not pre-set shot numbers; the storyboard stage rereads the original text for timing and does not treat the count summary as the full dialogue.
+- Emotional intensity 0-10, emotional tone and its change, e.g. "probing -> disappointment -> resolve". Intensity is a planning judgment, not a score the actor must exaggerate to.
+- The emotional moment the audience most needs to see, character identity and prop state, key spatial distances, specific ambient sound sources and shooting difficulties.
+- Propose action bridges, empty shots or fades only between scenes that truly need connecting. A new transition must be marked as a proposed addition and wait for confirmation; do not mechanically add an empty shot between every two scenes.
 
-Khi chuyển cảm xúc thành diễn xuất nhìn thấy được, trước tiên tìm động tác đã có trong kịch bản, rồi dùng biên độ, tốc độ, hơi thở, ánh nhìn và tư thế để diễn giải nó, không phát minh thêm động tác cốt truyện. Có thể dùng các quan hệ tương ứng sau để chi tiết hóa diễn xuất đã xác nhận:
+When turning emotion into visible performance, first find the actions the script already has, then interpret them with amplitude, speed, breathing, eye line and posture; do not invent extra plot actions. The following correspondences can refine a confirmed performance:
 
-| Mục tiêu diễn xuất | Căn cứ nhìn thấy được | Không nên thay bằng |
+| Performance goal | Visible basis | Should not be replaced with |
 |---|---|---|
-| Kìm nén giận dữ | Hàm siết chặt, nắm tay dần chặt, ánh nhìn không dời, ngừng ngắn trước khi lên tiếng | Ném đồ, gào thét vô căn cứ |
-| Đau buồn nhưng cố nén | Chớp mắt chậm lại, hơi thở ngắt quãng, môi mím lại, cúi đầu tránh nhìn nhau | Mỗi shot đều rơi lệ hoặc đột ngột suy sụp |
-| Dò xét và do dự | Nhìn đối phương trước khi nói, cử chỉ dừng giữa chừng, trọng tâm chưa dồn hẳn về trước | Thêm một lượt đối thoại mới |
-| Quyết tâm | Ánh nhìn vững, động tác thu gọn, tư thế dứt khoát, cuối câu chắc chắn | Viết suông "kiên nghị, cảm giác sử thi" |
-| Khinh miệt | Cười lạnh đã xác nhận, hất cằm, liếc ngang thoáng qua và khoảng cách tương tác | Đổi cười lạnh vốn có thành "sắp nhếch mép" |
+| Restrained anger | Jaw tightening, grip gradually tightening, gaze not moving, short pause before speaking | Unfounded throwing of objects, roaring |
+| Sad but holding back | Slower blinking, interrupted breathing, tightened lips, head lowered to avoid eye contact | Tears in every shot or a sudden breakdown |
+| Probing and hesitation | Looking at the other person before speaking, a gesture stopping halfway, weight not fully shifted forward | Adding a new round of dialogue |
+| Resolve | Steady gaze, actions coming to a close, clear posture, firm sentence endings | Empty words like "determined, epic" |
+| Contempt | Confirmed cold smile, raised chin, brief sidelong glance and interaction distance | Changing an existing cold smile into "about to raise the corner of the mouth" |
 
-Phản ứng của người nghe phục vụ nội dung lời nói: khi ánh mắt, hơi thở hoặc thay đổi tư thế nhỏ là đủ thì không thêm động tác giành tiêu điểm. Quần chúng chỉ dùng các vi động tác như che, liếc, cúi, nắm để duy trì phản ứng trong cảnh, không tự ý thêm lời thoại hay nâng thành nhân vật chính thứ hai. Diễn xuất đặc biệt đã chốt được ưu tiên, không dùng kho từ để định hình lại tính cách nhân vật.
+Listener reactions serve what is being said: when eye line, breathing or small posture changes are enough, do not add actions that steal focus. Extras maintain in-scene reactions only with micro-actions such as covering, glancing, lowering eyes, clutching; do not add dialogue on your own or elevate them into a second lead. A finalized special performance takes priority; do not reshape a character's personality with a vocabulary list.
 
-## Ngữ pháp shot
+## Shot grammar
 
-Trước tiên hỏi "shot này đem lại thông tin mới gì cho khán giả", rồi mới chọn cỡ cảnh, góc máy và chuyển động. Chuyển địa điểm/thời gian, chuyển chủ thể, mốc động tác quan trọng hoặc thay đổi cỡ cảnh có ý nghĩa thì có thể cắt shot; động tác nhỏ, biến đổi biểu cảm vi tế và đối thoại liên tục trong cùng khung hình không cần chặt vụn từng mục.
+First ask "what new information does this shot give the audience", then choose shot size, angle and movement. Location/time changes, subject shifts, important action points or meaningful shot size changes can justify a cut; small actions, slight expression changes and continuous dialogue in the same frame need not be chopped up item by item.
 
-Định cảnh thường hoàn thành bằng 1-2 shot: một viễn cảnh đẩy chậm vào đồng thời giới thiệu môi trường và chủ thể, hoặc toàn bộ môi trường rồi nối tiếp toàn cảnh chủ thể. Quay liên tiếp cổng sân, mặt tường, song cửa sổ mà không có tiến triển thông tin thì có thể gộp thành một shot bao gồm không gian trước sau. Quy tắc bản cũ "mỗi 50-100 chữ khoảng 1-2 shot" chỉ dùng để kiểm tra việc chia có bất thường không, không được sản xuất shot máy móc theo số chữ.
+Establishing is usually done in 1-2 shots: one long shot slowly pushing in that shows both environment and subject, or a full view of the environment followed by a full shot of the subject. Consecutive shots of a courtyard gate, wall and window lattice with no information progression can be merged into one shot with front and back space. The old "about 1-2 shots per 50-100 characters" can only check for abnormal splitting, not mechanically produce shots by character count.
 
-### Cỡ cảnh và mục đích thông tin
+### Shot size and information purpose
 
-| Cỡ cảnh | Căn cứ bố cục | Thông tin phù hợp đảm nhận | Cách diễn đạt tiếng Anh có thể dùng |
+| Shot size | Composition basis | Information it suits | Usable English expression |
 |---|---|---|---|
-| Đại viễn cảnh | Toàn bộ môi trường, nhân vật rất nhỏ | Định cảnh, quy mô, cô độc, chênh lệch giữa người và môi trường | extreme wide shot / establishing shot |
-| Viễn cảnh | Quan hệ giữa nhân vật và không gian xung quanh rõ ràng | Đường di chuyển, khoảng cách giữa các nhân vật, giới thiệu không gian | wide shot |
-| Toàn cảnh | Toàn thân vào khung trọn vẹn | Xuất hiện, động tác tay chân trọn vẹn, quan hệ giữa nhân vật và đạo cụ | full shot / full body |
-| Trung cảnh | Từ eo hoặc từ gối trở lên tùy theo động tác cần thiết | Đối thoại, động tác thân trên, quan hệ hai bên | medium shot; khi cần bố cục đến gối thì ghi rõ knee shot |
-| Cận cảnh/bán thân | Từ ngực hoặc eo trở lên, vị trí cắt khung rõ ràng | Biến đổi cảm xúc, trọng tâm lời thoại, tay và mặt cùng khung | medium close-up / upper body / half body |
-| Cận cảnh đặc tả | Khuôn mặt hoặc một phần vật thể then chốt | Quyết định, phản ứng vi tế, manh mối then chốt | close-up / face focus |
-| Đại cận cảnh đặc tả | Một phần cực nhỏ | Chi tiết mang tính quyết định, nhấn mạnh ngắn cảm xúc cực đoan | extreme close-up / macro detail |
-| Shot qua vai | Vai/lưng tiền cảnh tạo quan hệ với người còn lại | Đối thoại, cảm giác áp bức, quy thuộc ánh nhìn | over-the-shoulder shot |
+| Extreme long shot | Full environment, figures very small | Establishing, scale, loneliness, disparity between people and environment | extreme wide shot / establishing shot |
+| Long shot | Figures and surrounding spatial relationship clear | Path of movement, distance between characters, introducing space | wide shot |
+| Full shot | Full body in frame | Entrance, full body action, relationship between character and prop | full shot / full body |
+| Medium shot | Above the waist or knees depending on the action needed | Dialogue, upper-body action, relationship between two parties | medium shot; state knee shot when knee framing is needed |
+| Medium close-up / half body | Above the chest or waist, with the crop stated explicitly | Emotional change, dialogue emphasis, hands and face in the same frame | medium close-up / upper body / half body |
+| Close-up | Face or part of a key object | Decisions, subtle reactions, key clues | close-up / face focus |
+| Extreme close-up | A very small detail | Decisive details, brief emphasis of extreme emotion | extreme close-up / macro detail |
+| Over-the-shoulder | Foreground shoulder/back forms a relationship with another person | Dialogue, oppression, ownership of eye line | over-the-shoulder shot |
 
-Bảng cũ ghi chung trung cảnh là "từ gối trở lên", nhưng kho từ của các mô hình khác nhau cắt khung không nhất quán; bổ sung thuật ngữ bằng bộ phận bố cục đã xác nhận, không được chỉ dựa vào một nhãn tiếng Anh. Đại cận cảnh đặc tả không dùng làm thường lệ; quy định 2-3 lần cho cả phim của bản cũ là lời nhắc tiết chế, không phải hạn ngạch mỗi tập phải đủ.
+The old table wrote medium shot uniformly as "above the knees", but crops differ across model vocabularies; supplement the term with the confirmed framed body part, and do not rely on a single English label. Extreme close-ups are not the norm; the old "2-3 per film" is a reminder of restraint, not a quota every episode must meet.
 
-Cỡ cảnh có thể siết lại từ xa đến gần, cũng có thể giải phóng từ gần ra xa. Ba shot liên tiếp cùng cỡ cảnh mà không có thay đổi thông tin hay quan hệ thì cần kiểm tra; có lý do tự sự cố ý duy trì cùng bố cục thì có thể giữ. Đột ngột cắt từ toàn bộ sang chi tiết then chốt có thể dùng để hé lộ, không vì "tăng dần từng bậc" mà tạo thêm shot.
+Shot size can tighten from far to near or release from near to far. Three consecutive shots of the same size with no change in information or relationship need checking; a narrative reason for deliberately keeping the same composition can be kept. A sudden cut from the full view to a key detail can be used for reveals; do not create extra shots for the sake of "step-by-step progression".
 
-### Góc máy, điểm nhìn và chuyển động máy
+### Angle, point of view and camera movement
 
-Góc máy nói rõ vị trí quan sát của máy quay so với chủ thể, chuyển động máy nói rõ máy quay di chuyển thế nào theo thời gian; bản thân quay từ trên xuống, quay từ dưới lên không phải chuyển động.
+Angle describes the camera's viewing position relative to the subject; camera movement describes how the camera moves over time; high angle and low angle are not movements in themselves.
 
-| Lựa chọn | Mục đích tự sự | Cách viết phải nêu rõ |
+| Choice | Narrative purpose | What the writing must make explicit |
 |---|---|---|
-| Ngang tầm mắt | Giao tiếp bình đẳng, quan sát khách quan | Quan hệ giữa máy quay và tầm mắt nhân vật |
-| Nhìn từ trên/quay từ trên xuống | Quan hệ không gian, bị áp chế hoặc đứng ngoài quan sát | Ai ở phía trên, nhìn về chủ thể nào; không tự động gán thân phận kẻ yếu cho nhân vật |
-| Nhìn từ dưới/quay từ dưới lên | Khối lượng, uy áp, ngưỡng vọng | Đối tượng quan sát và vị trí máy bắt đầu; không dựa vào góc máy mà thay đổi quan hệ quyền lực trong cốt truyện |
-| Qua vai/shot đối đáp | Người quan sát và người bị quan sát trong đối thoại | Tiền cảnh là ai, vai/lưng ở phía nào, ánh nhìn của nhân vật phía xa |
-| POV | Thứ nhân vật nhìn thấy | Điểm nhìn thuộc về ai, đối tượng nhìn thấy; không được viết lẫn với vị trí máy toàn tri bên ngoài |
-| Máy nghiêng | Cảm giác bất ổn đã xác nhận | Mục đích nghiêng; không được nghiêng mỗi shot để trang trí |
-| Đẩy/kéo | Tập trung phát hiện, siết cảm xúc / hé lộ toàn cảnh, giải phóng quan hệ | Khung đầu, điểm kết thúc và tốc độ, như "toàn cảnh đẩy chậm vào cận cảnh" |
-| Lia | Tìm kiếm, chuyển ánh nhìn, trình bày không gian | Máy cố định xoay trái/phải hoặc lên/xuống và điểm dừng |
-| Di chuyển/quay bám theo | Đi theo nhân vật xuyên qua không gian | Hướng di chuyển, theo ai, đến đâu; đừng gọi lẫn với zoom |
-| Nâng hạ/quay vòng | Hé lộ tầng không gian, thay đổi phương vị quan sát | Vị trí máy bắt đầu và kết thúc, vị trí chủ thể và có vượt trục hành động không |
-| Cố định | Để diễn xuất hoặc vật thể đảm nhận biến đổi | Viết "cố định", không thay bằng "cảm giác điện ảnh" mơ hồ |
+| Eye level | Equal exchange, objective observation | The camera's relation to the characters' eye line |
+| Looking down / high angle | Spatial relationship, being suppressed or observed | Who is above, which subject they look at; does not automatically make a character the weaker one |
+| Looking up / low angle | Size, intimidation, looking up to | The observed object and starting camera position; do not change the plot's power relations by angle |
+| Over-the-shoulder / reverse shot | Observer and observed in dialogue | Who is in the foreground, which side the shoulder/back is on, the far character's eye line |
+| POV | What a character sees | Whose point of view it is, the object seen; do not mix with an external omniscient camera |
+| Dutch angle | Confirmed sense of instability | Purpose of the tilt; do not tilt every shot for decoration |
+| Push / pull | Focusing on a discovery, tightening emotion / revealing the whole, releasing the relationship | Starting frame, endpoint and speed, e.g. "slow push from full shot to medium close-up" |
+| Pan | Searching, shifting eye line, showing space | A fixed camera turning left/right or up/down and where it lands |
+| Dolly / tracking | Following a character through space | Direction of movement, whom it follows, where to; do not confuse with zoom |
+| Crane / orbit | Revealing spatial layers, changing the viewing direction | Start and end camera positions, subject positions and whether it crosses the axis of action |
+| Static | Let the performance or objects carry the change | Write "static"; do not substitute a vague "cinematic feel" |
 
-Trong cùng shot chỉ sắp xếp những chuyển động có thể thực hiện. Mẫu cũ Seedance 2.0 yêu cầu mỗi shot một chuyển động máy chính, áp dụng ràng buộc này khi chuyển sang [Prompt video](videoPromptCraft.md); các chế độ khác cũng không chồng chất vô căn cứ đẩy, kéo, lia, xoay trong một shot ngắn.
+Arrange only movement that can be executed within one shot. The Seedance 2.0 old template requires one main camera movement per shot, which applies when converting to [Video prompts](videoPromptCraft.md); other modes also do not pile push, pull, pan and rotation without basis into one short shot.
 
-Một shot liền (long take) phù hợp để đi theo nhân vật xuyên qua cùng một không gian, động tác liên tục hoặc thay đổi chậm góc quan sát. Viết rõ khung đầu, đường đi, khung kết và thông tin mới xuất hiện dọc đường. Kỹ pháp cũ cho phép loại shot dài liên tục cập nhật thông tin này kéo dài đến khoảng 12 giây; đây không phải đảm bảo của mô hình hiện tại. Chỉ khi là shot liên tục đã xác nhận và mô hình hỗ trợ mới chọn dùng, không vì muốn tạo ít node mà gộp cứng nhiều shot vốn có.
+A oner suits following a character through the same space, continuous action, or slowly changing the viewing angle. State the starting frame, path, final frame and new information that appears along the way. The old technique allowed such long takes that keep updating information to last about 12 seconds; this is not a guarantee of current models. Use it only for confirmed continuous shots when the model supports it; do not force-merge existing multiple shots to create fewer nodes.
 
-## Không gian và tính liên tục
+## Space and continuity
 
-Sau khi giới thiệu rõ không gian lần đầu trong mỗi cảnh, thiết lập mốc chuẩn đơn giản:
+After the space is clearly established for the first time in each scene, set up a simple baseline:
 
 ~~~text
-Cảnh / phiên bản phân cảnh đã xác nhận
-Nhân vật A: phía trước bên trái, 3/4 chính diện quay sang phải, nhìn chăm chú nhân vật B; tay phải cầm thư
-Nhân vật B: phía sau bên phải, 3/4 chính diện quay sang trái, nhìn chăm chú nhân vật A; bàn ở giữa hai người
-Điểm thay đổi: shot 3, A đặt thư xuống và đi hai bước về phía bên phải bàn; shot 4 tiếp tục dùng vị trí đứng sau thay đổi
+Scene / confirmed storyboard version
+Character A: front left, 3/4 frontal facing right, looking at character B; holding a letter in the right hand
+Character B: back right, 3/4 frontal facing left, looking at character A; table between the two
+Change point: shot 3, A puts down the letter and takes two steps toward the right side of the table; shot 4 keeps the changed positions
 ~~~
 
-Vị trí dùng cách diễn đạt chín ô trái/giữa/phải × trước/giữa/sau: trước trái, trước giữa, trước phải, giữa trái, chính giữa, giữa phải, sau trái, sau giữa, sau phải. Trước sau chủ yếu chỉ độ sâu so với ống kính; cao thấp viết riêng, không được tự động coi "quỳ xuống đất" là tiền cảnh. Mốc chuẩn và điểm thay đổi được viết trong node văn bản hoặc mô tả phân cảnh của tập này, không hư cấu trường dữ liệu node.
+Positions use a nine-cell description of left/center/right x front/middle/back: front left, front center, front right, middle left, center, middle right, back left, back center, back right. Front/back mainly means depth from the camera; height is written separately, and "kneeling" must not automatically equal foreground. The baseline and change points are written in this episode's text node or the storyboard notes; do not invent node data fields.
 
-- Đối thoại/đối đầu trước tiên xác định trục hành động tương tác. Shot đối đáp thông thường giữ trái phải của khung hình tương ứng với ánh nhìn: nhân vật bên trái nhìn sang phải, nhân vật bên phải nhìn sang trái. Không được vì muốn thấy mặt chính diện của cả hai mà để cả hai vô cớ quay mặt về ống kính.
-- Tính liên tục 180° ràng buộc không gian mà khán giả có thể hiểu, không phải cấm nhân vật di chuyển. Di chuyển vị trí, quay đầu, máy quay vượt trục hành động cần thấy quá trình thiết lập trong phân cảnh đã xác nhận; sau đó tiếp tục dùng mốc chuẩn mới.
-- Hướng lần lượt lấy theo hướng rõ ràng trong khung hình đã xác nhận, đối tượng tương tác và không gian, mốc chuẩn đã có. Tiền cảnh qua vai thường là vai/lưng, nhân vật phía xa quay về phía bên tương tác; khi thiếu thông tin ảnh hưởng ý nghĩa thì trước tiên hình thành phương án chờ xác nhận, không dựa vào cảm xúc mà ép quyết định mặt hướng về phía nào.
-- Các shot liền kề kiểm tra vị trí nhân vật, mức độ hoàn thành động tác, tay cầm đồ, quyền sở hữu đạo cụ, hướng mắt và trạng thái trang phục. Shot trước cánh tay giơ lên giữa không trung, shot sau không thể không có chuyển tiếp mà trở về bên hông.
-- Không yêu cầu cận cảnh đặc tả nhét hết mọi nhân vật trong cảnh, nhưng sự hiện diện của các nhân vật trong cảnh phải có điểm đặt dễ hiểu ở shot liền kề hoặc cùng đoạn: hậu cảnh, một phần cơ thể, qua vai, shot phản ứng hoặc vị trí ngoài khung đã được thiết lập. Âm thanh có thể giới thiệu sự hiện diện ngoài khung, nhưng không thể giả làm đã nhìn thấy hình tượng của họ.
-- Bóng lưng một phần, bàn tay, bóng dáng nhận ra được cũng tiếp tục dùng phiên bản tài sản tương ứng. Nhân vật sao chép vô căn cứ, bản sao giống hệt, bỏ sót người có mặt then chốt thì phải nêu vấn đề; khi cốt truyện rõ ràng có anh em sinh đôi thì không được áp "cấm sinh đôi" mà xóa nhân vật.
-- Danh tính, trang phục, biểu cảm và động tác trong hình phản chiếu phải cùng thời điểm với thực thể, không coi hình phản chiếu là người thứ hai được thêm vào. Dựa vào hướng của mặt gương/mặt nước, tư thế thực thể và vị trí máy quay để phán đoán bộ phận nhìn thấy được và quan hệ tương ứng; mặt nước có thể có biến dạng phù hợp với chất liệu và gợn sóng, không coi "thực thể quay phải→mọi bóng phản chiếu quay trái" của tài liệu cũ là quy luật vật lý phổ quát, không được lật ngang máy móc.
+- For dialogue/standoffs, first establish the axis of action. Ordinary reverse shots keep screen left/right consistent with eye lines: the character on the left looks right, the character on the right looks left. Do not have both face the camera without reason just because you want to see both faces.
+- 180-degree continuity constrains space the audience can understand; it does not forbid characters from moving. Blocking, head turns and the camera crossing the axis of action need the establishing process visible in the confirmed storyboard; afterward the new baseline carries on.
+- Facing is taken in order from the explicit direction in the confirmed frame, the interaction partner and space, and the existing baseline. An over-the-shoulder foreground is usually the shoulder/back, and the far character faces the interacting side; when meaningful information is missing, first form a proposal pending confirmation; do not force which way a face turns based on emotion.
+- For adjacent shots, check character positions, how far an action has progressed, the hand holding objects, prop ownership, eye lines and costume state. If the arm is raised halfway in the previous shot, it cannot return to the side in the next shot without a transition.
+- Close-ups need not cram in everyone in the scene, but every in-scene character's presence must have an understandable placement in an adjacent shot or the same segment: background, partial view, over-the-shoulder, reaction shot or an established off-screen position. Sound can convey off-screen presence but cannot pass as having shown the person.
+- Partial backs, hands and recognizable silhouettes also use the corresponding asset version. Unfounded duplicated characters, identical clones, or missing key people present must be raised as problems; when the plot clearly has twins, do not apply "no twins" and delete a character.
+- Identity, costume, expression and action in a reflection should match the physical person at the same moment; do not treat a reflection as an added second person. Judge visible parts and correspondence by the mirror/water orientation, the physical posture and the camera position; water may have distortion matching its material and ripples; do not treat the old text's "body faces right -> all reflections face left" as a universal physical rule, and do not mechanically flip horizontally.
 
-Ranh giới đoạn có thể nối qua động tác, cảm xúc, ánh nhìn, nguồn âm. Ghi lại "trạng thái kết thúc thực tế/dự kiến của đoạn trước → trạng thái bắt đầu của đoạn này": nối động thì tiếp nối tiến độ động tác, nối tĩnh thì tiếp nối trạng thái cuối. Bảng phân cảnh cũ đề xuất nối động xuyên đoạn, panel cũ lại giả định động tác liền mạch không vượt nhóm; skill này lấy ranh giới phân cảnh đã xác nhận làm chuẩn, không ép đóng băng động tác hay tạo thêm đoạn chuyển cảnh. Trạng thái chưa được tạo thì ghi chú "quy hoạch", không được tuyên bố là khung cuối đã xem.
+Segment boundaries can connect through action, emotion, eye line or sound source. Record "previous segment's actual/expected end state -> this segment's start state": a match-on-action carries the action's progress, a static cut carries the end state. The old storyboard table suggested match-on-action across segments, while the old panel assumed continuous action does not cross groups; this skill follows the confirmed storyboard boundaries and does not force-freeze actions or create extra transitions. States not yet generated are marked "planned" and must not be claimed as a viewed last frame.
 
-Cùng cảnh mặc định cắt cứng; khi vượt thời gian không gian hoặc biên độ cảm xúc lớn mới chọn dùng shot trống, cầu nối âm thanh, hòa tan hoặc fade in/fade out đã xác nhận. Quy định "chuyển cảnh nhất định thêm 2-3 giây shot trống" của bảng chung cũ nhường chỗ cho quy ước "chỉ thêm khi cần thiết" của tài liệu thực thi đạo diễn. Đổi cảnh cho phép thiết lập lại mốc chuẩn vị trí, không nối cứng một động tác vật lý xuyên qua các địa điểm khác nhau.
+Within a scene, hard cuts are the default; use confirmed empty shots, sound bridges, dissolves or fades only across time and space or large emotional spans. The old general table's "always add a 2-3 second empty shot across scenes" yields to the director execution document's convention of "add only when necessary". A scene change may re-establish the position baseline; do not force one physical action across different locations.
 
-## Lời thoại và thời lượng
+## Dialogue and duration
 
-Nguyên văn lời thoại, nhân vật đầy đủ và sự kiện đã xác nhận được ưu tiên hơn heuristic về thời lượng. Đối thoại, OS, VO, thông báo hệ thống và chữ trên màn hình buộc phải truyền đạt đều giữ nguyên từng chữ và ghi nguồn. Prompt tiếng Anh cũng không dịch lời thoại gốc trong dấu ngoặc kép. Chữ thuần trên màn hình phải ghi riêng nguyên văn và cách trình bày; việc bản cũ thống nhất chuyển sang VO, làm sáng từng dòng và thêm tiếng tích tắc là phương án sản xuất có thể đề xuất, chưa được xác nhận thì không biến tin nhắn không tiếng thành lời dẫn bổ sung hay thêm hiệu ứng âm thanh.
+Original dialogue, complete characters and confirmed events take priority over duration heuristics. Dialogue, OS, VO, system announcements and screen text that must be conveyed are kept verbatim with their source marked. English prompts also do not translate the original dialogue in quotes. Pure screen text records its original text and presentation separately; the old practice of uniformly converting to VO, lighting up line by line and adding a ticking sound is a production option that may be proposed; without confirmation, do not turn a silent text message into extra narration or add sound effects.
 
-| Giọng điệu | Tốc độ nói quy hoạch | Cách dùng |
+| Tone | Planned speaking rate | Usage |
 |---|---|---|
-| Gấp gáp, tranh cãi | Khoảng 4 chữ/giây | Mốc ước lượng nhanh của tầng thực thi cũ |
-| Trần thuật bình thường, đối thoại thường ngày | Khoảng 3 chữ/giây | Chừa chỗ cho phát âm tự nhiên và cuối câu |
-| Thâm tình, đau buồn, trầm tư | Khoảng 2 chữ/giây | Chừa thời gian cho hơi thở, ngừng nghỉ và phản ứng |
-| Thì thầm, yếu ớt | Khoảng 2 chữ/giây hoặc chậm hơn theo thực tế | Không được dựa vào nén tốc độ nói để triệt tiêu diễn xuất |
+| Urgent, arguing | About 4 characters/second (calibrated for Chinese; adjust for other languages) | The old execution layer's quick rough baseline |
+| Normal statement, everyday dialogue | About 3 characters/second | Leaves room for natural pronunciation and sentence endings |
+| Tender, sad, contemplative | About 2 characters/second | Gives time for breathing, pauses and reactions |
+| Whispering, weak | About 2 characters/second or slower as actually needed | Do not eliminate the performance by compressing the rate |
 
-SOP mặc định chọn dùng 4 chữ/giây của tầng thực thi cũ cùng ngừng nghỉ và khoảng dư đầu cuối của tầng kiểm duyệt; 3/2 chữ/giây trong bảng trên đến từ kỹ pháp chung cũ, là lựa chọn dành cho diễn xuất. Khi cần chọn dùng phương án tốc độ chậm, tiếp tục theo yêu cầu sẵn có của người dùng, hoặc trước tiên nói rõ ảnh hưởng đến thời lượng và số đoạn rồi xác nhận. Không được để kỹ pháp chung tự động ghi đè giá trị mặc định của tầng thực thi, rồi lại tuyên bố số lượng hoàn toàn khớp với SOP cũ.
+The default SOP uses the old execution layer's 4 characters/second plus the review layer's pauses and head/tail margins; the 3/2 characters/second in the table above come from the old general techniques and are performance-oriented options. When a slower scheme is needed, follow the user's existing requirements, or first explain its impact on duration and segment count and confirm. Do not let the general techniques automatically override the execution layer's default and then claim the counts match the old SOP exactly.
 
-Thời lượng quy hoạch tối thiểu có thể tính theo "số chữ lời thoại ÷ tốc độ nói đã chọn dùng làm tròn lên + ngừng nghỉ dấu câu cần thiết (mỗi chỗ khoảng 0,3-0,5 giây) + khoảng dư an toàn đầu cuối tổng cộng khoảng 1 giây"; khi chọn dùng phương án diễn xuất cảm xúc thì tính thêm khoảng dư chuyển ý cần thiết (khoảng 0,5 giây). Cùng một ngừng nghỉ không cộng dồn lặp lại; ngôn ngữ thực tế, tốc độ nói và yêu cầu diễn xuất của người dùng được ưu tiên. Ước lượng lời thoại khác với ước tính thời gian cả tập khoảng 150 chữ/phút ở giai đoạn kịch bản, cũng không bằng thời lượng thực tế của video đã tạo.
+The minimum planned duration can be computed as "dialogue character count / adopted speaking rate, rounded up + needed punctuation pauses (about 0.3-0.5 seconds each) + head and tail safety margin totaling about 1 second"; when an emotional performance scheme is adopted, add the necessary turn margin (about 0.5 seconds). Do not count the same pause twice; the actual language, speaking rate and user performance requirements take priority. The rough dialogue estimate differs from the script stage's whole-episode estimate of about 150 characters/minute, and is not the actual duration of a generated video either.
 
-Ví dụ lời thoại 24 chữ theo mặc định 4 chữ/giây cơ bản khoảng 6 giây, hai chỗ ngừng rõ ràng tổng cộng khoảng 0,8 giây, chừa thêm khoảng 1 giây để vào ra, quy hoạch khoảng 8 giây; khi xác nhận chọn dùng 3 chữ/giây thì khoảng 10 giây. Cả hai phương án đều không được chỉ cho thời gian đọc cơ bản rồi cắt chữ. Nếu diễn xuất thật hoặc năng lực mô hình không đáp ứng được thời lượng đã định, thì chia lại đoạn theo ngữ nghĩa và quay lại phân cảnh để xác nhận.
+For example, 24 characters of dialogue at the default 4 characters/second is a base of about 6 seconds; two noticeable pauses total about 0.8 seconds; leave another about 1 second for lead-in and release; plan about 8 seconds; if 3 characters/second is confirmed, it is about 10 seconds. Neither scheme may give only the base reading time and cut words. If the real performance or model capability cannot meet the set duration, re-split segments by meaning and go back to storyboard confirmation.
 
-- Lời thoại/VO liên tục quá 20 chữ ưu tiên tách shot liên tục tại chỗ ngừng ngữ nghĩa, đổi cỡ cảnh hoặc cắt sang shot phản ứng của người nghe, âm thanh vẫn thuộc người nói gốc. Lời thoại có thể ghi đầy đủ ở dòng đầu và nêu rõ phạm vi tiếp diễn âm thanh của các shot sau, không được để mô hình đọc lặp lại cả câu ở mỗi shot.
-- Ngữ nghĩa không thể cắt rời thì có thể giữ một shot, dùng biến đổi biểu cảm, diễn tiến cơ thể đã có trong kịch bản hoặc chuyển động máy hợp lý để gánh; không vì "phải chuyển động" mà thêm động tác vô căn cứ, cũng không xóa chữ để ép thời lượng.
-- Shot tĩnh không có thông tin mới khoảng 6 giây là nên kiểm tra xem có lê thê không; đây là heuristic về sự chú ý của bản cũ, không phải mọi shot không lời thoại quá 6 giây đều không dùng được.
-- Tham khảo mật độ động tác: 2-3 giây chứa khoảng 1 nhịp, 4-6 giây khoảng 2 nhịp, từ 7 giây trở lên khoảng 3 nhịp. Một nhịp có thể là một động tác vật lý, một chuyển động máy chính hoặc một câu thoại ngắn; động tác tiếp xúc phức tạp cần nhiều thời gian hơn, không được máy móc nhồi đầy cùng lúc.
-- Đầu và cuối mỗi bên khoảng 0,5 giây để tránh lời thoại then chốt vừa bắt đầu đã bị cắt. Tổng đoạn vẫn tuân theo giá trị nhỏ hơn giữa 15 giây của quy trình này và giới hạn trên của mô hình hiện tại, đồng thời xác minh các thời lượng rời rạc có thể chọn; 8 giây cho shot đơn, 12 giây cho shot dài của bảng chung cũ chỉ dùng để phát hiện chật chội hoặc lê thê.
+- Continuous dialogue/VO over 20 characters is preferably split into continuous shots at semantic pauses, changing shot size or cutting to a listener reaction shot, while the sound still belongs to the original speaker. The dialogue may be recorded in full on the first row with the range of sound continuation in the following shots made explicit; do not let the model repeat the whole sentence in every shot.
+- Meaning that cannot be cut can stay in one shot, carried by expression changes, body progression already in the script or reasonable camera movement; do not add unfounded actions for the sake of "must move", and do not delete words to force the duration.
+- A static shot with no new information should be checked for dragging at about 6 seconds; this is an old attention heuristic, not a rule that every shot without dialogue over 6 seconds is unusable.
+- Action density reference: 2-3 seconds holds about 1 beat, 4-6 seconds about 2 beats, 7 seconds or more about 3 beats. A beat can be one physical action, one main camera movement or one short line; complex contact actions need more time and must not be mechanically packed in simultaneously.
+- About 0.5 seconds at each of head and tail avoids key dialogue being cut off as it begins. Total segments still follow the smaller of this workflow's 15 seconds and the current model limit, and verify discrete selectable durations; the old general table's 8 seconds per shot and 12 seconds per long take are only for spotting crowding or dragging.
 
-Âm thanh chia thành nguồn âm môi trường và nguồn âm động tác, ví dụ "gió lùa qua khe cửa sổ, đáy cốc chạm bàn". Đừng dùng "nhạc buồn, bầu không khí hoành tráng" thay cho âm thanh cụ thể. Mặc định không thêm nhạc nền; âm nhạc mà kịch bản hoặc người dùng yêu cầu rõ ràng được giữ lại thành yêu cầu riêng chờ thực thi, không được vì tiếp tục dùng từ cấm cũ mà xóa cốt truyện chính thức hay tiết mục nhạc cụ thật.
+Sound is split into ambient sources and action sources, e.g. "wind through a window gap, a cup base touching the table". Do not substitute "sad music, grand atmosphere" for specific sounds. No score is added by default; music the script or user explicitly requires is kept as a separate pending requirement; do not delete formal plot or real instrument performance just to follow old banned words.
 
-## Phương pháp duyệt xét và điểm đặt trong tập này
+## Review method and where it lands in the episode
 
-Mỗi lần đọc lại kịch bản, phân cảnh, tài sản thực tế và phiên bản đã xác nhận trên canvas, kiểm tra theo bốn nguyên tắc cốt lõi:
+Each time, read back the actual script, storyboard, assets and confirmed versions on the canvas, and check against four core principles:
 
-| Nguyên tắc cốt lõi | Phương pháp kiểm chứng | Vấn đề cần định vị |
+| Core principle | Verification method | Problems to locate |
 |---|---|---|
-| R1 Tham chiếu thật | Đối chiếu từng mục tham chiếu của đoạn với node thật và file đã chọn dùng trên canvas tài sản | ID hư cấu, lệch thứ tự tham chiếu, nhân vật/bối cảnh then chốt nhìn thấy được chưa được gắn |
-| R2 Trung thành kịch bản | So sánh từng mục lời thoại, sự kiện và thứ tự | Sót chữ, sửa chữ, sót cảnh, thêm sự kiện, viết đề xuất thành bản chốt |
-| R3 Nhìn thấy được, nghe thấy được | Đối chiếu động tác khung hình, nguồn âm, chi tiết diễn xuất | Chỉ có mô tả không thể thực thi như "rất buồn/tô đậm bầu không khí" |
-| R4 Trạng thái đúng | Đối chiếu tài sản cha, trạng thái cốt truyện hiện tại và phiên bản đã chọn dùng | Lẽ ra dùng trạng thái phái sinh lại dùng trạng thái cơ bản, coi hai trạng thái của cùng một người là hai người |
+| R1 Real references | Match segment references item by item to real nodes and adopted files on the asset canvas | Fictional IDs, misordered references, visible key characters/locations not bound |
+| R2 Faithful to script | Compare dialogue, events and order line by line | Missing words, changed words, missing scenes, added events, writing suggestions as finalized |
+| R3 Visible and audible | Compare against on-screen action, sound sources, performance details | Only non-executable descriptions such as "very sad / set the mood" |
+| R4 Correct state | Compare against the parent asset, the current plot state and the adopted version | Using the base state where a derived state applies, treating two states of the same person as two people |
 
-Kiểm tra thêm: nhân vật đầu cảnh, tham chiếu đoạn, cấu trúc bảng bảy cột của mỗi shot; tổng thời lượng shot và đoạn; dung lượng lời nói; âm thanh liên tục của lời thoại dài; sự hiện diện trong cảnh và tiến độ động tác; cỡ cảnh/góc máy có phục vụ thông tin không; prompt ảnh có bỏ sót yếu tố then chốt không; có thêm ánh sáng xung đột với ảnh bối cảnh, nhạc nền hoặc ngoại hình vô căn cứ không.
+Then check: scene-head characters, segment references, the seven-column table structure for each shot; totals of shot and segment durations; speech capacity; continuous sound for long dialogue; in-scene presence and action progress; whether shot size/angle serve information; whether image prompts miss key elements; whether any lighting conflicting with the location image, unfounded score or appearance has been newly added.
 
-Tài liệu giám sát cũ không duyệt việc thiếu tài sản cơ bản và trục nhìn, đó là hạn chế về quyền hạn và trường của quy trình cũ. Skill này đã bao gồm kiến thức tài sản cơ bản và không gian: thiếu sót phải được ghi nhận là phụ thuộc sản xuất và quay lại giai đoạn tương ứng, không được bịa; không gian đã rõ ràng mà xảy ra mâu thuẫn thì chỉ ra như thường. Không được vì tìm thấy một chữ đơn lẻ liên quan đến "ánh sáng/bóng" mà xóa sửa "ánh mắt", danh từ riêng, lời thoại gốc hay nguồn sáng cốt truyện then chốt.
+The old supervision document did not review missing base assets or the axis of view, a limit of the old workflow's permissions and fields. This skill already includes base asset and spatial knowledge: missing items should be registered as production dependencies and returned to the corresponding stage, not fabricated; contradictions in established space are pointed out as usual. Do not delete or alter "gaze", proper nouns, original dialogue or key plot light sources just because a search hit the single character for "light/shadow".
 
-Báo cáo vấn đề ghi lại vào canvas của tập này, tối thiểu gồm "mức độ nghiêm trọng, cảnh/đoạn/số shot, nguyên văn hoặc tham chiếu thực tế, ảnh hưởng, phương án sửa có thể chọn". Chỉ liệt kê vấn đề, các vấn đề nhẹ cùng loại thì gộp lại; kiểm tra không có vấn đề không có nghĩa là người dùng đã xác nhận.
+Write the problem report back to this episode's canvas, containing at least "severity, scene/segment/shot number, actual original text or reference, impact, optional revision". List only problems, merging minor problems of the same kind; a check with no problems does not mean the user has confirmed.
 
-- Nghiêm trọng: phá vỡ tính trung thành, lỗi tham chiếu thật, không tương thích năng lực đã xác định, dung lượng lời thoại hoặc quan hệ động tác rõ ràng không thể thực thi.
-- Trung bình: diễn xuất, cách chia lời thoại dài, nhịp điệu hoặc quan hệ không gian đã xác nhận ảnh hưởng đến việc hiểu, cần sửa cục bộ.
-- Nhẹ: đã có phương án khả dụng, nhưng có thể cải thiện cỡ cảnh lặp lại, cách dùng từ hoặc định dạng cục bộ.
+- Severe: fidelity broken, real reference errors, established capability incompatibility, clearly unexecutable dialogue capacity or action relationships.
+- Moderate: performance, long dialogue splitting, rhythm or confirmed spatial relationships affect understanding and need local fixes.
+- Minor: a usable plan exists, but repeated shot sizes, wording or local formatting could be improved.
 
-Khi cần tiếp tục dùng tổng quan A/B/C/D cũ, A là không có nghiêm trọng và tối đa 2 mục trung bình, B là không có nghiêm trọng và tối đa 5 mục trung bình, C là 1-2 mục nghiêm trọng, D là ít nhất 3 mục nghiêm trọng; không có nghiêm trọng nhưng quá 5 mục trung bình là tình huống bảng cũ không bao phủ, báo cáo trực tiếp phạm vi cần xử lý, không ép gán cấp. Điểm đánh giá không thay thế bằng chứng vấn đề hay quyết định của người dùng.
+When the old A/B/C/D overview is needed: A is no severe and at most 2 moderate, B is no severe and at most 5 moderate, C is 1-2 severe, D is at least 3 severe; no severe but more than 5 moderate is a case the old table did not cover, so report the scope needing work directly and do not force a grade. A score does not replace problem evidence or user decisions.
 
-Giai đoạn đạo diễn viết căn cứ cảm xúc, mốc neo không gian và chuyển cảnh dự kiến vào "Quy hoạch đạo diễn"; giai đoạn phân cảnh viết cỡ cảnh/góc máy, tính thời gian, tính liên tục và kết luận vấn đề vào "Bảng phân cảnh/Ghi chép duyệt xét". Không cần thêm số lượng cố định node kiến thức, chỉ cần cập nhật mô tả tương ứng đã có của tập này.
+The director stage writes emotional basis, spatial anchors and proposed transitions into the "director plan"; the storyboard stage writes shot size/angle, timing, continuity and problem conclusions into the "storyboard table / review record". There is no need to add a fixed number of knowledge nodes; just update the corresponding existing notes for this episode.
 
-## Căn cứ bản cũ và chuyển đổi
+## Legacy basis and migration
 
-Căn cứ vào v1.1.8 (cd3e7c4): production_skills/storyboard_table_techniques.md, production_skills/storyboard_prompt_techniques.md, production_execution_director_plan.md, production_execution_storyboard_table.md, production_execution_storyboard_panel.md, production_agent_supervision.md. Giữ lại các kỹ pháp có thể thực thi, chọn dùng cấu trúc "cảnh→đoạn→shot" của giai đoạn sau; đọc một lần, cấm đọc lại, đầu ra XML và ngoại lệ quyền giám sát không được chuyển sang quy trình canvas hiện tại.
+Based on v1.1.8 (cd3e7c4): production_skills/storyboard_table_techniques.md, production_skills/storyboard_prompt_techniques.md, production_execution_director_plan.md, production_execution_storyboard_table.md, production_execution_storyboard_panel.md, production_agent_supervision.md. Their executable techniques are kept, adopting the later "scene -> segment -> shot" structure; one-time reading, no-rereading, XML output and supervision permission exceptions are not migrated to the current canvas workflow.

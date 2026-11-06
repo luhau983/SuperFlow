@@ -1,153 +1,153 @@
 ---
 name: canvas
-description: Sổ tay thao tác canvas của Toonflow. Dùng các công cụ canvas để tạo, chuyển đổi và đổi tên canvas; thêm, di chuyển, đổi tên, kết nối và xóa node; tự động sắp xếp toàn bộ canvas, điều chỉnh khung nhìn (viewport) và gọi các hàm do node đăng ký. Dùng khi người dùng yêu cầu thao tác trên canvas hiện tại hoặc dựng luồng node.
+description: Toonflow canvas operations manual. Use the canvas tools to create, switch and rename canvases, add, move, rename, connect and delete nodes, automatically arrange the whole canvas, adjust the viewport, and call functions registered by nodes. Use when the user asks to operate on the current canvas or build a node flow.
 metadata:
   version: "2.1.0"
-  displayName: Sổ tay thao tác canvas
+  displayName: Canvas Operations Manual
   author: Toonflow
   github: https://github.com/HBAI-Ltd/Toonflow-app
 ---
 
-# Sổ tay thao tác canvas
+# Canvas Operations Manual
 
-Điều khiển canvas đang chạy hiện tại thông qua công cụ "Thao tác canvas" đã được bật. Công cụ chỉ khả dụng khi có ngữ cảnh canvas; khi thiếu công cụ, hãy nhờ người dùng mở canvas của dự án mục tiêu và xác nhận công cụ đã được bật, không sửa JSON của canvas để lách qua công cụ.
+Control the currently running canvas through the enabled "canvas operations" tools. The tools are only available when a canvas context exists; if the tools are missing, ask the user to open the target project's canvas and confirm the tools are enabled. Do not bypass the tools by editing the canvas JSON.
 
-## Quy trình thao tác
+## Workflow
 
-1. Khi đã biết ID node thì đọc thẳng mục tiêu; nếu không, dùng `getCanvas({})` để xác nhận tổng quan canvas đang kích hoạt, dùng `findCanvasNodes` để tìm theo tên, loại hoặc trạng thái chọn. Chỉ khi cần thêm node mới dùng `getCanvas({ include: ["nodeTypes"] })` để tra loại.
-2. Chọn thao tác bên dưới theo yêu cầu của người dùng, chờ kết quả trả về của từng lần. Các lần gọi sau dùng ID do bước trước trả về, không đoán ID, loại node, cổng (port) hay hàm của node.
-3. Dùng `getCanvasNodes` để đọc các trường mục tiêu khi cần, `getCanvasEdges` để tra kết nối cục bộ; khi cần chỉnh nội dung node, dùng `getNodeTools` để đọc mô tả và `parameters` đầy đủ của hàm node đó, rồi gọi qua `nodeTools`.
-4. Sau khi hoàn tất điều chỉnh cấu trúc, gọi `fitCanvas` khi cần để hiển thị kết quả, rồi dùng `getCanvasNodes` / `getCanvasEdges` chỉ đối chiếu các node, tên và kết nối bị ảnh hưởng. `arrangeCanvas` đã tự động khớp khung nhìn, không cần gọi lại `fitCanvas`. Chỉ báo cáo những thao tác mà công cụ thực sự đã hoàn thành.
+1. When the node ID is known, read the target directly; otherwise use `getCanvas({})` to confirm the overview of the active canvas, and use `findCanvasNodes` to search by name, type or selection state. Only use `getCanvas({ include: ["nodeTypes"] })` to query types when you need to add nodes.
+2. Choose the operations below according to the user's request, waiting for each result in turn. Later calls use the IDs returned by earlier steps; do not guess IDs, node types, ports or node functions.
+3. Use `getCanvasNodes` to read the target fields as needed and `getCanvasEdges` to query local connections; when node content needs adjusting, use `getNodeTools` to read the description and full `parameters` of that node function, and call it through `nodeTools`.
+4. After finishing structural changes, call `fitCanvas` as needed to show the result, then use `getCanvasNodes` / `getCanvasEdges` to verify only the affected nodes, names and connections. `arrangeCanvas` already fits the viewport automatically, so there is no need to call `fitCanvas` again. Report only the operations the tools actually completed.
 
-Với sản xuất câu chuyện hoặc video, trước tiên đọc [Các giai đoạn sản xuất và xác nhận](references/videoProduction.md#0-phối-hợp-từng-giai-đoạn). Mặc định chỉ thực hiện giai đoạn hiện đã được xác nhận; trước hết thu thập thông tin từng bước, sau đó trình bày thành quả giai đoạn và hỏi điều chỉnh, đợi người dùng nói rõ là tiếp tục. Không vì người dùng nói "làm một phim ngắn" mà tạo một lần toàn bộ phân cảnh và node tạo, cũng không coi việc hỏi thất bại, bỏ qua hay im lặng là xác nhận.
+For story or video production, first read [Production stages and confirmation](references/videoProduction.md#0-stage-by-stage-collaboration). By default, implement only the currently confirmed stage; collect information step by step first, then present the stage's results and ask for adjustments, and wait until the user explicitly continues. Do not create all storyboard and generation nodes at once just because the user says "make a short film", and do not treat a failed question, a skip or silence as confirmation.
 
-Mặc định tạo tài sản nhân vật, bối cảnh, đạo cụ từ kịch bản hoàn chỉnh của lần này, rồi tách thành các đoạn nhiều shot; mỗi đoạn tương ứng một prompt video và một node video, tài sản dùng trực tiếp cho tạo đa tham chiếu. Trước khi viết prompt tài sản, đọc [Quy chuẩn ảnh tài sản](../script/references/assetGuide.md); trước khi viết prompt video, đọc [Hướng dẫn sản xuất đoạn](../script/references/productionGuide.md). Cận cảnh khuôn mặt nhân vật và bộ ba góc nhìn đầy đủ trước-nghiêng-sau không được giản lược thành một ảnh cốt truyện chung duy nhất.
+By default, generate character, location and prop assets from this complete script, then split it into multi-shot segments; one segment corresponds to one video prompt and one video node, and assets are used directly for multi-reference generation. Before writing asset prompts, read [Asset image guidelines](../script/references/assetGuide.md); before writing video prompts, read [Segment production guide](../script/references/productionGuide.md). Character facial close-ups and complete front/side/back three-view sheets cannot be reduced to a generic single story image.
 
-Liên kết trong tài liệu tính tương đối theo thư mục của tệp hiện tại. Quy chuẩn `script` xuyên skill được định vị theo `location` thực tế trong `available_skills`; khi thiếu phụ thuộc thì nêu rõ mục thiếu, chỉ tiếp tục các thao tác cấu trúc không phụ thuộc vào nó, không dựa vào phần giới thiệu để bịa ra quy chuẩn.
+Links in documents are relative to the current file's directory. Cross-skill `script` guidelines are located by the actual `location` in `available_skills`; when a dependency is missing, state what is missing and continue only with structural operations that do not depend on it. Do not fabricate guidelines from the summary.
 
-Cách viết dưới đây có nghĩa là "tên công cụ (đối tượng tham số)". Gọi thẳng công cụ tương ứng, không bọc thêm một lớp `{ name, args }`; chỉ riêng `nodeTools` có tham số `name` và `args`.
+The notation below means "toolName(parameter object)". Call the corresponding tool directly without wrapping it in an extra `{ name, args }` layer; only `nodeTools` itself has `name` and `args` parameters.
 
-## Đọc canvas
+## Reading the canvas
 
-Cả năm công cụ đọc đều hỗ trợ `canvasId` tùy chọn, dùng để xác nhận canvas đang kích hoạt, không thể dùng nó để đọc canvas chưa kích hoạt. Mỗi phản hồi tối đa 64 KiB, không cung cấp ảnh chụp nhanh toàn đồ thị:
+All five read tools support an optional `canvasId`, used to confirm the currently active canvas; it cannot be used to read an inactive canvas. Each response is at most 64 KiB, and no full-canvas snapshot is provided:
 
-| Công cụ | Tham số và kết quả trả về |
+| Tool | Parameters and return |
 | --- | --- |
-| `getCanvas` | Mặc định trả về `id`, số node, số dây nối, số mục đang chọn và `viewport`. `include: ["canvases"]` tra danh sách canvas `{ id, name }`, `include: ["nodeTypes"]` tra `{ type, label }` của `availableNodeTypes`; hai loại danh sách dùng chung phân trang, `limit` mặc định 30, tối đa 100. |
-| `findCanvasNodes` | Lọc theo `query` (ID hoặc tên đầy đủ), `types` (tối đa 20 loại), `selectedOnly`; khi bỏ qua bộ lọc thì liệt kê theo trang. Trả về tóm tắt `nodes`, bản xem trước tên tối đa 512 ký tự; `limit` mặc định 30, tối đa 100. |
-| `getCanvasNodes` | `nodeIds` mỗi lần 1–20 cái, không được trùng; `fields` mặc định là `label/type/position`, ngoài ra có thể chọn `ports/data/outputs`. `dataKeys` giới hạn các thuộc tính riêng của data cần lấy, tối đa 20 cái; trả về phép chiếu `nodes`. |
-| `getCanvasEdges` | `nodeIds` tùy chọn, tối đa 20 cái; `direction` nhận `incoming/outgoing/both`, mặc định `both`, chỉ khi bỏ qua ID mới duyệt toàn bộ cạnh theo trang. Trả về `edges`; `limit` mặc định 100, tối đa 200. |
-| `getNodeTools` | `nodeIds` mỗi lần 1–20 cái, không được trùng, `names` có thể lọc tối đa 20 tên hàm đầy đủ. Trả về `nodeTools` (gồm `nodeId/name/description/parameters`); `limit` mặc định 20, tối đa 50. Schema không bị cắt bớt, một mục quá lớn thì báo lỗi rõ ràng. |
+| `getCanvas` | By default returns `id`, node count, edge count, selected count and `viewport`. `include: ["canvases"]` queries the `{ id, name }` canvas list, `include: ["nodeTypes"]` queries `{ type, label }` of `availableNodeTypes`; both lists share pagination, `limit` defaults to 30, max 100. |
+| `findCanvasNodes` | Filters by `query` (ID or full name), `types` (up to 20 types), `selectedOnly`; omitting filters lists with pagination. Returns `nodes` summaries, name previews up to 512 characters; `limit` defaults to 30, max 100. |
+| `getCanvasNodes` | `nodeIds` 1-20 per call, no duplicates; `fields` defaults to `label/type/position`, optionally also `ports/data/outputs`. `dataKeys` limits the data's own properties needed, up to 20; returns `nodes` projections. |
+| `getCanvasEdges` | `nodeIds` optional, up to 20; `direction` is `incoming/outgoing/both`, default `both`; only omitting IDs paginates through all edges. Returns `edges`; `limit` defaults to 100, max 200. |
+| `getNodeTools` | `nodeIds` 1-20 per call, no duplicates; `names` can filter up to 20 full function names. Returns `nodeTools` (containing `nodeId/name/description/parameters`); `limit` defaults to 20, max 50. Schemas are not truncated; if a single item is too large, an explicit error is returned. |
 
-Với phân trang, kiểm tra `hasMore` / `nextCursor`, giữ nguyên toàn bộ tham số truy vấn ban đầu, chỉ thay `cursor`; lọc node và truy vấn dây nối mỗi lần quét tối đa 2000 mục, kể cả khi `nodes` / `edges` hiện tại rỗng, `hasMore: true` vẫn có nghĩa là chưa quét xong. `totalNodes` / `totalEdges` là tổng số của cả canvas, không phải số kết quả khớp bộ lọc. Không tự phân tích hay tự dựng con trỏ (cursor); khi hết hiệu lực thì truy vấn lại. `selectedOnly` lọc theo trạng thái chọn tại thời điểm đọc từng trang, thao tác chỉnh sửa của người dùng có thể làm thay đổi kết quả truy vấn, không coi phân trang là một ảnh chụp nhanh đã đóng băng.
+For pagination, check `hasMore` / `nextCursor`, keep all original query parameters and replace only `cursor`; node filtering and edge queries scan at most 2000 items per call, so even if the current `nodes` / `edges` are empty, `hasMore: true` means the scan is not finished. `totalNodes` / `totalEdges` are totals for the whole canvas, not filter hit counts. Do not parse or construct cursors yourself; re-query when they become invalid. `selectedOnly` filters by the selection state at the time each page is read; user edits may change query results, so do not treat pagination as a frozen snapshot.
 
-Bên trong một node cũng có thể rất lớn. `getCanvasNodes` dùng `path` để chọn đường dẫn con trong phép chiếu, ví dụ `path: ["data", "promptModel"]` hoặc `["outputs", "text", "value"]`, trả về `value` của đường dẫn đó; đoạn đầu chỉ có thể là một trong sáu trường chiếu, `ports` tương ứng với `data.handles` của node. Mảng và đối tượng phân trang bằng `valueOffset` / `valueLimit`, mặc định 0 / 30, tối đa 100 mục; chuỗi chia đoạn bằng `textOffset` / `textLimit`, mặc định 0 / 1000, tối đa 4000 ký tự. Khi `valueOffset` hoặc `textOffset` lớn hơn 0 thì bắt buộc phải cung cấp `path`, để tránh mọi trường chiếu cùng bị lệch. Đường dẫn chỉ truy cập thuộc tính riêng, không đọc được thuộc tính kế thừa.
+A single node's content can also be large. `getCanvasNodes` uses `path` to select a sub-path within the projection, e.g. `path: ["data", "promptModel"]` or `["outputs", "text", "value"]`, returning that path's `value`; the first segment can only be one of the six projection fields, and `ports` corresponds to the node's `data.handles`. Arrays and objects are paginated with `valueOffset` / `valueLimit`, default 0 / 30, max 100 items; strings are segmented with `textOffset` / `textLimit`, default 0 / 1000, max 4000 characters. When `valueOffset` or `textOffset` is greater than 0, `path` must be provided, to avoid misaligning all projection fields together. Paths only access own properties and cannot read inherited properties.
 
-`path` tối đa 64 tầng, mỗi đoạn tối đa 256 ký tự (cho phép khóa rỗng của đối tượng JSON), độ dài JSON UTF-8 của toàn bộ đường dẫn tối đa 2048 byte. Khi chạm giới hạn độ sâu hoặc số byte của đường dẫn thì trả về `pathDepthLimit` / `pathBytesLimit`, không được nhầm dấu hiệu đó là đã đọc xong toàn bộ nội dung; khóa quá dài được đánh dấu bằng `keyTooLong`, kèm `nextOffset` để tiếp tục đọc các trường phía sau.
+`path` has at most 64 levels, each segment at most 256 characters (empty keys of JSON objects are allowed), and the JSON UTF-8 length of the whole path is at most 2048 bytes. When the path depth or byte boundary is reached, `pathDepthLimit` / `pathBytesLimit` is returned; do not mistake that marker for having read the full content. Overlong keys are marked with `keyTooLong`, and `nextOffset` is provided to continue reading subsequent fields.
 
-`hasMore/nextCursor` ở cấp cao nhất có nghĩa là còn node chưa được trả về, giữ nguyên tham số ban đầu để tiếp tục phân trang node; `truncated` của từng node có nghĩa là giá trị của node đó chưa đọc hết. Khi xử lý bất kỳ mục bị cắt nào, chỉ truy vấn node chứa nó, dùng đường dẫn và offset của mục đó, không mang theo `cursor` ban đầu; quy tắc cụ thể:
+Top-level `hasMore/nextCursor` means some nodes have not been returned yet; keep the original parameters to continue node pagination. Each node's `truncated` means that node's values have not been fully read. When handling any truncated item, query only its owning node, using that item's path and offset, without carrying the original `cursor`; specific rules:
 
-- `text`: dùng `path` của mục đó và `nextOffset` làm `textOffset` để đọc tiếp; `entries`: dùng `path` của mục đó và `nextOffset` làm `valueOffset` để đọc tiếp. Không có `nextOffset` nghĩa là đường dẫn đó đã đến cuối, dấu hiệu vẫn có thể còn vì lần này chỉ trả về nửa sau.
-- `depth/budget`: dùng `path` của mục đó để mở một truy vấn chi tiết mới, thu hẹp phạm vi đọc; khi đọc lại đường dẫn không mang theo `cursor` của truy vấn ban đầu.
-- `pathDepthLimit/pathBytesLimit/keyTooLong/circular` có nghĩa là không thể triển khai đầy đủ. `keyTooLong` có thể dùng `nextOffset` trả về để bỏ qua khóa đó và đọc tiếp các trường sau, nhưng giá trị bị bỏ qua vẫn chưa lấy được; không thử lại liên tục với giới hạn cứng hay coi đó là nội dung đầy đủ.
+- `text`: continue reading with that item's `path` and `nextOffset` as `textOffset`; `entries`: continue reading with that item's `path` and `nextOffset` as `valueOffset`. No `nextOffset` means the path has reached its end; the marker may still be present because this call only returned the latter part.
+- `depth/budget`: start a new detail query with that item's `path`, narrowing the read scope; do not carry the original query's `cursor` when re-reading the path.
+- `pathDepthLimit/pathBytesLimit/keyTooLong/circular` mean it cannot be fully expanded. `keyTooLong` can skip that key using the returned `nextOffset` and continue reading subsequent fields, but the skipped value is still not obtained; do not repeatedly retry hard limits or treat it as complete content.
 
-Với nội dung node, trước tiên đọc các trường cần thiết, phát hiện bị cắt thì mới bổ sung theo đường dẫn, không mở rộng thành đọc toàn đồ thị. Đường dẫn tệp văn bản đã có thì giao cho công cụ đọc tệp; khi đối chiếu toàn văn phải bao gồm cả đoạn đã đọc và đoạn đọc tiếp.
+For node content, read the needed fields first, and after finding truncation fill in along the path; do not expand into a whole-canvas read. Hand existing text file paths to the file read tool; when verifying the full text, it must include both the already-read fragment and the continued fragments.
 
-Tác vụ toàn cục xử lý từng trang và ghi lại tiến độ, trong ngữ cảnh chỉ giữ lô hiện tại, bản tóm tắt tích lũy và con trỏ; không tích lũy toàn bộ chi tiết. Thao tác thêm/xóa trên toàn đồ thị có thể làm con trỏ duyệt mất hiệu lực, hãy truy vấn lại và đối chiếu theo các ID đã xử lý hoặc kết quả, tránh thực hiện trùng lặp. Sau khi thêm, xóa node hoặc chuyển canvas, dùng `getNodeTools` để khám phá lại các hàm liên quan.
+Process global tasks page by page and record progress, keeping only the current batch, cumulative summary and cursor in context; do not accumulate all details. Adding or deleting across the whole canvas may invalidate traversal cursors; re-query and verify against already-processed IDs or results to avoid repeated execution. After nodes are added, deleted or the canvas is switched, use `getNodeTools` to rediscover the relevant functions.
 
-## Quản lý canvas
+## Canvas management
 
-| Công cụ | Tham số | Hành vi và kết quả trả về |
+| Tool | Parameters | Behavior and return |
 | --- | --- | --- |
-| `addCanvas` | `{ name? }` | Tạo canvas trống và chuyển sang nó; khi bỏ qua tên thì tự động dùng tên "Canvas N" chưa bị chiếm. Trả về tổng quan canvas mới được kích hoạt. |
-| `switchCanvas` | `{ canvasId }` | Chờ các sửa đổi hiện tại được lưu rồi chuyển sang canvas chỉ định, trả về tổng quan canvas mới được kích hoạt. |
-| `renameCanvas` | `{ canvasId?, name }` | Khi bỏ qua ID thì đổi tên canvas đang kích hoạt, đồng thời sửa tên tệp JSON. Trả về tổng quan canvas đang kích hoạt sau thao tác. |
+| `addCanvas` | `{ name? }` | Creates a blank canvas and switches to it; when the name is omitted, an unused "CanvasN" is used automatically. Returns the overview of the newly active canvas. |
+| `switchCanvas` | `{ canvasId }` | Waits for current changes to be saved and then switches to the specified canvas, returning the overview of the newly active canvas. |
+| `renameCanvas` | `{ canvasId?, name }` | When the ID is omitted, renames the active canvas and also changes the JSON file name. Returns the overview of the active canvas after the operation. |
 
-Tên sau khi bỏ khoảng trắng đầu cuối phải dài 1–120 ký tự, không kèm phần mở rộng `.json`, phải là tên tệp hợp lệ; không được chứa dấu phân cách đường dẫn, ký tự không hợp lệ trong tên tệp, ký tự điều khiển, không được kết thúc bằng dấu chấm hay dùng tên dành riêng của hệ thống. Tệp trùng tên sẽ không bị ghi đè.
+The name, after trimming leading and trailing whitespace, is 1-120 characters, without the `.json` extension, and must be a valid file name; it cannot contain path separators, illegal file name characters or control characters, cannot end with a dot, and cannot use system reserved names. Files with the same name are not overwritten.
 
-ID canvas gắn với tên tệp, sau khi đổi tên hãy đọc lại ID được trả về. Đổi tên một canvas không kích hoạt sẽ không chuyển sang nó. Sau khi tạo hoặc chuyển canvas thành công qua các công cụ trên, các lần gọi tiếp theo trong lượt này sẽ tác động lên canvas mới được kích hoạt.
+The canvas ID is tied to the file name; after renaming, re-read the returned ID. Renaming an inactive canvas does not switch to it. After successfully creating or switching a canvas through the tools above, subsequent calls in this turn act on the new active canvas.
 
-## Node và dây nối
+## Nodes and edges
 
-| Công cụ | Tham số | Hành vi và kết quả trả về |
+| Tool | Parameters | Behavior and return |
 | --- | --- | --- |
-| `addNode` | `{ type, position: { x, y }, label? }` | Thêm node mới, trả về thông tin node; hàm thì tra bằng `getNodeTools`. Khi không chỉ định tên thì dùng `label` của loại. |
-| `moveNodes` | `{ moves: [{ nodeId, position: { x, y } }] }` | Di chuyển hàng loạt, trả về thông tin node `nodes`. Node không kéo được sẽ từ chối thao tác. |
-| `renameNodes` | `{ renames: [{ nodeId, label }] }` | Cập nhật tên hiển thị hàng loạt, trả về thông tin node `nodes`. Không thay đổi ID node. |
-| `deleteNodes` | `{ nodeIds: [...] }` | Xóa node và các cạnh kết nối của nó, trả về `nodeIds`, `removedEdgeCount`, tối đa 100 mục `removedEdgeIds` và `truncated`; việc cắt bớt chỉ ảnh hưởng đến biên nhận. |
-| `connectNodes` | `{ connections: [{ source, sourceHandle, target, targetHandle }] }` | Kết nối hàng loạt cổng đầu ra với cổng đầu vào, trả về `{ edges }`. Khi kết nối hoàn toàn giống hệt đã tồn tại thì trả về cạnh đã có. |
-| `deleteEdges` | `{ edgeIds: [...] }` | Xóa các dây nối chỉ định, trả về `edgeIds` và thông tin node liên quan `nodes`. |
-| `selectNodes` | `{ nodeIds: [...] }` | Thay thế lựa chọn hiện tại, trả về `selectedCount`, tối đa 100 mục `selectedNodeIds` và `truncated`; mảng rỗng hủy chọn node. |
-| `arrangeCanvas` | `{}` | Sắp xếp toàn bộ canvas hiện tại: theo kích thước thực của node và dây nối, xếp các node cấp cao nhất từ trái sang phải, node con di chuyển theo node cha, và tự động khớp khung nhìn. Trả về `arrangedCount`, tối đa 100 mục `arrangedNodeIds`, `truncated` và `viewport`; không đổi nội dung, dây nối hay lựa chọn, không kích hoạt tạo. |
-| `fitCanvas` | `{ nodeIds?: [...] }` | Điều chỉnh khung nhìn, trả về `fitted`, `viewport`, `nodeCount` và `truncated`; khi truyền `nodeIds` thì trả thêm tối đa 100 mục `nodeIds`, khi bỏ qua thì hiển thị toàn bộ node. |
+| `addNode` | `{ type, position: { x, y }, label? }` | Adds a node and returns node info; query functions with `getNodeTools`. When no name is specified, the type's `label` is used. |
+| `moveNodes` | `{ moves: [{ nodeId, position: { x, y } }] }` | Batch move, returns `nodes` node info. Non-draggable nodes reject the operation. |
+| `renameNodes` | `{ renames: [{ nodeId, label }] }` | Batch update display names, returns `nodes` node info. Does not change node IDs. |
+| `deleteNodes` | `{ nodeIds: [...] }` | Deletes nodes and their connected edges, returns `nodeIds`, `removedEdgeCount`, up to 100 `removedEdgeIds` and `truncated`; truncation only affects the receipt. |
+| `connectNodes` | `{ connections: [{ source, sourceHandle, target, targetHandle }] }` | Batch connects output and input ports, returns `{ edges }`. When an identical connection already exists, the existing edge is returned. |
+| `deleteEdges` | `{ edgeIds: [...] }` | Deletes the specified edges, returns `edgeIds` and associated node info `nodes`. |
+| `selectNodes` | `{ nodeIds: [...] }` | Replaces the current selection, returns `selectedCount`, up to 100 `selectedNodeIds` and `truncated`; an empty array clears node selection. |
+| `arrangeCanvas` | `{}` | Arranges the whole current canvas: lays out top-level nodes left to right by real node sizes and edges, child nodes move with their parents, and the viewport is fitted automatically. Returns `arrangedCount`, up to 100 `arrangedNodeIds`, `truncated` and `viewport`; does not change content, edges or selection, and does not trigger generation. |
+| `fitCanvas` | `{ nodeIds?: [...] }` | Adjusts the viewport, returns `fitted`, `viewport`, `nodeCount` and `truncated`; when `nodeIds` is passed, also returns up to 100 `nodeIds`; when omitted, shows all nodes. |
 
-`truncated` trong biên nhận của các thao tác trên chỉ có nghĩa là danh sách ID được rút gọn, không có nghĩa là thao tác chỉ hoàn thành phần xem trước. Không thực hiện lại thao tác chỉ để lấy đủ biên nhận; khi cần thì dùng công cụ đọc để đối chiếu phạm vi bị ảnh hưởng.
+The `truncated` in the receipts of the operations above only means the ID list is abbreviated, not that the operation completed only the previewed part. Do not repeat operations to get a full receipt; use the read tools to verify the affected scope as needed.
 
-### Ràng buộc tham số
+### Parameter constraints
 
-- `position` dùng tọa độ canvas, không phải tọa độ pixel màn hình; `x`, `y` phải là số hữu hạn. Khi bật bám lưới, vị trí khi thêm mới và di chuyển sẽ được làm tròn theo lưới, lấy `node.position` được trả về làm chuẩn.
-- `label` của node sau khi bỏ khoảng trắng đầu cuối phải dài 1–200 ký tự.
-- `addNode` chỉ chấp nhận các loại có trong `availableNodeTypes` hiện tại, không chấp nhận `data` tùy ý hay ID node tự định nghĩa. Khi cần điền nội dung hoặc thiết lập tham số node, dùng hàm node đã đăng ký.
-- Các thao tác di chuyển, đổi tên, xóa, kết nối nói trên mỗi lô có 1–64 mục, một mục đơn lẻ cũng dùng tham số mảng. Chỉ cần một mục kiểm tra không đạt thì cả lô không được thực hiện; ngoại lệ xảy ra trong lúc thực hiện không có nghĩa là các tác dụng phụ đã phát sinh được tự động hoàn tác, trước khi khôi phục vẫn cần đọc lại.
-- Tham số cấp cao nhất của công cụ được kiểm tra theo đối tượng nghiêm ngặt, không truyền trường chưa khai báo. `nodeTools.args` còn phải thỏa định nghĩa tham số của hàm node cụ thể.
-- ID node, ID canvas, ID cạnh là các định danh khác nhau, không dùng tên hiển thị thay cho chúng.
+- `position` uses canvas coordinates, not screen pixel coordinates; `x` and `y` must be finite numbers. When grid snapping is on, positions of added and moved nodes are rounded to the grid; the returned `node.position` is authoritative.
+- A node `label`, after trimming leading and trailing whitespace, is 1-200 characters.
+- `addNode` only accepts types in the current `availableNodeTypes`, and does not accept arbitrary `data` or custom node IDs. Use registered node functions when you need to fill in content or set node parameters.
+- The move, rename, delete and connect operations above take 1-64 items per batch; a single item also uses the array parameter. If any item fails validation, the whole batch is not executed; an exception during execution does not mean side effects already produced are automatically rolled back, so read back before recovering.
+- Top-level tool parameters use strict object validation; do not pass undeclared fields. `nodeTools.args` must also satisfy the specific node function's parameter definition.
+- Node IDs, canvas IDs and edge IDs are different identifiers; do not substitute display names for them.
 
-### Quy tắc kết nối
+### Connection rules
 
-Trước tiên đọc cổng hai đầu bằng `getCanvasNodes({ nodeIds: [...], fields: ["ports"] })`, mỗi cổng gồm `id`, `type`, `dataType`, có thể còn có `label`. `source`, `target` là ID node; `sourceHandle`, `targetHandle` là ID cổng bên trong từng node tương ứng.
+First read both ends' ports with `getCanvasNodes({ nodeIds: [...], fields: ["ports"] })`; each port contains `id`, `type`, `dataType`, and possibly `label`. `source` and `target` are node IDs; `sourceHandle` and `targetHandle` are port IDs within their respective nodes.
 
-- Chỉ được kết nối từ cổng đầu ra `type: "source"` đến cổng đầu vào `type: "target"`.
-- Dùng ID cổng thực tế, không đoán dựa trên chữ gợi ý như "Đầu vào ảnh". Các node khác nhau có thể có cổng cùng tên, phải đồng thời xác nhận node sở hữu.
-- Công cụ áp dụng quy tắc kiểm tra kết nối của canvas và node đích; khớp loại không đảm bảo chắc chắn kết nối được, node đích có thể có quy tắc bổ sung. Khi kết nối bị từ chối, kiểm tra cổng và mô tả hàm mới nhất, không sửa JSON để ép nối dây.
-- Văn bản kịch bản và phân cảnh dùng để lập kế hoạch, không trực tiếp làm đầu vào cho node tạo ảnh hoặc video. Trước tiên xác nhận các tài sản như nhân vật, bối cảnh, rồi chuyển toàn bộ shot của đoạn hiện tại thành một prompt video chuyên dụng; dây nối chỉ mang những tư liệu thực sự được dùng lần này.
-- Sau khi nối xong media, đối chiếu thứ tự tham chiếu thực tế của node đích, rồi dùng `node:setPrompt` ghi `{{ref N}}`, tên tư liệu và công dụng. Nối dây thành công không có nghĩa là prompt đã gắn với tư liệu; chi tiết đánh số và đối chiếu cấu hình xem [Chuyển đổi sản xuất mục 3–4](references/videoProduction.md).
-- Khi node hoặc dây nối cấm kết nối, chọn, di chuyển, xóa thì tuân theo lỗi được trả về. Xóa node có node con thì phải xóa node con trước hoặc đưa chúng vào cùng lô xóa; nếu liên quan đến nội dung người dùng không yêu cầu xóa, trước tiên làm rõ phạm vi, không tự động mở rộng thao tác xóa.
+- You can only connect from an output port with `type: "source"` to an input port with `type: "target"`.
+- Use the actual port IDs; do not guess from hint text such as "image input". Different nodes can have ports with the same name, so the owning node must be confirmed as well.
+- The tool reuses the connection validation of the canvas and target node; matching types does not guarantee a connection is possible, as the target node may have extra rules. When a connection is rejected, check the latest ports and function descriptions; do not modify JSON to force the wiring.
+- Script and storyboard text are for planning and are not used directly as inputs to image or video generation nodes. First confirm assets such as characters and locations, then rewrite all shots of the current segment into one dedicated video prompt; edges carry only the media actually used this time.
+- After connecting media, verify the target's actual reference order, then use `node:setPrompt` to write `{{ref N}}`, media names and purposes. A successful connection does not mean the prompt has bound the media; for detailed numbering and configuration verification, see [Production conversion sections 3-4](references/videoProduction.md).
+- When a node or edge forbids connecting, selecting, moving or deleting, follow the returned error. Deleting a node with child nodes requires first deleting the child nodes or including them in the same delete batch; if it involves content the user did not ask to delete, clarify the scope first and do not automatically expand the delete operation.
 
-## Gọi hàm node
+## Calling node functions
 
-Dùng `nodeTools({ nodeId, name, args })`:
+Use `nodeTools({ nodeId, name, args })`:
 
-- `nodeId` và `name` phải đến từ cùng một mục trong danh sách hàm; `name` giữ nguyên tiền tố đầy đủ `node:`.
-- Dựng `args` theo JSON Schema `parameters` của mục đó, tuân thủ trường bắt buộc, enum và cấu trúc dữ liệu; hàm không có tham số cũng truyền `{}`.
-- Không giả định mọi node đều có cùng một bộ hàm, ví dụ các khả năng như thiết lập prompt, nhập tư liệu, tạo media phải lấy nội dung đăng ký thực tế của node đó làm chuẩn.
-- Khi cần đối chiếu hoặc sửa cấu hình tạo, nếu danh sách có `node:getConfig` thì dùng nó để đọc cấu hình hiện tại và khả năng của các model khả dụng; các tùy chọn cần thay đổi thì sửa bằng `node:setConfig` theo mô tả tham số thực tế, rồi đối chiếu kết quả trả về. Sửa cấu hình không kích hoạt tạo; các thiết lập hợp lệ người dùng đã xác nhận thì tiếp tục dùng, không chọn lại model chỉ vì một tác vụ chỉnh sửa thông thường.
-- Trước khi tạo ảnh hoặc video, trình bày model thực tế, đối tượng và số lượng, quy cách, prompt, tham chiếu và chi phí, chờ người dùng phê duyệt rõ ràng phương án tiêu tốn credit tính toán; không biết giá thì nói là chưa biết. Ảnh đơn, bản mẫu nhỏ, bổ sung thêm, tạo lại và các lần thử lại có thể tính phí đều bị ràng buộc bởi phạm vi ủy quyền, một lô cụ thể có thể xác nhận một lần. Dùng `askUser` nếu có, khi không có công cụ đó thì hỏi bằng văn bản và chờ trả lời; chưa trả lời thì không được kích hoạt tạo. Khi không chỉ định nhà cung cấp, mặc định chọn model Toonflow thực sự khả dụng và đáp ứng yêu cầu theo thứ tự công cụ trả về; lựa chọn người dùng chỉ định rõ hoặc đã xác nhận được ưu tiên, không được coi giá trị mặc định tự động của node là lựa chọn của người dùng; khi không có model Toonflow phù hợp thì trước tiên nêu rõ và xác nhận nhà cung cấp hoặc model thay thế.
-- Giá trị trả về do hàm node quyết định; khi không có giá trị trả về thì là `null`. Giới hạn 64 KiB của năm công cụ đọc canvas không áp dụng cho kết quả thực thi của hàm nghiệp vụ `nodeTools`. Thực thi thành công không tự động có nghĩa là tạo media thành công, phải kiểm tra nội dung trả về và trạng thái node mới nhất.
-- Sau khi tạo node mới có thể dùng ngay ID node được trả về để tra `getNodeTools` và gọi, không cần kết thúc lượt hội thoại hiện tại.
+- `nodeId` and `name` must come from the same item of the function list; `name` keeps the full `node:` prefix.
+- Build `args` according to that item's `parameters` JSON Schema, following required fields, enums and data structures; pass `{}` for functions without parameters.
+- Do not assume all nodes have the same set of functions; capabilities such as setting prompts, importing media and generating media must be based on what the node actually registers.
+- When you need to verify or modify the generation configuration, if the list provides `node:getConfig`, read the current configuration and available model capabilities through it; change the options that need changing with `node:setConfig` according to the actual parameter descriptions, then verify the returned result. Configuration changes do not trigger generation; valid settings already confirmed by the user continue to apply, and do not re-select the model because of an ordinary editing task.
+- Before image or video generation, present the actual model, targets and quantity, specs, prompt, references and cost, and wait for the user to explicitly approve the compute credits spending plan; if the price is unknown, say it is unknown. Single images, small samples, additions, regenerations and retries that may incur charges are all bound by the authorized scope; specific batches can be confirmed at once. Use the available `askUser`; when that tool is unavailable, ask in text and wait for a reply; no answer cannot trigger generation. When no provider is specified, by default choose an actually available Toonflow model that meets the need in the order returned by the tool; a choice explicitly specified or already confirmed by the user takes precedence, and a node's automatic default cannot be treated as the user's choice; when no applicable Toonflow model exists, first explain and confirm an alternative provider or model.
+- The return value is determined by the node function; it is `null` when there is no return value. The 64 KiB limit of the five canvas read tools does not apply to `nodeTools` business function results. Successful execution does not automatically mean media generation succeeded; check the returned content and the latest node state.
+- After creating a node, you can immediately query `getNodeTools` with the returned node ID and call it, without ending the current conversation turn.
 
-## Tác vụ thường gặp
+## Common tasks
 
-### Chuyển phương án sáng tác thành canvas có thể thực thi
+### Turn a creative plan into an executable canvas
 
-Khi tác vụ sản xuất từ kịch bản, tiểu thuyết hay ý tưởng cần biến phân cảnh, tư liệu và prompt thành node, đọc [Chuyển đổi canvas cho sản xuất video](references/videoProduction.md). Tài liệu đó giải thích nội dung nào đưa vào node văn bản, cách tái sử dụng media và kết nối các phụ thuộc thực, cũng như đối chiếu hoàn tất của việc tạo chạy nền. Các tham số chung vẫn lấy sổ tay này và mô tả do công cụ hiện tại trả về làm chuẩn.
+When script, novel or creative production tasks need storyboards, media and prompts implemented as nodes, read [Canvas conversion for video production](references/videoProduction.md). It explains what goes into text nodes, how to reuse media and connect real dependencies, and how to verify completion of background generation. General parameters still follow this manual and the descriptions returned by the current tools.
 
-### Tạo canvas mới và thêm node
+### Create a new canvas and add nodes
 
-Gọi `addCanvas({ "name": "Bản nháp phân cảnh" })`, rồi dùng `getCanvas({ "include": ["nodeTypes"] })` để tra `availableNodeTypes`, chọn loại phù hợp với yêu cầu của người dùng truyền vào `type` của `addNode`. Ví dụ vị trí có thể dùng `{ "x": 120, "y": 160 }`; tên do ý định của người dùng quyết định. Ghi lại `node.id` được trả về, dùng `getNodeTools` để tra và gọi hàm điền nội dung node, cuối cùng gọi `fitCanvas({})`.
+Call `addCanvas({ "name": "Storyboard draft" })`, then use `getCanvas({ "include": ["nodeTypes"] })` to query `availableNodeTypes`, and pass the type that matches the user's request as the `type` of `addNode`. For example, the position can be `{ "x": 120, "y": 160 }`; the name is determined by the user's intent. Record the returned `node.id`, use `getNodeTools` to query and call functions to fill in the node content, and finally call `fitCanvas({})`.
 
-### Kết nối hai node đã có
+### Connect two existing nodes
 
-Gọi `findCanvasNodes`, định vị hai node theo tên hoặc trạng thái chọn mà người dùng chỉ định; khi đã biết ID thì bỏ qua bước tìm, nếu các node cùng tên không phân biệt được thì trước tiên làm rõ mục tiêu. Sau khi dùng `getCanvasNodes` đọc cổng đầu ra và đầu vào, điền ID thực tế vào mảng `connections` của `connectNodes`. Kiểm tra hai đầu của `edges` được trả về, rồi khi cần thì lấy tiêu điểm vào hai node này.
+Call `findCanvasNodes` to locate the two nodes by the name or selection state the user specified; skip the search when the IDs are known, and if same-name nodes cannot be distinguished, clarify the target first. After reading the output and input ports with `getCanvasNodes`, fill the actual IDs into the `connections` array of `connectNodes`. Check both ends of the returned `edges`, then focus on these two nodes as needed.
 
-### Tìm và đọc một đoạn chỉ định
+### Find and read a specified segment
 
-Ví dụ người dùng chỉ định G51, trước tiên gọi `findCanvasNodes({ "query": "G51", "limit": 20 })`, xác nhận mục tiêu theo kết quả phân trang. `ID-mục-tiêu` dưới đây phải thay bằng ID thực tế được trả về:
+For example, if the user specifies G51, first call `findCanvasNodes({ "query": "G51", "limit": 20 })` and confirm the target from the paginated results. The `targetId` below must be replaced with the actual returned ID:
 
-- Đối chiếu prompt và đầu ra: `getCanvasNodes({ "nodeIds": ["ID-mục-tiêu"], "fields": ["label", "data", "outputs"], "dataKeys": ["prompt", "referenceOrder"] })`. Trường mặc định không gồm `ports/data/outputs`, không được coi trường chưa yêu cầu là giá trị rỗng.
-- Đọc prompt dài: `getCanvasNodes({ "nodeIds": ["ID-mục-tiêu"], "path": ["data", "prompt"], "textLimit": 4000 })`; các lần sau dùng `nextOffset` được trả về, không tự suy ra theo độ dài yêu cầu.
-- Tra cạnh vào của mục tiêu: `getCanvasEdges({ "nodeIds": ["ID-mục-tiêu"], "direction": "incoming", "limit": 100 })`; tra các hàm có thể gọi: `getNodeTools({ "nodeIds": ["ID-mục-tiêu"], "limit": 20 })`.
+- Verify prompt and output: `getCanvasNodes({ "nodeIds": ["targetId"], "fields": ["label", "data", "outputs"], "dataKeys": ["prompt", "referenceOrder"] })`. Default fields do not include `ports/data/outputs`; do not treat unrequested fields as empty values.
+- Read a long prompt: `getCanvasNodes({ "nodeIds": ["targetId"], "path": ["data", "prompt"], "textLimit": 4000 })`; afterwards use the returned `nextOffset`, do not compute it yourself from the requested length.
+- Query the target's incoming edges: `getCanvasEdges({ "nodeIds": ["targetId"], "direction": "incoming", "limit": 100 })`; query callable functions: `getNodeTools({ "nodeIds": ["targetId"], "limit": 20 })`.
 
-### Sắp xếp node hàng loạt
+### Batch-arrange nodes
 
-Chỉ khi người dùng yêu cầu rõ ràng sắp xếp toàn bộ canvas hiện tại, sau khi xác nhận mục tiêu thì gọi `arrangeCanvas({})` một lần, không tự tính tọa độ của mọi node rồi di chuyển từng cái. Công cụ này tái sử dụng chức năng sắp xếp sẵn có của canvas, không nhận `nodeIds` hay tham số phạm vi cục bộ khác.
+Only when the user explicitly asks to arrange the whole current canvas, call `arrangeCanvas({})` once after confirming the target; do not compute all node coordinates yourself and move them one by one. This tool reuses the canvas's existing arrange feature and does not accept `nodeIds` or other local scope parameters.
 
-Khi các node cần sắp xếp chưa được đo kích thước hoặc không thể di chuyển, công cụ trả về lỗi rõ ràng; không đoán kích thước hay lách giới hạn di chuyển. Canvas trống trả về bình thường với `arrangedNodeIds` rỗng, không thực hiện bố cục hay điều chỉnh khung nhìn.
+When nodes to be arranged have not been measured yet or cannot be moved, the tool explicitly returns an error; do not guess sizes or bypass movement restrictions. An empty canvas normally returns an empty `arrangedNodeIds`, and no layout or viewport adjustment is performed.
 
-Khi chỉ sắp xếp các shot chỉ định hoặc node cục bộ, đọc vị trí thực tế và phạm vi mục tiêu, dùng mảng `moves` của `moveNodes` để điều chỉnh các node đó, khi cần thì dùng `fitCanvas({ "nodeIds": [...] })` để hiển thị. Khi chỉ yêu cầu nhìn rõ nội dung thì dùng thẳng `fitCanvas`, không xếp lại node. Không được gọi `arrangeCanvas` để sắp xếp cục bộ mà di chuyển các node khác của người dùng, cũng không xóa hay dựng lại node thay cho việc di chuyển.
+When arranging only specified shots or local nodes, read the actual positions and target range, adjust those nodes with the `moves` array of `moveNodes`, and use `fitCanvas({ "nodeIds": [...] })` to show them as needed. When the user only wants to see the content clearly, use `fitCanvas` directly without rearranging nodes. Do not call `arrangeCanvas` for local arrangement and move the user's other nodes, and do not delete or rebuild nodes instead of moving them.
 
-## Xử lý sau khi thất bại
+## Handling failures
 
-- Loại node chưa bật, cổng không tồn tại, hàm chưa đăng ký: lần lượt dùng `getCanvas({ include: ["nodeTypes"] })`, `getCanvasNodes`, `getNodeTools` để tra trạng thái mới nhất và điều chỉnh thao tác, không đoán hàm thay thế.
-- Canvas đã đóng, người dùng tự tay chuyển dự án hoặc canvas, ngữ cảnh của lượt này mất hiệu lực: ngừng dùng ID cũ, nhờ người dùng gửi lại yêu cầu trên canvas mục tiêu.
-- Hết thời gian, hủy hoặc lưu thất bại không có nghĩa là thao tác đã được hoàn tác. Khi ngữ cảnh vẫn còn hiệu lực, trước tiên đọc trạng thái canvas mới nhất, xác nhận xem đã tạo node, dây nối hay canvas chưa, rồi mới quyết định có thử lại hay không, tránh tạo trùng hoặc kích hoạt tạo trùng.
-- Công cụ sẽ chờ các thao tác cần lưu được lưu xong; không ghi trực tiếp JSON canvas theo cách khác. Công cụ hiện tại không cung cấp giao diện chung để xóa canvas, ghi tùy ý dữ liệu node hay thiết lập tùy ý tham số khung nhìn.
+- Node type not enabled, port does not exist, function not registered: use `getCanvas({ include: ["nodeTypes"] })`, `getCanvasNodes`, `getNodeTools` respectively to query the latest state and adjust the operation; do not guess substitute functions.
+- Canvas closed, user manually switched project or canvas, this turn's context invalidated: stop reusing old IDs and ask the user to resend the request on the target canvas.
+- A timeout, cancellation or save failure does not mean the operation was rolled back. While the context is still valid, first read the latest canvas state to confirm whether nodes, edges or canvases were created, then decide whether to retry, to avoid duplicate creation or duplicate generation triggers.
+- The tools wait for operations that need saving to finish saving; do not write the canvas JSON directly yourself. The current tools do not provide general interfaces for deleting canvases, writing arbitrary node data or setting arbitrary viewport parameters.

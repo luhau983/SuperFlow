@@ -1,66 +1,66 @@
-# Phân tích tài sản phái sinh
+# Derived asset analysis
 
-Phân tích các biến thể hình ảnh mà kịch bản đã xác nhận hiện tại cần và các thiết kế người dùng yêu cầu bổ sung rõ ràng, không tạo ảnh ở giai đoạn này. Thao tác canvas xem [canvasOperations.md](canvasOperations.md).
+Analyze the visual variants needed by the currently confirmed script and the designs the user has explicitly added; do not generate images at this stage. For canvas operations see [canvasOperations.md](canvasOperations.md).
 
-## Đầu vào và nơi lưu
+## Input and placement
 
-- Đọc kịch bản chính thức của tập đó từ `Canvas/Kịch bản.json`; đọc tài sản cơ bản, các biến thể sẵn có và trạng thái xác nhận từ `Canvas/Tài sản.json`.
-- Phán đoán trực tiếp dựa trên kịch bản và mô tả tài sản, không yêu cầu kế hoạch đạo diễn cung cấp "Danh sách dự kiến phái sinh" của bản cũ.
-- Danh sách phái sinh và quan hệ cha con ghi thống nhất vào `Canvas/Tài sản.json`, canvas của tập này chỉ giữ tham chiếu và ghi chú shot áp dụng.
-- Tài sản cha phải thực sự tồn tại; thiếu tài sản cơ bản thì ghi lại chỗ thiếu và quay lại giai đoạn tài sản cơ bản, không bịa node cha hay lén tạo mới tài sản cơ bản.
+- Read this episode's formal script from `Canvas/Script.json`; read base assets, existing variants, and confirmation status from `Canvas/Assets.json`.
+- Judge directly from the script and asset descriptions; do not require the director plan to provide the legacy "derived pre-plan list".
+- The derived list and parent-child relationships are all written to `Canvas/Assets.json`; this episode's canvas keeps only references and notes on applicable shots.
+- The parent asset must actually exist; when a base asset is missing, record the gap and return to the base asset stage, without inventing a parent node or quietly creating a new base asset.
 
-## Nạp kiến thức trước khi thực hiện
+## Knowledge to load before execution
 
-- Đọc phần phân lớp tạo hình nhân vật, biến thể bối cảnh của [Phương pháp thiết kế tài sản](knowledge/assetDesign.md); khi gặp nhu cầu như trạng thái đạo cụ do người dùng yêu cầu bổ sung rõ ràng thì đọc thêm chương tương ứng.
-- Đọc nhánh hiện tại của [Phong cách vẽ và quy tắc hình ảnh](knowledge/visualStyles.md), và đọc lại "Quy ước hình ảnh dự án", thẻ thiết kế tài sản cha và ảnh cha đã xác nhận trên canvas tài sản.
-- Dùng kiến thức để chi tiết hóa "mục bất biến, mục được phép thay đổi, thay đổi kéo theo về chất liệu/ánh sáng", ghi vào canvas tài sản; có kiến thức thiết kế dùng được không đồng nghĩa với mở rộng phạm vi trích xuất mặc định trong bảng dưới.
+- Read character design layering and location variants in [asset design methods](knowledge/assetDesign.md); when the user explicitly adds requirements such as prop states, read the corresponding sections as well.
+- Read the current branch of [drawing styles and visual rules](knowledge/visualStyles.md), and read back the "Project visual conventions", parent asset design cards, and confirmed parent images on the assets canvas.
+- Use the knowledge to refine "invariants, permitted changes, knock-on changes in material/lighting" and write them to the assets canvas; available design knowledge does not mean expanding the default extraction scope in the table below.
 
-## Phạm vi tự động trích xuất mặc định
+## Default automatic extraction scope
 
-| Loại | Có thể trích xuất | Không trích xuất |
+| Type | May extract | Do not extract |
 |---|---|---|
-| Nhân vật | Thay trang phục toàn bộ, hiệu ứng biến thân, thay đổi hình thái về vóc dáng hoặc cấu trúc | Biểu cảm tức thời, viền mắt đỏ lên, cận cảnh cục bộ tay mắt miệng, tư thế trong một shot |
-| Bối cảnh | Biến thể theo khung giờ như cảnh ngày, cảnh đêm, sáng sớm, hoàng hôn của cùng một địa điểm | Chỉ đổi góc máy, thay đổi thời tiết, trạng thái hư hỏng |
-| Đạo cụ | Quy trình này không tự động phái sinh | Mọi biến thể trạng thái đạo cụ |
+| Character | Full costume change, transformation effects, form changes in body type or structure | Momentary expressions, reddened eyes, local close-ups of hands/eyes/mouth, single-shot poses |
+| Location | Time-of-day variants of the same place such as day, night, early morning, dusk | Mere camera position changes, weather changes, damaged states |
+| Prop | Not derived automatically in this flow | All prop state variants |
 
-Đây là ranh giới trích xuất mặc định của v1.1.8. Khi người dùng yêu cầu rõ ràng các thiết kế bổ sung như thời tiết, góc máy hoặc trạng thái đạo cụ, ghi lại nhu cầu đó và trực tiếp dùng phương pháp kiến thức tương ứng, không bị hạn chế bởi các mục loại trừ mặc định trong bảng; đã có yêu cầu rõ ràng thì không hỏi lại có cần không, chỉ xác nhận thiết kế và phương án tạo chưa xác định.
-Tự động trích xuất mặc định lấy các trạng thái tài sản ổn định, dùng lại được, làm thay đổi ngoại hình nhận diện tổng thể làm chuẩn; kịch bản viết là quan trọng không có nghĩa phải tạo tài sản mới. Ảnh tham chiếu bổ sung mà người dùng đã xác nhận có thể giữ cùng thân phận và ngoại hình, chỉ thay đổi góc máy hoặc trạng thái chỉ định.
-Khi cùng một trạng thái đã có ảnh xác nhận thì ưu tiên dùng lại; đã có phiên bản chờ duyệt thì tiếp tục sửa, không tạo lặp biến thể cùng tên.
-Mỗi tài sản cha thường chỉ cần 1~5 biến thể có căn cứ, khi không cần thì giữ ở số không.
+This is the default extraction boundary of v1.1.8. When the user explicitly asks for extra designs such as weather, camera position, or prop state, record the requirement and use the corresponding knowledge method directly, unrestricted by the default exclusions in the table; when there is already an explicit request, do not ask again whether it is needed, and only confirm the designs and generation plan not yet settled.
+Default automatic extraction is based on stable, reusable asset states that change the overall recognizable appearance; something being important in the plot does not mean a new asset must be created. Extra reference images the user has confirmed may keep the same identity and shape while changing only the camera position or the specified state.
+When a confirmed image already exists for the same state, prefer reusing it; when there is a version pending review, continue revising it, and do not create a duplicate variant with the same name.
+Each parent asset usually needs only 1-5 grounded variants, and keeps zero when none is needed.
 
-## Phân tích và ghi
+## Analysis and writing
 
-1. Đối chiếu từng tài sản với kịch bản và nhu cầu rõ ràng của người dùng, ghi lại cảnh gây ra thay đổi, câu chữ rõ ràng hoặc căn cứ nhu cầu.
-2. Phân biệt trạng thái cơ bản và trạng thái đích, ghi rõ "khác biệt so với trạng thái cơ bản" và "đặc điểm thân phận cần giữ".
-3. Khi tự động trích xuất mặc định, kiểm tra thay đổi có thể được biểu đạt bằng động tác, biểu cảm hoặc bố cục của một phân cảnh đơn lẻ không, nếu có thể thì không lập phái sinh; ảnh tham chiếu biến thể độc lập mà người dùng đã yêu cầu rõ thì làm bản nháp thiết kế theo phạm vi đó.
-4. Kiểm tra các biến thể sẵn có, dùng lại hoặc sửa; chỉ thêm bản nháp cho trạng thái không có bản ghi tương ứng.
-5. Ghi vào canvas tài sản thống nhất, và ghi lại tham chiếu canvas/node thật của tài sản cha, không được chỉ xuất danh sách trong chat.
-6. Thực hiện thiết kế theo kiến thức tương ứng: thay trang phục ghi thay đổi thực tế của trang điểm/kiểu tóc/áo trong/áo chính/giày/phụ kiện chứ không thiết lập lại toàn bộ; khung giờ ghi thay đổi nguồn sáng, độ dài bóng và việc bật tắt đèn; trạng thái đạo cụ bổ sung ghi phản ứng chất liệu cụ thể. Ghi ngược phong cách, bảng màu, chất liệu cùng các mục khóa theo ảnh cha, sau khi xác nhận mới được dùng để tạo.
+1. Go through assets one by one against the script and the user's explicit requirements, recording the scenes, explicit lines, or requirement basis that trigger the change.
+2. Distinguish the base state from the target state, and spell out "difference from the base state" and "identity features to keep".
+3. During default automatic extraction, check whether the change can be expressed by the action, expression, or composition of a single storyboard shot; if so, do not create a derivative. Independent variant reference images the user has explicitly requested get design drafts within that scope.
+4. Check existing variants, reuse or revise them; add drafts only for states without a corresponding record.
+5. Write to the unified assets canvas and record the parent asset's real canvas/node reference; do not just output a list in chat.
+6. Implement the design according to the corresponding knowledge: a costume change states the actual changes in makeup/hairstyle/inner layer/main garment/shoes/accessories rather than a full reset; a time of day states changes in light source, shadow length, and lights on or off; extra prop states describe the concrete material reaction. Write back the style, palette, material, and the parent image's locked items together; only after confirmation can they be used for generation.
 
-## Đầu ra kiểm chứng được
+## Verifiable output
 
-Mỗi mục gồm: tài sản cha và tham chiếu ảnh cha, tên phái sinh, loại, mục bất biến, mô tả thay đổi, thiết kế hình ảnh cụ thể, căn cứ kịch bản hoặc nhu cầu người dùng, tập/cảnh áp dụng, trạng thái ảnh.
-Tên nên ngắn gọn và dễ nhận biết, ví dụ "Tên nhân vật·Đồ chiến đấu" hoặc "Sân vườn·Cảnh đêm"; giữ quan hệ truy ngược được với tài sản cha.
-Mô tả dùng "Khác biệt so với trạng thái cơ bản · Đặc điểm hình ảnh đích", tránh viết mở rộng thân phận nhân vật hoặc thiết lập thế giới không có căn cứ.
-Khi ảnh cha chưa xác nhận hoặc không đọc được có thể lưu bản nháp thiết kế, nhưng không được đánh dấu là có thể tạo, cũng không được tuyên bố có ảnh tham chiếu dùng được.
-Khi không có biến thể đủ điều kiện, ghi "Không cần thêm phái sinh" và phạm vi đã kiểm tra vào canvas tài sản, đồng thời đồng bộ tiến độ của tập này.
+Each item contains: parent asset and parent image reference, derived name, type, invariants, change description, concrete visual design, script or user requirement basis, applicable episodes/scenes, image status.
+Names should be short and recognizable, e.g. "Character name - Battle suit" or "Courtyard - Night"; keep a traceable relationship with the parent asset.
+Descriptions use "difference from the base state - target visual features", avoiding ungrounded expansion of character identity or world setting.
+When the parent image is unconfirmed or unreadable, a design draft may be saved, but it cannot be marked as ready to generate, nor claimed to have a usable reference image.
+When no variant meets the criteria, write "No new derivatives needed" and the scope checked to the assets canvas and sync this episode's progress.
 
-## Đọc lại và xác nhận
+## Read-back and confirmation
 
-1. Đọc lại canvas tài sản, kiểm tra số lượng thêm mới/dùng lại lần này, tham chiếu tài sản cha, căn cứ kịch bản và trạng thái ảnh.
-   Đồng thời kiểm tra thiết kế dùng tiếp đúng quy ước phong cách vẽ: thay trang phục không đổi mặt, đổi khung giờ không đổi địa điểm; biểu hiện phương tiện, chất liệu và thay đổi trạng thái tương xứng, biến thể bổ sung có căn cứ xác nhận riêng.
-2. Trình bày ba loại kết quả thêm mới, dùng lại, chờ bổ sung đầu vào, nói rõ ảnh chưa được tạo.
-3. Để người dùng xác nhận toàn bộ, một phần, sửa hoặc bỏ qua; biến thể bị bỏ qua không được tiếp tục dùng làm tham chiếu ảnh khả dụng.
-4. Ghi phạm vi xác nhận ngược vào canvas tài sản và tiến độ của tập này, dừng giai đoạn này.
-5. Về sau theo [generateAssets.md](generateAssets.md) tạo tập con đã xác nhận; không tự động khởi tạo tác vụ.
+1. Read back the assets canvas, checking this run's new/reused counts, parent asset references, script basis, and image status.
+   Also check that the design follows the correct drawing-style conventions: a costume change does not change the face, a time-of-day change does not change the place; media expression, material, and state changes match, and extra variants have a separate confirmation basis.
+2. Show results in three groups: new, reused, and pending input, stating clearly that images have not yet been generated.
+3. Let the user confirm all, part, modify, or skip; skipped variants must not continue to be referenced as usable images.
+4. Write the confirmed scope back to the assets canvas and this episode's progress, and stop this stage.
+5. Afterward, generate the confirmed subset per [generateAssets.md](generateAssets.md); do not start tasks automatically.
 
-## Bàn giao sau khi tạo một phần hoặc bỏ qua
+## Handoff after partial generation or skipping
 
-Ghi rõ từng mục "trạng thái cốt truyện cần có, ảnh khả dụng hiện có, lựa chọn của người dùng, tập/cảnh bị ảnh hưởng, trạng thái về sau", không được chỉ để lại hai chữ "Đã bỏ qua".
+For each item write "required plot state, existing usable images, user choice, affected episodes/scenes, subsequent status"; do not leave just the word "Skipped".
 
-- Đã có ảnh chọn dùng ở trạng thái phù hợp: dùng lại trực tiếp, và ghi lại nguồn thực tế, không tạo mới nữa.
-- Chỉ có trạng thái cơ bản mà không có trạng thái cần thiết: giữ yêu cầu cốt truyện như thay trang phục, cảnh đêm và bản ghi chưa tạo, không được đem ảnh cơ bản giả làm ảnh phái sinh. Phân cảnh vẫn có thể viết bản nháp văn bản đầy đủ, nhưng các shot bị ảnh hưởng đánh dấu là "Chờ tư liệu/Chờ xác nhận phương án", không được vào bước tạo media tương ứng hay tuyên bố cả tập có thể sản xuất.
-- Khi người dùng muốn dùng tiếp ảnh hiện có để tiếp tục, đề xuất phương án thay thế cụ thể, nói rõ cách giữ cốt truyện gốc và trạng thái hình ảnh; chỉ khi phương án đó được xác nhận và mô hình hiện tại thực sự đáp ứng được mới cập nhật các phân cảnh liên quan và tham chiếu thực tế. Không tự động xóa thay trang phục/cảnh đêm, cũng không diễn giải "bỏ qua tạo" thành đã đồng ý hạ cấp hình ảnh.
-- Các shot không bị chỗ thiếu ảnh hưởng có thể tiếp tục theo tập con người dùng đã xác nhận; cả tập ghi là hoàn thành một phần, giữ lại phạm vi chưa giải quyết. Khi người dùng chưa ủy quyền lại, không vì khâu sau đọc thấy chỗ thiếu mà khởi tạo lại các tác vụ phái sinh đã bỏ qua.
+- When an adopted image with the matching state exists: reuse it directly and record the actual source, without generating anew.
+- When only the base state exists without the required state: keep the plot requirement such as the costume change or night scene and the not-generated record, and never pass off a base image as a derived image. The storyboard can still be written as a complete text draft, but affected shots are marked "Awaiting media/Awaiting plan confirmation", and must not enter the corresponding media generation or be claimed as making the whole episode producible.
+- When the user wants to continue with existing images, propose a concrete alternative, explaining how the original plot and visual state are preserved; only when that alternative is confirmed and the current model can actually support it, update the related storyboards and actual references. Do not automatically drop the costume change/night scene, and do not interpret "skip generation" as agreement to a visual downgrade.
+- Shots not affected by the gap may continue within the subset confirmed by the user; the whole episode is recorded as partially complete, keeping the unresolved scope. Unless the user re-authorizes, do not restart skipped derived tasks just because a downstream stage reads the gap.
 
-Cách xử lý xung đột với prompt quyết định của bản cũ và nguồn xem [sourceMap.md](sourceMap.md).
+For sources and conflict handling with the legacy decision prompts see [sourceMap.md](sourceMap.md).
