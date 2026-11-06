@@ -1,60 +1,62 @@
 ---
 name: explainerVideo
-description: Làm video giải thích khoa học ngắn tiếng Việt (3–4 phút, ~50 cảnh, 16:9) theo mẫu "AI Explainer" trên canvas Toonflow — kịch bản 7 nhịp có nhân vật nhân hoá, style low-poly 3D đồng nhất, character sheet, ảnh cảnh, giọng đọc từng câu, prompt chuyển động, clip ảnh→video và dựng thành phẩm có phụ đề. Dùng khi người dùng muốn làm video kiểu explainer/giải thích/"tại sao...?" theo mẫu này; không dùng khi chỉ bàn hoặc sửa chính skill.
+description: Make a short science explainer video (3-4 minutes, ~50 scenes, 16:9) on the Toonflow canvas following the "AI Explainer" template - a 7-beat script with anthropomorphized characters, one consistent low-poly 3D style, character sheets, scene images, per-line voiceover, motion prompts, image-to-video clips, and a final cut with subtitles. Use when the user wants an explainer / "why does...?" video in this template; do not use when only discussing or editing the skill itself.
 metadata:
-  version: "1.0.0"
-  displayName: Video giải thích khoa học (mẫu Explainer)
+  version: "1.1.0"
+  displayName: Science Explainer Video (Explainer template)
   author: SuperFlow
 ---
 
-# Video giải thích khoa học theo mẫu Explainer
+# Science explainer video (Explainer template)
 
-Biến một **chủ đề** thành video giải thích ngắn: tiêu đề là câu hỏi nghịch lý, mỗi câu thoại là một cảnh 4–5 giây, nhân vật nhân hoá có tính cách, cùng một style ảnh cho toàn bộ video. Mọi thành quả nằm trên canvas của dự án hiện tại; tóm tắt trong chat không thay cho node trên canvas.
+Turn a **topic** into a short explainer: the title is a paradoxical question, every spoken line is one 4-5 second scene, characters are anthropomorphized with personalities, and the whole video shares one image style. All results live on the current project's canvas; a chat summary does not replace nodes on the canvas.
 
-Thao tác canvas (đọc node, `addNode`, `nodeTools`, nối dây, `node:getConfig/setConfig/setPrompt/generateImage/generateVideo`) theo đúng hợp đồng trong skill `canvas` và tài liệu "canvasExecution" của skill `workflow` (định vị qua `available_skills`/`skillOperator`). Skill này chỉ quy định **nội dung và thứ tự** của mẫu Explainer.
+Narration, script and subtitles use the user's language (the reference video was Vietnamese). Image, motion and video prompts are always written in English.
 
-## Nguyên tắc cố định
+Canvas operations (reading nodes, `addNode`, `nodeTools`, edges, `node:getConfig/setConfig/setPrompt/generateImage/generateVideo`) follow the contract in the `canvas` skill and the "canvasExecution" reference of the `workflow` skill (locate them via `available_skills` / `skillOperator`). This skill only defines the **content and order** of the Explainer template.
 
-- **Làm từng bước, mỗi bước một cửa duyệt.** Xong bước → lưu lên canvas → đọc lại kiểm tra → trình bày → chờ người dùng xác nhận rõ ràng. Im lặng, bỏ qua hay câu "làm video đi" không phải xác nhận cho các bước sau.
-- **Đồng nhất trên hết.** STYLE BLOCK và mô tả nhân vật (desc) được chốt ở bước 2 và **không sửa giữa chừng** một video; muốn đổi thì làm lại các ảnh bị ảnh hưởng.
-- **1 câu thoại = 1 cảnh = 1 ảnh = 1 clip**, cùng một `id` ba chữ số (`001`, `002`, …) xuyên suốt kịch bản, bảng cảnh, ảnh, audio, prompt chuyển động và clip.
-- **Không tự tiêu tốn hạn mức.** Trước mỗi đợt generate ảnh/audio/video: nêu số node, model, tham số, ước tính chi phí (nếu không tra được thì nói "chưa rõ") và chờ đồng ý. Chạy theo lô 10–15 cảnh.
-- **Không bịa số liệu.** Mọi số liệu, mốc năm, tên chiến dịch, cơ chế khoa học phải có nguồn; không có nguồn thì bỏ hoặc nói chung chung.
-- Không để model ảnh/video tự vẽ chữ, phụ đề, watermark; phụ đề được ghép ở bước dựng.
+## Fixed principles
 
-## Bố cục canvas
+- **One step at a time, one approval gate per step.** Finish the step -> save it on the canvas -> read it back and check -> present it -> wait for explicit user confirmation. Silence, skipping, or "just make the video" is not confirmation for later steps.
+- **Consistency above all.** The STYLE BLOCK and character descriptions (desc) are locked in step 2 and **never edited mid-video**; to change them, regenerate every affected image.
+- **1 spoken line = 1 scene = 1 image = 1 clip**, sharing one three-digit `id` (`001`, `002`, ...) across the script, scene table, images, audio, motion prompts and clips.
+- **Never spend quota on your own.** Before every image/audio/video generation batch: state node count, model, parameters and estimated cost ("unknown" if it cannot be looked up) and wait for approval. Run in batches of 10-15 scenes.
+- **No invented facts.** Every figure, year, campaign name or scientific mechanism needs a source; without one, drop it or say it in general terms.
+- Never let image/video models draw text, subtitles or watermarks; subtitles are added at the assembly step.
 
-Một canvas cho một video, đặt tên theo chủ đề. Xếp từ trái sang phải theo bước, các cảnh xếp dọc theo `id`:
+## Canvas layout
 
-| Cột | Nội dung |
+One canvas per video, named after the topic. Lay out steps left to right, scenes stacked vertically by `id`:
+
+| Column | Content |
 |---|---|
-| 1 | Text "Kịch bản" (tiêu đề + câu thoại đánh số), text "Bảng cảnh", text "Nguồn" |
-| 2 | Text "Style block", mỗi nhân vật: text desc + các image sheet đã duyệt |
-| 3 | Mỗi cảnh: image generation "Cảnh 001" (nối ảnh sheet của nhân vật xuất hiện) |
-| 4 | Mỗi cảnh: audio "Thoại 001" |
-| 5 | Mỗi cảnh: video generation "Clip 001" (nối ảnh cảnh đã duyệt) |
+| 1 | Text "Script" (title + numbered lines), text "Scene table", text "Sources" |
+| 2 | Text "Style block"; per character: desc text + approved sheet images |
+| 3 | Per scene: image generation node "Scene 001" (connected to the sheets of the characters in it) |
+| 4 | Per scene: audio node "Line 001" |
+| 5 | Per scene: video generation node "Clip 001" (connected to the approved scene image) |
 
-Song song, lưu file trong workspace để tái dùng và dựng: `explainer/<slug>/script.md`, `scenes.csv`, `sources.md`, `style.md`, `characters/<tên>.txt`, `pronunciation.csv`, `timing.csv`, `motionPrompts.csv`, `subtitles.srt`. Đường dẫn chỉ ghi khi đã thật sự ghi/đọc được.
+In parallel, save workspace files for reuse and assembly: `explainer/<slug>/script.md`, `scenes.csv`, `sources.md`, `style.md`, `characters/<name>.txt`, `pronunciation.csv`, `timing.csv`, `motionPrompts.csv`, `subtitles.srt`. Only cite a path after actually writing/reading it.
 
-## Các bước và cửa duyệt
+## Steps and approval gates
 
-| Bước | Việc | Tài liệu đọc trước | Cửa duyệt |
+| Step | Work | Read first | Gate |
 |---|---|---|---|
-| 0 | Chốt chủ đề, giọng đọc (nam/nữ), độ dài mục tiêu, model ảnh/video/audio sẽ dùng | — | Người dùng xác nhận thông số |
-| 1 | Kịch bản 7 nhịp + bảng cảnh + nhân vật mới + nguồn | [Kịch bản](references/scriptGuide.md) | Duyệt kịch bản, đi hết checklist |
-| 2 | Style block + desc nhân vật → character sheet | [Hình ảnh](references/visualAssets.md) | Duyệt từng nhân vật (ảnh front trước, rồi các góc/biểu cảm) |
-| 3 | Ảnh cảnh theo lô | [Hình ảnh](references/visualAssets.md#3-ảnh-cảnh) | Duyệt từng lô; cảnh lệch thì tạo lại riêng cảnh đó |
-| 4 | Giọng đọc từng câu + bảng timing | [Audio & chuyển động](references/audioMotion.md) | Nghe lại; sửa phát âm |
-| 5 | Prompt chuyển động từng cảnh | [Audio & chuyển động](references/audioMotion.md#2-prompt-chuyển-động) | Duyệt bảng prompt |
-| 6 | Clip ảnh→video theo lô | [Audio & chuyển động](references/audioMotion.md#3-tạo-clip) | Duyệt từng clip; clip lỗi đơn giản hoá motion rồi tạo lại |
-| 7 | Dựng: ghép clip theo timing + voiceover + phụ đề | [Dựng thành phẩm](references/assembly.md) | Người dùng xem bản dựng |
+| 0 | Lock topic, voice (male/female), target length, image/video/audio models | - | User confirms the settings |
+| 1 | 7-beat script + scene table + new characters + sources | [Script](references/scriptGuide.md) | Script approved, checklist complete |
+| 2 | Style block + character descs -> character sheets | [Visuals](references/visualAssets.md) | Each character approved (front first, then angles/expressions) |
+| 3 | Scene images in batches | [Visuals](references/visualAssets.md#3-scene-images) | Each batch approved; off scenes regenerated individually |
+| 4 | Per-line voiceover + timing table | [Audio and motion](references/audioMotion.md) | User listens; pronunciation fixed |
+| 5 | Per-scene motion prompts | [Audio and motion](references/audioMotion.md#2-motion-prompts) | Prompt table approved |
+| 6 | Image-to-video clips in batches | [Audio and motion](references/audioMotion.md#3-generating-clips) | Each clip approved; broken clips simplified and regenerated |
+| 7 | Assembly: clips on the timing + voiceover + subtitles | [Assembly](references/assembly.md) | User reviews the cut |
 
-Phải xong bước 4 trước bước 5: thời lượng clip lấy từ độ dài thật của câu thoại.
+Step 4 must finish before step 5: clip length comes from the real duration of each spoken line.
 
-## Tiếp tục dự án đang làm
+## Continuing an existing project
 
-Đọc canvas và file trong `explainer/<slug>/` để xác định bước đầu tiên chưa được duyệt, rồi làm tiếp từ đó. Yêu cầu sửa một cảnh chỉ đụng tới cảnh đó và các khâu sau của chính nó (ảnh → clip → bản dựng), không chạy lại cả chuỗi. Sửa câu thoại thì phải làm lại audio của câu đó, kiểm lại thời lượng clip, rồi dựng lại.
+Read the canvas and the files in `explainer/<slug>/` to find the first unapproved step and continue from there. A request to change one scene touches only that scene and its own downstream (image -> clip -> cut); never rerun the whole chain. Changing a spoken line means regenerating that line's audio, rechecking the clip length, then re-assembling.
 
-## Báo cáo cuối mỗi bước
+## End-of-step report
 
-Nêu: đã làm gì, node/file thật nằm ở đâu, cảnh nào đạt/chưa đạt, ai đã kiểm (Agent hay người dùng), và một bước tiếp theo cần người dùng quyết định.
+State what was done, where the real nodes/files are, which scenes passed or failed, who checked them (agent or user), and the single next decision for the user.

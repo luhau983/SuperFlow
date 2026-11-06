@@ -1,22 +1,22 @@
-# Dựng thành phẩm (bước 7)
+# Assembly (step 7)
 
-Chỉ làm khi tool `ffmpeg`/`ffprobe` có trong lượt này và người dùng đã duyệt đủ clip + audio. Thiếu tool thì giao danh sách file theo thứ tự (`Clip <id>`, `Thoại <id>`, `subtitles.srt`, `timing.csv`) và nói rõ còn việc dựng.
+Only do this when the `ffmpeg`/`ffprobe` tools are available this turn and the user has approved all clips and audio. Without the tools, deliver the ordered file list (`Clip <id>`, `Line <id>`, `subtitles.srt`, `timing.csv`) and state that assembly is still pending.
 
-Mọi đường dẫn là đường dẫn tương đối trong workspace, lấy từ output thật của node (đọc `outputs` bằng `getCanvasNodes`). Ghi kết quả vào `explainer/<slug>/build/`; không ghi đè file đã có — trùng tên thì dùng hậu tố `-v2`, `-v3`.
+All paths are workspace-relative and taken from the nodes' real outputs (read `outputs` with `getCanvasNodes`). Write results to `explainer/<slug>/build/`; never overwrite existing files - on a name clash use a `-v2`, `-v3` suffix.
 
-## 1. Khung thời gian
+## 1. Timeline
 
-Với mỗi cảnh: `slot = duration (timing.csv) + 0,25`, riêng cảnh cuối `slot = duration + 0,5`. Thời điểm phụ đề trong `subtitles.srt` phải khớp với cách cộng dồn này (nếu sai, sinh lại SRT trước khi dựng).
+For each scene: `slot = duration (timing.csv) + 0.25`; for the last scene `slot = duration + 0.5`. Subtitle times in `subtitles.srt` must match this cumulative sum (if not, regenerate the SRT before assembling).
 
-## 2. Ghép audio vào từng cảnh
+## 2. Attach audio to each scene
 
-Mỗi cảnh một lệnh: clip được cắt/kéo dài đúng `slot` (thiếu thì giữ khung cuối), giọng đọc đặt từ giây 0 và thêm khoảng lặng tới hết `slot`. Ví dụ cảnh 003 có `slot = 4.87`:
+One command per scene: the clip is cut/extended to exactly `slot` (holding the last frame if short), the voiceover starts at 0 and is padded with silence to the end of `slot`. Example for scene 003 with `slot = 4.87`:
 
 ```json
 {
   "steps": [
-    { "method": "input", "args": ["<đường dẫn Clip 003>"] },
-    { "method": "input", "args": ["<đường dẫn Thoại 003>"] },
+    { "method": "input", "args": ["<path of Clip 003>"] },
+    { "method": "input", "args": ["<path of Line 003>"] },
     { "method": "complexFilter", "args": [[
       "[0:v]scale=1920:1080:force_original_aspect_ratio=decrease,pad=1920:1080:(ow-iw)/2:(oh-ih)/2,fps=30,format=yuv420p,tpad=stop_mode=clone:stop_duration=10[v]",
       "[1:a]aresample=48000,apad[a]"
@@ -27,11 +27,11 @@ Mỗi cảnh một lệnh: clip được cắt/kéo dài đúng `slot` (thiếu 
 }
 ```
 
-Chạy lần lượt, kiểm `ffprobe` từng file (có cả video lẫn audio, độ dài ≈ `slot`).
+Run them one by one and check each file with `ffprobe` (has video and audio, duration ≈ `slot`).
 
-## 3. Nối các cảnh
+## 3. Join the scenes
 
-Ghi `explainer/<slug>/build/list.txt` bằng tool ghi file của workspace, mỗi dòng `file '003.mp4'` theo đúng thứ tự `id`. Rồi:
+Write `explainer/<slug>/build/list.txt` with the workspace file-write tool, one line `file '003.mp4'` per scene in `id` order. Then:
 
 ```json
 {
@@ -44,14 +44,14 @@ Ghi `explainer/<slug>/build/list.txt` bằng tool ghi file của workspace, mỗ
 }
 ```
 
-## 4. Phụ đề và tiêu đề
+## 4. Subtitles and title
 
-Kiểm filter có sẵn bằng `operation: { "method": "availableFilters" }`.
+Check available filters with `operation: { "method": "availableFilters" }`.
 
-- Có `subtitles`: đốt phụ đề vào hình — `-vf subtitles=explainer/<slug>/subtitles.srt:force_style='FontName=Arial,FontSize=22,Outline=2,MarginV=40'`, `-c:a copy` → `final.mp4`.
-- Có thêm `drawtext` và người dùng muốn câu hỏi tiêu đề cố định trên màn hình (nhịp 1): ghi tiêu đề vào `explainer/<slug>/build/title.txt`, thêm vào cùng chuỗi `-vf` một `drawtext=textfile=...:fontfile=<font hỗ trợ tiếng Việt>:fontsize=44:fontcolor=white:borderw=3:x=(w-text_w)/2:y=40`. Hỏi người dùng file font nếu chưa biết; không đoán.
-- Không có `subtitles`: giao `joined.mp4` + `subtitles.srt` (phụ đề rời) và nói rõ.
+- `subtitles` available: burn subtitles in - `-vf subtitles=explainer/<slug>/subtitles.srt:force_style='FontName=Arial,FontSize=22,Outline=2,MarginV=40'`, `-c:a copy` -> `final.mp4`.
+- `drawtext` also available and the user wants the title question fixed on screen (beat 1): write the title to `explainer/<slug>/build/title.txt` and add to the same `-vf` chain `drawtext=textfile=...:fontfile=<font that supports the narration language>:fontsize=44:fontcolor=white:borderw=3:x=(w-text_w)/2:y=40`. Ask the user for the font file if unknown; never guess.
+- `subtitles` not available: deliver `joined.mp4` + `subtitles.srt` (sidecar subtitles) and say so.
 
-## 5. Kiểm tra và giao
+## 5. Check and deliver
 
-`ffprobe` file cuối: độ dài ≈ tổng `slot`, 1920×1080, có audio. Báo người dùng đường dẫn thật của `final.mp4` (hoặc `joined.mp4` + `subtitles.srt`), tổng thời lượng, và nhờ xem lại vì Agent không nghe/xem được toàn bộ video. Không xoá các file trung gian trong `build/` khi chưa được người dùng cho phép.
+`ffprobe` the final file: duration ≈ total `slot`, 1920x1080, has audio. Report the real path of `final.mp4` (or `joined.mp4` + `subtitles.srt`) and the total duration, and ask the user to review it, since the agent cannot watch/listen to the whole video. Do not delete intermediate files in `build/` without the user's permission.
