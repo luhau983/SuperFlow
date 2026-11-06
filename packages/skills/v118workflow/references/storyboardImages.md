@@ -1,55 +1,55 @@
-# Tạo và nghiệm thu ảnh phân cảnh
+# Storyboard image generation and acceptance
 
-Giai đoạn này chỉ xử lý các đơn vị sản xuất đã xác nhận cần ảnh phân cảnh. Phương pháp tạo, truy vấn trạng thái và đọc lại xem [canvasOperations.md](canvasOperations.md).
+This stage only handles production units confirmed as needing storyboard images. For generation, status queries, and read-back methods see [canvasOperations.md](canvasOperations.md).
 
-Trước khi bắt đầu, đọc [Kiến thức prompt ảnh phân cảnh và khung đầu](knowledge/imagePromptCraft.md), rà lại mẫu mô hình mà đơn vị sản xuất chọn dùng, ngữ nghĩa khung đơn và yêu cầu chất lượng từng mục; phong cách chỉ tra mục đã xác nhận của [Phong cách hình ảnh](knowledge/visualStyles.md). Dùng tiếp prompt đã được phê duyệt, khi phát hiện thiếu sót hoặc mâu thuẫn thực chất thì trước tiên sửa và xác nhận, không mượn việc chuyển đổi mẫu để tự ý thay đổi nội dung đã phê duyệt.
+Before starting, read [storyboard image prompts and first-frame knowledge](knowledge/imagePromptCraft.md), and re-check the model template adopted by the production unit, the single-frame semantics, and the item-by-item quality requirements; style only consults the confirmed entry in [visual styles](knowledge/visualStyles.md). Keep the approved prompts; when a substantive omission or contradiction is found, revise and confirm first, and do not use template conversion as a pretext to change approved content.
 
-## Đầu vào và nơi lưu
+## Input and placement
 
-- Từ canvas của tập hiện tại đọc bảng phân cảnh, đơn vị sản xuất, prompt ảnh và phạm vi tạo đã xác nhận, ví dụ `Canvas/Tập/Tập 001.json`.
-- Ảnh tham chiếu lấy từ phiên bản tài sản đã xác nhận trong `Canvas/Tài sản.json`, kiểm tra trạng thái cha con nhất quán với cốt truyện của shot này.
-- Node tạo, ảnh ứng viên, ảnh được chọn dùng và bản ghi nghiệm thu đều để trên canvas của tập hiện tại, giữ số shot/số đoạn.
-- Khi văn bản đa tham chiếu không chọn ảnh phân cảnh, ghi lại trong tập này "Tuyến này không cần ảnh phân cảnh" và tiếp tục theo quy trình chính, không tạo tác vụ ảnh rỗng.
+- Read the confirmed storyboard table, production units, image prompts, and generation scope from the current episode canvas, e.g. `Canvas/Episodes/Episode 001.json`.
+- Reference images come from the confirmed asset versions in `Canvas/Assets.json`; check that parent/child states match this shot's plot.
+- Generation nodes, candidate images, adopted images, and acceptance records all stay on the current episode canvas, keeping shot/segment numbers.
+- When text multi-reference has not chosen storyboard images, record "This route does not need storyboard images" in this episode and continue per the main flow, without creating empty image tasks.
 
-## Kiểm tra trước khi tạo
+## Pre-generation check
 
-1. Đọc lại node thật và năng lực công cụ hiện tại, kiểm tra prompt, mẫu chọn dùng, mô hình, tỉ lệ khung, độ phân giải, số lượng đầu vào và phạm vi lần này; JSON có cấu trúc chỉ thuộc về văn bản prompt, không thành trường cấu hình node bổ sung.
-2. Xác nhận từng ảnh tham chiếu thực sự đọc được, thứ tự ảnh nhất quán với dấu tham chiếu trong prompt.
-3. Theo kiến thức ảnh truy ngược từng mục về phân cảnh gốc, kiểm tra khung đầu giữ trạng thái tĩnh; động tác liên tục lấy khoảnh khắc bắt đầu thật, gồm bối cảnh đã xác nhận, toàn bộ chủ thể/vật then chốt, bố cục, hướng quay và cảm xúc, không đổi biểu cảm tĩnh thành động tác chuẩn bị, không lấy trạng thái kết quả bên phải mũi tên cỡ cảnh làm khung đầu.
-4. Khung cuối chỉ dùng cho chế độ khung đầu và khung cuối đã xác nhận và được mô hình hỗ trợ, kiểm tra nó nhất quán với khung đầu cùng shot và toàn bộ động tác.
-5. Tham số và phạm vi đã xác nhận được dùng tiếp; mọi yêu cầu mở rộng phạm vi, thay đổi ảnh tham chiếu hoặc làm lại đều phải cho người dùng biết rõ.
+1. Read back the real nodes and current tool capabilities, and check the prompt, adopted template, model, aspect ratio, resolution, input count, and this scope; structured JSON belongs only to the prompt text and does not become an extra node config field.
+2. Confirm item by item that reference images are actually readable and that the image order matches the reference markers in the prompt.
+3. Per the image knowledge, trace back to the original storyboard item by item, checking that the first frame keeps static states; continuous actions take the real starting instant, including the confirmed location, all key subjects/objects, composition, facing, and emotion; do not turn a static expression into a preparatory action, and do not use the result state on the right side of a shot-size arrow as the first frame.
+4. The last frame is used only in a confirmed first-and-last-frame mode supported by the model; check that it is consistent with the same shot's first frame and complete action.
+5. Confirmed parameters and scope carry over; any scope expansion, reference image change, or redo request must be made clearly known to the user.
 
-Ghi phiên bản nguồn, phán đoán trạng thái bắt đầu, ánh xạ tham chiếu và các mục chưa giải quyết của lần "kiểm tra chuyển đổi ảnh" này vào ghi chú đơn vị đã có của tập này. Không được chỉ kiểm tra trong chat, cũng không cần lập canvas độc lập cho mỗi loại kiến thức.
+Write this "image conversion check"'s source version, starting-state judgment, reference mapping, and unresolved items into the existing unit notes for this episode. Do not check only in chat, and there is no need to create a separate canvas for each kind of knowledge.
 
-## Thực hiện
+## Execution
 
-1. Dùng công cụ node thực tế khởi động phạm vi đã ủy quyền, ghi lại node thật và thông tin tác vụ trả về.
-2. Tác vụ mới chỉ khởi động thì đánh dấu "Đang tạo", không được báo cáo "Ảnh phân cảnh đã hoàn thành".
-3. Theo công cụ trạng thái thời gian thực truy vấn trạng thái cuối, giữ trạng thái độc lập của mục thành công và thất bại.
-4. Sau khi chuyển canvas vẫn theo bản ghi truy vấn node gốc; chuyển canvas không phải hủy, không vì thế mà khởi tạo lại cùng một tác vụ.
-5. Sau khi thành công đọc lại node và ảnh đầu ra, xác nhận ảnh đã được lưu và mở được; thất bại chỉ thử lại các mục được chọn rõ ràng.
+1. Use the actual node tools to start the authorized scope, and record the real node and the information returned by the task.
+2. When a task has only been started, mark it "Generating"; do not report "storyboard images completed".
+3. Query the final state with the live status tools, keeping independent statuses for successful and failed items.
+4. After switching canvases, still query the original node from the record; switching canvases is not cancellation, and is no reason to restart the same task.
+5. After success, read back the node and output images, confirming the images are saved and can be opened; for failures, retry only the explicitly selected items.
 
-## Nghiệm thu ảnh
+## Image acceptance
 
-Xem thực tế ảnh, đối chiếu với phân cảnh tương ứng kiểm tra từng mục:
+Actually look at the images and check item by item against the corresponding storyboard:
 
-- Thân phận nhân vật, bối cảnh và đạo cụ nhất quán với tài sản đã xác nhận, không sai người, thiếu người hay thừa chủ thể.
-- Chọn trạng thái cơ bản/phái sinh đúng, trang phục và khung giờ không nhảy vô lý trong cùng cảnh.
-- Cỡ cảnh, góc nhìn, vị trí, hướng quay và trạng thái động tác chủ thể tương ứng với shot gốc, khung đầu không hoàn thành trước cả đoạn động tác.
-- Bàn tay, che khuất, tương tác nhân vật, quyền sở hữu đạo cụ dễ hiểu, thông tin cốt truyện then chốt không bị cắt hay vẽ sai.
-- Quan hệ không gian và cảm xúc giữa các shot trước sau cùng cảnh nối được, phong cách và ánh sáng không xung đột rõ với ảnh tham chiếu.
-- Chủ thể và chi tiết cốt truyện then chốt rõ ràng; độ sâu trường ảnh, sương mù hoặc chất cảm hạt đã xác nhận không nên che mất thông tin cần thiết, không vì từ cấm của mẫu cũ mà xóa phong cách người dùng đã xác nhận.
-- Không có phụ đề, watermark hay chữ giao diện ngoài ý muốn; chữ trong cảnh mà kịch bản yêu cầu được kiểm tra theo thiết kế tương ứng.
+- Character identity, location, and props match the confirmed assets, with no wrong person, missing person, or extra subject.
+- The base/derived state choice is correct, and costume and time of day do not jump without reason within the same scene.
+- Shot size, viewpoint, position, facing, and the subject's action state correspond to the original shot, and the first frame does not complete the whole action early.
+- Hands, occlusion, character interactions, and prop ownership are understandable, and key plot information is not cropped or drawn wrong.
+- Spatial relationships and emotion of adjacent shots in the same scene can connect, and style and lighting do not clearly conflict with the reference images.
+- The subject and key plot details are clear; depth of field, fog, or confirmed grain texture should not obscure necessary information, and a user-confirmed style is not removed because of legacy template banned words.
+- No unexpected subtitles, watermarks, or interface text; in-scene text required by the script is checked against the corresponding design.
 
-Với phản chiếu, đối chiếu thân phận, động tác và bộ phận nhìn thấy theo mặt gương/mặt nước và vị trí máy thực tế, không lật trái phải một cách máy móc. Khi hiện không có năng lực xem ảnh, ghi lại chờ người dùng xem trước, không dựa vào đường dẫn hay trạng thái tạo mà tuyên bố đã xem ảnh.
+For reflections, check identity, action, and visible parts against the actual mirror/water surface and camera position, without mechanically flipping left and right. When there is currently no ability to view images, record that it awaits user preview, and do not claim to have seen the image based on the path or generation status.
 
-## Đọc lại và người dùng xác nhận
+## Read-back and user confirmation
 
-1. Gắn ứng viên thực tế và bản ghi vấn đề vào đơn vị sản xuất tương ứng, không được chỉ liệt kê danh sách thất bại trong chat.
-2. Trình bày ảnh, số shot tương ứng và kết luận kiểm tra ngắn gọn, để người dùng xác nhận chọn dùng, sửa prompt, làm lại hoặc bỏ qua.
-3. Ảnh thành công chưa được xác nhận chọn dùng giữ làm ứng viên, không được tự động thành đầu vào video đã nghiệm thu.
-4. Sau khi người dùng quyết định, ghi tham chiếu thật của ảnh được chọn dùng, và đọc lại để xác nhận đã lưu thành công.
-5. Bỏ qua shot cần khung đầu sẽ làm đầu vào video tương ứng không đầy đủ, ghi lại chờ xử lý, không được lặng lẽ chuyển sang tuyến khác.
-6. Lưu danh sách hoàn thành/thất bại/bỏ qua trên canvas của tập này, dừng giai đoạn này, không tự động khởi động tác vụ video.
+1. Bind the actual candidates and issue records to the corresponding production units; do not just list failures in chat.
+2. Show the images, corresponding shot numbers, and concise check conclusions, and let the user confirm adopt, revise the prompt, redo, or skip.
+3. Successful images without adoption confirmation remain candidates and cannot automatically become accepted video inputs.
+4. After the user decides, write the real reference of the adopted images and read back to confirm the save succeeded.
+5. Skipping a shot that needs a first frame leaves the corresponding video input incomplete; record it as pending, and do not quietly switch to another route.
+6. Save the completed/failed/skipped list on this episode's canvas, stop this stage, and do not automatically start video tasks.
 
-Chuẩn bị video tiếp theo xem [videoProduction.md](videoProduction.md), nguồn bản cũ xem [sourceMap.md](sourceMap.md).
+For later video preparation see [videoProduction.md](videoProduction.md); for legacy sources see [sourceMap.md](sourceMap.md).

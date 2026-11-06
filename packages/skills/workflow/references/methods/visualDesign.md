@@ -1,151 +1,151 @@
-# Suy luận thiết kế hình ảnh từ sự thật cốt truyện
+# Deriving visual design from story facts
 
-Dùng khi ngoại hình nhân vật chưa hoàn chỉnh, không gian khó dùng cho hành động, cấu trúc đạo cụ then chốt không rõ hoặc phần tiếp theo cần đối chiếu trạng thái.
-Khi tài sản đã có đủ để hoàn thành lần quay này thì dùng lại trực tiếp; phương pháp này không yêu cầu bổ sung tiểu sử nhân vật, sách concept độc lập hay các góc nhìn không dùng tới.
-Viết kết luận vào mục tương ứng trong [sản xuất tài sản](../assets.md). Sau khi vào Seedance PART A, phương pháp này chỉ cung cấp mốc tài sản/không gian khi A1.2/A4 nêu rõ cần đề xuất thiết kế, không định nghĩa shot, diễn xuất hay cấu trúc prompt.
-Suy luận về màu sắc, chất liệu dưới ánh sáng và cảm quan cuối cùng xem [màu sắc và ánh sáng](colorAndLight.md).
+Use this when a character's appearance is still incomplete, a space is hard to use for action, a key prop's structure is unclear, or a sequel needs state verification.
+When existing assets are enough for this shoot, reuse them directly; this method does not require adding character backstories, a standalone concept book, or unused views.
+Write the conclusions into the corresponding entries of [Asset production](../assets.md). After entering Seedance PART A, this method provides asset/space anchors only when A1.2/A4 explicitly require a design proposal, and does not define shots, performance, or prompt structure.
+For deriving color, material lighting response, and the final look, see [Color and light](colorAndLight.md).
 
-## 1. Trước tiên phân biệt sự thật, ràng buộc và đề xuất
+## 1. First separate facts, constraints, and proposals
 
-Điểm vào của thiết kế là cốt truyện lần này cần khán giả nhận ra điều gì, nhân vật thực sự phải làm gì, chứ không phải điền đầy các trường ngoại hình cho mỗi người trước.
-Suy luận từng mục theo "sự thật đã có → ràng buộc hành động hiện tại → đề xuất nhìn thấy được cần thiết", nội dung đã xác nhận không bị ghi đè vì sở thích thẩm mỹ.
+The entry point for design is what this story needs the audience to recognize and what the characters actually have to do, not filling every appearance field for everyone first.
+Derive item by item along "existing facts → current action constraints → necessary visible proposals"; confirmed content is not overridden by aesthetic preference.
 
-| Tầng | Tìm gì trong tài liệu | Cách dùng |
+| Layer | What to look for in the material | How to use it |
 | --- | --- | --- |
-| Sự thật | Tuổi hoặc giai đoạn phát triển, ngoại hình, trang phục, vật, vết thương, không gian và sự kiện đã ghi rõ | Kế thừa trực tiếp, giữ xuất xứ và trạng thái áp dụng |
-| Ràng buộc | Thời đại, vùng miền, phương tiện thể hiện, quan hệ thân phận, cách hành động, giới hạn năng lực | Loại bỏ phương án không tương thích, không viết mở rộng ràng buộc thành trải nghiệm mới |
-| Đề xuất | Đường nét, cấu trúc, phối màu và chất liệu bắt buộc phải bổ sung để nhận diện, hành động hoặc sản xuất | Ghi rõ là đề xuất thiết kế và lý do, không được thêm năng lực, bí mật hay manh mối cốt truyện |
+| Facts | Stated age or growth stage, appearance, costume, objects, injuries, space, and events | Inherit directly, keeping source and applicable state |
+| Constraints | Era, region, medium, identity relationships, mode of action, limits of ability | Exclude incompatible options; do not expand constraints into new experiences |
+| Proposals | Silhouette, structure, colors, and materials that must be filled in for recognition, action, or production | Mark as design proposals with reasons; must not add abilities, secrets, or story clues |
 
-Trước tiên trích các mục xác định, rồi liệt kê các mục thiếu sẽ ảnh hưởng hình ảnh lần này, chỉ thiết kế cho mục sau.
-Một câu "cô ấy canh ở sân ga" không thể suy ra nghề nghiệp, quê quán và thân thế; có thể bổ sung trong phạm vi được phép thiết kế trang phục thích ứng với thời tiết tại chỗ.
-Khi thân phận cần thiết, số người hoặc chức năng then chốt xung đột nhau thì giữ lại khác biệt; kiểu cúc áo thông thường không cần nâng thành việc làm rõ cốt truyện.
-Mỗi mục thiết kế chỉ cần giữ một câu căn cứ ngắn, ví dụ "vạt áo ngắn: tiện cho việc leo trèo đã ghi rõ, đề xuất thiết kế".
-Đầu ra đi đâu: mốc ngoại hình hoặc cấu trúc, mục giữ nguyên và thay đổi được phép của mục tài sản; không nhét toàn bộ quá trình suy luận vào prompt tạo.
+First pick out the settled items, then list the gaps that affect this round's visuals, and design only for the latter.
+A line like "she keeps watch at the platform" cannot imply occupation, hometown, or life story; within the allowed design scope, you may add clothing suited to the weather on the spot.
+When necessary identity, headcount, or key functions conflict, keep the differences; an ordinary button style need not be escalated into a story clarification.
+Keep one short rationale per design item, e.g. "short coat hem: allows the stated climbing, design proposal".
+Output destination: the asset entry's appearance or structure anchors, items to keep, and allowed changes; do not stuff the whole derivation into the generation prompt.
 
-## 2. Chức năng nhân vật biến thành tạo hình như thế nào
+## 2. How a character's function becomes a look
 
-Áp dụng: nhân vật mới thiếu hình thái nhìn thấy được, hoặc tạo hình hiện tại cản trở hành động cốt truyện, nhận diện thân phận và phân biệt trong cùng cảnh.
-Trước tiên dùng một câu mô tả chức năng của nhân vật trong tuồng hiện tại, ví dụ "phụ trách dẫn đường, nhưng không chịu giao chìa khóa"; không lấy người tốt, kẻ xấu để quyết định diện mạo.
-Rồi thiết kế theo thứ tự sau, bước sau phải giải thích được nhu cầu của bước trước.
+Applies when: a new character lacks a visible form, or an existing look hinders story action, identity recognition, or distinction within the same scene.
+First describe the character's function in the current scene in one sentence, e.g. "leads the way, but refuses to hand over the key"; do not decide appearance by good guy or bad guy.
+Then design in the following order; each later step must be able to explain the needs of the previous one.
 
-1. **Nhu cầu hành vi**: nhân vật cần chạy, leo, ẩn nấp, ngồi lâu hay thao tác tinh tế; kiểm tra vạt áo, cổ tay áo, giày dép và vị trí mang đồ có cho phép không.
-2. **Nhận diện từ xa**: trước tiên định tỉ lệ cơ thể, đường nét, kiểu tóc hoặc đặc điểm đầu, đảm bảo ở cỡ cảnh thường dùng vẫn nhận ra nhân vật.
-3. **Nhận diện từ gần**: chọn một vài đặc điểm ổn định của mặt, da hoặc lông; không dựa vào chồng chất trang sức, sẹo để tạo thân phận.
-4. **Thân phận và môi trường**: các lớp trang phục, kỹ thuật chế tác và dấu vết sử dụng phù hợp thời đại, lối sống và môi trường địa phương đã biết.
-5. **Quan hệ cùng cảnh**: xem cùng các nhân vật thường xuyên cùng khung, kiểm tra đường nét, khối lượng, độ sáng hoặc mảng màu có lẫn vào nhau không.
-6. **Thích ứng phương tiện thể hiện**: 2D giữ đường nét và mảng màu rõ ràng; 3D cách điệu nhấn mạnh khác biệt về khối và chất liệu; hướng người thật cân nhắc đường cắt may và cách đeo mặc đáng tin.
+1. **Behavioral needs**: does the character need to run, climb, hide, sit for long periods, or do fine manipulation; check whether hems, cuffs, footwear, and carrying positions allow it.
+2. **Recognition at a distance**: first set body proportions, silhouette, hairstyle, or head features, ensuring the character is still recognizable at commonly used shot sizes.
+3. **Recognition up close**: choose a few stable facial, skin, or fur features; do not create identity by piling on jewelry or scars.
+4. **Identity and environment**: clothing layers, craftsmanship, and signs of use fit the known era, way of life, and local environment.
+5. **Relationships within a scene**: look at characters who often share the frame, and check whether silhouettes, mass, value, or color blocks get confused with each other.
+6. **Medium fit**: 2D keeps clear silhouettes and color blocks; stylized 3D emphasizes differences in volume and material; live-action direction considers believable tailoring and wearing.
 
-Không cần lần nào cũng đồng thời phóng to đường nét, kéo cao độ bão hòa, thêm đồ trang sức; thường trước tiên cải thiện một mục ảnh hưởng nhận diện nhất.
-Tính cách nhân vật dùng để ràng buộc lựa chọn và hành vi, không trực tiếp bằng đặc điểm cơ thể; thận trọng không nhất thiết gầy gò, cứng rắn không nhất thiết mặt vuông.
-Cùng nghề cũng có thể chung chất liệu vải và kỹ thuật, rồi phân biệt qua dáng người, cách mặc hoặc vị trí mài mòn, tránh mỗi người một phong cách không liên quan.
-Phần ổn định và có tài liệu chống đỡ trong thói quen hành động có thể giữ trong mô tả nhân vật; căng thẳng, trừng mắt hay khom lưng tại chỗ thuộc về diễn xuất trong shot.
-Đầu ra đi đâu: mốc thân phận, cấu trúc trang phục và vật mang theo cố định trong trạng thái cơ sở của nhân vật; mô tả nhìn thấy được ngắn gọn đưa vào prompt tài sản.
+You need not enlarge the silhouette, raise saturation, and add accessories all at once every time; usually first improve the one item that most affects recognition.
+Personality constrains choices and behavior and does not directly equal physical features; cautious need not mean thin, tough need not mean a square face.
+Characters with the same occupation can share fabrics and craftsmanship, then be distinguished by build, way of wearing, or wear locations, avoiding giving everyone an unrelated style.
+Stable, material-supported parts of action habits can stay in the character description; momentary tension, glaring, or bending over belong to shot performance.
+Output destination: identity anchors, costume structure, and fixed carried items in the character's base state; a concise visible description goes into the asset prompt.
 
-**Ví dụ giảng dạy**: kịch bản chỉ xác nhận "thợ sửa đồng hồ lớn tuổi, phải chui vào cửa kiểm tra hẹp của tháp đồng hồ, bên hông có túi đồ nghề".
-Có thể đề xuất áo khoác ngắn vừa người, cổ tay áo bó, túi đồ nghề sát người; túi đồ nghề vẫn ở vị trí đã định, không vì nghề nghiệp mà thêm tay giả cơ khí.
-Mốc nhận diện có thể chọn sống mũi khá rộng và tóc bạc chải ra sau, nhưng đều ghi là đề xuất; không bổ sung trải nghiệm hư cấu "bị thương trên chiến trường".
-Dùng sai là viết "đại sư bí ẩn" trước rồi chồng áo choàng, huy hiệu phát sáng và vũ khí lớn, khiến không làm được động tác, thân phận cũng bị tự ý sửa.
+**Teaching example**: the script only confirms "an elderly clockmaker who must crawl into the clock tower's narrow access hatch, with a tool bag at the waist".
+You can propose a short, well-fitting coat, tightened cuffs, and a close-fitting tool bag; the tool bag stays in its specified position, and do not add a mechanical prosthetic hand based on the occupation.
+Recognition anchors could be a wider nose bridge and gray hair combed back, but both are marked as proposals; do not add a fictional "wounded in battle" experience.
+The misuse is to write "mysterious master" first and then pile on a cape, glowing emblem, and big weapon, making the action impossible and arbitrarily changing the identity.
 
-## 3. Trạng thái cơ sở và biến thể tích lũy
+## 3. Base state and cumulative variants
 
-Áp dụng: thay đồ, vết thương kéo dài, vết bẩn rõ rệt, thay đổi cơ thể hoặc mất vật cố định sẽ ảnh hưởng nhận diện về sau.
-Trạng thái cơ sở lấy trạng thái thực tế khi vào cảnh trong cốt truyện lần này, không đồng nghĩa với khỏe mạnh, gọn gàng hay nguyên vẹn; nhân vật cũ có thể vào cảnh từ biến thể đã chọn dùng lần trước.
-Theo thứ tự cốt truyện theo dõi "trạng thái cũ → sự kiện kích hoạt → trạng thái mới → khoảng kéo dài", chỉ sự kiện hoặc thiết lập rõ ràng mới cho phép thay đổi.
+Applies when: costume changes, persistent injuries, obvious soiling, body changes, or loss of fixed objects affect later recognition.
+The base state is the state in which the character actually enters this story, which does not mean healthy, tidy, or intact; an existing character can enter from the most recently adopted variant.
+Track "original state → triggering event → new state → persistence interval" in story order; only events or explicit settings allow changes.
 
-| Mục kiểm tra | Khác biệt cần nói rõ | Nội dung thường vẫn thuộc về shot |
+| Check item | Differences to state clearly | Content that usually still belongs to the shot |
 | --- | --- | --- |
-| Cơ thể và diện mạo | Bộ phận nào, thay đổi gì, mức độ, có kéo dài không | Nhíu mày, quay đầu, hơi thở và biểu cảm ngắn |
-| Trang phục | Món đồ nào, bộ phận nào, kết quả thay hoặc bẩn | Vạt áo đung đưa theo động tác, nếp nhăn khi ngồi xuống |
-| Vật mang theo cố định | Món nào được thêm, mất, hỏng và kết quả nhìn thấy được | Cùng một vật đổi tay, giơ lên, bị che ngắn |
+| Body and appearance | Which part, what change, how much, whether it persists | Frowning, turning the head, breathing, and brief expressions |
+| Costume | Which garment, which part, result of changing or soiling | Hem swaying with movement, wrinkles formed by sitting |
+| Fixed carried items | Which item is added, lost, or damaged, and the visible result | The same object changing hands, being raised, briefly occluded |
 
-Mỗi biến thể trước tiên xác định trạng thái mà ảnh tham chiếu thực đang ở, rồi viết đầy đủ khác biệt hiệu lực so với tham chiếu đó.
-Khi tham chiếu trạng thái cơ sở, phải bao gồm vết thương và hư hỏng trước đó vẫn còn hiệu lực; khi tham chiếu biến thể gần nhất, phải nói rõ kế thừa những thay đổi nào.
-Viết khác biệt rồi liệt kê ít bất biến, không được dùng "trang phục không đổi" để triệt tiêu việc thay đồ đã rõ lần này, cũng không được mượn vết bẩn để vẽ lại khuôn mặt.
-Một ảnh tài sản chỉ biểu thị một trạng thái, không được trộn trước và sau khi bị thương, hai bộ quần áo vào một bảng cơ sở.
-Các khoảng trạng thái liền kề mà ngoại hình hoàn toàn giống nhau có thể gộp và tái sử dụng; không cần mỗi cảnh tạo một ảnh.
-Đầu ra đi đâu: trạng thái và cảnh áp dụng trong bảng tài sản, prompt biến thể; động tác kích hoạt và điểm chuyển trạng thái viết vào trạng thái đầu/cuối của đoạn.
+For each variant, first determine the state the real reference image is in, then write the complete effective differences relative to that reference.
+When referencing the base state, include injuries and damage still in effect from before; when referencing the most recent variant, state clearly which changes are inherited.
+After writing the differences, list a few invariants; "costume unchanged" cannot cancel an explicit costume change this time, nor can soiling be used to redraw the face.
+One asset image represents only one state; do not mix before and after an injury, or two sets of clothes, into one base board.
+Adjacent state intervals with completely identical appearance can be merged and reused; do not generate one per scene.
+Output destination: state and applicable scenes in the asset table, variant prompts; triggering actions and state switch points go into segment start and end states.
 
-**Ví dụ giảng dạy**: cảnh 2 tay áo trái bị rách, cảnh 4 huy hiệu rơi mất, đến cảnh 6 mới thay đồ.
-Cảnh 4-5 nếu tham chiếu ảnh cơ sở, viết "giữ vết rách tay áo trái, huy hiệu trước ngực đã mất"; không được chỉ bỏ huy hiệu mà khôi phục tay áo.
-Thay đồ ở cảnh 6 có thể xóa hư hỏng quần áo, nhưng không thể tự động chữa lành vết thương mu bàn tay tồn tại cùng lúc.
+**Teaching example**: in scene 2 the left sleeve is torn, in scene 4 the badge falls off, and only in scene 6 does the character change clothes.
+If scenes 4-5 reference the base image, write "the left sleeve tear remains, the chest badge is missing"; do not just remove the badge while restoring the sleeve.
+Changing clothes in scene 6 can clear the clothing damage, but cannot automatically heal a wound on the back of the hand that exists at the same time.
 
-## 4. Nhóm người dùng quy tắc chung và khác biệt cần thiết
+## 4. Groups use common rules and necessary differences
 
-Áp dụng: nhiều người xuất hiện như một nhóm, cùng tạo nên sức mạnh hình ảnh, hoặc đám đông lớn cần phạm vi tạo hình ổn định.
-Trước tiên từ kịch bản phán đoán là một nhân vật vô danh, một nhóm nhỏ có số người xác định, hay một nhóm số lượng lớn; vô danh không đồng nghĩa với nhóm người.
-Trước tiên ghi số người hoặc quy mô trong cốt truyện, rồi ghi riêng số mẫu dùng cho thiết kế, hai thứ không thay thế nhau.
-Thiết kế nhóm trước tiên định các mục chung: thân phận trực thuộc, niên đại trang phục, chất liệu kỹ thuật, phạm vi phối màu và quan hệ với chủ thể.
-Rồi chọn các mẫu có thể bao phủ khác biệt thực: tuổi hoặc giai đoạn phát triển, khối lượng, trang phục theo chức trách, v.v.; khác biệt không đủ thì không cố tạo thêm nhân vật.
-Khi nhóm nhỏ xác định có từng người hành động độc lập hoặc cần nhận diện liên tục, cấp cho thành viên định danh ổn định và tài sản cá nhân cần thiết.
-Mẫu của nhóm lớn chỉ định nghĩa phạm vi ngoại hình được phép xuất hiện, không để ba người trong mẫu thành toàn bộ số người trong cốt truyện.
-Tầng lớp hình ảnh có thể tạo thành tổng thể qua mảng màu gần nhau và chi tiết đơn giản hóa, nhưng không được vì làm nổi nhân vật chính mà xóa hành động của quần chúng then chốt mà cốt truyện yêu cầu.
-Đầu ra đi đâu: quy tắc nhóm, mẫu và mô tả số người cốt truyện trong mục tài sản; prompt video viết riêng số người thực tế và hành động của thành viên trong đoạn này.
-Dùng sai: đổi "sáu người hộ tống" thống nhất thành "một hộ vệ điển hình", hoặc bịa tên và tiểu sử cho từng người đi đường ở hậu cảnh.
+Applies when: several people appear as a group, together form the visual force, or a large crowd needs a stable range of looks.
+First judge from the script whether it is one unnamed character, a small group of a set number, or a larger group; unnamed does not mean a group.
+First record the story headcount or scale, then separately record the number of samples adopted for design; the two do not substitute for each other.
+Group design first sets the common items: affiliated identity, era of clothing, materials and craftsmanship, color range, and relationship to the main subject.
+Then pick samples that cover real differences: age or growth stage, mass, role-specific clothing, etc.; when differences are insufficient, do not force more characters.
+When members of a set small group each have independent actions or need persistent recognition, give members stable IDs and necessary individual assets.
+Samples for a large group only define the range of appearances allowed; do not let three people in the samples become the entire story headcount.
+Visual layering can form a whole through similar color blocks and simplified details, but do not erase key crowd actions the story requires just to make the protagonist stand out.
+Output destination: group rules, samples, and story headcount notes in the asset entry; the video prompt separately states this segment's actual headcount and member actions.
+Misuse: changing "six escorts" into "one typical guard", or inventing names and bios for every background pedestrian.
 
-## 5. Bối cảnh có không gian gốc trước, rồi mới có khu vực lấy cảnh
+## 5. A location first has a spatial master, then framing areas
 
-Áp dụng: cùng một địa điểm được dùng nhiều lần, lấy cảnh gần hơn, nhân vật hành động xuyên khu vực, hoặc ảnh concept hiện có chỉ đẹp mà không chống đỡ được cốt truyện.
-Không gian gốc cố định ranh giới đầy đủ, cấu trúc và quan hệ của địa điểm; khu vực con chỉ chọn một phần đã có trong không gian gốc.
-Thay đổi số cảnh, vị trí máy và bố cục đều không tự động sinh không gian mới; phòng độc lập cũng không được cưỡng ép gộp chỉ vì cùng thuộc một tòa nhà.
+Applies when: the same place is used multiple times, framing gets closer, characters act across areas, or an existing concept image only looks good but cannot support the story.
+The spatial master pins the place's complete boundaries, structure, and relationships; sub-areas only select part of what already exists in the master.
+Changes in scene number, camera position, or composition do not automatically create a new space; independent rooms also cannot be forcibly merged just because they are in the same building.
 
-1. Liệt kê việc vào, dừng, tương tác và rời đi bắt buộc xảy ra trong cảnh này, tìm ra nhiệm vụ không gian gánh vác.
-2. Dùng mốc ổn định để xác định không gian: lối vào, cửa sổ, quầy, cầu thang, ranh giới địa hình; nhiều cửa ra vào và cửa sổ dùng tên phân biệt được.
-3. Mô tả quan hệ liền kề, tương đối, thông nhau và chênh độ cao của các mốc, rồi mới đặt bài trí thông thường, giữ số lượng và quan hệ tỉ lệ cần thiết.
-4. Kiểm tra lộ trình hành động chính và không gian tương tác, không để đồ đạc chặn mất lối bắt buộc đi qua, không vì tiện chuyển động máy mà bịa thêm cửa.
-5. Đặt tên cục bộ trong cùng không gian gốc là khu vực con, ghi ranh giới, trạng thái cấp cha, bài trí kế thừa và thông tin cần thiết riêng có.
-6. Khi thực sự xảy ra hư hỏng, di chuyển bài trí hoặc ảnh hưởng thời tiết thì ghi riêng trạng thái; vật ngoài khung lấy cảnh vẫn tiếp tục tồn tại.
+1. List the entering, staying, interacting, and leaving that must happen in this scene, and identify the tasks the space carries.
+2. Pin the space with stable anchors: entrances, windows, counters, stairs, terrain boundaries; give multiple doors and windows distinguishable names.
+3. Describe the adjacency, relative position, connectivity, and height differences of anchors, then place ordinary furnishings, keeping necessary counts and scale relationships.
+4. Check the main action path and interaction space; do not let furniture block required routes, and do not add doors out of nothing for convenient camera movement.
+5. Name local parts of the same master as sub-areas, recording boundaries, parent state, inherited furnishings, and unique necessary information.
+6. When damage, moved furnishings, or weather effects actually happen, record a separate state; objects outside the frame continue to exist.
 
-Diễn đạt quan hệ bằng "lối vào đối diện quầy, dưới cửa sổ bên có bàn dài, giữa bàn và quầy đủ hai người tránh nhau", ít dùng trái phải không có điểm tham chiếu.
-Khi tỉ lệ tương đối đủ để thực thi thì không dùng kích thước kỹ thuật hư cấu; kích thước, tên riêng và quan hệ địa lý cần thiết kịch bản đã cho vẫn phải giữ.
-Ranh giới khu vực con không phải bức tường mới; cận cảnh dưới cửa sổ không thể đổi bàn dài ban đầu thành bàn tròn ăn ảnh hơn.
-Đầu ra đi đâu: mốc không gian, quan hệ không gian gốc và khu vực con, trạng thái trong mục bối cảnh; quan hệ kế thừa đầy đủ có thể giữ ở dạng chữ, không tự động sinh tác vụ ảnh mới.
+Express relationships as "the entrance faces the counter, a long table sits under the side window, and two people can pass each other between the table and the counter", using unreferenced left and right sparingly.
+When relative scale is enough to execute, do not invent engineering dimensions; dimensions, proper names, and necessary geographic relationships already given by the script must still be kept.
+A sub-area boundary is not a new wall; a close shot under the window cannot swap the original long table for a more photogenic round table.
+Output destination: spatial anchors, master and sub-area relationships, and states in the location entry; the complete inheritance relationship can stay as text and does not automatically create new image tasks.
 
-**Ví dụ giảng dạy**: phòng chờ nhà ga gồm khu trước cửa bán vé và khu ghế dài, hai cảnh diễn lần lượt xảy ra ở hai nơi này.
-Cả hai kế thừa lối vào, cửa bán vé và vị trí ghế dài của cùng một phòng; phòng trực khép kín có ranh giới và cấu trúc riêng, mới được đánh giá là không gian độc lập.
-"Khu ghế dài gần hơn" chỉ đổi cách lấy cảnh; "ghế dài bị đẩy sát tường bên" mới thay đổi trạng thái không gian, toàn cảnh về sau cũng phải dùng tiếp kết quả này.
+**Teaching example**: a station waiting hall includes the area in front of the ticket window and the bench area, and two scenes take place in these two spots respectively.
+Both inherit the same hall's entrance, ticket window, and bench placement; the enclosed duty room has its own boundaries and structure, and only then is judged as an independent space.
+"Bench area gets closer" changes only the framing; only "the bench is pushed against the side wall" changes the spatial state, and later wide shots must keep this result too.
 
-## 6. Từ đường đi hành động suy ra không gian nhìn thấy được trong bố cục
+## 6. From action paths to visible space in the composition
 
-Áp dụng: cần viết khung nhìn chính môi trường tự đủ, hoặc cần xác nhận một shot có thấy được hành động, lối ra và manh mối không.
-Tạm dùng chữ đi một lượt lộ trình của nhân vật: xuất phát từ mốc nào, đi qua đâu, dừng ở đâu, tiếp xúc với cái gì.
-Rồi chọn vị trí quan sát có thể thể hiện khu hoạt động chính và mốc ổn định, nêu quan hệ quan sát như "từ lối vào nhìn về cửa bán vé".
-Tiền cảnh giúp dẫn vào không gian, trung cảnh chứa hành động chính, hậu cảnh thể hiện ranh giới hoặc hướng đi; không phải ảnh nào cũng phải nhét đầy ba lớp trang trí.
-Phân biệt "bắt buộc tồn tại" và "bắt buộc nhìn thấy trong ảnh này": khu vực sau cửa có thể bị che, nhưng khi dùng về sau không được tuyên bố chi tiết của nó đã được xác minh trong ảnh.
-Khu vực ẩn cần thiết chưa được định nghĩa thì bổ sung đề xuất bằng chữ; không làm tường chồng lên nhau trong suốt để một ảnh hiện được tất cả.
-Sau khi shot đổi hướng, trái phải của khung hình sẽ thay đổi, quan hệ vật lý của mốc giữ nguyên; di chuyển vị trí máy không được di chuyển ánh sáng cửa sổ và đồ đạc.
-Tư liệu môi trường mặc định là một khung nhìn chính thuần môi trường tự đủ, prompt viết đủ quan hệ không gian cần thiết, không chỉ viết "cùng không gian gốc".
-Ảnh không kèm nhân vật, bóng người hay động vật trong truyện; vị trí và hành vi của nhân vật do video tham chiếu tài sản nhân vật thực để thực hiện.
-Đầu ra đi đâu: prompt khung nhìn chính của tài sản chỉ ghi cấu trúc nhìn thấy được và mốc không gian. Nếu dùng cho Seedance, vị trí máy, che khuất, hướng nhìn và hướng màn ảnh hoàn toàn do A5/A7/A9 trong PART A của `SKILL.md` chính xử lý, phương pháp này không được viết riêng.
-Dùng sai: để hai lối ra vào cùng vào khung mà sửa cấu trúc kiến trúc, hoặc biến mỗi lần đổi vị trí máy thành tác vụ bổ sung ảnh bốn hướng.
+Applies when: you need to write a self-contained environment main view, or confirm whether a shot can see the action, exits, and clues.
+Walk the character's path in text first: which anchor they start from, where they pass, where they stop, and what they come into contact with.
+Then choose a viewing position that shows the main activity area and stable landmarks, stating the viewing relationship such as "looking from the entrance toward the ticket window".
+The foreground helps enter the space, the midground carries the main action, and the background shows boundaries or destinations; not every image needs all three layers filled with decoration.
+Distinguish "must exist" from "must be visible in this image": the area behind a door can be occluded, but later use cannot claim the image has verified its details.
+When a necessary hidden area is not yet defined, add a text proposal; do not see through overlapping walls to show everything in one image.
+After the camera reverses direction, screen left and right change, while the physical relationships of anchors stay; moving the camera position cannot move window light or furniture.
+The default environment material is one self-contained pure environment main view, with the prompt stating all needed spatial relationships, not just "same master".
+Images do not include characters, silhouettes, or story animals; character placement and behavior are realized by videos referencing real character assets.
+Output destination: the asset main view prompt records only visible structure and spatial anchors. If used for Seedance, camera position, occlusion, eyelines, and screen direction are all handled by A5/A7/A9 of PART A in the main `SKILL.md`, and this method must not write them separately.
+Misuse: altering the building structure so that two entrances fit in the frame at once, or turning every camera position change into a four-direction image task.
 
-## 7. Đạo cụ then chốt từ chức năng suy ra hình dáng
+## 7. Key props: from function to form
 
-Áp dụng: cốt truyện dựa vào vật để truyền thông tin, kích hoạt sự kiện hoặc hoàn thành tương tác then chốt, mà tài sản hiện có lại không đủ bao phủ rõ ràng.
-Trước tiên tra xem nó đã thuộc tạo hình cố định của nhân vật hay bài trí bối cảnh chưa, dùng tiếp cùng một thiết kế; phóng to chi tiết riêng cũng không được tạo phiên bản thứ hai.
-Cái cốc thông thường không tự động thành tài sản mới vì được cầm lên, tính then chốt do mục đích cốt truyện lần này và nhu cầu tái sử dụng quyết định.
+Applies when: the story relies on an object to convey information, trigger events, or complete a key interaction, and existing assets are not enough to cover it clearly.
+First check whether it already belongs to a character's fixed look or location furnishings, and reuse the same design; enlarging a detail on its own also cannot create a second version.
+An ordinary cup does not automatically become a new asset just because it is picked up; whether it is key is judged by this story's use and reuse needs.
 
-1. Trích chức năng đã xác định: khán giả phải nhận ra gì, nhân vật phải sử dụng như thế nào, thay đổi trạng thái nào sẽ đẩy sự kiện.
-2. Từ động tác sử dụng suy ngược cấu trúc: vị trí cầm nắm, quan hệ đóng mở, cách nối, vùng thông tin nhìn thấy được và tỉ lệ cần thiết.
-3. Chọn chất liệu và kỹ thuật tương thích với thời đại, môi trường và thao tác, phân biệt thân chính, bộ phận nối và xử lý bề mặt.
-4. Đặt dấu vết sử dụng ở bộ phận có lý do, như nút bấm được ấn nhiều lần hoặc mép thường xuyên cầm; không rải vết xước đều khắp nơi.
-5. Viết rõ trạng thái nguyên vẹn và trạng thái thay đổi cần thiết, giữ đường nét, mối nối và thông tin chữ còn lại nhất quán.
+1. Pick out the settled function: what the audience must recognize, how the character must use it, and which state change drives events.
+2. Work backward from the usage action to the structure: grip position, opening and closing relationships, connection methods, visible information areas, and necessary scale.
+3. Choose materials and craftsmanship compatible with the era, environment, and operation, distinguishing the main body, connecting parts, and surface treatment.
+4. Place signs of use in places with a reason, such as a repeatedly pressed button or a frequently gripped edge; do not scatter scratches evenly.
+5. Write clearly the intact state and necessary changed states, keeping the remaining silhouette, connections, and text information consistent.
 
-Chỉ viết mật mã, văn khắc, con dấu và ký hiệu khi cốt truyện đã cung cấp; nội dung thư chưa biết không được thiết kế mỹ thuật bổ sung thành đáp án.
-Chất liệu mô tả bằng phản ứng nhìn thấy được: kim loại xước giữ vân định hướng, vải thô thiên về mờ, kính mờ cho ánh sáng qua nhưng không nhìn xuyên rõ.
-Tránh coi phần trăm phản xạ không rõ chuẩn đo là sự thật chất liệu; không cần thuật ngữ vẫn nói rõ được điểm sáng, độ trong suốt và độ thô mịn bề mặt.
-Màu của vật có thể hòa vào môi trường, hô ứng nhẹ hoặc nổi bật, nhưng mức độ nổi bật tuân theo thời điểm hé lộ, không để lộ sớm bằng chứng vốn phải giấu.
-Đầu ra đi đâu: mốc cấu trúc đạo cụ và prompt tài sản; người nắm giữ, động tác đóng mở, quá trình chuyển giao và vị trí kết thúc thuộc về đoạn video.
+Write passwords, inscriptions, seals, and symbols only when the story already provides them; unknown letter contents cannot be filled in as answers by art design.
+Describe materials by visible response: brushed metal keeps a directional texture, coarse cloth tends to be matte, frosted glass lets light through without clear see-through.
+Avoid treating reflectance percentages of unclear standard as material facts; highlights, transparency, and surface roughness can be stated clearly without jargon.
+An object's color can blend into the environment, echo it slightly, or stand out, but its conspicuousness follows the reveal timing, without exposing evidence that should be hidden too early.
+Output destination: prop structure anchors and asset prompts; holder, opening and closing actions, handover process, and end position belong to video segments.
 
-**Ví dụ giảng dạy**: cốt truyện xác nhận một hộp bằng chứng "phải trượt mở khóa bên mới lấy được mẩu giấy".
-Trước tiên thiết kế khóa bên dễ nhận ra, hướng trượt và đường nối nắp hộp, rồi theo thời đại chọn hộp gỗ và khóa kim loại; không thêm khóa vân tay hay hoa văn bí ẩn.
-Nếu nội dung mẩu giấy chưa được cho, chỉ đảm bảo nó lấy ra được từ trong hộp, không viết bổ sung chữ thay biên kịch; trạng thái trong và ngoài hộp ghi riêng.
+**Teaching example**: the story confirms an evidence box where "the note can only be taken out after sliding open the side latch".
+First design a recognizable side latch, sliding direction, and lid seam, then choose a wooden box with a metal latch to match the era; do not add a fingerprint lock or mysterious carvings.
+If the note's content is not given, only make sure it can be taken out of the box, without filling in text for the screenwriter; record the states inside and outside the box separately.
 
-## 8. Nén thiết kế thành căn cứ tài sản có thể dùng
+## 8. Compress the design into a usable asset basis
 
-Trước tiên xóa lời khen không nhìn thấy được và tính từ lặp lại, rồi giữ "thân phận đối tượng, mốc nhận diện, quan hệ cấu trúc, trạng thái hiện tại, thay đổi được phép".
-Ảnh nhân vật mới dùng tiếp cận cảnh đầu hoàn chỉnh, toàn thân chính diện, toàn thân nghiêng phải 90°, toàn thân sau lưng; đỉnh đầu, thân và bàn chân đầy đủ.
-Các góc nhìn trên cùng một bảng giữ cùng thân phận và trạng thái; động vật thích ứng theo thiết lập thực, không vì mẫu mà thêm cơ quan.
-Bối cảnh dùng tiếp ảnh đơn tự đủ; đạo cụ tổ chức theo cách trình bày mặc định trong [sản xuất tài sản](../assets.md) hoặc bố cục người dùng đã xác nhận.
-Tỉ lệ khung cần thiết do việc trình bày đầy đủ và năng lực thực tế quyết định, không biến phương pháp này thành yêu cầu tỉ lệ hay model cố định.
-Cuối cùng dùng cốt truyện tra ngược: nhân vật làm được động tác, bối cảnh đi thông được, đạo cụ dùng được, khán giả nhận ra được khi cần.
-Chỉ đưa kết luận cần thiết vào prompt; sau khi chọn dùng ảnh thì đối chiếu lại thân phận, cấu trúc và trạng thái thực tế, không coi ý đồ thiết kế là ảnh đã thực hiện được.
+First delete invisible praise and repeated adjectives, then keep "object identity, recognition anchors, structural relationships, current state, allowed changes".
+New character images keep the complete head close-up, front full body, right-side 90° full body, and back full body; the top of the head, body, and feet are complete.
+Views on the same board keep the same identity and state; animals are adapted to their real settings, without adding organs because of the template.
+Locations keep the self-contained single image; props are organized according to the default display method in [Asset production](../assets.md) or a user-confirmed layout.
+The required aspect ratio is determined by complete display and actual capability; do not turn this method into a fixed ratio or model requirement.
+Finally, check against the story: the character can do the action, the location can be walked through, the prop can be used, and the audience can recognize them when needed.
+Bring only the necessary conclusions into the prompt; after adopting images, verify the actual identity, structure, and state again, and do not treat design intent as already realized in the image.

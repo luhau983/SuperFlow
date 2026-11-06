@@ -1,64 +1,64 @@
-# Chuẩn bị, tạo và nghiệm thu video
+# Video preparation, generation, and acceptance
 
-Quy trình này có ba điểm dừng xác nhận độc lập, không được vượt qua một lần. Mọi thành quả để trên canvas của tập hiện tại, ví dụ `Canvas/Tập/Tập 001.json`.
-Node cụ thể, khám phá công cụ, trạng thái và thao tác tệp xem [canvasOperations.md](canvasOperations.md).
+This flow has three independent confirmation stops that cannot be passed in one go. All outputs stay on the current episode canvas, e.g. `Canvas/Episodes/Episode 001.json`.
+For specific nodes, tool discovery, status, and file operations see [canvasOperations.md](canvasOperations.md).
 
-Trước khi chuẩn bị, đọc [Kiến thức chế độ video, mẫu mô hình và âm thanh](knowledge/videoPromptCraft.md): trước tiên đọc phần chọn chế độ và ràng buộc chung, rồi đọc đầy đủ mẫu thực tế áp dụng cho lần này trong các mẫu Seedance ba đoạn, Wan khung đầu đơn, khung đầu/khung đầu và khung cuối chung hoặc đa tham chiếu chung, cuối cùng đọc phần ghi chép tập này và nghiệm thu. Không được chỉ lấy tên mẫu; phải thực sự điền số shot gốc, động tác, lời thoại, âm thanh và tham chiếu thật của tập này. Phong cách chỉ tra mục đã xác nhận của [Phong cách hình ảnh](knowledge/visualStyles.md), khi có nghi vấn về tính thời gian hoặc nối tiếp thì đọc lại phần tương ứng của [Kiến thức shot](knowledge/shotCraft.md).
+Before preparation, read [video modes, model templates, and sound knowledge](knowledge/videoPromptCraft.md): first read mode selection and shared constraints, then fully read whichever template actually applies this time (Seedance three-part, Wan single first frame, generic first frame/first-and-last frame, or generic multi-reference), and finally read the episode record and acceptance sections. Do not take only the template name; actually fill in this episode's original shot numbers, actions, dialogue, sound, and real references. Style only consults the confirmed entry in [visual styles](knowledge/visualStyles.md); when timing or carry-over is in doubt, re-read the corresponding part of [shot knowledge](knowledge/shotCraft.md).
 
-## I. Chuẩn bị video
+## 1. Video preparation
 
-Đầu vào là bảng phân cảnh đã xác nhận, đơn vị sản xuất, ảnh tài sản được chọn dùng, và ảnh phân cảnh đã xác nhận mà tuyến được chọn cần.
-Lời thoại chính thức lấy `Canvas/Kịch bản.json` làm chuẩn; tham chiếu tài sản lấy từ `Canvas/Tài sản.json`, không lập bản sao tài sản chính thức mới.
+Input is the confirmed storyboard table, production units, adopted asset images, and the confirmed storyboard images the chosen route needs.
+Formal dialogue follows `Canvas/Script.json`; asset references come from `Canvas/Assets.json`, without creating new formal asset copies.
 
-1. Đọc đầu vào, số lượng tham chiếu, thời lượng, độ phân giải, tỉ lệ khung, âm thanh và chế độ mà mô hình video hiện tại thực sự hỗ trợ, không bắt buộc Seedance.
-2. Văn bản đa tham chiếu chuẩn bị một video cho mỗi đoạn; tuyến khung đầu chuẩn bị một video cho mỗi shot, chỉ khi hỗ trợ và đã chọn khung đầu và khung cuối mới thêm khung cuối.
-3. Thời lượng đơn vị đồng thời bị ràng buộc bởi giới hạn 15 giây của v1.1.8 và giới hạn của mô hình hiện tại; thời lượng rời rạc hoặc đầu vào không tương thích thì quay lại xác nhận phân cảnh/chế độ.
-4. Theo mô hình/chế độ đầu vào thực tế chọn mẫu áp dụng trong tệp kiến thức, viết prompt thực thi đầy đủ cho mỗi đơn vị: chủ thể và bối cảnh, số shot gốc và toàn bộ shot con, trạng thái đầu cuối của động tác, chuyển động máy, trình tự thời gian, lời thoại đầy đủ và hiệu ứng âm thanh cụ thể. Khi mẫu yêu cầu một shot liên tục đơn mà gặp nhiều shot đã xác nhận thì quay lại xác nhận phân cảnh/chế độ, không vì khớp định dạng mà xóa shot.
-5. Lời thoại giữ ngôn ngữ gốc và nguyên văn, phân biệt đối thoại, OS và VO; chỉ người nói mới khẩu hình tương ứng, không được để lời dẫn tự động thành nhân vật mở miệng.
-6. Dấu tham chiếu được lập theo `{{ref N}}` của host hiện tại và thứ tự đầu vào media thật, đồng thời kiểm tra ánh xạ thích ứng, không coi `@ảnhN` cũ hay XML là giao thức chung; ảnh, video, âm thanh ghi chú riêng mục đích thực tế, thiếu ảnh phân cảnh thì không hư cấu tham chiếu bố cục, cũng không vì thế mà bỏ tham chiếu tài sản thật.
-7. Khi thiếu ảnh, âm thanh không được hỗ trợ hoặc tham chiếu vượt giới hạn thì trước tiên điều chỉnh phương án và xác nhận, không được bỏ đầu vào rồi tạo thẳng.
-8. Sau khi ghi node video và ghi chú, đọc lại, kiểm tra số shot/số đoạn, thứ tự, prompt, thời lượng, đầu vào media thực tế và mốc đầu ra đã có; chính văn mẫu chỉ viết nội dung thực thi, ý kiến duyệt để trong ghi chú đọc được.
+1. Read the inputs, reference count, duration, resolution, aspect ratio, audio, and modes the current video model actually supports, without forcing Seedance.
+2. Text multi-reference prepares one video per segment; the first-frame route prepares one video per shot, adding a last frame only when supported and first-and-last frame has been chosen.
+3. Unit duration is constrained by both v1.1.8's 15-second limit and the current model's limit; incompatible discrete durations or inputs go back to storyboard/mode confirmation.
+4. Based on the actual model/input mode, choose the applicable template from the knowledge file and write a complete execution prompt for each unit: subject and location, original shot number and all sub-shots, start and end states of actions, camera movement, timing, complete dialogue, and concrete sound effects. When a template requires a single continuous shot but a confirmed multi-shot segment comes up, go back to storyboard/mode confirmation; do not delete shots to fit the format.
+5. Dialogue keeps its original language and wording, distinguishing dialogue, OS, and VO; only the speaker makes the corresponding mouth movements, and voiceover must not automatically turn into a character speaking.
+6. Reference markers are built from the current host's `{{ref N}}` and the real media input order, and the adaptation mapping is checked; do not treat the legacy `@imageN` (originally written with the Chinese word for image) or XML as a universal protocol. Note the actual purpose of each image, video, and audio input; when storyboard images are missing, do not invent composition references, and do not drop real asset references because of it.
+7. When images are missing, audio is unsupported, or references exceed the limit, first adjust the plan and confirm; do not discard inputs and generate directly.
+8. After writing video nodes and notes, read back and check shot/segment numbers, order, prompts, duration, actual media inputs, and the existing output baseline; the template body contains only execution content, and review comments stay in the readable note.
 
-Trong ghi chú sản xuất đã có của tập này, lưu lựa chọn mẫu và lý do, mô hình/chế độ, prompt thực thi đầy đủ, quan hệ tương ứng với số shot gốc, lời thoại/OS/VO và người nói cùng khẩu hình, căn cứ âm sắc, phiên bản nguồn tham chiếu và ánh xạ đầu vào thực tế, trạng thái đầu cuối và sự tiếp nối trước sau. Không có mẫu giọng thật thì không bịa tham chiếu âm thanh, không có năng lực âm thanh thì không hứa tạo lời thoại/âm sắc; không thêm bản sao tài sản chính thức ở đây.
+In the existing production notes for this episode, save the template choice and reason, model/mode, complete execution prompt, mapping to original shot numbers, dialogue/OS/VO with speakers and lip-sync, voice basis, reference source versions and actual input mapping, start and end states, and carry-over before and after. Without a real voice sample, do not invent audio references; without audio capability, do not promise dialogue/voice generation; do not add formal asset copies here.
 
-**Điểm dừng A: Xác nhận chuẩn bị.** Trình bày prompt, mô hình/chế độ, tham số, số lượng đơn vị và phạm vi, chờ người dùng xác nhận hoặc sửa.
-Sau khi ghi phạm vi xác nhận ngược vào canvas của tập này thì dừng; xác nhận nội dung chuẩn bị không tự động đồng nghĩa với ủy quyền khởi động tạo.
+**Stop A: Preparation confirmation.** Show the prompts, model/mode, parameters, unit count, and scope, and wait for the user to confirm or revise.
+Write the confirmed scope back to this episode's canvas and stop; confirmation of the preparation does not automatically authorize starting generation.
 
-## II. Tạo video
+## 2. Video generation
 
-Điều kiện vào: phần chuẩn bị đã thông qua, và đã nhận được chỉ thị tạo cho lô video này; cùng một phạm vi ủy quyền rõ ràng thì không xác nhận đi xác nhận lại.
+Entry condition: preparation has been approved, and a generation instruction for this batch of videos has been received; within the same explicit authorization scope, do not confirm repeatedly.
 
-1. Đọc lại kết quả chuẩn bị, bảo đảm mục tiêu tạo và phạm vi ủy quyền vẫn nhất quán, thay đổi tham số không được lặng lẽ có hiệu lực.
-2. Khởi động phạm vi xác nhận qua công cụ node được khám phá thời gian thực, giữ ứng viên cũ và phiên bản đã chọn dùng.
-3. Ghi lại định danh node/tác vụ thực tế và "Đang tạo", dùng công cụ trạng thái hiện khả dụng để truy vấn trạng thái cuối.
-4. Sau khi chuyển canvas tiếp tục truy vấn theo định danh thật; không được diễn giải việc rời trang thành hủy tác vụ rồi đặt lặp.
-5. Sau khi thành công đọc lại đầu ra video và mở để kiểm chứng, thất bại thì ghi lại đơn vị tương ứng và nguyên nhân; yêu cầu thành công không đồng nghĩa với video thành công.
-6. Ghi ngược riêng các mục thành công, thất bại, vẫn đang chạy vào tập này; mục chưa hoàn thành không tính vào hoàn thành bàn giao.
+1. Read back the preparation results, making sure the generation targets and authorization scope still match; parameter changes must not take effect silently.
+2. Start the confirmed scope through the live-discovered node tools, keeping old candidates and already adopted versions.
+3. Record the actual node/task identifiers and "Generating", and query the final state with the currently available status tools.
+4. After switching canvases, continue querying by the real identifiers; do not interpret leaving the page as task cancellation and place a duplicate order.
+5. After success, read back the video output and open it to verify; record failures with the corresponding unit and reason. A successful request does not mean a successful video.
+6. Write successes, failures, and items still in progress back to this episode separately; unfinished items do not count toward delivery completion.
 
-**Điểm dừng B: Xác nhận kết quả tạo.** Trình bày các ứng viên phát được và phạm vi thất bại, chờ người dùng quyết định nghiệm thu, thử lại cục bộ hoặc sửa.
-Chưa có chỉ thị rõ ràng thì không tự động chạy lại mục thất bại, không đánh dấu thẳng toàn bộ ứng viên thành công là thành phẩm đã chọn dùng.
+**Stop B: Generation result confirmation.** Show the playable candidates and the failed scope, and wait for the user to decide on acceptance, partial retries, or changes.
+Without explicit instruction, do not automatically rerun failed items, and do not directly mark all successful candidates as adopted final footage.
 
-## III. Nghiệm thu và bàn giao video
+## 3. Video acceptance and delivery
 
-Điều kiện vào: người dùng xác nhận vào nghiệm thu hoặc yêu cầu rõ ràng chọn đoạn/bàn giao. Phát thực tế các ứng viên, đối chiếu phân cảnh và lời thoại để kiểm tra:
+Entry condition: the user confirms moving to acceptance or explicitly asks for selection/delivery. Actually play the candidates and check against the storyboard and dialogue:
 
-- Thân phận, hình thái nhân vật, bối cảnh và đạo cụ nhất quán, động tác và shot phù hợp phân cảnh đã xác nhận, không thiếu sự kiện then chốt.
-- Lời thoại đầy đủ, người nói đúng, quan hệ giữa OS/VO và khẩu hình đúng, hiệu ứng âm thanh phù hợp bối cảnh; kiểm tra âm thanh theo năng lực mô hình thực tế.
-- Thời lượng thực tế, tỉ lệ khung, độ nét dùng được, động tác, bối cảnh và cảm xúc giữa các đoạn liên tục, không có cắt cụt rõ ràng hay đoạn đuôi thừa.
-- Tệp video đọc được và tương ứng đúng đơn vị; ghi lại khác biệt giữa các ứng viên, vị trí vấn đề và phiên bản khuyến nghị sử dụng.
+- Character identity, form, location, and props are consistent, actions and shots follow the confirmed storyboard, and no key event is missing.
+- Dialogue is complete, speakers are correct, OS/VO and lip-sync relationships are correct, and sound effects suit the scene; check audio according to the actual model's capabilities.
+- Actual duration, aspect ratio, and clarity are usable; action, location, and emotion are continuous between segments, with no obvious truncation or extra trailing section.
+- Video files are readable and correspond to the correct units; record candidate differences, problem locations, and the recommended version.
 
-Theo phương pháp nghiệm thu của kiến thức video, ghi bằng chứng đã xem thực tế và thời điểm có vấn đề ngược vào tập này. Khi công cụ hiện tại không thể phát/hiểu video hoặc đọc track âm thanh, nhờ người dùng xem trước và phản hồi, giữ "Chờ người dùng kiểm chứng", không được dùng đường dẫn đọc được, trạng thái thành công hay đầu ra cũ để giả là đã xem và nghe.
+Following the acceptance method in the video knowledge, write the evidence actually viewed and the problem timestamps back to this episode. When the current tools cannot play/understand video or read the audio track, ask the user to preview and report back, and keep "Awaiting user verification"; never pass off a readable path, success status, or old output as having watched and listened.
 
-**Điểm dừng C: Xác nhận chọn dùng và bàn giao.** Trình bày ý kiến nghiệm thu từng đơn vị, phương án chọn đoạn và thứ tự, chờ người dùng quyết định phạm vi chọn dùng hoặc làm lại.
-Sau khi người dùng xác nhận, ghi kết quả chọn dùng và tham chiếu video thật ngược vào canvas của tập này, giữ các ứng viên không được chọn và bản ghi vấn đề.
+**Stop C: Selection and delivery confirmation.** Show per-unit acceptance notes, the selection plan, and the order, and wait for the user to decide the scope to adopt or redo.
+After user confirmation, write the selection results and real video references back to this episode's canvas, keeping unselected candidates and issue records.
 
-## Ranh giới bàn giao
+## Delivery boundaries
 
-Mặc định có thể bàn giao các đoạn sắp theo thứ tự đã xác nhận và danh sách, ghi rõ số tập, số shot/số đoạn, thời lượng thực tế, tham chiếu tệp và các mục chưa giải quyết.
-Khi người dùng yêu cầu ghép, trước tiên xác minh host hiện tại có năng lực ghép khả dụng, rồi xác nhận phương án cụ thể; không có năng lực thì nói rõ bàn giao dưới dạng các đoạn.
-Chỉ sau khi ghép thực tế, đọc lại tệp và phát kiểm chứng mới được gọi là thành phẩm của tập này; không được dùng danh sách hay tác vụ chưa thực hiện để giả là đã xuất xong.
-README bản cũ có nhắc tới ghép nối xuất, nhưng tag đó không cung cấp route xuất sản xuất nào có thể dựa vào để dùng lại, không bịa API cũ.
-Thư mục bàn giao được lưu theo tổ chức dự án đã xác nhận, node canvas giữ tham chiếu thật; không tùy tiện di chuyển hay xóa bản gốc đã tạo.
-Sau khi ghi ngược trạng thái bàn giao của tập này thì dừng; tập sau vẫn theo quy trình chính thực hiện từng giai đoạn, không được mở rộng xác nhận của tập này cho tất cả các tập.
+The default deliverable is the segments arranged in confirmed order plus a list, noting episode number, shot/segment numbers, actual duration, file references, and unresolved items.
+When the user asks for compositing, first verify that the current host has usable compositing capability, then confirm the specific plan; without that capability, deliver clearly as segments.
+Only after actual compositing, reading back the file, and verifying playback can it be called this episode's final cut; a list or unexecuted task cannot pass for a completed export.
+The legacy README mentions stitching and export, but that tag does not provide a production export route that can be reused on that basis; do not invent legacy APIs.
+The delivery folder is organized and saved according to the confirmed project, and canvas nodes keep real references; do not arbitrarily move or delete generated originals.
+Stop after writing back this episode's delivery status; the next episode still proceeds stage by stage per the main flow, and this episode's confirmation cannot be extended to all episodes.
 
-Ranh giới giữa bàn làm việc bản cũ và node hiện tại xem [sourceMap.md](sourceMap.md).
+For the boundary between the legacy workbench and current nodes see [sourceMap.md](sourceMap.md).

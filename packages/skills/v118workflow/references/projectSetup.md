@@ -1,45 +1,45 @@
-# Khởi tạo và lưu trữ dự án
+# Project setup and archiving
 
-Đầu vào là mục tiêu của người dùng, tiểu thuyết/câu chuyện/kịch bản sẵn có, dự án hiện tại và thư mục canvas. Đầu ra ghi vào canvas kịch bản duy nhất; bước này xác nhận phạm vi dự án và nơi lưu, không tạo cốt truyện hay media.
+Input is the user's goal, any existing novel/story/script, the current project, and the canvas directory. Output is written to the single script canvas; this step confirms project scope and placement, and does not generate plot or media.
 
-## Xác nhận phạm vi sản xuất
+## Confirm production scope
 
-Trước tiên đọc các tệp thực tế và canvas sẵn có, chỉ bổ sung những gì chưa rõ: tên dự án, số tập mục tiêu, các tập xử lý lần này, thời lượng mỗi tập, phạm vi nguồn, tỉ lệ khung, thể loại câu chuyện và phong cách mỹ thuật. Các chương nguyên tác phải tồn tại; "chương 1–10" không thể thực hiện trực tiếp trên đầu vào chỉ có 8 chương. Khi người dùng không biết chia tập thế nào, trước tiên đọc tóm tắt nguồn, đưa ra phương án có căn cứ để người dùng chọn.
+First read the actual files and existing canvases, and only fill in what is not yet clear: project name, target episode count, episodes to process this time, per-episode duration, source scope, aspect ratio, story genre, and art style. Source-work chapters must exist; "Chapters 1-10" cannot be executed directly on an input that only has 8 chapters. When the user does not know how to split episodes, first read the source synopsis and offer a grounded plan for them to choose from.
 
-Điểm chặn trả phí chỉ xác nhận khi người dùng dự định làm phim ngắn thương mại, các dự án khác ghi "không áp dụng". 150 chữ/phút là mức ước tính thô theo cách lập kế hoạch kịch bản của bản cũ, không phải bảo đảm thời lượng; phân cảnh quay còn phải tính lại thời gian dựa trên lời thoại, khoảng dừng và động tác. Kịch bản sẵn có chỉ kiểm tra phạm vi, tính đầy đủ và trạng thái bản chốt, không ép bổ sung giai đoạn chuyển thể.
+Paywall points are confirmed only when the user plans a commercial short drama; for other projects write "Not applicable". 150 characters/minute (calibrated for Chinese; adjust for other languages) is the rough estimate used by the legacy script planning, not a duration guarantee; shooting storyboards must be re-timed taking dialogue, pauses, and action into account. For an existing script, only check its scope, completeness, and finalized status; do not force the adaptation stages to be filled in.
 
-Mô hình ảnh/video trước tiên ghi lại lựa chọn sẵn có của người dùng; đến trước lần tạo đầu tiên mới kiểm tra năng lực thực tế của node hiện tại và xác nhận tham số, không đặt trước nhà cung cấp hay bắt buộc dùng Seedance. Khi chỉ cần kịch bản hoặc tài sản, các giai đoạn sản xuất không liên quan phía sau không khởi động.
+For image/video models, first record any choice the user already has; before the first generation, check the current node's actual capabilities and confirm parameters, without presupposing a provider or forcing Seedance. When only a script or assets are needed, do not start the unrelated later production stages.
 
-## Chọn kiến thức dùng cho dự án này
+## Choose the knowledge this project will use
 
-Đọc phần hướng dẫn lựa chọn của [Thể loại tự sự](knowledge/narrativeGenres.md) và [Phong cách mỹ thuật](knowledge/visualStyles.md) cùng các mục phù hợp với ý định người dùng. Bản cũ dùng chúng lần lượt làm cẩm nang đạo diễn và cẩm nang mỹ thuật, skill này vẫn ghi lại riêng: thể loại tự sự phụ trách việc tiết lộ thông tin, nhịp, diễn xuất và mục đích shot; phong cách mỹ thuật phụ trách hình khối, chất liệu, màu sắc, ánh sáng và chất cảm chuyển động.
+Read the selection guidance in [narrative genres](knowledge/narrativeGenres.md) and [visual styles](knowledge/visualStyles.md) and the entries matching the user's intent. The legacy version treated them as the director handbook and the art handbook respectively, and this skill still records them separately: the narrative genre governs information release, pacing, performance, and shot purpose; the art style governs form, material, color, light, and motion texture.
 
-Khi đã có thể loại được chỉ định hoặc ảnh tham chiếu thì dùng tiếp, không bắt người dùng chọn lại từ preset. Khi cần đề xuất, dùng các bối cảnh cụ thể trong nguồn để giải thích lý do lựa chọn, ví dụ trinh thám chọn dùng thông tin cục bộ và manh mối có thể truy ngược, đất sét chọn dùng vân thủ công và nhịp dừng-chạy có trọng lượng; đề xuất thể loại chính/phong cách chính và các hướng phụ trợ cần thiết, chờ người dùng xác nhận. Thể loại/phong cách vẽ tùy chỉnh dùng phương pháp chung gần nhất và ghi rõ điểm sai lệch, không được giả vờ thư viện cũ có preset đó.
+When a genre or reference image is already specified, keep it; do not make the user pick from presets again. When a recommendation is needed, justify the choice with concrete scenes from the source, e.g. suspense uses partial information and traceable clues, claymation uses handmade texture and weighty starts and stops; propose a main genre/main style plus any necessary secondary directions, and wait for the user to confirm. A custom genre/drawing style uses the closest general method and states clearly where it deviates; do not pretend the legacy library has that preset.
 
-Trong "Cấu hình dự án" lưu `Thể loại tự sự và mục kiến thức tương ứng / Phong cách mỹ thuật và mục kiến thức tương ứng / Các điểm thực tế chọn dùng / Ghi đè tùy chỉnh của người dùng / Các giới hạn mẫu cũ không áp dụng`. Các giai đoạn sau đọc những quyết định này, rồi đến tệp kiến thức lấy phương pháp cụ thể cần cho giai đoạn hiện tại; chọn phong cách vẽ không đồng nghĩa với cho phép thiết lập lại ngoại hình của tài sản sẵn có.
+In the "Project config" node save `narrative genre and its knowledge entries / art style and its knowledge entries / key points actually adopted / user custom overrides / legacy template limits that do not apply`. Later stages read these decisions and then pull the specific methods needed for the current stage from the knowledge files; choosing a drawing style does not authorize redesigning the look of existing assets.
 
-## Lập thư mục canvas
+## Set up the canvas directory
 
-Trước tiên đọc [Thực thi canvas](canvasOperations.md), liệt kê các canvas và thư mục hiện có. Mặc định `Canvas/Kịch bản.json`, `Canvas/Tài sản.json`; canvas theo tập đặt ở `Canvas/Tập/Tập 001.json` theo tiến độ thực tế, không tạo trước tất cả các tập.
+First read [canvas execution](canvasOperations.md) and list the existing canvases and folders. Defaults are `Canvas/Script.json` and `Canvas/Assets.json`; episode canvases are placed as `Canvas/Episodes/Episode 001.json` according to actual progress, without pre-creating all episodes.
 
-- Dùng lại canvas sẵn có và đúng mục đích; canvas cùng tên nhưng nội dung khác thì xác minh trước, không ghi đè.
-- Dự án lần đầu lập hai canvas trống kịch bản và tài sản; nếu lần này chỉ làm kịch bản thì canvas tài sản có thể để đến giai đoạn tài sản mới lập. Tạo từng cái một, ghi lại ID trả về, không được chuyển đổi song song.
-- Khi công cụ hiện tại không thể tạo mới/phối hợp di chuyển canvas trong thư mục, trước tiên liệt kê cho người dùng vị trí hiện tại và vị trí đích của các canvas trống đã tạo, rồi nhờ họ lập thư mục và đặt về đúng chỗ qua cây tệp của workspace. Giải thích rằng giới hạn đến từ năng lực của công cụ hiện tại; sau khi người dùng trả lời đã xong và canvas đích được mở lại, mới kiểm tra danh sách tệp và ID canvas.
-- Các bước lưu trữ tương tự áp dụng khi lần đầu vào sản xuất mỗi tập. Chưa đặt về đúng chỗ thì không được bắt đầu điền canvas đó hoặc ghi trạng thái lưu trữ là hoàn thành. Không dùng `write` để ghép JSON canvas, không đặt dấu gạch chéo vào `addCanvas.name`.
-- Tệp tư liệu do host lưu ở vị trí trả về. `Canvas/Tài sản.json` là canvas quản lý tài sản, không phải thư mục chứa ảnh được tạo; không di chuyển tệp `assets/` để mô phỏng cấp thư mục của canvas.
+- Reuse existing canvases whose purpose is correct; for a canvas with the same name but different content, verify first and do not overwrite.
+- For a new project, create two empty canvases: script and assets; if only the script is being done this time, the assets canvas can be created at the asset stage. Create them one by one and record the returned IDs; do not switch in parallel.
+- When the current tools cannot create canvases inside a directory or coordinate moving them, first list for the user the current location and target location of the empty canvases already created, then ask them to create the directories in the workspace file tree and move the canvases into place. Explain that the limitation comes from the current tool capabilities; after the user replies that it is done and the target canvas has been reopened, check the file list and canvas IDs again.
+- The same archiving steps apply when first entering production of each episode. Until placement is complete, do not start filling that canvas or record the archiving status as complete. Do not use `write` to assemble canvas JSON, and do not put a slash in `addCanvas.name`.
+- Media files are saved by the host at the returned location. `Canvas/Assets.json` is the asset management canvas, not a directory for generated images; do not move `assets/` files to imitate the canvas directory hierarchy.
 
-## Đầu ra canvas
+## Canvas output
 
-Tạo hoặc cập nhật các node văn bản sau trên canvas kịch bản:
+Create or update the following text nodes on the script canvas:
 
-| Node | Nội dung |
+| Node | Content |
 | --- | --- |
-| Cấu hình dự án | Tên tác phẩm, loại/đường dẫn đầu vào, phạm vi nguồn, số tập toàn bộ và lần này, thời lượng mục tiêu, tỉ lệ khung, phong cách tự sự/mỹ thuật và kiến thức được chọn dùng, ràng buộc thương mại áp dụng |
-| Chỉ mục canvas | Mục đích, đường dẫn tương đối thực tế, ID canvas mới nhất; canvas theo tập chỉ thêm vào sau khi tồn tại, không điền ID hư cấu |
-| Nhật ký giai đoạn | Phạm vi lần này, các giai đoạn đã có/căn cứ xác nhận, điểm dừng hiện tại, tư liệu cần bổ sung, bước tiếp theo |
+| Project config | Title, input type/path, source scope, total and current episode count, target duration, aspect ratio, narrative/art style and the knowledge adopted, applicable commercial constraints |
+| Canvas index | Purpose, actual relative path, latest canvas ID; add episode canvases only once they exist, do not fill in fictitious IDs |
+| Stage log | Current scope, existing stages/confirmation basis, current stopping point, materials still to supply, next step |
 
-Khi đã có kịch bản bản chốt đầy đủ từ tệp bên ngoài hoặc được cung cấp trong chat, sau khi thư mục đã đặt đúng chỗ thì **ghi nguyên văn vào các node văn bản chính thức theo từng tập của canvas tổng kịch bản**, ghi lại nguồn gốc và căn cứ bản chốt của người dùng, rồi đọc lại toàn bộ chính văn. Nếu đã có node chính thức tương ứng thì kiểm tra và dùng lại. Nhánh này không sáng tác lại kịch bản, không yêu cầu bổ sung khung xương, cũng không xác nhận lại nội dung bản chốt mà người dùng đã nói rõ; các tập không thuộc phạm vi sản xuất lần này không khởi động khâu sau.
+When there is a complete finalized script from an external file or provided in chat, after the directory is in place write it **verbatim into the per-episode formal text nodes of the master script canvas**, record the original source and the user's finalization basis, then read back the full text. If corresponding formal nodes already exist, check and reuse them. This branch does not rewrite the script, does not require a skeleton to be filled in, and does not re-confirm finalized content the user has already made clear; episodes outside this production scope do not start downstream work.
 
-Ghi qua các hàm node, rồi đọc lại cấu hình và chỉ mục, xác nhận đường dẫn thực sự tồn tại và không trộn việc sản xuất nhiều tập vào một canvas. Trình bày cấu hình, thư mục và bước tiếp theo để người dùng xác nhận. Sau khi xác nhận, đầu vào có tiểu thuyết thì vào [Nguồn và sự kiện chương](sourceEvents.md), đã có kịch bản bản chốt đầy đủ thì sau khi các node chính thức được lưu xong vào [Tài sản cơ bản](baseAssets.md) hoặc giai đoạn sản xuất được chỉ định.
+Write through the node functions, then read back the config and index to confirm the paths actually exist and that multi-episode production has not been mixed into one canvas. Show the config, directory, and next step for the user to confirm. After confirmation, projects with a novel input proceed to [source and chapter events](sourceEvents.md); those with a complete finalized script proceed, once the formal nodes are saved, to [base assets](baseAssets.md) or the specified production stage.
 
-Nguồn: v1.1.8 `data/skills/script_agent_decision.md`, `src/routes/project/addProject.ts`. Việc tổ chức canvas và thư mục là quy ước di chuyển của skill này, không phải cấu trúc lưu trữ của bản cũ.
+Source: v1.1.8 `data/skills/script_agent_decision.md`, `src/routes/project/addProject.ts`. The canvas and folder organization is this skill's migration convention, not the legacy storage structure.

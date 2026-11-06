@@ -1,67 +1,67 @@
-# Kịch bản từng tập
+# Episode script
 
-Giai đoạn này viết từng tập kịch bản có thể sản xuất; kịch bản chính thức của tất cả các tập đều lưu thống nhất trên canvas tổng kịch bản.
+This stage writes producible scripts episode by episode; the formal scripts of all episodes are kept together on the master script canvas.
 
-## Đầu vào
+## Input
 
-- Cấu hình dự án, khung xương câu chuyện, đại cương theo tập và chiến lược chuyển thể đã xác nhận.
-- Nguyên văn và sự kiện tương ứng với tập hiện tại, cùng kịch bản đã xác nhận của tập trước và trạng thái nhân vật ở cuối tập đó.
-- Số tập được yêu cầu xử lý rõ ràng lần này; kịch bản tập này đã có, ý kiến sửa của người dùng và bản ghi xác nhận.
+- The confirmed project config, story skeleton, episode outline, and adaptation strategy.
+- The source text and events for the current episode, plus the previous episode's confirmed script and the characters' state at its end.
+- The episode numbers explicitly to be handled this time; any existing script for this episode, user revision notes, and confirmation records.
 
-## Bắt buộc đọc trước khi thực hiện
+## Required reading before execution
 
-- Phải đọc các phần "Cảm xúc, động tác và lời thoại trong một tập", "Mẫu thành phẩm có thể điền trực tiếp", "Phương pháp thẩm định và phân cấp vấn đề" của [Phương pháp biên kịch](knowledge/scriptCraft.md), và đọc lại các quyết định chênh lệch thông tin/cú lật mà tập này đã chọn dùng.
-- Phải đọc quy tắc chung và thể loại chính/phụ trợ dùng cho tập này trong [Thể loại tự sự](knowledge/narrativeGenres.md). Chuyển nhịp, diễn xuất, tiết lộ thông tin, âm thanh và điều cấm kỵ của chúng thành cảnh thực tế, không được chỉ ghi "chọn dùng phong cách thể loại nào đó".
+- You must read "Single-episode emotion, action, and dialogue", "Ready-to-fill output templates", and "Review methods and issue grading" in [screenwriting methods](knowledge/scriptCraft.md), and read back the information-gap/twist decisions already adopted for this episode.
+- You must read the general rules of [narrative genres](knowledge/narrativeGenres.md) and the main/secondary genres used in this episode. Turn their beats, performance, information release, sound, and taboos into actual scenes; do not just write "use the style of genre X".
 
-## Phương pháp thực hiện
+## Method
 
-1. Theo [Thao tác canvas](canvasOperations.md) đọc lại đầu vào và tiến độ hiện tại, định vị tập được chỉ định còn cần viết hoặc sửa.
-2. Mỗi lần tập trung một tập, trích xuất nguồn, chức năng kịch tính, lõi cảnh, quyết định cắt giảm và điểm kết thúc của nó; tập cuối khép lại theo kết cục đã xác nhận, không gượng tạo móc câu cho tập sau.
-3. Nối tiếp thời gian, địa điểm, quan hệ nhân vật, ngoại hình và trạng thái đạo cụ then chốt của tập trước; không tạo lại toàn bộ các kịch bản đã hoàn thành.
-4. Tổ chức các cảnh cụ thể, để động tác, lời thoại và thay đổi cảnh thúc đẩy cốt truyện; miêu tả tâm lý chuyển thành hành vi thể hiện được hoặc OS/VO cần thiết.
-5. Ghi rõ số cảnh, địa điểm, thời gian/nội ngoại cảnh, nhân vật trong cảnh, động tác và biểu cảm, lời thoại, âm thanh cần thiết và chuyển cảnh.
-6. Ước tính thời lượng theo cấu hình; khoảng 150 chữ/phút chỉ dùng làm tham chiếu cho lời thoại, động tác và khoảng dừng tính riêng, không được coi quy đổi số chữ là đo thực tế.
-7. Kiểm tra thông tin mới, thay đổi xung đột và kỳ vọng ở cuối của tập này; thiết kế kỹ thuật shot để lại cho giai đoạn đạo diễn và phân cảnh phía sau.
-8. Khi sửa tập này chỉ cập nhật nội dung được chỉ định, và rà lại sự nối tiếp với tập trước và đại cương tập sau.
-9. Cảnh hành động nêu rõ mục tiêu/trở ngại/lựa chọn/kết quả; cảnh đời thường, chuyển tiếp và khoảng trống ghi lại tác dụng thực tế về quan hệ, thời gian, thông tin hoặc cảm xúc, không gượng tạo trở ngại và lựa chọn. Chọn kênh biểu đạt cảm xúc và viết ra động tác diễn được, kiểm tra lời nói bề mặt và ý định thật của lời thoại, ai biết gì, khi nào tiết lộ thông tin, giữ lại im lặng và đời thường có chức năng thể loại.
+1. Following [canvas operations](canvasOperations.md), read back the inputs and current progress, and locate the specified episodes that still need writing or revision.
+2. Focus on one episode at a time, extracting its source, dramatic function, scene core, cut decisions, and ending point; the final episode closes on the confirmed ending, without forcing a hook for a next episode.
+3. Carry over the previous episode's time, place, character relationships, appearance, and key prop states; do not regenerate all completed scripts.
+4. Organize concrete scenes so that actions, dialogue, and scene changes drive the plot; turn psychological description into performable behavior or necessary OS/VO.
+5. State the scene number, location, time/interior or exterior, characters in the scene, actions and expressions, dialogue, necessary sound, and transitions.
+6. Estimate duration according to the config; about 150 characters/minute is only a dialogue reference (calibrated for Chinese; adjust for other languages), with actions and pauses counted separately; do not treat a character-count conversion as a measurement.
+7. Check this episode's new information, conflict changes, and ending anticipation; technical shot design is left to the later director and storyboard stages.
+8. When revising this episode, only update the specified content, and re-check continuity with the outlines of the previous and next episodes.
+9. Action scenes state goal/obstacle/choice/result; everyday, transitional, and negative-space scenes record their actual role for relationship, time, information, or emotion, without forcing obstacles and choices. Choose the emotional expression channel and write performable actions, check the surface meaning of dialogue against the real intent, who knows what, and when information is released, and keep silences and everyday moments that serve a genre function.
 
-## Ghi vào canvas kịch bản
+## Writing to the script canvas
 
-Vị trí mặc định là `Canvas/Kịch bản.json` trong workspace; mỗi tập một node kịch bản chính thức rõ ràng, định vị được.
+The default location is `Canvas/Script.json` in the workspace; each episode has one clearly locatable formal script node.
 
-- Tiêu đề node gợi ý là "Kịch bản Tập 001 | Tiêu đề tập", tiêu đề chính văn giữ tên tác phẩm, số tập và tiêu đề tập.
-- Khi cùng một tập đã có node thì sửa tại chỗ; không được coi "bản sửa", "bản chốt" là một tập mới để tạo lặp.
-- Node kịch bản đã xác nhận là nguồn sản xuất của tập đó; về sau `Canvas/Tập/Tập 001.json` ghi lại định vị nguồn thật của nó.
-- Giai đoạn này không chuyển kịch bản chính thức sang canvas tập riêng, cũng không tạo kho tài sản mới cho mỗi tập.
-- Trên cùng canvas, node văn bản "Quyết định sáng tác Tập 001" lưu nhịp thể loại của tập, thay đổi cảm xúc/thông tin từng cảnh, việc thực hiện phục bút, thay đổi khoảng cách quan hệ/quyền lực, âm thanh then chốt và căn cứ ước tính thời gian; trích dẫn các quyết định đã có, không kẹp phân tích và tham số mô hình vào chính văn kịch bản.
-- Kịch bản chính thức thực hiện các quyết định trên thành động tác, lời thoại, im lặng, âm thanh cần thiết và chuyển cảnh; phương án đạo diễn từng tập phía sau đọc quyết định sáng tác rồi mới thiết kế shot, không được chỉ dựa vào nhãn thể loại mà biên kịch lại cốt truyện.
+- The suggested node title is "Episode 001 Script | Episode title", and the body title keeps the work title, episode number, and episode title.
+- When a node for the same episode already exists, modify it in place; do not create a "revised" or "finalized" version as a duplicate new episode.
+- A confirmed script node is that episode's production source; the later `Canvas/Episodes/Episode 001.json` records its real source location.
+- This stage does not move the formal script onto the episode canvas, nor create a new asset library for each episode.
+- In an "Episode 001 creative decisions" text node on the same canvas, save this episode's genre beats, per-scene emotion/information changes, foreshadowing payoffs, relationship distance/power changes, key sounds, and timing basis; reference existing decisions, and do not mix analysis or model parameters into the script body.
+- The formal script delivers the above decisions as actions, dialogue, silences, necessary sound, and transitions; the later per-episode director plan reads the creative decisions before designing shots, and must not rewrite the plot based only on a genre label.
 
-Chính văn kịch bản tối thiểu gồm:
+The script body contains at least:
 
 ```text
-Tên tác phẩm EP001: Tiêu đề tập
-Thời lượng mục tiêu / Tỉ lệ khung / Phong cách
-Tóm tắt cốt truyện: xung đột chính, bước ngoặt then chốt và thay đổi cảm xúc của tập này
-1-1 Tên bối cảnh Ngày/Nội
-Nhân vật: các nhân vật thực tế xuất hiện trong cảnh này
-△Môi trường, động tác, biểu cảm cụ thể và đạo cụ cần thiết
-Tên nhân vật: lời thoại
-OS/VO: độc thoại nội tâm hoặc lời ngoài khung hình cần thiết
-Chuyển cảnh và cảnh tiếp theo; điểm kết thúc của tập này
+Work title EP001: Episode title
+Target duration / aspect ratio / style
+Synopsis: this episode's main conflict, key turn, and emotional change
+1-1 Scene name Day/Int
+Characters: characters actually appearing in this scene
+△Concrete environment, actions, expressions, and necessary props
+Character name: dialogue
+OS/VO: necessary inner monologue or off-screen voice
+Transition and next scene; this episode's ending point
 ```
 
-## Cổng chất lượng và xác nhận
+## Quality gate and confirmation
 
-- Tập hiện tại nhất quán với đại cương và chiến lược đã xác nhận; không tự ý thêm, bỏ sót hoặc viết lại các tập khác.
-- Số cảnh, nhân vật, thời gian địa điểm rõ ràng; động tác thể hiện được; lời thoại giữ giọng nhân vật; không có bước nhảy cốt truyện vô căn cứ.
-- Thời lượng dự kiến phù hợp mục tiêu; trạng thái nhân vật, đạo cụ và tập trước sau liên tục; không bỏ sót chuyển cảnh và âm thanh cần thiết.
-- Dùng các điểm kiểm tra cụ thể của thể loại đã đọc để đối chiếu chính văn: ví dụ hài có trải đường/cú chốt/phản ứng không, manh mối trinh thám có truy ngược được không, tình cảm ấm áp có dùng hành động thể hiện sự quan tâm không; không được chỉ kiểm tra định dạng chung.
-- Sau khi ghi, đọc lại toàn bộ chính văn, kiểm tra nội dung không bị cắt cụt, node đúng chỗ, rồi trình bày tóm tắt và vấn đề của tập này.
-- Sau khi mỗi tập hoàn thành, chờ người dùng xác nhận rõ ràng rồi mới đẩy tiếp tập sau hoặc giai đoạn hạ nguồn; nếu đã có ủy quyền theo lô rõ ràng thì thực hiện theo phạm vi đó.
-- Không coi thông báo hoàn thành, sự im lặng của người dùng hay tự kiểm nội bộ đạt là xác nhận.
+- The current episode is consistent with the confirmed outline and strategy; no other episode has been added, omitted, or rewritten without permission.
+- Scene numbers, characters, time, and place are clear; actions are performable; dialogue keeps each character's voice; there are no ungrounded plot jumps.
+- Estimated duration fits the target; characters, props, and states across adjacent episodes are continuous; no necessary transitions or sounds are missing.
+- Check the body against the concrete checkpoints of the genres read: e.g. whether comedy has setup/punchline/reaction, whether suspense clues are traceable, whether warmth delivers care through action; do not stop at a generic format check.
+- After writing, read back the full body, check that content is not truncated and the node belongs in the right place, then show the episode summary and issues.
+- After each episode's output is complete, wait for explicit user confirmation before moving to the next episode or a downstream stage; when there is an explicit batch authorization, proceed within its scope.
+- Do not treat a completion notice, user silence, or passing an internal self-check as confirmation.
 
-Kịch bản đã xác nhận có thể vào [Danh sách tài sản cơ bản](baseAssets.md); các tập còn lại tiếp tục quy trình này theo phạm vi đã được ủy quyền.
+A confirmed script can proceed to the [base asset list](baseAssets.md); the remaining episodes continue this process within the authorized scope.
 
-## Căn cứ bản cũ
+## Legacy basis
 
 `data/skills/script_execution_script.md`, `data/skills/script_agent_decision.md`, `src/agents/scriptAgent/index.ts`.

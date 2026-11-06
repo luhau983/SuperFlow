@@ -1,230 +1,230 @@
-# Thiết kế tài sản, biến thể và phương pháp viết prompt
+# Asset Design, Variants, and Prompt Methods
 
-Tệp này hợp nhất các ràng buộc thị giác về nhân vật, bối cảnh, đạo cụ, ba loại phái sinh và hình ảnh/video của từng phong cách vẽ trong v1.1.8. Trước khi trích xuất tài sản, hãy đọc "Cơ sở thiết kế và ghi chép trên canvas"; làm loại tài sản nào thì đọc thêm chương, mẫu và mục nghiệm thu tương ứng. Việc chọn phong cách vẽ và khác biệt giữa chúng xem [visualStyles.md](visualStyles.md), thao tác công cụ canvas thực tế xem [canvasOperations.md](../canvasOperations.md).
+This file merges the v1.1.8 character, location, and prop methods for each drawing style, the three kinds of derivatives, and the image/video visual constraints. Before extracting assets, read "Design basis and canvas records"; for whichever kind of asset you are producing, then read the matching section, template, and acceptance items. For art style selection and differences, see [visualStyles.md](visualStyles.md); for actual canvas tool operations, see [canvasOperations.md](../canvasOperations.md).
 
-## Cơ sở thiết kế và ghi chép trên canvas
+## Design basis and canvas records
 
-Bản ghi chính duy nhất của mọi tài sản đặt trong `Canvas/Tài sản.json`; `Canvas/Kịch bản.json` cung cấp nguồn sự thật, các canvas sản xuất theo tập chỉ tham chiếu phiên bản đã xác nhận. Tệp kiến thức cung cấp phương pháp thiết kế, không thay kịch bản thêm nhân vật, đạo cụ hay tình tiết mới.
+The single master record for all assets lives in `Canvas/Assets.json`; `Canvas/Script.json` supplies the source of facts, and episode production canvases only reference confirmed versions. Knowledge files provide design methods; they do not add characters, props, or plot on behalf of the script.
 
-Trước hết phân biệt ba loại thông tin: sự thật rõ ràng trong kịch bản, tham chiếu do người dùng đưa, và lựa chọn mỹ thuật còn chờ xác nhận. Kiểu tóc, trang phục hay cấu trúc chưa biết có thể đề xuất phương án cụ thể, nhưng phải đánh dấu là đề xuất. Phong cách vẽ không thể thay thế cá tính nhân vật, càng không được áp các giá trị mặc định về giới tính, chiều cao, màu da và ngũ quan của mẫu cũ cho mọi nhân vật.
+First separate three kinds of information: facts stated explicitly in the script, references given by the user, and art choices still awaiting confirmation. For an unknown hairstyle, outfit, or structure you may propose a concrete option, but mark it as a proposal. Art style cannot replace a character's personality, and the old template's default gender, height, skin tone, and facial features must never be applied to every character.
 
-Mỗi node mô tả tài sản tối thiểu lưu thẻ thiết kế dưới đây; đây là yêu cầu về nội dung, không phải trường node bịa ra.
+Each asset description node stores at least the following design card; these are content requirements, not invented node fields.
 
-| Hạng mục | Nội dung ghi chép |
+| Item | What to record |
 |---|---|
-| Danh tính và nguồn gốc | Tên duy nhất/bí danh, loại, tập và cảnh xuất hiện, căn cứ kịch bản hoặc tham chiếu của người dùng |
-| Nhận diện cốt lõi | Khuôn mặt/kiểu tóc/đường nét của nhân vật, bố cục và mốc nhận diện của bối cảnh, hình dạng và chức năng của đạo cụ |
-| Quy ước thị giác | Phong cách sử dụng, bảng màu cụ thể, cách thể hiện chất liệu, nền và cách trình bày |
-| Nguồn sáng và bố cục | Vị trí sáng cơ bản, mềm hay cứng, quan hệ sáng tối, góc nhìn/vị trí máy và chi tiết cần nhìn rõ |
-| Sự thật và đề xuất | Những gì đã xác nhận, những gì là lựa chọn chờ xác nhận để bổ sung thông tin thị giác |
-| Biến thể | Tham chiếu thật tới tài sản cha và ảnh cha, các hạng mục không đổi, phần duy nhất được phép thay đổi, tập và cảnh áp dụng |
-| Thực thi và chọn dùng | Prompt cuối cùng, đầu vào tham chiếu thực tế, phạm vi tham số đã xác nhận, tham chiếu ảnh ứng viên và ảnh được chọn, trạng thái |
+| Identity and source | Unique name/aliases, category, episodes and scenes where it appears, script basis or user reference |
+| Core identifiers | Character face/hairstyle/silhouette, location layout landmarks, prop shape and function |
+| Visual conventions | Style used, specific palette, material rendering, background and presentation |
+| Lighting and composition | Base light position, hardness, light-dark relationship, view/camera position, and details that must be visible |
+| Facts and proposals | What is confirmed and which are pending choices that fill in visual information |
+| Variants | Real references to the parent asset and parent image, invariants, the only parts allowed to change, applicable episodes and scenes |
+| Execution and adoption | Final prompt, actual reference inputs, confirmed parameter ranges, references to candidate and adopted images, status |
 
-Xác nhận thiết kế có thể tái sử dụng trước, rồi mới viết prompt tạo. Thay đổi nhân vật cơ bản, bố cục không gian hay phong cách sẽ ảnh hưởng tới hạ nguồn: ghi lại các biến thể và phân cảnh bị ảnh hưởng, quay về điểm xác nhận tương ứng để xử lý, không được ghi đè bản ghi chính rồi giả vờ hạ nguồn vẫn còn hiệu lực.
+Confirm the reusable design first, then write the generation prompt. Changing a base character, spatial layout, or style affects everything downstream: record the affected variants and storyboards and return to the corresponding confirmation point; do not overwrite the master record and pretend the downstream work is still valid.
 
-## Nhân vật: nhận diện trước, tạo hình sau
+## Characters: identifiability first, then styling
 
-### Xây dựng nhân vật cơ bản có khác biệt
+### Build distinct base characters
 
-Dùng danh tính, giai đoạn tuổi, môi trường sống, tính cách và chức năng trong cốt truyện để suy ra ngoại hình, không dùng "đẹp/điển trai/chất lượng cao" thay cho thiết kế. Xác định ít nhất hai ba đặc điểm có thể nhận ra ở mọi góc, tránh để các nhân vật khác nhau dùng chung một khuôn mặt mẫu.
+Derive appearance from identity, age stage, living environment, personality, and story function; do not substitute "beautiful/handsome/high quality" for design. Settle at least two or three features that stay recognizable across angles, so different characters do not share one template face.
 
-| Chiều | Lựa chọn có thể quan sát |
+| Dimension | Observable choices |
 |---|---|
-| Đường nét đầu mặt | Dài/tròn/vuông, quan hệ gò má và hàm dưới, độ rộng trán, hình cằm; không chỉ thay tên |
-| Cấu trúc ngũ quan | Dáng mày, khe mắt và khoảng cách hai mắt, chỗ gãy sống mũi, dáng môi, vành tai; giữ tổ hợp thay vì chồng chất "tinh xảo" |
-| Đặc điểm da tóc | Màu da, đường chân tóc, màu tóc, độ dài, ngôi rẽ, xoăn hay thẳng, râu, nốt ruồi nhỏ hoặc sẹo do thiết lập quyết định |
-| Dáng người | Quan hệ chiều cao, vóc dáng, vai cổ, trọng tâm và tư thế đứng tự nhiên; trẻ em, người già... tuân theo tuổi thực |
-| Trang phục cơ bản | Quần áo và giày hoàn chỉnh khớp với thời đại, thân phận, nghề nghiệp và trạng thái thường ngày, tiện cho việc thay đồ sau này |
-| Khí chất | Thể hiện qua ánh nhìn, độ thả lỏng của mày mắt, khoé miệng và tư thế đứng; ảnh cơ bản chủ yếu dùng vi biểu cảm trung tính |
+| Head and face contour | Long/round/square, cheekbone-to-jaw relationship, forehead width, chin shape; not just swapping the name |
+| Facial structure | Brow shape, eye shape and spacing, nose bridge turn, lip shape, ear contour; keep a combination instead of piling on "refined" |
+| Skin and hair traits | Skin tone set by the setting, hairline, hair color, length, part, curl or straightness, beard, small moles or scars |
+| Posture | Height relationships, body type, shoulders and neck, center of gravity, and natural stance; children, the elderly, etc. follow their actual age |
+| Base outfit | A complete outfit and shoes matching era, identity, occupation, and daily state, making later outfit changes easy |
+| Temperament | Shown through gaze, how relaxed the brows and eyes are, mouth corners, and stance; base images use a neutral micro-expression |
 
-Phim điện ảnh đô thị người thật có thể dùng các hướng quan sát như lạnh lùng tiết chế, dịu dàng lắng nghe, gọn gàng tháo vát, trẻ trung thẳng thắn, từng trải đời phố chợ: lần lượt thay đổi cốt tướng, ánh mắt, biểu cảm và dấu vết cuộc sống; không gắn cố định các hướng này với một giới tính, màu da hay chiều cao nào. Giữ kết cấu da tự nhiên, tóc con và độ bất đối xứng vừa phải, tránh để mọi nhân vật đều thành người mẫu quảng cáo đã chỉnh sửa kỹ.
+Live-action urban film can use directions such as cool and restrained, gentle listener, crisp and capable, youthful and direct, or street-worn experience: each changes bone structure, gaze, expression, and traces of life; never bind these directions to a particular gender, skin tone, or height. Keep natural skin texture, stray hairs, and moderate asymmetry, so every character does not become a retouched advertising model.
 
-### Cận cảnh khuôn mặt cộng bản vẽ ba góc nhìn hoàn chỉnh
+### Face close-up plus full three-view sheet
 
-Cùng một khung hình trình bày từ trái sang phải: cận cảnh khuôn mặt, toàn thân chính diện, toàn thân nghiêng, toàn thân sau lưng. Cận cảnh lấy từ đỉnh đầu đầy đủ tới gần xương quai xanh, khuôn mặt đủ lớn; ba toàn thân lấy đủ từ đỉnh đầu tới lòng bàn chân, không cắt mất trang sức tóc, vạt áo và giày. Góc nghiêng khoảng 90°, sau lưng khoảng 180°, đặc điểm trước sau trái phải tương ứng với nhau.
+In one image, from left to right, show a face close-up, front full body, side full body, and back full body. The close-up runs from the top of the head to around the collarbone with the face large enough; the three full-body views are complete from the top of the head to the soles of the feet, without cropping hair ornaments, hems, or shoes. The side is about 90° and the back about 180°, with front, back, left, and right features corresponding to each other.
 
-- Cùng một người, cùng kiểu tóc, cùng vóc dáng, cùng một bộ quần áo; vị trí cúc áo, vạt áo, hoa văn, túi, thắt lưng, giày và phụ kiện nhất quán.
-- Nền đơn giản có độ sáng khác biệt với chủ thể, ánh sáng đều nhưng vẫn giữ được cấu trúc. Thường dùng xám nhạt; hoạt hình Nhật có thể dùng trắng ngà, 2D cổ phong có thể dùng trắng ánh trăng, đất sét có thể dùng kem sữa ấm, phim điện ảnh đô thị người thật có thể dùng phông giấy xám trung tính.
-- Nhánh người thật được hiểu là ghi lại bốn góc trong cùng một buổi chụp studio nhân vật, giữ trọng tâm tự nhiên, không dùng tư thế đứng nghiêm như ma-nơ-canh; 3D/2D thể hiện bằng chất liệu tương ứng, không trộn thuật ngữ nhiếp ảnh.
-- Khung ngang rộng tiện xếp cạnh nhau, nhưng chỉ chọn tỉ lệ mà mô hình hiện tại thực sự hỗ trợ. Nếu một lần xuất không chứa được rõ ràng, trước hết nói rõ và xác nhận phương án chia ảnh, vẫn giữ đủ tư liệu khuôn mặt và chính diện/nghiêng/sau lưng hoàn chỉnh.
-- Mẫu cơ bản cũ của cổ phong cyberpunk chỉ có siêu cận cảnh khuôn mặt; quy trình này giữ lại phương pháp "khuôn mặt khác biệt" của nó, rồi thống nhất bổ sung tư liệu toàn thân, không được coi một khuôn mặt là thiết lập nhân vật đã hoàn thành.
+- Same person, same hairstyle, same body type, same outfit; buttons, lapels, patterns, pockets, belt, shoes, and accessories stay in consistent positions.
+- A simple background with a value distinct from the subject; even lighting that still preserves structure. Light gray is common; Japanese animation can use ivory white, 2D Guofeng can use moon white, claymation can use warm cream, and live-action urban film can use a mid-gray backdrop paper.
+- Treat the live-action branch as a four-angle record from one studio shoot of the character, keeping a natural center of gravity rather than a mannequin-like stiff stance; 3D/2D use their own medium, and photographic terms must not be mixed in.
+- A wide aspect ratio makes side-by-side layout easier, but only choose ratios the current model actually supports. If one output cannot clearly fit everything, explain first and confirm a split-image plan, still keeping the face and the complete front/side/back material.
+- The old Guofeng cyberpunk base template only had an extreme facial close-up; this workflow keeps its "differentiated faces" method and then uniformly completes the full-body material; a single face must not be treated as a finished character design.
 
-### Phân lớp tạo hình nhân vật và biến thể
+### Layered character styling and variants
 
-| Lớp | Quyết định thiết kế | Ranh giới giữ nguyên |
+| Layer | Design decision | Boundary to keep |
 |---|---|---|
-| Danh tính cơ bản | Khuôn mặt, vóc dáng, điểm nhận diện da tóc và tư thế đứng chuẩn đã xác nhận | Thay đồ không được biến thành người khác; nhu cầu biến hình rõ ràng thì ghi riêng các cấu trúc được phép thay đổi |
-| Trang điểm | Mặt mộc, thường ngày, theo dịp, lễ hội hoặc trạng thái cốt truyện; thay đổi cụ thể ở mày mắt, má, môi | Đạo cụ, thời tiết, từ chỉ động tác không tự động kích hoạt trang điểm đậm; sau khi trang điểm vẫn nhận ra nhân vật |
-| Kiểu tóc/trang sức đầu | Chải, buộc, búi, tết và trang sức tóc cần thiết | Đường chân tóc, màu tóc và độ dài chưa được cho phép không đổi; cấu trúc nghiêng và sau lưng tương ứng được |
-| Lớp trong | Cổ áo, độ dài tay, chất vải và màu của lớp sát người | Quan hệ giữa các lớp hợp lý, không xuyên lớp hay lơ lửng |
-| Trang phục chính/áo khoác | Phom dáng và đường cắt do thời đại, dịp, nhiệt độ, thân phận quyết định | Chính diện/nghiêng/sau lưng là cùng một món đồ, trọng lượng và nếp gấp hợp với chất liệu |
-| Giày và phụ kiện | Kiểu giày hoàn chỉnh, thắt lưng, trang sức, kính, mũ, túi | Không thiếu giày; phụ kiện bám sát cơ thể, không lơ lửng vô cớ hay cắm vào da |
+| Base identity | The confirmed face, body type, skin/hair identifiers, and reference stance | An outfit change must not become a different person; an explicit transformation records the structures allowed to change separately |
+| Makeup | Bare skin, everyday, occasion, gala, or story state; specific changes to brows/eyes, cheeks, lips | Props, weather, and action words do not automatically trigger heavy makeup; the character is still recognizable with makeup |
+| Hairstyle/headwear | Combing, tying, updo, braiding, and necessary hair ornaments | Hairline, hair color, and unauthorized length stay unchanged; side and back structures correspond |
+| Inner layer | Neckline, sleeve length, fabric, and color of the layer against the body | Layer relationships are plausible, with no clipping or floating |
+| Main garment/outerwear | Silhouette and cut determined by era, occasion, temperature, and identity | Front, side, and back show the same garment; weight and folds match the material |
+| Shoes and accessories | Complete shoe style, belt, jewelry, glasses, hat, bags | Shoes are never omitted; accessories fit the body, not floating or embedded in skin |
 
-Buổi sáng ở nhà có thể dùng mặt mộc và kiểu tóc lỏng; đi làm thì chỉnh trang vừa phải, quần áo vừa người; gặp mặt trang trọng thì nhấn mạnh đường cắt và trang điểm cục bộ; đám cưới/lễ hội có thể trang điểm tạo hình đầy đủ. Trên đây là phương pháp đề xuất, không tự động thêm trang điểm hay trang sức cho mọi nhân vật. Mặc nhiều lớp kiểu hiện đại phải có lý do về thời tiết/dịp; trang phục truyền thống coi trọng hình chế của cổ áo, vạt áo, thắt lưng, váy bào và giày; biến thể cyberpunk phải nói rõ vật mang truyền thống và bộ phận chức năng kết nối với nhau thế nào.
+Waking up at home can use bare skin and loose hair; commuting uses moderate grooming and well-fitted clothing; formal meetings strengthen the cut and local makeup; weddings/galas can have full styling. These are proposal methods, and makeup or accessories are not automatically added to every character. Layering in modern outfits needs a weather/occasion reason; traditional outfits emphasize the form of collar, lapel, belt, skirt/robe, and shoes; cyberpunk variants must explain how the traditional carrier connects to the functional parts.
 
-Biến thể nhân vật lấy ảnh cha đã xác nhận làm đầu vào thật, ghi rõ hạng mục giữ nguyên và hạng mục thay đổi. Ảnh thiết lập trang phục không thêm hành động cầm điện thoại, cốc cà phê, vũ khí hay hành động cốt truyện trong bối cảnh; những thứ này được tích hợp thông qua đạo cụ độc lập và phân cảnh. Biến hình đáng kể có thể thay đổi cấu trúc cơ thể đã được xác nhận, nhưng phải ghi lại tính liên tục về nhận diện và ranh giới mới.
+Character variants use the confirmed parent image as the actual input and spell out what is kept and what changes. Outfit design sheets do not add a handheld phone, coffee cup, weapon, or background story action; these are integrated through separate props and storyboards. A significant transformation may change confirmed body structure, but identity continuity and the new boundaries must be recorded.
 
-## Bối cảnh: xây dựng không gian có thể tái sử dụng
+## Locations: build reusable spaces
 
-### Thiết kế bối cảnh cơ bản
+### Base location design
 
-Trước hết xác định chức năng của địa điểm, thời đại và vùng miền, trong nhà hay ngoài trời, người sử dụng chính và lộ trình cốt truyện, rồi mới thiết kế cấu trúc. Đa số phong cách vẽ dùng một khung nhìn chính đại diện duy nhất, nhìn rõ lối vào, lối ra, khu vực hoạt động chính và mốc cố định; cổ phong cyberpunk dùng thiết lập bốn hướng nói dưới đây, không được dùng một góc cục bộ đẹp mắt thay cho không gian hoàn chỉnh.
+First settle the place's function, era and region, interior or exterior, main users, and story routes, then design the structure. Most drawing styles use a single representative main view showing entrances, exits, main activity areas, and fixed landmarks; Guofeng cyberpunk uses the four-direction setup below, and a pretty partial view must not stand in for the complete space.
 
-| Tầng | Nội dung thiết kế |
+| Layer | Design content |
 |---|---|
-| Khung xương cố định | Vị trí và quan hệ của tường, cửa ra vào, cửa sổ, cầu thang, cột, đường, bờ nước...; có thể hỗ trợ nhân vật đi lại thực tế |
-| Bài trí chính | Công dụng, chất liệu và hướng đặt của bàn, tủ, giường, bình phong, quầy bar, bàn làm việc... |
-| Tiền, trung, hậu cảnh | Khung cửa/cành cây/cạnh đồ nội thất làm tiền cảnh, khu vực hoạt động ở trung cảnh, hành lang/ngoài cửa sổ/núi xa làm hậu cảnh kéo dài |
-| Nguồn sáng | Cửa sổ ở hướng nào, ngọn đèn nào, vị trí mặt trời và thời điểm, chỗ nào sinh ra bóng đổ và phản chiếu |
-| Môi trường | Mùa, thời tiết, thảm thực vật, trạng thái mặt đất; loài cây khớp với vùng miền và mùa |
-| Dấu vết sinh hoạt/lịch sử | Sự hao mòn, sửa chữa, sắp đặt, bụi bặm liên quan đến trải nghiệm của địa điểm; không mặc định toàn cảnh cũ nát |
+| Fixed skeleton | Positions and relationships of walls, doors and windows, stairs, columns, roads, waterfronts, etc.; must support characters actually walking |
+| Main furnishings | Purpose, material, and orientation of tables, cabinets, beds, screens, bars, workstations, etc. |
+| Foreground/midground/background | Door frames/branches/furniture edges as foreground, activity area in the midground, corridors/views outside the window/distant mountains extending the background |
+| Light sources | Which window in which direction, which lamp, sun position and time of day, where shadows and reflections fall |
+| Environment | Season, weather, vegetation, ground condition; tree species match region and season |
+| Traces of life/history | Wear, repairs, arrangement, dust tied to what the place has been through; not a default run-down look everywhere |
 
-Bối cảnh tài sản không xuất hiện người, bóng người, đường nét cơ thể hay hình bóng. Bối cảnh trống vẫn có thể kể chuyện: một chiếc ghế chưa đẩy vào, nửa cốc nước cho thấy vừa rời đi; ghế xếp ngay ngắn và máy chiếu đang mở cho thấy sắp bắt đầu; móc trên tường và đường viền cũ trên sàn cho thấy đã dọn đi. Chi tiết phải khớp kịch bản, không ám chỉ thêm sự kiện chưa xảy ra.
+Location assets contain no people, human shadows, body outlines, or silhouettes. An empty space can still tell a story: a chair not pushed back and half a glass of water mean someone just left; neat chairs and a switched-on projector mean something is about to start; wall hooks and old outlines on the floor mean someone moved out. Details must match the script and not imply events that did not happen.
 
-Nội thất hiện đại có thể chọn cấu trúc chức năng từ căn hộ, văn phòng, phòng họp, quán cà phê, cửa hàng tiện lợi, bệnh viện, lớp học; ngoại cảnh chọn khung không gian từ đường phố, ngõ cũ, khu dân cư, sân thượng, cửa ga tàu điện ngầm, bờ sông... Không gian truyền thống chú trọng sân viện, hành lang, điện đường, song cửa, mái cong và kết cấu gỗ đá. Không gian cyberpunk phải có cấu trúc kiểu Trung Hoa nhận ra được trước rồi mới thêm hệ thống công nghệ, không dùng đèn neon thay cho kiến trúc.
+Modern interiors can draw functional structure from apartments, offices, meeting rooms, cafes, convenience stores, hospitals, and classrooms; exteriors draw spatial skeletons from streets, old alleys, residential compounds, rooftops, subway entrances, riverbanks, etc. Traditional spaces focus on courtyards, covered walkways, halls, lattice windows, upturned eaves, and timber-and-stone construction. Cyberpunk spaces first have a recognizable Chinese structure and then add technical systems; neon does not replace architecture.
 
-Bố cục lấy góc nhìn ngang tầm mắt hoặc góc nhìn có thể giải thích rõ bố cục làm điểm khởi đầu. Phim điện ảnh đô thị người thật có thể dùng góc rộng/tiêu chuẩn kiểu 24–35mm và vùng rõ nét lớn hơn; phong cách phẳng dùng mảng màu che khuất và quan hệ tỉ lệ; đất sét dùng bối cảnh thu nhỏ và độ sâu trường ảnh vừa phải. Thông số ống kính là biểu đạt mỹ thuật, tham số thực tế theo công cụ hiện tại.
+Start composition from eye level or a viewpoint that clearly conveys the layout. Live-action urban film can use a 24–35mm-style wide/standard view with a larger in-focus range; flat styles use color-block occlusion and scale relationships; claymation uses miniature sets and moderate depth of field. Lens numbers are artistic expression; actual parameters follow the current tool.
 
-### Thiết lập bốn hướng cho bối cảnh cyberpunk phong cách cổ phong
+### Four-direction setup for Guofeng cyberpunk locations
 
-`3D_guofeng_cyber` là trường hợp đặc biệt về cách trình bày bối cảnh trong 11 phong cách vẽ của phiên bản cũ, cả bối cảnh cơ bản lẫn bối cảnh phái sinh đều giữ tư liệu bốn hướng. 10 phong cách còn lại vẫn mặc định một khung hình, không mở rộng bố cục này cho mọi phong cách.
+`3D_guofeng_cyber` is the special case for location presentation among the 11 legacy drawing styles; both base and derived locations keep four-direction material. The other 10 still default to a single image, and this layout is not extended to all styles.
 
-- Cùng một điểm trung tâm, cùng độ cao điểm nhìn, chỉ thay đổi hướng nhìn: trên trái là phía trước 0°, trên phải là phía phải 90°, dưới trái là phía sau 180°, dưới phải là phía trái 270°, xếp thành 2×2. Không phải đứng ngoài bối cảnh vòng quanh tòa nhà chụp bốn mặt tiền.
-- Không gian nhỏ có thể dùng góc nhìn ngang tầm mắt người, đô thị quy mô lớn có thể dùng điểm nhìn trung tâm trên cao đã xác nhận; một khi ảnh cha đã được xác nhận, biến thể dùng lại điểm trung tâm và độ cao đó, không đột ngột hạ ảnh cha trên cao xuống giá trị mặc định 1,6 mét của mẫu phái sinh cũ.
-- Kiến trúc, lối vào, lối đi, thiết bị cyberpunk và bài trí cố định có vị trí duy nhất trong cùng một thế giới; ranh giới, chất liệu, mùa và thời tiết của các hướng liền kề khớp được với nhau. Ánh sáng tự nhiên và các nguồn sáng nhân tạo như neon giữ vị trí trong thế giới, vùng nhận sáng và bóng đổ thay đổi hợp lý theo hướng quan sát, không yêu cầu ô nào cũng sáng ở cùng một phía của khung hình.
-- Tỉ lệ 1:1 của phiên bản cũ hợp với cách xếp 2×2, tỉ lệ và độ phân giải thực tế phải được mô hình hỗ trợ và được xác nhận. Nếu bốn ô không thể trình bày rõ ràng, nói rõ chỗ thiếu và xác nhận việc tách thành bốn ảnh tư liệu của cùng một bối cảnh; bốn ảnh cùng thuộc về một bối cảnh và một phiên bản trong canvas tài sản, không được tuyên bố một ảnh một hướng đã bổ sung đủ tư liệu.
-- Khi phân cảnh tham chiếu, ghi rõ dùng hướng nào và quan hệ không gian của nó, đầu ra vẫn là một khung hình duy nhất của shot đó, không mang bố cục bốn ô của tư liệu tài sản vào phân cảnh hay video.
+- Same center point, same eye height, only the facing direction changes: top-left front 0°, top-right right 90°, bottom-left back 180°, bottom-right left 270°, arranged 2×2. It is not four exterior elevations shot while circling the building from outside the location.
+- Small spaces can use a human eye-level view; large-scale cityscapes can use a confirmed high-altitude center viewpoint. Once the parent image is confirmed, variants keep that center point and height; a high-altitude parent must not suddenly drop to the old derivative template's 1.6-meter default.
+- Buildings, entrances, passages, cyber installations, and fixed furnishings have a unique position in one world; boundaries, materials, season, and weather match across adjacent directions. Natural light and artificial sources such as neon keep their world positions, and lit faces and shadows change plausibly with viewing direction; each cell is not required to be bright on the same side of the frame.
+- The legacy 1:1 suits a 2×2 layout, but the actual aspect ratio and resolution must be supported by the model and confirmed. If four cells cannot be shown clearly, explain the gap and confirm splitting into four reference images of the same location; all four belong to the same location and version on the asset canvas, and a single-direction image must not be claimed to have completed the material.
+- When a storyboard references it, note which direction is used and its spatial relationships; the output is still that shot's single image, and the four-cell layout of the asset material is not carried into storyboards or video.
 
-### Biến thể bối cảnh
+### Location variants
 
-| Biến thể | Bắt buộc giữ nguyên | Có thể thay đổi và ảnh hưởng kéo theo |
+| Variant | Must keep | May change and its knock-on effects |
 |---|---|---|
-| Thời điểm trong ngày | Cấu trúc địa điểm, vị trí bài trí, góc máy và hao mòn đã có | Độ cao/hướng mặt trời, nóng lạnh, độ dài bóng, độ sáng ngoài cửa sổ, bật tắt đèn nhân tạo và thứ bậc nguồn sáng |
-| Thời tiết | Cùng địa điểm, bố cục chính, đồ vật không bị ảnh hưởng | Sợi mưa, vệt mưa trên kính, phản chiếu mặt đất ướt, vị trí tuyết đọng, tầng xa gần của sương mù; thay đổi bề mặt hợp với chất liệu |
-| Vị trí máy/tiêu cự | Cấu trúc thế giới, vị trí đồ vật thực tế, thời điểm và thời tiết, nguồn sáng của thế giới | Phạm vi khuôn hình, phối cảnh và quan hệ che khuất, độ sâu trường ảnh; không được biến đổi góc thành đổi địa điểm |
-| Trạng thái cốt truyện rõ ràng | Khung xương không gian vẫn nhận ra được và manh mối liên tục | Chỉ những sửa chữa, hư hại, trang trí, sắp đặt đã xác nhận, nói rõ nguyên nhân và cảnh áp dụng |
+| Time of day | Location structure, furnishing positions, camera view, and existing wear | Sun height/direction, warm/cool, shadow length, brightness outside the window, artificial lights on/off and light source hierarchy |
+| Weather | Same place, main layout, unaffected objects | Rain streaks, rain trails on glass, wet ground reflections, snow placement, depth layering of fog; surface changes fit the materials |
+| Camera position/focal length | World structure, actual object positions, time of day and weather, world light sources | Framing range, perspective and occlusion relationships, depth of field; changing the angle must not turn into changing the place |
+| Explicit story state | A still-recognizable spatial skeleton and continuity clues | Only confirmed repairs, damage, decoration, arrangement, etc., with the reason and applicable scenes stated |
 
-SOP v1.1.8 mặc định tự động trích xuất thay đổi thời điểm trong ngày của cùng địa điểm; thời tiết, vị trí máy, hư hại... chỉ được đưa vào phạm vi thiết kế độc lập sau khi người dùng nêu rõ nhu cầu. Kiến thức có các phương pháp này không có nghĩa quy trình tự động mở rộng. Biến thể dùng lại cách trình bày của bối cảnh cha: bối cảnh thường một khung, cổ phong cyberpunk thiết lập bốn hướng; bốn hướng đồng bộ thay đổi trạng thái đã xác nhận, không được một ô ban ngày còn ô khác ban đêm.
+The v1.1.8 SOP extracts time-of-day changes for the same location by default; weather, camera position, damage, etc. join the separate design scope only after the user explicitly needs them. Having these methods in the knowledge does not mean the workflow expands automatically. Variants follow the parent location's presentation: ordinary locations single-image, Guofeng cyberpunk four-direction setup; all four directions change the confirmed state together, never one cell daytime and another nighttime.
 
-Chuyển ngày sang đêm không thể chỉ đổi bầu trời: ánh sáng tự nhiên yếu đi, đèn đường/đèn trong nhà trở lại làm nguồn sáng chính, phản chiếu và bóng đổ đồng bộ thay đổi. Chuyển nắng sang mưa không thể chỉ thêm vệt mưa: mặt đất ướt, kính đọng nước, không khí và ánh sáng cửa sổ thay đổi. Khi đổi góc nhìn, giữ vị trí nguồn sáng trong thế giới, tính lại hướng nhận sáng trong khung hình.
+Day to night is not just swapping the sky: natural light weakens, street/indoor lights become the key light again, and reflections and shadows change with them. Clear to rain is not just adding rain lines: the ground gets wet, glass holds water, the air and window light change. When changing viewpoint, keep light sources at their world positions and recompute the lighting direction in the frame.
 
-## Đạo cụ: cấu trúc, chất liệu và trạng thái cốt truyện
+## Props: structure, materials, and story state
 
-### Phán đoán có tách riêng hay không và cách trình bày
+### Deciding whether to list separately and how to present
 
-Đạo cụ chỉ được lập tài sản khi có vai trò cốt truyện hoặc thị giác độc lập; bài trí nền thông thường có thể để lại trong bối cảnh. Ghi rõ công dụng, hình dạng, quan hệ kích thước, kết nối cấu trúc, chất liệu chính phụ và trạng thái, không dùng "đạo cụ tinh xảo" thay cho thông tin có thể kiểm tra.
+Create an asset only when a prop has an independent story or visual role; generic background furnishings can stay in the location. Spell out purpose, shape, size relationships, structural connections, primary and secondary materials, and state; do not substitute "exquisite prop" for checkable information.
 
-| Loại | Thông tin nhận diện trọng tâm |
+| Category | Key identifying information |
 |---|---|
-| Thiết bị liên lạc/điện tử | Đường viền thân máy, màn hình và phím bấm, cổng kết nối, ốp bảo vệ, trạng thái bật tắt và giao diện cần thiết |
-| Đồ dùng ăn uống | Miệng cốc, quai cốc, dung tích vật chứa, chất liệu, thứ đựng bên trong và hơi nước/cặn mà cốt truyện yêu cầu |
-| Đồ dùng văn phòng/học tập | Bìa, cách đóng gáy, mép trang, kẹp bút, thẻ nhân viên...; chữ chỉ thiết kế theo nhu cầu cốt truyện |
-| Đồ dùng đi lại/mang theo người | Răng chìa khoá, nan và mặt ô, cấu trúc túi, dây đeo vai, mép thẻ |
-| Trang sức/tín vật | Hoa văn, khảm nạm, khớp cài, vết khắc, chỗ khuyết độc đáo, và vì sao có thể nhận ra |
-| Đồ gia dụng/sức khoẻ | Vật chứa, miệng mở, chất liệu, cấu trúc cần cho cách sử dụng; không tự bịa thêm thông tin cá nhân thật |
-| Khí vật truyền thống/huyễn tưởng | Kỹ nghệ thời đại, các chất liệu như gỗ, kim loại, ngọc, gốm, hình chế và cơ chế/hiệu ứng đặc biệt rõ ràng |
+| Communication/electronic devices | Body outline, screen and buttons, ports, protective case, on/off state and necessary UI |
+| Food and drink vessels | Rim, handle, vessel capacity, material, contents and any steam/residue the story requires |
+| Office/study supplies | Cover, binding, page edges, pen clip, badge, etc.; text designed only as the story needs |
+| Travel/carry items | Key tooth pattern, umbrella ribs and canopy, bag structure, shoulder strap, card edges |
+| Jewelry/tokens | Patterns, inlays, clasps, engravings, unique notches, and why it can be recognized |
+| Household/health items | Container, opening, material, structure required by how it is used; do not invent real personal information |
+| Traditional/fantasy artifacts | Period craftsmanship, wood/metal/jade/ceramic materials, form, and explicit special mechanisms/effects |
 
-Đa số phong cách có thể dùng cách trình bày 2×2 gồm chính diện, nghiêng, sau lưng cộng chi tiết, chủ thể hoàn chỉnh, tỉ lệ nhất quán, cấu trúc các góc khớp nhau. Nếu một ảnh đơn đủ để nhận diện hoặc người dùng đã xác nhận cách khác, chọn theo nhu cầu. **Phim điện ảnh đô thị người thật `realpeople_modern_city` mặc định là một ảnh nhiếp ảnh tĩnh vật thật**: phông giấy xám, mặt bàn vân gỗ nhạt hoặc trắng kem, có mặt đỡ thật, bóng tiếp xúc mềm, không áp bố cục mô hình bốn ô.
+Most styles can use a 2×2 presentation of front, side, back, and detail, with the subject complete, proportions consistent, and structures matching across angles. If a single image is enough for identification or the user has confirmed another approach, choose as needed. **Live-action urban film `realpeople_modern_city` defaults to a single real-object still-life photograph**: gray backdrop paper, light wood grain, or an off-white tabletop, with a real supporting surface and soft contact shadow, not a four-grid modeling layout.
 
-Ảnh đạo cụ độc lập không xuất hiện người, tay, người đeo hay động tác sử dụng; trang sức có thể đặt phẳng, vũ khí hoặc dụng cụ có thể đặt yên an toàn. Nền đơn giản, đạo cụ vào khung đầy đủ, chi tiết bề mặt không bị độ sâu trường ảnh làm mờ. Tên và công dụng của tài sản ghi trong phần mô tả trên canvas, không yêu cầu bộ tạo vẽ nhãn vào ảnh.
+Standalone prop images contain no people, hands, wearers, or usage actions; jewelry can lie flat, and weapons or tools can rest safely. Keep the background simple, the prop fully in frame, and surface detail not blurred away by depth of field. Asset name and purpose go in the canvas description; the generator is not required to draw labels into the image.
 
-### Chất liệu thể hiện trạng thái như thế nào
+### How materials express state
 
-Trước hết xác định đồ vật là mới, dùng hằng ngày, dùng lâu năm, bị hư hại hay được niêm cất, rồi mới chọn dấu vết cụ thể. Lão hoá và hư hại của cùng một chất liệu có thứ tự nhân quả; không cho gốm sứ bị gỉ, không viết vết móp kim loại cho giấy.
+First decide whether the object is new, in daily use, long used, damaged, or stored away, then choose specific traces. Aging and damage of the same material follow a causal order; do not give ceramic rust or paper metal dents.
 
-| Chất liệu | Kết cấu bình thường | Dấu vết thời gian hoặc sử dụng | Hư hại/thay đổi môi trường đọc được |
+| Material | Normal texture | Traces of time or use | Readable damage/environmental change |
 |---|---|---|---|
-| Kim loại | Phản chiếu kiểu xước tóc, rèn hoặc đánh bóng, highlight ở cạnh | Vùng tiếp xúc mòn bóng, vết xước nhỏ, oxy hoá vừa phải | Móp, cong, chỗ gãy, gỉ sét; nước mưa đọng thành giọt hoặc màng nước |
-| Ngọc/đá | Ấm mịn trong màu hoặc vân đá, khác biệt độ mài bóng | Lớp bóng do vuốt ve, mòn góc cạnh | Vết nứt, sứt mẻ, bong mảnh, giữ danh tính vân gốc |
-| Thuỷ tinh | Trong suốt, khúc xạ ở cạnh, phản chiếu thật | Dấu tay, vệt nước, vết xước nhẹ | Đường nứt, vỡ vụn, thiếu mảnh; độ ẩm tạo ngưng tụ |
-| Gốm sứ | Ánh dịu mặt men, khác biệt giữa xương gốm và men | Mòn miệng/đáy cốc, rạn men nhỏ | Sứt mẻ, vết nứt, mảnh vỡ, lộ xương gốm |
-| Gỗ | Vân gỗ, khác biệt giữa mặt sơn và gỗ trần | Lớp bóng thời gian, mòn sơn, màu sẫm đi | Nứt toác, chỗ gãy, mọt hoặc vết cháy, chọn theo cốt truyện |
-| Giấy | Sợi giấy, nếp gấp, bề mặt hút sáng | Mép trang xơ, ố vàng, dấu vết lật giở nhiều lần | Rách, mất góc, ướt nhăn, mực loang |
-| Vải | Kiểu dệt, cảm giác nhung, độ rủ và nếp gấp do chịu lực | Phai màu, xù lông, chỗ chịu lực mòn mỏng | Rách, tuột chỉ, lỗ thủng, ướt nặng bám dính hoặc vết bẩn cục bộ |
-| Da thuộc | Vân da, độ mềm cứng, đường may và dầu viền | Nếp gập, lớp bóng thời gian, mòn mép | Nứt, rách, bong lớp mặt, phần kim loại thay đổi riêng |
-| Nhựa/mặt panel điện tử | Đường ghép khuôn ép phun, mờ/bóng, phản chiếu màn hình | Vết xước nhỏ, phai màu, vùng phím mòn bóng | Sứt cạnh, vết nứt, biến dạng, vỡ màn hình, rò dịch hoặc lỗi hiển thị |
+| Metal | Brushed, forged, or polished reflections, edge highlights | Contact areas rubbed bright, micro-scratches, appropriate oxidation | Dents, bends, fractures, rust; rain beading or a water film |
+| Jade/stone | Warm translucency or stone grain, polish differences | Handling patina, worn corners | Cracks, notches, chips, keeping the original grain identity |
+| Glass | Transparency, edge refraction, real reflections | Fingerprints, water spots, light scratches | Crack lines, shattering, missing pieces; condensation from humidity |
+| Ceramic | Soft glaze sheen, body vs glaze distinction | Wear at rim/base, fine crazing | Chips, cracks, shards, exposed body |
+| Wood | Grain, lacquer vs bare wood differences | Patina, worn lacquer, darkened color | Splits, breaks, insect holes or burn marks, chosen by story |
+| Paper | Fibers, creases, light-absorbing surface | Fuzzy page edges, yellowing, signs of repeated reading | Tears, missing corners, wet wrinkling, ink bleeding |
+| Fabric | Weave, pile, drape and stress folds | Fading, pilling, thinning at stress points | Tears, loose threads, holes, wet heavy clinging or local stains |
+| Leather | Grain, softness or stiffness, stitching and edge paint | Bend creases, patina, worn edges | Cracking, tears, peeling surface; hardware changes separately |
+| Plastic/electronic panels | Injection mold seam lines, matte/glossy, screen reflections | Micro-scratches, fading, button areas rubbed shiny | Chipped edges, cracks, deformation, shattered screen, leaks or display faults |
 
-Các dấu vết vật lý trên phải được chuyển sang chất liệu biểu đạt đã chọn: cel dùng nét và mảng màu, thiết kế phẳng dùng ký hiệu đơn giản, 3D thể hiện bề mặt và phản chiếu, đất sét giữ dấu vết thủ công, tả thực người thật mô tả hành vi vật liệu mà máy quay nhìn thấy. Không được thêm texture sợi tả thực cho đạo cụ phong cách phẳng.
+The physical traces above must be translated into the chosen medium: cel uses line and flat color, flat design uses simple symbols, 3D renders surface and reflection, claymation keeps handmade marks, and live-action realism describes material behavior visible to the camera. Do not add realistic fiber textures to flat props.
 
-Biến thể đạo cụ giữ nguyên đường viền, hoa văn cốt lõi và điểm neo cấu trúc ban đầu, cũng như vị trí máy trình bày, nền, nguồn sáng. Thay đổi trạng thái phải nhận ra ngay, nguyên nhân truy được. Mảnh vỡ then chốt giữ phần có thể nhận diện; "được trân trọng cất giữ" có thể thể hiện qua lớp bọc và dấu vết mở ra đóng lại nhiều lần, "yêu quý mang sát người" có thể thể hiện qua vị trí vuốt ve cụ thể, không cần thêm tay người giữ. Trạng thái mới tinh và mòn nặng loại trừ nhau; đèn điện/màn hình phát sáng bình thường cũng phải phân biệt với năng lượng phép thuật vô căn cứ.
+Prop variants keep the original silhouette, core patterns, and structural anchors, as well as the presentation camera, background, and light source. State changes must be readable at a glance with a traceable cause. Key fragments keep their recognizable parts; "treasured" can be expressed through wrapping and repeated open-close wear, "kept close and loved" through specific rubbed spots, without adding the owner's hands. Brand-new state and heavy wear are mutually exclusive; normal glow from a lamp/screen must also be distinguished from unfounded magical energy.
 
-SOP không tự động trích xuất phái sinh đạo cụ; chỉ dùng các phương pháp này cho nhu cầu trạng thái bổ sung mà người dùng nêu rõ, và xác nhận phạm vi riêng.
+The SOP does not automatically extract prop derivatives; use these methods only for extra states the user explicitly requests, and confirm the scope separately.
 
-## Mẫu prompt có thể điền trực tiếp
+## Fill-in prompt templates
 
-Trong ngoặc vuông điền nội dung đã xác nhận, xoá mục không áp dụng; dưới đây là mẫu ngữ nghĩa, không yêu cầu công cụ hiện tại có trường cùng tên. Tham chiếu phải gắn với đầu vào ảnh thực tế, chỉ viết "tham chiếu đường dẫn nào đó" không cấu thành ảnh tham chiếu. Ký hiệu tham chiếu chuyên dụng chỉ dùng khi mô hình được chọn và công cụ hiện tại thực sự hỗ trợ.
+Fill the brackets with confirmed content and delete what does not apply; these are semantic templates and do not require the current tool to have fields of the same name. A reference must be bound to an actual image input; merely writing "refer to some path" is not a reference image. Use dedicated reference markers only when the chosen model and current tool actually support them.
 
-### Nhân vật cơ bản
-
-```text
-Tư liệu thiết lập nhân vật [phong cách vẽ và chất liệu biểu đạt đã chọn], [tên nhân vật/thân phận/giai đoạn tuổi].
-Nhận diện cốt lõi: [đường nét đầu mặt, tổ hợp ngũ quan, đường chân tóc, kiểu tóc và một vài đặc điểm độc đáo]; [vóc dáng đã xác nhận và tư thế đứng tự nhiên].
-Mặc [trang phục cơ bản hoàn chỉnh và giày, hình chế, màu sắc, chất liệu], biểu cảm trung tính tự nhiên.
-Cùng một khung hình lần lượt là cận cảnh khuôn mặt, toàn thân chính diện, toàn thân nghiêng, toàn thân sau lưng; khuôn mặt rõ ràng, ba toàn thân đủ đầu đến chân.
-Bốn góc là cùng một nhân vật, cùng kiểu tóc, trang phục và tư thế đứng, cấu trúc nghiêng và sau lưng tương ứng với nhau.
-[Nền đơn giản], [ánh sáng trình bày phù hợp chất liệu biểu đạt]; không thêm môi trường cốt truyện hay đạo cụ cầm tay, không thêm nhãn hay chữ chồng lên.
-```
-
-Phái sinh nhân vật đổi phần mở đầu thành "lấy ảnh cha đã gắn làm tham chiếu danh tính", ghi từng mục "Không đổi: [khuôn mặt/vóc dáng/màu tóc/tư thế đứng]; Chỉ thay đổi: [trang điểm/kiểu tóc/lớp trong/trang phục chính/giày/phụ kiện]", rồi dùng lại quy chuẩn góc nhìn. Không thay đổi tất cả các lớp một lượt.
-
-### Bối cảnh cơ bản và biến thể bối cảnh
-
-Dưới đây là mẫu bối cảnh một khung hình; cổ phong cyberpunk dùng mẫu bốn hướng phía sau, không được viết lẫn "một khung/không ghép nhiều góc nhìn" với yêu cầu bốn ô.
+### Base character
 
 ```text
-[Phong cách vẽ và chất liệu biểu đạt đã chọn], [tên và chức năng địa điểm], một khung nhìn chính của không gian, [thời đại và vùng miền], [thời điểm/mùa/thời tiết].
-Khung xương không gian: [vị trí lối vào, cửa sổ, lối đi và khu vực chính]; bài trí cố định: [đồ vật chính và vị trí tương đối].
-Tiền cảnh [khung/vật che], trung cảnh [khu vực hoạt động chính], hậu cảnh [phần không gian kéo dài], cấu trúc chủ thể rõ ràng.
-Nguồn sáng chính đến từ [vị trí và nguồn thật], [mềm cứng và nóng lạnh]; [ánh sáng phụ, phản chiếu và bóng đổ].
-[Chất liệu và dấu vết sử dụng cần thiết]; không người, không bóng người hay đường nét cơ thể, không ghép thành nhiều góc nhìn, không thêm chữ chồng ngoài khung.
+Character design sheet in [chosen drawing style and medium], [character name/identity/age stage].
+Core identifiers: [head and face contour, combination of facial features, hairline, hairstyle and a few distinctive traits]; [confirmed body type and natural stance].
+Wearing [complete base outfit and shoes, form, color, material], with a neutral, natural expression.
+In one image, in order: face close-up, front full body, side full body, back full body; face clear, all three full-body views complete from head to feet.
+All four angles show the same character, same hairstyle, same outfit and stance, with side and back structures corresponding.
+[Simple background], [presentation lighting suited to the medium]; no story environment or handheld props, no labels or overlaid text.
 ```
 
-Mẫu cổ phong cyberpunk:
+For character derivatives, replace the opening with "Using the bound parent image as the identity reference", list item by item "Unchanged: [face/body type/hair color/stance]; only change: [makeup/hairstyle/inner layer/main garment/shoes/accessories]", then reuse the view specification. Do not change every layer.
+
+### Base location and location variants
+
+Below is the single-image location template; Guofeng cyberpunk uses the four-direction template after it instead, and "single image/no multi-view collage" must not be mixed with the four-cell requirement.
 
 ```text
-Thiết lập bốn hướng cho bối cảnh 3D cyberpunk phong cách cổ phong, [chức năng địa điểm, thời đại và vùng miền, cấu trúc kiểu Trung Hoa và hệ thống công nghệ], [thời điểm/mùa/thời tiết thống nhất].
-Điểm trung tâm cố định [vị trí] và độ cao điểm nhìn [độ cao đã xác nhận], chỉ xoay hướng quan sát; cùng một khung hình 2×2: trên trái phía trước 0°, trên phải phía phải 90°, dưới trái phía sau 180°, dưới phải phía trái 270°.
-Khung xương không gian [vị trí tương đối trong thế giới của cửa, cửa sổ, lối đi, kiến trúc và bài trí]; ranh giới bốn hướng và mốc cố định có thể tương ứng, không thay đổi điểm trung tâm hay phóng to thu nhỏ riêng một ô.
-Nguồn sáng chính [vị trí trong thế giới và nguồn], thiết bị cyberpunk [vị trí cố định và trạng thái phát sáng], vùng nhận sáng, bóng đổ và phản chiếu ở mỗi góc nhìn tuân theo cùng một bộ nguồn sáng.
-[Chất liệu PBR, hình chế kiểu Trung Hoa, bộ phận công nghệ cụ thể và dấu vết sử dụng cần thiết]; mùa và thời tiết bốn hướng nhất quán, không có đường nét nhân vật, bóng người, cơ thể hay động vật, không thêm nhãn hay watermark ngoài khung.
+[Chosen drawing style and medium], [location name and function], single-image main spatial view, [era and region], [time of day/season/weather].
+Spatial skeleton: [positions of entrances, windows, passages and main areas]; fixed furnishings: [main objects and relative positions].
+Foreground [framing/occlusion], midground [main activity area], background [spatial extension], main structure clear.
+Key light from [real position and source], [hardness and warmth]; [fill light, reflections and shadows].
+[Materials and necessary traces of use]; no people, human shadows or body outlines, no multi-view collage, no off-screen overlaid text.
 ```
 
-Biến thể bốn hướng lấy ảnh cha đã gắn làm tham chiếu, khoá bố cục bốn hướng, điểm trung tâm, độ cao, vị trí kiến trúc và thiết bị, rồi ghi các thay đổi đã xác nhận như thời điểm/thời tiết diễn ra đồng bộ ở mỗi hướng; thay đổi trạng thái không có nghĩa là tạo một địa điểm khác.
-
-Ví dụ biến thể bối cảnh: lấy ảnh cha "Sân viện · cảnh ngày" đã gắn làm tham chiếu, giữ vị trí cổng sân, cột hành lang, bàn đá, cây cối và cùng một vị trí máy, chỉ đổi thành cảnh đêm; ánh sáng trời yếu đi thành môi trường xanh lam lạnh, hai chiếc đèn lồng đã đặt sẵn bên cổng sáng lên, bóng đổ ấm trên bàn đá và mặt đất tuân theo vị trí đèn lồng; vẫn là cùng một sân viện không người. Chưa xác nhận trời mưa thì không thêm phản chiếu mặt đất ướt.
-
-### Đạo cụ cơ bản và biến thể đạo cụ
+Guofeng cyberpunk template:
 
 ```text
-[Phong cách vẽ và chất liệu biểu đạt đã chọn], tĩnh vật độc lập [tên/loại đạo cụ], [cấu trúc tương ứng với công dụng], [hình dạng và quan hệ kích thước].
-[Chất liệu chính phụ, màu sắc, hoa văn cốt lõi, kỹ nghệ], trạng thái hiện tại [trạng thái đã xác nhận và dấu vết nhìn thấy cụ thể].
-[Bố cục một góc nhìn hoặc chính diện/nghiêng/sau lưng cộng chi tiết đã xác nhận], cấu trúc tương ứng, vào khung đầy đủ, không người, không tay, không động tác đeo hay cầm nắm.
-[Nền và cách đặt đỡ], [ánh sáng và bóng đổ phù hợp chất liệu biểu đạt], chi tiết then chốt rõ ràng, không thêm nhãn hay watermark.
+Guofeng cyberpunk 3D location four-direction setup, [location function, era and region, Chinese structure and technical systems], [uniform time of day/season/weather].
+Fixed center point [position] and eye height [confirmed height], only the viewing direction rotates; one image in 2×2: top-left front 0°, top-right right 90°, bottom-left back 180°, bottom-right left 270°.
+Spatial skeleton [relative world positions of doors and windows, passages, buildings and furnishings]; boundaries and fixed landmarks correspond across the four directions, without changing the center point or scaling any cell independently.
+Key light [world position and source], cyber installations [fixed positions and emissive state], lit faces, shadows and reflections in each view obey the same set of light sources.
+[PBR materials, Chinese forms, specific tech components and necessary traces of use]; season and weather consistent across all four directions, no people, human shadows, human or animal outlines, no off-screen labels or watermarks.
 ```
 
-Ví dụ biến thể đạo cụ: lấy ảnh cha "Phong bì cũ" đã gắn làm tham chiếu, giữ màu giấy, chỗ dán, vị trí nếp gấp và cùng một vị trí máy tĩnh vật, chỉ đổi thành sau khi dầm mưa; mặt giấy hút nước sẫm màu cục bộ, mép hơi quăn, vết mực có sẵn loang nhẹ, giữ nét chữ nhận ra được và cấu trúc chỗ dán; không tự ý thêm vết rách, cháy sém hay chữ mới.
+Four-direction variants use the bound parent image as reference, lock the four-direction layout, center point, height, and building and installation positions, then write the confirmed changes such as time of day/weather that happen in all directions together; a state change is not a new, different location.
 
-### Lựa chọn ràng buộc phủ định
+Location variant example: Using the bound "Courtyard - Day" parent image as reference, keep the courtyard gate, pillars, stone table, and vegetation positions with the same camera position, changing only to night; skylight fades to a cool blue ambience, the two lanterns already set beside the gate light up, and the warm shadows on the stone table and ground follow the lantern positions; it is still the same empty courtyard. Without confirmed rain, do not add wet ground reflections.
 
-Trước hết loại trừ nội dung xung đột trực tiếp với nhiệm vụ hiện tại, rồi thêm một ít từ chỉ lỗi thực sự có rủi ro. Không dán nguyên cả đoạn từ phủ định cũ.
+### Base prop and prop variants
 
-| Nhiệm vụ | Hướng ràng buộc phù hợp | Không nên thêm máy móc |
+```text
+[Chosen drawing style and medium], standalone still life of [prop name/type], [structure matching its purpose], [shape and size relationships].
+[Primary and secondary materials, colors, core patterns, craftsmanship], current state [confirmed state and specific visible traces].
+[Confirmed single view or front/side/back plus detail layout], structures correspond, fully in frame, no people, no hands, no wearing or holding actions.
+[Background and support], [lighting and shadows suited to the medium], key details clear, no labels or watermarks.
+```
+
+Prop variant example: Using the bound "Old envelope" parent image as reference, keep the paper color, seal, crease positions, and the same still-life camera position, changing only to after being rained on; parts of the paper absorb water and darken, edges curl slightly, existing ink bleeds slightly while the letterforms and seal structure stay recognizable; do not add tears, burns, or new text on your own.
+
+### Choosing negative constraints
+
+First exclude content that directly conflicts with the current task, then add a few defect terms where there is real risk. Do not paste whole blocks of old negative terms.
+
+| Task | Applicable constraint direction | Should not be added mechanically |
 |---|---|---|
-| Thiết lập nhân vật | Ghép nhiều người khác nhau, mặt bị trôi, thiếu góc nhìn, cắt đầu chân, chi sai, trang phục thay đổi giữa các góc nhìn | Cấm tuyệt đối căn giữa/chụp studio, hoặc quy định mọi nhân vật cùng chiều cao màu da |
-| Tài sản bối cảnh | Người, bóng người, cấu trúc biến dạng, ánh sáng bóng đổ không có nguồn, chữ lớn phủ lên không gian; nhánh một khung hình còn loại trừ ghép nhiều góc nhìn | Cấm tư liệu bốn hướng đã xác nhận của cổ phong cyberpunk, hoặc cấm biển đường, thư từ, thiết bị trong nhà mà cốt truyện cần |
-| Đạo cụ độc lập | Tay/người, cấu trúc lơ lửng, góc nhìn không nhất quán, đổi chất liệu vô căn cứ | Cấm màn hình/đèn vốn thực sự phát sáng, hoặc đồng thời yêu cầu mới tinh và mòn cũ |
-| Phong cách vẽ | Từ ảnh chụp/3D/2D mâu thuẫn với chất liệu biểu đạt đã chọn, cụ thể tới nhánh đó | Thêm "cấm cel" cho cel, cấm hạt nhiễu tuyệt đối cho phim điện ảnh người thật |
+| Character design | Collage of different people, face drift, missing views, cropped head or feet, wrong limbs, outfit changing across views | Blanket bans on centering/studio shots, or forcing all characters to the same height and skin tone |
+| Location assets | People, human shadows, structural distortion, unsourced light and shadow, large text covering the space; the single-image branch also excludes multi-view collages | Banning the confirmed Guofeng cyberpunk four-direction material, or banning street signs, letters, indoor devices the story needs |
+| Standalone props | Hands/people, floating structures, inconsistent views, unfounded material changes | Banning screens/lamps that genuinely glow, or demanding brand-new and worn at the same time |
+| Drawing style | Photo/3D/2D terms that contradict the chosen medium, specific to that branch | Adding "no cel-shading" to cel, or blanket-banning grain for live-action film |
 
-Khi mô hình không hỗ trợ prompt phủ định riêng, viết các yêu cầu cần thiết thành điều kiện nhìn thấy được dạng khẳng định, ví dụ "bốn góc của cùng một nhân vật, đủ đầu đến chân, nền đơn giản, trang phục nhất quán". Độ phân giải và tỉ lệ dùng tham số thực tế đã xác nhận và được hỗ trợ, chữ "4K/8K" không bằng kích thước đầu ra thực tế.
+When the model does not support a separate negative prompt, rewrite the necessary requirements as positive visible conditions, e.g. "four angles of the same character, complete head to feet, simple background, consistent outfit". Resolution and aspect ratio use confirmed, supported actual parameters; the words "4K/8K" do not equal the actual output size.
 
-## Kiểm tra trước khi tạo và nghiệm thu khi đọc lại
+## Pre-generation checks and readback acceptance
 
-Trước khi tạo, đối chiếu thẻ thiết kế, prompt, ảnh tham chiếu và tham số có cùng phiên bản không; dùng lại phạm vi đã xác nhận, không thêm lô chưa được cho phép. Bản thiết kế, đang xếp hàng, đang tạo, ứng viên, đã chọn dùng phải phân biệt rõ, không được bỏ qua các điểm xác nhận của quy trình chính.
+Before generating, check that the design card, prompt, reference images, and parameters are the same version; keep to the confirmed scope and do not add unauthorized batches. Distinguish design draft, queued, generating, candidate, and adopted, and do not skip the main workflow's confirmation points.
 
-- Nhân vật: khác biệt rõ với nhân vật khác, khuôn mặt và chính diện/nghiêng/sau lưng là cùng một người, quần áo và giày đầy đủ, không tự ý đổi tuổi, vóc dáng, điểm nhận diện da tóc; chất liệu người thật, đất sét, phẳng... đều tự đứng vững.
-- Bối cảnh: bố cục địa điểm đọc được và liên tục, không lén thêm bóng người; nguồn sáng giải thích được, không gian và chất liệu hợp phong cách, thay đổi thời điểm/thời tiết tạo ra ảnh hưởng kéo theo đúng. Cổ phong cyberpunk còn phải đối chiếu cách xếp trước/phải/sau/trái, cùng điểm trung tâm cùng độ cao, mốc bốn hướng nối tiếp và trạng thái thống nhất, không được chỉ nghiệm thu một ô.
-- Đạo cụ: đường viền, cấu trúc và hoa văn then chốt nhận ra được, chất liệu/trạng thái hợp lý, không có tay hay người cầm; ảnh tĩnh vật đơn của phim điện ảnh đô thị người thật có mặt đỡ và bóng đổ đáng tin.
-- Biến thể: thực sự dùng ảnh cha đã xác nhận; chỉ thay đổi hạng mục được phép; hạng mục không đổi, khác biệt trạng thái và tập/cảnh áp dụng đều đọc lại được.
-- Chung: prompt không có chỉ thị loại trừ nhau, ảnh thật truy cập được; xem kết quả thực tế rồi ghi vấn đề và kết luận chọn dùng, không lấy "công cụ trả về thành công" thay cho nghiệm thu thị giác.
+- Characters: clearly distinct from other characters, face and front/side/back are the same person, clothes and shoes complete, age, body type, and skin/hair identifiers not changed without authorization; live-action, claymation, flat, and other materials each hold up on their own terms.
+- Locations: layout readable and continuous, no sneaked-in human shadows; light sources explainable, space and materials fit the style, time-of-day/weather changes produce the correct knock-on effects. Guofeng cyberpunk must also check the front/right/back/left arrangement, same center point and height, landmark continuity across the four directions, and uniform state; accepting only one cell is not enough.
+- Props: silhouette, structure, and key patterns recognizable, materials/state plausible, no hands or owner; the single still life for live-action urban film has a believable support surface and shadow.
+- Variants: the confirmed parent image was actually used; only allowed items changed; invariants, state differences, and applicable episodes and scenes can all be read back.
+- General: prompts have no mutually exclusive instructions and real images are accessible; look at the actual results and record problems and the adoption decision; "the tool returned success" does not replace visual acceptance.
 
-Chỉ sau khi qua nghiệm thu và được người dùng xác nhận chọn dùng, mới ghi tham chiếu ảnh thật vào bản ghi chính của tài sản và các tập bị ảnh hưởng. Chỉnh sửa chỉ nhắm vào hạng mục không đạt, giữ lại ảnh đã xác nhận và ứng viên, không mặc định ghi đè toàn bộ tài sản.
+Only after passing acceptance and getting the user's adoption confirmation are real image references written into the asset master record and the affected episodes. Revisions target only failed items, keeping confirmed images and candidates, and do not overwrite all assets by default.

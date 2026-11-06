@@ -1,80 +1,80 @@
-# Trạng thái, sửa đổi và giao nộp
+# State, revision, and delivery
 
-> **Ranh giới sử dụng với Seedance:** File này chỉ ghi lại phiên bản, kết quả tạo thực tế, việc chọn dùng và giao nộp. Nó không được viết lại các quy tắc prompt đã xác định trong PART A của `SKILL.md` chính; mọi sửa đổi prompt Seedance phải quay về PART A.
+> **Seedance usage boundary:** This file only records versions, real generation results, adoption, and delivery. It cannot rewrite the prompt rules already set in PART A of the main `SKILL.md`; any Seedance prompt revision must go back to PART A.
 
-Sản xuất nhiều giai đoạn hoặc qua nhiều lượt dùng một file trạng thái gọn và một node văn bản tổng quan trên canvas. Ưu tiên dùng tiếp sổ theo dõi sẵn có của dự án và đường dẫn chính xác, bao gồm `production-state.md` bản cũ; dự án mới có thể dùng `productionState.md`, nhiều tập thì lưu trong thư mục con riêng của từng tập trong dự án. Tác vụ văn bản đơn lẻ đơn giản không bắt buộc lập cả bộ Trạng thái sản xuất.
+Multi-stage or multi-turn production uses one concise state file and one canvas overview text node. Prefer the project's existing ledger and exact path, including the legacy `production-state.md`; a new project can use `productionState.md`, and multiple episodes are saved in their own subdirectories within the project. Simple single-item text tasks do not require a full production state.
 
-File trạng thái ghi sự thật và chỉ mục, tổng quan chỉ hiển thị phạm vi hiện tại, thành phẩm hợp lệ, tiến độ, mục còn thiếu và bước tiếp theo. Nội dung chuyên môn vẫn nằm trong các node văn bản tương ứng, không sao chép vào toàn bộ sổ theo dõi. Chỉ thêm bản ghi khi có thành phẩm thực tế, không dựng sẵn nhiều bảng rỗng hay thư mục rỗng.
+The state file records facts and indexes; the overview shows only the current scope, valid outputs, progress, gaps, and next step. Professional body text stays in its own text nodes and is not copied into the whole ledger. Add records only when there are actual outputs; do not pre-create many empty tables or empty folders.
 
-## Tối thiểu cần ghi những gì
+## The minimum to record
 
 ```markdown
-# Trạng thái sản xuất
+# Production state
 
-Mục tiêu và phạm vi lần này:
-Đường dẫn canvas hiện tại và file trạng thái:
-Phiên bản kịch bản nguồn hoặc nguyên văn, phạm vi chọn dùng:
-Giai đoạn hiện tại, phạm vi sản xuất liên tục đã được ủy quyền, việc cần xử lý:
+Goal and scope for this round:
+Current canvas and state file path:
+Source script or source text version, adopted scope:
+Current stage, authorized continuous production scope, pending items:
 
-## Thành phẩm
-| Định danh | Mục đích/cảnh | Phiên bản | Canvas/node | Đường dẫn nội dung hoặc media hiện tại | Phiên bản cố định được chọn dùng | Phụ thuộc đầu vào | Trạng thái và căn cứ xác nhận |
+## Outputs
+| ID | Purpose/scene | Version | Canvas/node | Current body text or media path | Adopted pinned version | Input dependencies | Status and basis of confirmation |
 |---|---|---|---|---|---|---|---|
 
-## Lần thử tạo
-| Định danh lần thử cục bộ | Tài sản/đoạn, node | Ảnh chụp prompt | Mô hình và đầy đủ tham số hiệu lực | File tham chiếu, phiên bản, thứ tự và mục đích | Output trước khi gọi | Phạm vi ủy quyền và số lần còn lại | Phản hồi và file thực tế |
+## Generation attempts
+| Local attempt ID | Asset/segment, node | Prompt snapshot | Model and complete effective parameters | Reference files, versions, order, and uses | Pre-call output | Authorized scope and remaining runs | Return and actual files |
 |---|---|---|---|---|---|---|---|
 
-## Chọn dùng đoạn
-| Đoạn và phạm vi cốt truyện | Video lần này và lần thử tạo | Quyết định chọn dùng và khoảng dự kiến dùng | Trạng thái kết thúc thực tế và nguồn | Mục Agent đã kiểm tra/chưa kiểm tra | Phụ thuộc về sau |
+## Segment adoption
+| Segment and story range | Video and generation attempt this round | Adoption decision and planned interval | Actual end state and its source | Items the Agent checked/did not check | Later dependencies |
 |---|---|---|---|---|---|
 
-## Giao nộp
-File giao nộp thực tế và chỉ mục:
-Phạm vi đã tạo/đã chọn dùng/đã ghép/đã gom về:
-Mục còn thiếu và đầu vào cần để tiếp tục:
+## Delivery
+Actual delivered files and index:
+Generated/adopted/composited/collected scope:
+Gaps and input needed to continue:
 ```
 
-Lấy trường theo tác vụ, không bắt buộc lần nào cũng điền đủ mọi bảng. Phong cách sản xuất, phương án âm thanh và thông số có thể để trong bản tóm tắt và đánh chỉ mục ở đây. Định danh lần thử là bản ghi cục bộ, không được coi là task ID mà host chưa trả về. Đường dẫn được tuyên bố là tồn tại phải đến từ việc đọc, ghi thực tế hoặc từ node trả về.
+Use fields as the task requires; do not force filling every table every time. Production style, voice plan, and specs can live in the brief and be indexed here. Attempt IDs are local records and cannot be treated as task IDs the host did not return. Any path claimed to exist must come from a real read, write, or node return.
 
-## Phiên bản đã xác nhận không thể chỉ trỏ tới nội dung có thể thay đổi
+## A confirmed version cannot point only to mutable body text
 
-Khi chuẩn bị nộp để duyệt, lưu một ảnh chụp lịch sử độc lập của nội dung phiên bản đó và trình bày đúng phiên bản cụ thể này; xác nhận của người dùng gắn với ảnh chụp này. Khi người dùng đã chỉ định rõ nguyên văn bản chốt thì có thể cố định trực tiếp nguyên văn đó. Ảnh chụp chỉ làm căn cứ lịch sử, không chỉnh sửa hai chiều, và không chỉ bổ sung lưu khi Agent sắp sửa.
+When preparing to submit for review, save an independent historical snapshot of that version's body text and present that specific version; the user's confirmation binds to this snapshot. When the user has explicitly specified a finalized source text, that source text can be pinned directly. The snapshot serves only as a historical basis, is not edited in both directions, and is not saved only right before the Agent modifies something.
 
-Sau khi nhận xác nhận, đọc lại node hiện tại. Nếu nội dung bị người dùng sửa trong lúc chờ, xác nhận ban đầu vẫn ứng với phiên bản đã nộp, không thể tiện thể phê duyệt nội dung sau đó; liệt kê khác biệt và xử lý theo ý người dùng, ảnh chụp lịch sử giữ nguyên. Khi file đã xác nhận trước đây không có ảnh chụp, trước tiên so sánh với nội dung xác nhận có thể lấy được, lịch sử không thể khôi phục thì đánh dấu "căn cứ phiên bản cần xác minh", không lấy file hiện tại giả làm bản cũ.
+After receiving confirmation, re-read the current node. If the body text was changed by the user while waiting, the original confirmation still corresponds to the submitted version and does not incidentally approve the later content; list the differences and handle them according to the user's intent, keeping the historical snapshot unchanged. When an existing confirmed file has no snapshot, first compare it with whatever confirmed content is available; mark history that cannot be restored as "version basis to be verified", and do not pass off the current file as the old version.
 
-File lịch sử chỉ đọc sẵn có có thể dùng lại trực tiếp; công cụ đọc ghi thông thường không đảm bảo người dùng mãi mãi không sửa được ảnh chụp, khi đọc phát hiện không nhất quán cũng phải đối chiếu. Khi không có khả năng ghi file nhưng có thể giữ node văn bản độc lập, giữ node cũ và tạo thêm ứng viên, ghi nhận riêng node và đường dẫn thực tế; khi không thể lưu lịch sử thì không ghi đè nội dung vẫn đang được chọn dùng, và nêu rõ giới hạn cụ thể.
+Existing read-only history files can be reused directly; ordinary read/write tools cannot guarantee that the user can never modify a snapshot, so verify likewise when a read reveals inconsistencies. When no file can be written but an independent text node can be kept, keep the original node and create a separate candidate, registering both nodes and actual paths; when history cannot be saved, do not overwrite body text that is still adopted, and state the specific limitation.
 
-Trước khi tạo, lưu ảnh chụp prompt đầy đủ thực tế, tham số, tham chiếu và ủy quyền; chỉnh sửa sau đó không ghi ngược vào lần thử này. Phiên bản prompt và phiên bản kết quả tách riêng: sửa chữ không có nghĩa video cũ được tạo từ chữ mới. Việc rà soát trước khi thực thi cụ thể theo [thực thi canvas](canvasExecution.md).
+Before generating, save a snapshot of the actual complete prompt, parameters, references, and authorization; later edits do not write back into this attempt. Keep prompt versions and result versions separate: changing the text does not mean the old video was generated from the new text. Pre-execution review follows [Canvas execution](canvasExecution.md).
 
-## Media đã chọn dùng và sửa đổi cục bộ
+## Adopted media and partial revisions
 
-File đã chọn dùng được gắn vào node tư liệu độc lập, ghi đường dẫn thực tế và mục đích. Sửa ảnh hoặc video thì dùng node tạo ứng viên mới, sau khi chọn dùng mới cập nhật những hạ nguồn thực sự cần bản mới; giữ lại file, node, prompt đã chọn dùng cũ và quan hệ lịch sử, không chuyển trước các đoạn vẫn phụ thuộc kết quả cũ.
+Mount adopted files to independent media nodes, recording actual paths and uses. Revise images or videos with new candidate generation nodes, and after adoption update only the downstream that truly needs the new version; keep the old adopted files, nodes, prompts, and history relationships, and do not switch segments that still depend on the old result first.
 
-Mỗi thay đổi đều tra ảnh hưởng theo phụ thuộc đầu vào thực tế: ngoại hình nhân vật ảnh hưởng các đoạn dùng trạng thái đó, lời thoại ảnh hưởng dung lượng và khẩu hình của đoạn tương ứng, không gian hoặc hành động ảnh hưởng chỗ giao nối liền kề. Kết quả không bị ảnh hưởng tiếp tục có hiệu lực. Khi bản mới tương thích chỉ cập nhật quan hệ tương ứng, khi cần tạo lại thì nêu phạm vi bị ảnh hưởng và phương án cụ thể.
+For every change, check the impact along actual input dependencies: a character's appearance affects segments that use that state, dialogue affects the corresponding segment's capacity and lip sync, space or action affects adjacent boundaries. Unaffected results remain valid. When a new version is compatible, update only the corresponding relationships; when regeneration is needed, state the affected scope and the specific plan.
 
-Khi xử lý phản hồi thực tế về Seedance, dùng A8, A11.4, A12.18.1 và các điều khoản A0–A12 tương ứng trong PART A của `SKILL.md` chính để định vị các vấn đề về tham chiếu, hành động, không gian, âm thanh, diễn xuất, ánh sáng màu sắc, đạo cụ và hình bị vỡ; khi cần sửa prompt thì quay về mục bị ảnh hưởng trong PART A để xử lý. **Cấm gọi thêm phương pháp shot/diễn xuất độc lập để lập bộ quy tắc sửa đổi thứ hai.** Đừng xử lý mọi vấn đề bằng cách thêm tính từ, thiết kế lại tài sản hoặc chạy lại cả phim.
+When handling actual Seedance feedback, use A8, A11.4, A12.18.1 and the corresponding A0–A12 clauses in PART A of the main `SKILL.md` to locate problems with references, action, space, sound, performance, light and color, props, and visual breakdown; when the prompt needs changing, go back to the affected items in PART A. **Never invoke separate shot/performance methods to build a second set of revision rules.** Do not treat every problem as adding adjectives, redesigning assets, or rerunning the whole film.
 
-Tài sản cũ người dùng đã chọn dùng rõ ràng thì dùng lại trực tiếp, không yêu cầu làm lại ảnh cho mẫu mới. Khi thiếu sổ theo dõi có thể dựng lại chỉ mục đã biết từ tài liệu người dùng chỉ định và canvas thời gian thực; xác nhận, tham số tạo hoặc nguồn chưa biết thì ghi là chưa biết, không đoán chọn dựa vào tên "bản cuối", thời gian sửa đổi hay số phiên bản lớn nhất.
+Reuse old assets the user has explicitly adopted directly; do not require redoing images for a new template. When the ledger is missing, rebuild the known index from the user-specified materials and the live canvas; write unknown for unknown confirmations, generation parameters, or sources, and do not guess based on a name like "final version", modification time, or the highest version number.
 
-## Kiểm định và chọn dùng
+## Verification and adoption
 
-Khi đọc ảnh, kiểm tra thân phận, số lượng, góc nhìn cần thiết, trang phục và vật, quan hệ môi trường và chữ có thể đọc. Chỉ công cụ báo thành công không chứng minh ảnh đạt yêu cầu; tư liệu phù hợp mà người dùng đã chấp nhận rõ ràng thì không yêu cầu chọn dùng lại.
+When reading images, check identity, count, necessary views, costume and objects, environment relationships, and readable text. A tool succeeding alone does not prove the image meets requirements; do not repeatedly ask for adoption of applicable media the user has already explicitly accepted.
 
-Video kiểm tra cốt truyện, lời thoại và người nói, OS/VO, thân phận và quan hệ có mặt, tiếp xúc động tác, vật cầm và tính liên tục không gian, âm thanh và thông số đầu ra; đồng thời kiểm tra lỗi lộ của việc tạo thực tế: mặt/kiểu tóc/trang phục nhân vật bị trôi, chi/ngón tay thừa hoặc thiếu, tay và mặt dính vào nhau, nhân vật hoặc đạo cụ xuyên qua nhau, đạo cụ then chốt lóe hiện/biến mất/nhân bản/đổi tay, kích thước và cấu trúc biến đổi đột ngột, cấu trúc bao bì sản phẩm bị chảy, gương/kính/bóng đổ xuất hiện bản sao sai. Với các đoạn liên tiếp, trước tiên theo A8 của PART A nhúng để xác định có thực sự liên quan không: có liên quan mới so sánh vị trí thế giới, tư thế, hướng, vật cầm của nhân vật và trạng thái môi trường; không liên quan thì chỉ kiểm định đoạn này. Phạm vi kiểm tra phụ thuộc vào năng lực thực tế của lượt này: đường dẫn file, trình phát, file tồn tại hoặc khung hình tĩnh đều không chứng minh Agent đã xem toàn phim, đã nghe track âm thanh. Video người dùng tải lên cũng phải xác nhận mô hình/công cụ thực tế đọc được, không mặc định có tệp đính kèm là đã duyệt phim xong.
+For videos, check story, dialogue and speakers, OS/VO, identity and presence relationships, action contact, held objects and spatial continuity, sound, and output specs; also check actual generation errors: drift in a character's face/hairstyle/costume, extra or missing limbs/fingers, hands fused with faces, characters or props clipping through each other, key props flashing/disappearing/duplicating/changing hands, sudden changes in size and structure, product packaging structure melting, and wrong duplications in mirrors/glass/shadows. For consecutive segments, first use the embedded PART A A8 to decide whether they are really linked: only if linked, compare character world position, posture, facing, held objects, and environment state; if not linked, verify only this segment. The scope of checks depends on the real capabilities this round: a file path, a player, a file's existence, or a still frame does not prove the Agent watched the whole film or heard the audio track. For user-uploaded videos, also confirm the actual model/tool can read them; do not assume an attachment means the review is done.
 
-Khi không có khả năng đọc video, nhờ người dùng xem trước kết quả hiện tại, báo vấn đề rõ ràng, có chọn dùng không, và trạng thái kết thúc mà đoạn tiếp theo thực sự phụ thuộc. Ghi "người dùng xem trước và chọn dùng" và các mục Agent chưa kiểm định, không yêu cầu bảng hỏi chất lượng không liên quan. Quyết định chọn dùng, phản hồi vấn đề và trạng thái kết thúc có thể lấy trong cùng một lần trả lời.
+Without video-reading capability, ask the user to preview the current result and report obvious problems, whether to adopt it, and the end state the next segment truly depends on. Record "adopted by user preview" and the items the Agent did not verify; do not require an unrelated quality questionnaire. The adoption decision, problem feedback, and end state can be obtained in the same reply.
 
-Đoạn liên tiếp phải có căn cứ thực tế: vị trí và hướng nhân vật, vật cầm và tiến độ hành động, sự kiện đã xảy ra, thay đổi ngoại hình và âm thanh kéo dài. Dùng video có thể xem, khung nối cảnh thực hoặc phản hồi của người dùng, không lấy trạng thái cuối trong kế hoạch giả làm trạng thái cuối thực tế. Viết chúng thành sự thật ban đầu rõ ràng của đoạn sau; kết quả hiện tại sai thì xử lý đoạn hiện tại trước, không nâng lỗi lộ thành cốt truyện mới.
+Consecutive segments need an actual basis: character position and facing, held objects and action progress, events that have happened, appearance changes, and continuing sound. Use viewable video, real continuity frames, or user feedback; do not pass off the planned end state as the actual end state. Write them as explicit starting facts for the next segment; when the current result is wrong, fix the current segment first, and do not escalate an error into new story.
 
-Chỉ trích khung hoặc gắn media đoạn trước khi thực sự cần và công cụ hỗ trợ; đừng vì quy trình mà yêu cầu người dùng chụp thêm ảnh màn hình vô dụng. Đoạn không có phụ thuộc thời gian - không gian có thể tiến hành theo kế hoạch đã xác nhận và ủy quyền theo lô cụ thể, kết quả vẫn kiểm định và chọn dùng riêng.
+Extract frames or mount earlier segment media only when truly needed and supported by tools; do not ask the user for useless extra screenshots for the sake of process. Segments with no time-space dependency can proceed under the confirmed plan and specific batch authorization, with results still verified and adopted separately.
 
-## Giao nộp theo phạm vi hoàn thành thực tế
+## Deliver according to the actual completed scope
 
-- Chỉ cần văn bản: giao văn bản hiện tại, node tương ứng hoặc file thực và các mục thiếu cần thiết.
-- Video theo đoạn: giao các đoạn đã chọn dùng, thứ tự, căn cứ tạo thực tế, khoảng dự kiến dùng và mục thiếu. Tổng thời lượng tư liệu đã tạo không bằng thời lượng đo thực tế của phim đã dựng.
-- Phim hoàn chỉnh duy nhất: chỉ thực hiện khi thực sự có công cụ dựng, cắt, trộn âm hoặc xuất và người dùng đã ủy quyền; nếu không thì nêu còn cần những công đoạn hậu kỳ nào, không gọi hai đường link tư liệu là phim hoàn chỉnh.
-- Thư mục giao nộp: chỉ khi có khả năng sao chép nhị phân thực sự mới sao chép tư liệu đã chọn dùng vào thư mục đích trong dự án và kiểm định. `write` văn bản thông thường không sao chép được ảnh hay video; năng lực không đủ thì giao chỉ mục file nguồn và đánh dấu chờ gom về.
+- Text only: deliver the current text, corresponding nodes or real files, and necessary gaps.
+- Segmented video: deliver adopted segments, order, actual generation basis, planned intervals, and gaps. The total duration of generated media does not equal the measured duration of the edited film.
+- Single finished film: execute only when editing, trimming, mixing, or export tools are actually provided and the user has authorized it; otherwise state what post-production work is still needed, and do not call two media links a complete film.
+- Delivery directory: copy adopted media into the target directory within the project and verify only when real binary copy capability exists. Ordinary text `write` cannot copy images or videos; when capability is insufficient, deliver an index of source files and mark them as pending collection.
 
-Gom về giữ nguyên bản gốc, khi nội dung giao nộp cũ khác thì dùng thư mục phiên bản mới, tránh lẫn tư liệu bị loại. Bản giao nộp không thay đổi và đã kiểm định thì dùng lại trực tiếp, không sao chép lặp lại. Giao nộp mặc định không bao gồm phát hành, tải lên hay dọn file nguồn; những việc này thực hiện theo phạm vi thực tế người dùng chỉ định riêng.
+Collection keeps originals; when old delivery content differs, use a new version directory to avoid mixing in rejected media. Reuse unchanged, verified deliveries directly without copying repeatedly. Default delivery does not include publishing, uploading, or cleaning up source files; do these according to the actual scope the user separately specifies.
 
-Câu trả lời cuối cùng nêu đã làm được gì, node/file thực ở đâu, nội dung nào do ai kiểm định, và bước tiếp theo cần thiết duy nhất. Việc chọn dùng toàn bộ đoạn, ghép phim, gom thư mục được ghi nhận riêng theo thực tế, không vì tổng quan hay danh sách đã xong mà đổi mọi trạng thái thành hoàn thành.
+The final reply states what was done, where the real nodes/files are, which content was verified by whom, and the single necessary next step. Register all segment adoption, film compositing, and directory collection separately according to fact; do not change all states to done just because the overview or checklist is complete.

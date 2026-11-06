@@ -1,60 +1,60 @@
-# Khung xương câu chuyện và đại cương theo tập
+# Story skeleton and episode outline
 
-Giai đoạn này xác định tuyến truyện, cung nhân vật và phương án chia tập; bản cũ đặt chung chúng trong khung xương câu chuyện.
+This stage settles the storyline, character arcs, and episode plan; the legacy version put all of these together in the story skeleton.
 
-## Đầu vào
+## Input
 
-- Cấu hình dự án đã xác nhận: tổng số tập, thời lượng mỗi tập, phạm vi nguồn, tỉ lệ khung, phong cách và giới hạn chuyển thể.
-- Chỉ mục nguyên văn và bảng sự kiện chương đã xác nhận, cùng khung xương và bản ghi xác nhận đã có trên canvas kịch bản.
-- Các nhân vật trọng điểm, tình tiết cần giữ, hướng kết cục và lịch phát hành áp dụng mà người dùng yêu cầu rõ.
+- The confirmed project config: total episode count, per-episode duration, source scope, aspect ratio, style, and adaptation limits.
+- The confirmed source index and chapter event table, plus any skeleton and confirmation records already on the script canvas.
+- Key characters, plot points to keep, ending direction, and applicable release arrangements explicitly requested by the user.
 
-## Bắt buộc đọc trước khi thực hiện
+## Required reading before execution
 
-- Phải đọc các chương về mật độ, lõi câu chuyện, nhân vật, chênh lệch thông tin và cú lật, mẫu thành phẩm và thẩm định trong [Phương pháp biên kịch](knowledge/scriptCraft.md); khi chọn dùng nhịp phim ngắn thương mại thì đọc thêm phần tham chiếu định lượng của nó.
-- Phải đọc quy tắc chung và thể loại chính đã xác nhận trong [Thể loại tự sự](knowledge/narrativeGenres.md); khi thực sự có pha trộn thể loại thì đọc thêm thể loại phụ trợ. Tổ chức khung xương theo nhịp tương ứng, không áp tuyến đơn, số lượng cú lật hoặc nhịp nhanh cho mọi đề tài.
+- You must read the density, story core, characters, information gaps and twists, output templates, and review sections of [screenwriting methods](knowledge/scriptCraft.md); when using commercial short-drama pacing, also read its quantitative reference.
+- You must read the general rules of [narrative genres](knowledge/narrativeGenres.md) and the confirmed main genre; read secondary genres only when there is a real genre blend. Organize the skeleton by the corresponding beats; do not force a single line, a number of twists, or fast pacing onto every subject.
 
-## Phương pháp thực hiện
+## Method
 
-1. Theo [Thao tác canvas](canvasOperations.md) đọc lại node thật; khung xương đã có thì hiểu trước rồi sửa cục bộ.
-2. Dùng một câu xác định lõi câu chuyện: mục tiêu của nhân vật chính, trở ngại cốt lõi và mâu thuẫn hấp dẫn nhất của câu chuyện.
-3. Viết cung nhân vật của nhân vật chính từ trạng thái ban đầu, qua biến cố then chốt, đến thay đổi cuối cùng; nhân vật cốt lõi viết thân phận, đặc điểm, hoàn cảnh, hành động, hướng kết cục.
-4. Tổ chức cấu trúc ba hồi gồm thiết lập, phát triển, cao trào và khép lại, nói rõ chức năng mỗi hồi, nguồn bao phủ, số tập tương ứng và bước ngoặt cuối hồi.
-5. Sắp xếp từng tập theo tổng số tập đã xác nhận; mỗi tập nêu rõ sự tiếp nối nhân quả, thay đổi xung đột/quan hệ/cảm xúc, thông tin mới và điểm kết thúc. Tập thường tạo kỳ vọng cho tập sau; tập cuối thực hiện kết cục đã xác nhận, chỉ khi người dùng yêu cầu kết mở hoặc phần tiếp theo mới giữ lại hồi hộp về sau.
-6. Với mỗi chỗ giữ lại, nén, gộp hoặc xóa đều nói rõ căn cứ, tránh chỉ chia đều các chương vào số tập.
-7. Đăng ký thông tin cài cắm và vị trí thực hiện cho các cú lật then chốt; việc hé lộ phải có căn cứ trước đó, không được sửa thiết lập nhân vật khi chưa được phép.
-8. Khi dự án thực sự có yêu cầu điểm chặn trả phí hoặc phát hành thì thiết kế theo cấu hình đã xác nhận; không yêu cầu thì không áp đặt nhịp marketing.
+1. Following [canvas operations](canvasOperations.md), read back the real nodes; when a skeleton already exists, understand it first and then modify locally.
+2. Settle the story core in one sentence: the protagonist's goal, the core obstacle, and the story's most compelling conflict.
+3. Write the protagonist's character arc from the initial state, through the key upheaval, to the final change; for core characters write identity, traits, circumstances, actions, and ending direction.
+4. Organize a three-act structure of setup, development, climax, and resolution, stating each act's function, source coverage, corresponding episodes, and end-of-act turn.
+5. Lay out episode by episode according to the confirmed total episode count; each episode states the causal carry-over, change in conflict/relationship/emotion, new information, and ending point. Regular episodes build anticipation for the next episode; the final episode delivers the confirmed ending, and keeps a follow-up hook only when the user asks for an open ending or a next season.
+6. Give the basis for every keep, compression, merge, or deletion, rather than simply spreading chapters evenly across episodes.
+7. For key twists, register where information is planted and where it pays off; a reveal must have prior grounding, and must not rewrite character settings without permission.
+8. When the project genuinely requires paywall or release points, design them according to the confirmed config; when not required, do not impose a marketing rhythm.
 
-## Ghi vào canvas kịch bản
+## Writing to the script canvas
 
-Vị trí mặc định là `Canvas/Kịch bản.json` trong workspace; toàn bộ khung xương và đại cương của tất cả các tập đều ở canvas tổng này.
+The default location is `Canvas/Script.json` in the workspace; all skeletons and outlines for all episodes live on this master canvas.
 
-- Node "Khung xương câu chuyện": lõi câu chuyện, khát vọng và trở ngại, sự kiện then chốt của cung nhân vật, tiểu sử năm yếu tố, ranh giới năng lực/cái giá, cách nói chuyện, thiết kế xuất hiện, cấu trúc ba hồi.
-- Node "Đại cương theo tập" hoặc các node nhóm theo tập: cách xử lý nguồn, mục tiêu/trở ngại/lựa chọn/kết quả, thay đổi cảm xúc, thông tin mới và chênh lệch hiểu biết giữa khán giả và nhân vật, kỳ vọng ở cuối.
-- Node "Nhật ký quyết định chuyển thể": căn cứ cắt giảm toàn cục, nguồn phục bút và vị trí cài cắm/hé lộ, điểm chặn phát hành áp dụng.
-- Node "Quyết định phương pháp tự sự": thể loại chính/phụ trợ, nhịp đoạn được chọn, thay đổi quan hệ hoặc quyền lực, động tác diễn xuất cụ thể, ý đồ âm thanh và các mẫu bị loại bỏ cùng lý do; không được chỉ ghi nhãn thể loại.
-- Cập nhật node tương ứng đã có, và theo [Thao tác canvas](canvasOperations.md) giữ định vị node thật.
+- "Story skeleton" node: story core, desire and obstacle, key events of the character arcs, five-element character bios, ability limits/costs, manner of speech, entrance design, three-act structure.
+- "Episode outline" node, or nodes grouped by episode: source handling, goal/obstacle/choice/result, emotional change, new information and the knowledge gap between audience and characters, ending anticipation.
+- "Adaptation decision log" node: global cut rationale, foreshadowing sources and plant/reveal positions, applicable release points.
+- "Narrative method decisions" node: main/secondary genre, chosen sequence beats, relationship or power changes, concrete performance actions, sound intent, and templates dropped with reasons; do not write only a genre label.
+- Update the corresponding existing nodes and keep real node locations per [canvas operations](canvasOperations.md).
 
-Đại cương từng tập tối thiểu gồm:
+The per-episode outline contains at least:
 
-| Số tập | Tiêu đề tập | Phạm vi nguồn | Chức năng kịch tính | Lõi cảnh | Xử lý nguồn và lý do | Điểm kết thúc và kỳ vọng/khép lại |
+| Episode no. | Episode title | Source scope | Dramatic function | Scene core | Source handling and reason | Ending point and anticipation/resolution |
 |---|---|---|---|---|---|---|
-| Một số nguyên | Tiêu đề tập này | Chương/đoạn thật | Vai trò của tập này | Xung đột và thay đổi chính | Giữ/Nén/Gộp/Xóa | Kỳ vọng bước tiếp hoặc thực hiện ở tập cuối |
+| A single integer | This episode's title | Real chapter/passage | Role of this episode | Main conflict and change | Keep/Compress/Merge/Delete | Anticipation for what follows, or final-episode payoff |
 
-Khi tổng số tập nhiều thì viết tổng quan trước, rồi triển khai tập đầu, tập bước ngoặt cuối hồi, tập cao trào và các tập người dùng chỉ định; tổng quan vẫn phải một dòng một tập, không dùng dòng phạm vi thay cho nhiều tập.
+When there are many episodes, first write an overview, then expand the first episode, end-of-act turning episodes, climax episodes, and episodes the user specifies; the overview must still be one row per episode, without using a range row in place of several episodes.
 
-## Cổng chất lượng và xác nhận
+## Quality gate and confirmation
 
-- Số tập đúng bằng cấu hình, không nhảy số, không trùng lặp; một chương tách thành nhiều tập thì ghi rõ đoạn mỗi tập sử dụng.
-- Toàn bộ nguồn đều có đích đến rõ ràng, kể cả nội dung bị xóa; không có chương không tồn tại hoặc tình tiết mới chưa được phép.
-- Động cơ và thay đổi của nhân vật hợp lý; nhân quả ba hồi liền mạch; mỗi tập có tiến triển thực chất và điểm kết thúc phù hợp với dự án này.
-- Độ dài dự kiến phù hợp thời lượng mục tiêu; nhật ký cắt giảm khớp với nội dung các tập; cú lật truy ngược được về căn cứ cài cắm.
-- Định vị vấn đề theo các chiều thẩm định của phương pháp biên kịch: khát vọng và trở ngại có thành lập không, lựa chọn của nhân vật có mang lại hệ quả không, các tập có thêm thông tin/cảm xúc/quan hệ không, nhịp thể loại có thực sự rơi vào tập và cảnh không.
-- Sau khi ghi, đọc lại thành phẩm, kiểm tra độc lập các vấn đề trên, trình bày cho người dùng tóm tắt phương án, vấn đề cụ thể và đề xuất.
-- Chờ người dùng thông qua rõ ràng, chỉ định sửa hoặc làm lại; chấm điểm hay tự kiểm nội bộ đạt đều không thay được xác nhận của người dùng.
-- Sửa cục bộ chỉ cập nhật tập, nhân vật hoặc quyết định bị ảnh hưởng, đồng thời kiểm tra tập trước sau và tính liền mạch của tuyến chính.
+- The number of episodes exactly equals the config, with no skipped or duplicated numbers; when one chapter is split into several episodes, note which segment each episode uses.
+- All source material has a clear destination, including cut content; there are no nonexistent chapters or new plot points without permission.
+- Character motivations and changes hold up; the three-act causality is coherent; every episode has substantive progress and an ending point suited to this project.
+- Estimated length suits the target duration; cut records match the episode content; twists can be traced back to planted grounding.
+- Locate problems using the review dimensions of the screenwriting methods: whether desire and obstacle hold up, whether character choices carry consequences, whether each episode adds information/emotion/relationship, and whether genre beats actually land in episodes and scenes.
+- After writing, read back the results, check the issues above independently, and show the user the plan summary, specific problems, and suggestions.
+- Wait for the user to explicitly approve, specify changes, or ask for a redo; scores or passing internal self-checks never replace user confirmation.
+- Local changes only update the affected episodes, characters, or decisions, while checking continuity with adjacent episodes and the main plot.
 
-Sau khi xác nhận vào [Chiến lược chuyển thể](adaptationStrategy.md).
+After confirmation, proceed to [adaptation strategy](adaptationStrategy.md).
 
-## Căn cứ bản cũ
+## Legacy basis
 
 `data/skills/script_execution_skeleton.md`, `data/skills/script_agent_supervision.md`, `data/skills/script_agent_decision.md`.
