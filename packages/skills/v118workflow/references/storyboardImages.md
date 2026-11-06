@@ -1,55 +1,55 @@
-# 分镜图片生成与验收
+# Tạo và nghiệm thu ảnh phân cảnh
 
-本阶段只处理已确认需要分镜图的制作单元。生成、状态查询和回读方法见 [canvasOperations.md](canvasOperations.md)。
+Giai đoạn này chỉ xử lý các đơn vị sản xuất đã xác nhận cần ảnh phân cảnh. Phương pháp tạo, truy vấn trạng thái và đọc lại xem [canvasOperations.md](canvasOperations.md).
 
-开始前读取 [分镜图提示词与首帧知识](knowledge/imagePromptCraft.md)，复核制作单元采用的模型模板、单帧语义和逐项质量要求；风格只查 [视觉风格](knowledge/visualStyles.md) 的已确认条目。沿用已批准提示词，发现实质遗漏或矛盾时先修订并确认，不借模板转换擅自改变批准内容。
+Trước khi bắt đầu, đọc [Kiến thức prompt ảnh phân cảnh và khung đầu](knowledge/imagePromptCraft.md), rà lại mẫu mô hình mà đơn vị sản xuất chọn dùng, ngữ nghĩa khung đơn và yêu cầu chất lượng từng mục; phong cách chỉ tra mục đã xác nhận của [Phong cách hình ảnh](knowledge/visualStyles.md). Dùng tiếp prompt đã được phê duyệt, khi phát hiện thiếu sót hoặc mâu thuẫn thực chất thì trước tiên sửa và xác nhận, không mượn việc chuyển đổi mẫu để tự ý thay đổi nội dung đã phê duyệt.
 
-## 输入与落点
+## Đầu vào và nơi lưu
 
-- 从当前集画布读取已确认分镜表、制作单元、图像提示词及生成范围，例如 `画布/分集/第001集.json`。
-- 引用图片来自 `画布/资产.json` 中已确认的资产版本，核对父子状态与本镜剧情一致。
-- 生成节点、候选图片、选用图片及验收记录都留在当前集画布，保留镜号/片段号。
-- 文本多参未选择分镜图时，在本集记录「此路线不需要分镜图」并按主流程继续，不制造空图片任务。
+- Từ canvas của tập hiện tại đọc bảng phân cảnh, đơn vị sản xuất, prompt ảnh và phạm vi tạo đã xác nhận, ví dụ `Canvas/Tập/Tập 001.json`.
+- Ảnh tham chiếu lấy từ phiên bản tài sản đã xác nhận trong `Canvas/Tài sản.json`, kiểm tra trạng thái cha con nhất quán với cốt truyện của shot này.
+- Node tạo, ảnh ứng viên, ảnh được chọn dùng và bản ghi nghiệm thu đều để trên canvas của tập hiện tại, giữ số shot/số đoạn.
+- Khi văn bản đa tham chiếu không chọn ảnh phân cảnh, ghi lại trong tập này "Tuyến này không cần ảnh phân cảnh" và tiếp tục theo quy trình chính, không tạo tác vụ ảnh rỗng.
 
-## 生成前核查
+## Kiểm tra trước khi tạo
 
-1. 回读真实节点及当前工具能力，核对提示词、采用模板、模型、比例、分辨率、输入数量和本次范围；结构化 JSON 只属于 prompt 文本，不成为额外节点配置字段。
-2. 逐项确认参考图片实际可读取，图片顺序与提示词中的引用标记一致。
-3. 按图像知识逐项回溯原分镜，检查首帧保留静态状态；连续动作取真实起始瞬间，包含确认的场景、全部关键主体/物件、构图、朝向及情绪，不把静态表情改成预备动作，不把景别箭头右侧结果态当首帧。
-4. 末帧仅用于已确认且模型支持的首尾帧模式，检查它与同镜首帧、完整动作一致。
-5. 已确认参数与范围沿用；任何扩大范围、变更参考图或重做请求都要让用户明确知道。
+1. Đọc lại node thật và năng lực công cụ hiện tại, kiểm tra prompt, mẫu chọn dùng, mô hình, tỉ lệ khung, độ phân giải, số lượng đầu vào và phạm vi lần này; JSON có cấu trúc chỉ thuộc về văn bản prompt, không thành trường cấu hình node bổ sung.
+2. Xác nhận từng ảnh tham chiếu thực sự đọc được, thứ tự ảnh nhất quán với dấu tham chiếu trong prompt.
+3. Theo kiến thức ảnh truy ngược từng mục về phân cảnh gốc, kiểm tra khung đầu giữ trạng thái tĩnh; động tác liên tục lấy khoảnh khắc bắt đầu thật, gồm bối cảnh đã xác nhận, toàn bộ chủ thể/vật then chốt, bố cục, hướng quay và cảm xúc, không đổi biểu cảm tĩnh thành động tác chuẩn bị, không lấy trạng thái kết quả bên phải mũi tên cỡ cảnh làm khung đầu.
+4. Khung cuối chỉ dùng cho chế độ khung đầu và khung cuối đã xác nhận và được mô hình hỗ trợ, kiểm tra nó nhất quán với khung đầu cùng shot và toàn bộ động tác.
+5. Tham số và phạm vi đã xác nhận được dùng tiếp; mọi yêu cầu mở rộng phạm vi, thay đổi ảnh tham chiếu hoặc làm lại đều phải cho người dùng biết rõ.
 
-把这次“图像转换检查”的来源版本、起始状态判断、引用映射和未解决项写入本集已有单元说明。不能只在聊天中检查，也不需要为每种知识新建独立画布。
+Ghi phiên bản nguồn, phán đoán trạng thái bắt đầu, ánh xạ tham chiếu và các mục chưa giải quyết của lần "kiểm tra chuyển đổi ảnh" này vào ghi chú đơn vị đã có của tập này. Không được chỉ kiểm tra trong chat, cũng không cần lập canvas độc lập cho mỗi loại kiến thức.
 
-## 执行
+## Thực hiện
 
-1. 使用实际节点工具启动已授权范围，记录真实节点与任务返回信息。
-2. 任务只启动时标记「生成中」，不能报告「分镜图已完成」。
-3. 按实时状态工具查询终态，保留成功与失败项目的独立状态。
-4. 切换画布后仍按记录查询原节点；切画布不是取消，不据此重新发起同一任务。
-5. 成功后回读节点和输出图片，确认图片已保存且能打开；失败只重试明确选择的项目。
+1. Dùng công cụ node thực tế khởi động phạm vi đã ủy quyền, ghi lại node thật và thông tin tác vụ trả về.
+2. Tác vụ mới chỉ khởi động thì đánh dấu "Đang tạo", không được báo cáo "Ảnh phân cảnh đã hoàn thành".
+3. Theo công cụ trạng thái thời gian thực truy vấn trạng thái cuối, giữ trạng thái độc lập của mục thành công và thất bại.
+4. Sau khi chuyển canvas vẫn theo bản ghi truy vấn node gốc; chuyển canvas không phải hủy, không vì thế mà khởi tạo lại cùng một tác vụ.
+5. Sau khi thành công đọc lại node và ảnh đầu ra, xác nhận ảnh đã được lưu và mở được; thất bại chỉ thử lại các mục được chọn rõ ràng.
 
-## 图片验收
+## Nghiệm thu ảnh
 
-实际查看图片，对照对应分镜逐项检查：
+Xem thực tế ảnh, đối chiếu với phân cảnh tương ứng kiểm tra từng mục:
 
-- 人物身份、场景和道具与确认资产一致，没有错人、漏人或多出主体。
-- 基础态/衍生态选择正确，服装与时段没有在同场无理由跳变。
-- 景别、视角、位置、朝向和主体动作状态对应原镜，首帧没有提前完成整段动作。
-- 手部、遮挡、人物互动、道具归属可理解，关键剧情信息未被裁切或画错。
-- 同场前后镜的空间关系与情绪可衔接，风格和光照没有与参考图明显冲突。
-- 主体和关键剧情细节清楚；景深、雾或确认的颗粒质感不应掩盖必要信息，不因旧模板禁词删除用户已确认风格。
-- 没有意外字幕、水印或界面文字；剧本要求的场内文字按对应设计核查。
+- Thân phận nhân vật, bối cảnh và đạo cụ nhất quán với tài sản đã xác nhận, không sai người, thiếu người hay thừa chủ thể.
+- Chọn trạng thái cơ bản/phái sinh đúng, trang phục và khung giờ không nhảy vô lý trong cùng cảnh.
+- Cỡ cảnh, góc nhìn, vị trí, hướng quay và trạng thái động tác chủ thể tương ứng với shot gốc, khung đầu không hoàn thành trước cả đoạn động tác.
+- Bàn tay, che khuất, tương tác nhân vật, quyền sở hữu đạo cụ dễ hiểu, thông tin cốt truyện then chốt không bị cắt hay vẽ sai.
+- Quan hệ không gian và cảm xúc giữa các shot trước sau cùng cảnh nối được, phong cách và ánh sáng không xung đột rõ với ảnh tham chiếu.
+- Chủ thể và chi tiết cốt truyện then chốt rõ ràng; độ sâu trường ảnh, sương mù hoặc chất cảm hạt đã xác nhận không nên che mất thông tin cần thiết, không vì từ cấm của mẫu cũ mà xóa phong cách người dùng đã xác nhận.
+- Không có phụ đề, watermark hay chữ giao diện ngoài ý muốn; chữ trong cảnh mà kịch bản yêu cầu được kiểm tra theo thiết kế tương ứng.
 
-对反射按实际镜面/水面与机位核对身份、动作和可见部位，不机械左右翻转。当前没有查看图片能力时记录待用户预览，不凭路径或生成状态声称已经看过图。
+Với phản chiếu, đối chiếu thân phận, động tác và bộ phận nhìn thấy theo mặt gương/mặt nước và vị trí máy thực tế, không lật trái phải một cách máy móc. Khi hiện không có năng lực xem ảnh, ghi lại chờ người dùng xem trước, không dựa vào đường dẫn hay trạng thái tạo mà tuyên bố đã xem ảnh.
 
-## 回读与用户确认
+## Đọc lại và người dùng xác nhận
 
-1. 将实际候选与问题记录绑定到对应制作单元，不能只在聊天中列失败名单。
-2. 展示图片、对应镜号及简明检查结论，让用户确认采用、修订提示词、重做或跳过。
-3. 未获选用确认的成功图片保留为候选，不能自动作为已验收视频输入。
-4. 用户确定后写入选用图片的真实引用，并回读确认保存成功。
-5. 跳过需要首帧的镜头会使对应视频输入不完整，记录待处理，不能悄悄转为其他路线。
-6. 在本集画布保存完成/失败/跳过清单，停止本阶段，不自动启动视频任务。
+1. Gắn ứng viên thực tế và bản ghi vấn đề vào đơn vị sản xuất tương ứng, không được chỉ liệt kê danh sách thất bại trong chat.
+2. Trình bày ảnh, số shot tương ứng và kết luận kiểm tra ngắn gọn, để người dùng xác nhận chọn dùng, sửa prompt, làm lại hoặc bỏ qua.
+3. Ảnh thành công chưa được xác nhận chọn dùng giữ làm ứng viên, không được tự động thành đầu vào video đã nghiệm thu.
+4. Sau khi người dùng quyết định, ghi tham chiếu thật của ảnh được chọn dùng, và đọc lại để xác nhận đã lưu thành công.
+5. Bỏ qua shot cần khung đầu sẽ làm đầu vào video tương ứng không đầy đủ, ghi lại chờ xử lý, không được lặng lẽ chuyển sang tuyến khác.
+6. Lưu danh sách hoàn thành/thất bại/bỏ qua trên canvas của tập này, dừng giai đoạn này, không tự động khởi động tác vụ video.
 
-后续视频准备见 [videoProduction.md](videoProduction.md)，旧版来源见 [sourceMap.md](sourceMap.md)。
+Chuẩn bị video tiếp theo xem [videoProduction.md](videoProduction.md), nguồn bản cũ xem [sourceMap.md](sourceMap.md).

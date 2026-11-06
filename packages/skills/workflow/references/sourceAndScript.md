@@ -1,76 +1,76 @@
-# 输入与剧本
+# Đầu vào và kịch bản
 
-> **Seedance 硬隔离：** 本文件只用于剧本尚未定稿时的创作/改编，或非 Seedance 的文本制作。用户已经给出定稿剧本/时间轴并要求 Seedance 2.0/2.5 提示词时，**不得读取或套用本文件**，直接执行主 `SKILL.md` 内嵌 PART A。尤其不得用本文件的时长、连续性或改编方法覆盖 PART A。
+> **Cách ly cứng với Seedance:** File này chỉ dùng cho việc sáng tác/chuyển thể khi kịch bản chưa chốt, hoặc cho sản xuất văn bản không phải Seedance. Khi người dùng đã đưa kịch bản/timeline bản chốt và yêu cầu prompt Seedance 2.0/2.5, **không được đọc hoặc áp dụng file này**, mà trực tiếp thực hiện PART A nhúng trong `SKILL.md` chính. Đặc biệt không được dùng thời lượng, tính liên tục hay phương pháp chuyển thể của file này để ghi đè PART A.
 
-在写作、小说改编、定稿剧本接入或续作时读取。本次完整剧本是后续资产与视频的剧情依据；“完整”指约定范围，不要求先写整季或整部小说。
+Đọc khi viết, chuyển thể tiểu thuyết, tiếp nhận kịch bản bản chốt hoặc làm phần tiếp theo. Kịch bản hoàn chỉnh của lần này là căn cứ cốt truyện cho tài sản và video về sau; "hoàn chỉnh" nghĩa là trong phạm vi đã thỏa thuận, không yêu cầu viết trước cả mùa hay cả cuốn tiểu thuyết.
 
-进行创意开发、诊断、大纲或续作构思时读取[故事开发方法](methods/storyDevelopment.md)，用人物选择和事件因果支撑内容；把故事写成剧本、改编心理与对白或解决时长时读取[剧本改编方法](methods/screenAdaptation.md)。方法推导直接写入下述成果。已有定稿仅做制作提取时，按实际疑点查阅，不启动重写。
+Khi phát triển ý tưởng, chẩn đoán, lập dàn ý hoặc lên ý tưởng cho phần tiếp theo, đọc [phương pháp phát triển câu chuyện](methods/storyDevelopment.md), dùng lựa chọn của nhân vật và nhân quả sự kiện để chống đỡ nội dung; khi viết câu chuyện thành kịch bản, chuyển thể tâm lý và lời thoại hoặc giải quyết thời lượng, đọc [phương pháp chuyển thể kịch bản](methods/screenAdaptation.md). Kết quả suy luận theo phương pháp viết thẳng vào các thành phẩm bên dưới. Nếu đã có bản chốt và chỉ trích xuất cho sản xuất, chỉ tra cứu theo điểm nghi vấn thực tế, không khởi động viết lại.
 
-## 先锁定本次范围
+## Khóa phạm vi lần này trước
 
-从现有消息和文件提取：本次要交什么、采用哪个版本、改编或修改范围、时长或画幅硬要求、语言、风格及声音要求。已有信息直接沿用；确实缺少且会改变作品的再问。
+Trích xuất từ tin nhắn và file hiện có: lần này cần giao gì, chọn dùng phiên bản nào, phạm vi chuyển thể hoặc sửa đổi, yêu cầu cứng về thời lượng hoặc tỉ lệ khung, ngôn ngữ, phong cách và yêu cầu về âm thanh. Thông tin đã có thì dùng tiếp; chỉ hỏi khi thực sự thiếu và sẽ làm thay đổi tác phẩm.
 
-实际制作按[画布执行](canvasExecution.md)保存原文、当前剧本和必要简报；收到资料并不意味着获得任意改编范围。只做到文稿阶段仍可在画布文本节点交付，用户明确仅要对话文字或阅读建议时直接回复，不操作画布。
+Khi sản xuất thực tế, theo [thực thi canvas](canvasExecution.md) lưu nguyên văn, kịch bản hiện tại và bản tóm tắt cần thiết; nhận được tài liệu không có nghĩa là được phạm vi chuyển thể tùy ý. Nếu chỉ làm đến giai đoạn văn bản vẫn có thể giao trong node văn bản trên canvas; khi người dùng nói rõ chỉ cần chữ trong hội thoại hoặc góp ý đọc thì trả lời trực tiếp, không thao tác canvas.
 
-## 小说或故事改编
+## Chuyển thể tiểu thuyết hoặc câu chuyện
 
-1. 读到约定范围的完整原文。长文本分批读取时记录章节或段落覆盖范围、未读部分及下次准确起点；不从摘要或截断内容宣称读完。整部长篇先确定本次选段或分集目标，保留全局人物和未解信息索引。
-2. 提取会影响改编的事件顺序、人物关系、动机、重要对白、时间地点、物件变化和未解问题。简短故事可直接写入制作简报，复杂故事用下表追踪，避免另造一套冗长报告。
-3. 将叙述和心理转为可见行动、可听对白、原文已有旁白或必要的画内文字。涉及新增对白、删并事件、改叙事视角或揭开悬念时，作为改编提案展示；未经确认不冒充原著事实。
-4. 按本次约定的忠实度检查因果和信息覆盖。不得把重要背景只留在幕后人物卡，却声称成片已经表达；也不为了表现背景凭空新增实体人物或解释未知机制。
+1. Đọc hết nguyên văn trong phạm vi đã thỏa thuận. Khi đọc văn bản dài theo từng đợt, ghi lại phạm vi chương hoặc đoạn đã đọc, phần chưa đọc và điểm bắt đầu chính xác cho lần sau; không tuyên bố đã đọc xong dựa trên bản tóm tắt hoặc nội dung bị cắt. Với cả bộ tiểu thuyết dài, trước tiên xác định đoạn chọn hoặc mục tiêu chia tập cho lần này, giữ chỉ mục nhân vật toàn cục và thông tin chưa được giải đáp.
+2. Trích xuất thứ tự sự kiện, quan hệ nhân vật, động cơ, lời thoại quan trọng, thời gian địa điểm, biến đổi của vật và các câu hỏi chưa giải đáp có ảnh hưởng đến chuyển thể. Câu chuyện ngắn có thể ghi thẳng vào bản tóm tắt sản xuất, câu chuyện phức tạp dùng bảng dưới đây để theo dõi, tránh tạo ra một bộ báo cáo dài dòng khác.
+3. Chuyển phần tường thuật và tâm lý thành hành động nhìn thấy được, lời thoại nghe được, lời dẫn đã có trong nguyên văn hoặc chữ trong khung hình cần thiết. Khi thêm lời thoại mới, xóa/gộp sự kiện, đổi góc nhìn tự sự hoặc hé lộ điều bí ẩn, trình bày dưới dạng đề xuất chuyển thể; chưa được xác nhận thì không giả làm sự thật của nguyên tác.
+4. Kiểm tra nhân quả và độ phủ thông tin theo mức trung thành đã thỏa thuận cho lần này. Không được để bối cảnh quan trọng chỉ nằm trong thẻ nhân vật hậu trường mà lại tuyên bố phim đã thể hiện; cũng không vì muốn thể hiện bối cảnh mà bịa thêm nhân vật thực thể hoặc giải thích cơ chế chưa biết.
 
-| 原文位置或事实 | 本次是否采用 | 剧本中的视听表达 | 改编补充或待确认项 |
+| Vị trí hoặc sự thật trong nguyên văn | Lần này có chọn dùng không | Cách thể hiện nghe nhìn trong kịch bản | Bổ sung chuyển thể hoặc mục cần xác nhận |
 |---|---|---|---|
-| 填实际章节、事件或对白 | 保留、经确认压缩或范围外 | 对应场次、动作、对白、画内文字或旁白 | 仅记实质变化 |
+| Điền chương, sự kiện hoặc lời thoại thực tế | Giữ lại, nén lại sau khi xác nhận, hoặc ngoài phạm vi | Cảnh tương ứng, hành động, lời thoại, chữ trong khung hình hoặc lời dẫn | Chỉ ghi thay đổi thực chất |
 
-用户要求诊断时指出具体内容问题并给可执行改法；能在授权范围内解决的继续处理，不设置“诊断不通过就永远停工”的关口。
+Khi người dùng yêu cầu chẩn đoán, chỉ ra vấn đề nội dung cụ thể và đưa cách sửa có thể thực hiện; những gì giải quyết được trong phạm vi được ủy quyền thì tiếp tục xử lý, không đặt ra cửa ải kiểu "chẩn đoán không đạt thì dừng việc vĩnh viễn".
 
-## 已定稿剧本直接进入制作
+## Kịch bản đã chốt đi thẳng vào sản xuất
 
-保存并固定用户指定的原稿版本，保留场号、事件、对白、OS/VO和明确的制作要求。直接提取制作资料，不再进入从零构思、策划、大纲或重新编剧。
+Lưu và cố định phiên bản bản gốc người dùng chỉ định, giữ số cảnh, sự kiện, lời thoại, OS/VO và các yêu cầu sản xuất rõ ràng. Trích xuất thẳng tư liệu sản xuất, không quay lại lên ý tưởng từ đầu, lập kế hoạch, dàn ý hoặc viết lại kịch bản.
 
-可从原稿提取的剧情事实，等价满足后续制作的内容输入；制作简报负责补齐实际执行选择，不要求补出不存在的上游文件。若目标是 Seedance，定稿后直接进入主 PART A，不经过另一套分镜规则。角色未写性别、职业、动机、生平时保持未提及；外形、声线或空间缺项只补本次画面确实需要的设计。
+Các sự thật cốt truyện có thể trích từ bản gốc tương đương với việc đáp ứng đầu vào nội dung cho sản xuất về sau; bản tóm tắt sản xuất chịu trách nhiệm bổ sung các lựa chọn thực thi thực tế, không yêu cầu bổ sung các file thượng nguồn không tồn tại. Nếu mục tiêu là Seedance, sau khi chốt đi thẳng vào PART A chính, không qua một bộ quy tắc phân cảnh khác. Khi nhân vật không được ghi giới tính, nghề nghiệp, động cơ, tiểu sử thì giữ nguyên là chưa đề cập; những chỗ thiếu về ngoại hình, chất giọng hoặc không gian chỉ bổ sung thiết kế mà hình ảnh lần này thực sự cần.
 
-| 制作资料 | 从定稿提取或处理 |
+| Tư liệu sản xuất | Trích xuất hoặc xử lý từ bản chốt |
 |---|---|
-| 剧情和声音 | 按原文保留场次、事件、完整对白及说话人，区分画内对白、画外音、旁白 |
-| 角色与状态 | 出场范围、已知身份、造型、随身物及剧情触发的变化 |
-| 场景和道具 | 实际空间、陈设关系、关键物件的起止状态与持有人 |
-| 规格与视觉 | 沿用明确的时长、画幅、画风；缺少的必要选择给简短提案 |
-| 已有素材 | 指定的图片、视频、音频及采用用途，核实文件和适用范围 |
+| Cốt truyện và âm thanh | Giữ theo nguyên văn các cảnh, sự kiện, lời thoại đầy đủ và người nói, phân biệt lời thoại trong khung hình, âm thanh ngoài khung hình và lời dẫn |
+| Nhân vật và trạng thái | Phạm vi xuất hiện, thân phận đã biết, tạo hình, vật mang theo và các thay đổi do cốt truyện kích hoạt |
+| Bối cảnh và đạo cụ | Không gian thực tế, quan hệ bài trí, trạng thái đầu/cuối và người nắm giữ của vật then chốt |
+| Thông số và hình ảnh | Dùng tiếp thời lượng, tỉ lệ khung, phong cách vẽ đã nêu rõ; lựa chọn cần thiết còn thiếu thì đưa đề xuất ngắn gọn |
+| Tư liệu sẵn có | Hình ảnh, video, âm thanh được chỉ định và mục đích chọn dùng, xác minh file và phạm vi áp dụng |
 
-例如只有定稿剧本和两张已确认角色图时，下一步是检查这些图是否覆盖造型、提取环境及道具需求；不是要求用户补策划书。参考图未覆盖服装或全身时说明实际缺口，只补必要部分，保留身份。
+Ví dụ khi chỉ có kịch bản bản chốt và hai ảnh nhân vật đã xác nhận, bước tiếp theo là kiểm tra những ảnh này có bao phủ tạo hình hay không, trích xuất nhu cầu môi trường và đạo cụ; không phải yêu cầu người dùng bổ sung bản kế hoạch. Khi ảnh tham chiếu không bao phủ trang phục hoặc toàn thân, nêu chỗ thiếu thực tế, chỉ bổ sung phần cần thiết, giữ nguyên thân phận.
 
-若原稿的硬时长与完整对白、动作明显冲突，给出依据及拆段、延长或调整的选择。未获改稿授权时不删台词或改结局，也不把模型支持的时长当作剧情可以容纳的证明。
+Nếu thời lượng cứng của bản gốc xung đột rõ ràng với lời thoại và hành động đầy đủ, đưa ra căn cứ cùng các lựa chọn tách đoạn, kéo dài hoặc điều chỉnh. Khi chưa được ủy quyền sửa bản thảo thì không xóa lời thoại hay đổi kết thúc, cũng không coi thời lượng mô hình hỗ trợ là bằng chứng cốt truyện có thể chứa vừa.
 
-## 从创意写到可制作剧本
+## Từ ý tưởng viết thành kịch bản có thể sản xuất
 
-围绕“谁想要什么、遇到什么阻碍、如何行动、付出什么、结果改变了什么”补齐故事。类型、结构与反转服务于本次作品，不强制五段式、固定爆点、固定题材或每场反转。
+Bổ sung câu chuyện xoay quanh "ai muốn gì, gặp trở ngại gì, hành động ra sao, trả giá gì, kết quả thay đổi điều gì". Thể loại, cấu trúc và cú lật phục vụ tác phẩm lần này, không bắt buộc cấu trúc năm phần, điểm bùng nổ cố định, đề tài cố định hay cảnh nào cũng phải có cú lật.
 
-把故事写为有场次、空间与时段、人物、连续动作、对白和声音的可视听文本。明确每场推进的事件或信息，使用能拍出的行为表达情绪；人物小传只补解释行为所需部分，不与剧本互相等待。
+Viết câu chuyện thành văn bản nghe nhìn được, có cảnh, không gian và thời đoạn, nhân vật, hành động liên tục, lời thoại và âm thanh. Làm rõ sự kiện hoặc thông tin mà mỗi cảnh đẩy tới, dùng hành vi có thể quay được để thể hiện cảm xúc; tiểu sử nhân vật chỉ bổ sung phần cần để giải thích hành vi, không để nó và kịch bản chờ lẫn nhau.
 
-推荐的紧凑交付格式：
+Định dạng giao gọn được khuyến nghị:
 
 ```text
-本次范围与目标：
-已确定的视觉、语言和声音要求：
-总时长估算及硬约束：
+Phạm vi và mục tiêu lần này:
+Yêu cầu đã xác định về hình ảnh, ngôn ngữ và âm thanh:
+Ước tính tổng thời lượng và ràng buộc cứng:
 
-场01｜空间与时段｜出场人物
-人物的位置、起始状态、行动、阻力与可见结果。
-人物名：完整对白。
-必要的 OS/VO、音乐、音效、字幕或画内文字。
-本场结束状态及转场。
+Cảnh 01 | Không gian và thời đoạn | Nhân vật xuất hiện
+Vị trí, trạng thái ban đầu, hành động, lực cản và kết quả nhìn thấy được của nhân vật.
+Tên nhân vật: lời thoại đầy đủ.
+OS/VO, âm nhạc, hiệu ứng âm thanh, phụ đề hoặc chữ trong khung hình cần thiết.
+Trạng thái kết thúc cảnh này và chuyển cảnh.
 ```
 
-已有剧本保留其格式；模板不构成要求用户重新排版的理由。用户同时要求资产方案时，可据当前剧本草案提取[资产](assets.md)需求与设计提案，一并提交审阅，标明它们尚依赖该草案。关键选择确认并固定剧本版本后，再制作正式资产。
+Kịch bản đã có thì giữ nguyên định dạng của nó; mẫu không phải lý do để yêu cầu người dùng trình bày lại. Khi người dùng đồng thời yêu cầu phương án tài sản, có thể dựa trên bản nháp kịch bản hiện tại để trích xuất nhu cầu [tài sản](assets.md) và đề xuất thiết kế, nộp cùng để duyệt, ghi rõ chúng vẫn phụ thuộc vào bản nháp đó. Sau khi các lựa chọn then chốt được xác nhận và phiên bản kịch bản được cố định, mới làm tài sản chính thức.
 
-## 时长与连续性
+## Thời lượng và tính liên tục
 
-时长依据对白自然语速、完整行动、阅读画内信息、反应停顿和转场估算；可并行发生的声音与动作不重复累计。说明估算与硬限制，只有存在实质取舍时比较完整版和压缩版，不强制每次提交两套方案。
+Thời lượng ước tính dựa trên tốc độ nói tự nhiên của lời thoại, hành động đầy đủ, việc đọc thông tin trong khung hình, khoảng dừng phản ứng và chuyển cảnh; âm thanh và hành động có thể diễn ra song song thì không cộng dồn lặp lại. Nêu rõ ước tính và giới hạn cứng, chỉ khi có sự đánh đổi thực chất mới so sánh bản đầy đủ và bản nén, không bắt buộc lần nào cũng nộp hai phương án.
 
-剧情时长、模型单次支持时长、素材总时长和最终剪辑时长分别记录。根据实时模型能力把完整事件划入片段，不固定每段秒数、段数或统一上下限；模型不支持时给兼容方案，不悄悄丢事件。
+Thời lượng cốt truyện, thời lượng mô hình hỗ trợ cho mỗi lần, tổng thời lượng tư liệu và thời lượng dựng cuối cùng được ghi riêng. Dựa theo năng lực mô hình thời gian thực để chia các sự kiện hoàn chỉnh vào các đoạn, không cố định số giây mỗi đoạn, số đoạn hay giới hạn trên/dưới thống nhất; khi mô hình không hỗ trợ thì đưa phương án tương thích, không lặng lẽ bỏ sự kiện.
 
-续集读取用户指定的历史及已采用版本，提取已发生事件、人物状态、道具归属、空间变化和未解钩子。新提案不登记成历史事实；旧剧本与采用视频不一致时列明差异，不自行选择其一改写连续性。
+Với phần tiếp theo, đọc lịch sử và các phiên bản đã chọn dùng do người dùng chỉ định, trích xuất sự kiện đã xảy ra, trạng thái nhân vật, quyền sở hữu đạo cụ, thay đổi không gian và các móc câu chưa giải. Đề xuất mới không được ghi nhận là sự thật lịch sử; khi kịch bản cũ và video đã chọn dùng không nhất quán thì liệt kê khác biệt, không tự chọn một bên để viết lại tính liên tục.
 
-局部修订沿实际使用关系检查受影响的资产、片段、声音与交界状态。保留未受影响的确认；修改事件和造型时先更新权威剧本或制作资料，再更新相关提示词。版本保存与恢复见[状态与交付](stateAndDelivery.md)。
+Sửa đổi cục bộ thì kiểm tra theo quan hệ sử dụng thực tế các tài sản, đoạn, âm thanh và trạng thái chỗ giao nối bị ảnh hưởng. Giữ lại các xác nhận không bị ảnh hưởng; khi sửa sự kiện và tạo hình, trước tiên cập nhật kịch bản có thẩm quyền hoặc tư liệu sản xuất, rồi mới cập nhật các prompt liên quan. Lưu và khôi phục phiên bản xem [trạng thái và giao nộp](stateAndDelivery.md).

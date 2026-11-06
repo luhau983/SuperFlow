@@ -1,48 +1,48 @@
-# 单集导演规划
+# Kế hoạch đạo diễn từng tập
 
-只处理当前已确认的一集。完整顺序与阶段授权见 [SKILL.md](../SKILL.md)，画布操作见 [canvasOperations.md](canvasOperations.md)。
+Chỉ xử lý một tập đã xác nhận hiện tại. Thứ tự đầy đủ và ủy quyền theo giai đoạn xem [SKILL.md](../SKILL.md), thao tác canvas xem [canvasOperations.md](canvasOperations.md).
 
-开始前读取 [镜头知识](knowledge/shotCraft.md) 的“分场与表演依据”和 [叙事类型](knowledge/narrativeGenres.md) 中已确认的类型，回读剧本画布中的叙事方法决策与本集创作决策，用其方法完成下面的分场、情绪和表演规划。视觉风格只复用资产阶段已确认的 [风格条目](knowledge/visualStyles.md)，不在导演阶段重新选类型、画风或提前拆镜。已有定稿但没有方法记录时，只分析原文已有的线索、关系和情绪，不补造创作意图或剧情。
+Trước khi bắt đầu, đọc phần "Căn cứ phân cảnh và diễn xuất" của [Kiến thức shot](knowledge/shotCraft.md) và thể loại đã xác nhận trong [Thể loại tự sự](knowledge/narrativeGenres.md), đọc lại quyết định phương pháp tự sự và quyết định sáng tác của tập này trên canvas kịch bản, dùng phương pháp của chúng để hoàn thành kế hoạch chia cảnh, cảm xúc và diễn xuất dưới đây. Phong cách hình ảnh chỉ dùng lại [mục phong cách](knowledge/visualStyles.md) đã xác nhận ở giai đoạn tài sản, không chọn lại thể loại, phong cách vẽ hay tách shot trước ở giai đoạn đạo diễn. Khi đã có bản chốt nhưng không có bản ghi phương pháp, chỉ phân tích manh mối, quan hệ và cảm xúc đã có trong nguyên văn, không bịa thêm ý đồ sáng tác hay cốt truyện.
 
-## 输入与落点
+## Đầu vào và nơi lưu
 
-- 正式剧本来自 `画布/剧本.json` 中该集已确认节点，记录其实际节点标识和版本。
-- 从 `画布/资产.json` 读取该集可用资产及已确认状态；只核对真实名称和引用，不在此创建资产。
-- 导演规划、审阅意见和确认记录写入该集画布，例如 `画布/分集/第001集.json`。
-- 已有规划先读取再修改；保留未受本次修订影响的内容，不能凭聊天摘要覆盖画布。
+- Kịch bản chính thức lấy từ node đã xác nhận của tập đó trong `Canvas/Kịch bản.json`, ghi lại định danh node thực tế và phiên bản.
+- Đọc các tài sản khả dụng của tập đó và trạng thái đã xác nhận từ `Canvas/Tài sản.json`; chỉ kiểm tra tên thật và tham chiếu, không tạo tài sản ở đây.
+- Kế hoạch đạo diễn, ý kiến duyệt và bản ghi xác nhận ghi vào canvas của tập đó, ví dụ `Canvas/Tập/Tập 001.json`.
+- Kế hoạch đã có thì đọc trước rồi sửa; giữ nội dung không bị lần sửa này ảnh hưởng, không được dựa vào tóm tắt chat mà ghi đè canvas.
 
-## 方法
+## Phương pháp
 
-1. 按剧本已有场标拆场；没有场标时，以地点改变、时间跳变或连续戏结束为界。
-2. 按叙事顺序编号 `Sc1、Sc2……`，覆盖全部场次，不新增场内情节。
-3. 逐场统计台词条数与字数，包含对白、独白、OS、VO 和需要传达的文字信息；无台词记零。
-4. 逐场记录 0～10 的情绪浓度与一句话情绪基调，有推进时写明起点和终点。
-5. 将关键情感瞬间转成剧本有依据的视线、呼吸、姿态与动作幅度；把一致性锚点、空间距离、具体环境声源和易错处写成下游可落实的注意事项，不以情绪词库增加摔物、哭泣或新对白。
-6. 只在时空跨度或情绪落差需要衔接时提出场间过渡；可直接相接的场次无需硬加过场。
-7. 新增的连接动作或空镜必须明确标为「拟增补过渡」，说明连接哪两场，等待用户确认。
+1. Chia cảnh theo đánh dấu cảnh đã có trong kịch bản; khi không có đánh dấu cảnh, lấy thay đổi địa điểm, nhảy thời gian hoặc kết thúc đoạn diễn liên tục làm ranh giới.
+2. Đánh số theo thứ tự tự sự `Sc1, Sc2...`, bao phủ tất cả các cảnh, không thêm tình tiết trong cảnh.
+3. Thống kê từng cảnh số câu thoại và số chữ, gồm đối thoại, độc thoại, OS, VO và thông tin chữ cần truyền đạt; không có lời thoại ghi số không.
+4. Ghi lại từng cảnh cường độ cảm xúc 0~10 và tông cảm xúc bằng một câu, khi có diễn tiến thì ghi rõ điểm đầu và điểm cuối.
+5. Chuyển các khoảnh khắc cảm xúc then chốt thành ánh mắt, hơi thở, tư thế và biên độ động tác có căn cứ trong kịch bản; viết các neo nhất quán, khoảng cách không gian, nguồn âm môi trường cụ thể và chỗ dễ sai thành lưu ý mà khâu sau thực hiện được, không dùng kho từ cảm xúc để thêm ném đồ, khóc hay lời thoại mới.
+6. Chỉ đề xuất chuyển tiếp giữa các cảnh khi khoảng cách không thời gian hoặc chênh lệch cảm xúc cần nối; các cảnh có thể nối trực tiếp thì không cần gượng thêm đoạn chuyển.
+7. Động tác nối hoặc shot trống mới thêm phải đánh dấu rõ là "Chuyển tiếp dự kiến bổ sung", nói rõ nối hai cảnh nào, chờ người dùng xác nhận.
 
-导演规划负责分场、台词统计、情绪和注意事项，不提前写分镜表或启动媒体生成。
-光照与视觉风格沿用已确认资产；本阶段不另造冲突光影，不安排未经要求的配乐。
-台词原文仍以正式剧本为准，统计结果不能成为删改台词或压缩剧情的依据。
+Kế hoạch đạo diễn phụ trách chia cảnh, thống kê lời thoại, cảm xúc và lưu ý, không viết trước bảng phân cảnh hay khởi động tạo media.
+Ánh sáng và phong cách hình ảnh dùng tiếp tài sản đã xác nhận; giai đoạn này không tạo thêm ánh sáng xung đột, không sắp xếp nhạc nền chưa được yêu cầu.
+Nguyên văn lời thoại vẫn lấy kịch bản chính thức làm chuẩn, kết quả thống kê không được thành căn cứ để xóa sửa lời thoại hay nén cốt truyện.
 
-## 写入的成果
+## Thành quả được ghi
 
-在本集画布建立或更新可阅读的导演规划，至少包含以下三部分：
+Lập hoặc cập nhật kế hoạch đạo diễn đọc được trên canvas của tập này, tối thiểu gồm ba phần sau:
 
-| 场次 | 场景名 | 台词条数 | 台词字数 | 情绪浓度 | 情绪基调 |
+| Cảnh | Tên bối cảnh | Số câu thoại | Số chữ thoại | Cường độ cảm xúc | Tông cảm xúc |
 |---|---|---|---|---|---|
-| Sc1 | 剧本中的地点与当前戏 | 实际计数 | 实际计数 | 0～10 | 起点→终点 |
+| Sc1 | Địa điểm và đoạn diễn hiện tại trong kịch bản | Số đếm thực tế | Số đếm thực tế | 0~10 | Điểm đầu→Điểm cuối |
 
-- 逐场注意事项：场次编号、情感瞬间及其可见表演依据、一致性锚点、空间距离、环境声源、易错提示；按本集实际内容写清类型方法如何落实，例如观众此时能知道哪条已有线索、喜剧反应需要何种停顿、家庭关系由哪个日常动作表达，没有的项可省略。
-- 场间过渡表：前后场次、过渡方式、具体衔接内容、是否属于拟增补；无需过渡时写「无」。
-- 来源记录：正式剧本节点及版本、涉及资产的真实引用、本次修订范围。
+- Lưu ý từng cảnh: số cảnh, khoảnh khắc cảm xúc và căn cứ diễn xuất nhìn thấy được, neo nhất quán, khoảng cách không gian, nguồn âm môi trường, nhắc chỗ dễ sai; theo nội dung thực tế của tập này viết rõ phương pháp thể loại được thực hiện thế nào, ví dụ lúc này khán giả có thể biết manh mối sẵn có nào, phản ứng hài cần khoảng dừng ra sao, quan hệ gia đình được biểu đạt bằng động tác đời thường nào, mục không có thì có thể bỏ.
+- Bảng chuyển tiếp giữa các cảnh: cảnh trước sau, cách chuyển tiếp, nội dung nối cụ thể, có thuộc dự kiến bổ sung không; khi không cần chuyển tiếp ghi "Không".
+- Bản ghi nguồn: node kịch bản chính thức và phiên bản, tham chiếu thật của các tài sản liên quan, phạm vi sửa lần này.
 
-## 回读与确认
+## Đọc lại và xác nhận
 
-1. 写入后回读本集画布，检查场次不漏不重、编号连续、每场情绪与注意事项完整。
-2. 核对台词统计来源、表演依据及拟增补过渡，没有把情绪词库示例或创作建议混成已确认剧情。
-3. 向用户展示画布位置、分场摘要和需要决定的过渡，明确当前为「待确认」。
-4. 等待用户确认或提出修订；用户只确认部分时，仅标记该部分通过。
-5. 确认记录落在本集画布后停止，由主流程决定下一阶段，不自动分析或生成衍生资产。
+1. Sau khi ghi, đọc lại canvas của tập này, kiểm tra cảnh không sót không trùng, đánh số liên tục, cảm xúc và lưu ý mỗi cảnh đầy đủ.
+2. Kiểm tra nguồn thống kê lời thoại, căn cứ diễn xuất và chuyển tiếp dự kiến bổ sung, không trộn ví dụ kho từ cảm xúc hay gợi ý sáng tác thành cốt truyện đã xác nhận.
+3. Trình bày cho người dùng vị trí canvas, tóm tắt chia cảnh và các chuyển tiếp cần quyết định, nói rõ hiện tại là "Chờ xác nhận".
+4. Chờ người dùng xác nhận hoặc đưa ra sửa đổi; khi người dùng chỉ xác nhận một phần, chỉ đánh dấu phần đó là thông qua.
+5. Sau khi bản ghi xác nhận được lưu vào canvas của tập này thì dừng, do quy trình chính quyết định giai đoạn tiếp theo, không tự động phân tích hay tạo tài sản phái sinh.
 
-来源与旧协议差异见 [sourceMap.md](sourceMap.md) 中的导演规划映射。
+Nguồn và khác biệt với giao thức cũ xem ánh xạ kế hoạch đạo diễn trong [sourceMap.md](sourceMap.md).

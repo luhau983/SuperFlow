@@ -1,61 +1,61 @@
-# 基础资产清单
+# Danh sách tài sản cơ bản
 
-本阶段从已确认剧本提取角色、场景和道具，建立全项目唯一资产清单；不自动生成图片。
+Giai đoạn này trích xuất nhân vật, bối cảnh và đạo cụ từ kịch bản đã xác nhận, lập danh sách tài sản duy nhất cho toàn dự án; không tự động tạo ảnh.
 
-## 输入
+## Đầu vào
 
-- 本次纳入的已确认剧本节点，以及对应集号与场号。
-- 资产总画布已有资产、规范名称、别名、视觉设定及确认状态。
-- 已确认的画风、时代、画幅和用户提供的角色或场景参考。
+- Các node kịch bản đã xác nhận được đưa vào lần này, cùng số tập và số cảnh tương ứng.
+- Tài sản, tên chuẩn, tên khác, thiết lập hình ảnh và trạng thái xác nhận đã có trên canvas tổng tài sản.
+- Phong cách vẽ, thời đại, tỉ lệ khung đã xác nhận và tham chiếu nhân vật hoặc bối cảnh do người dùng cung cấp.
 
-## 执行前加载知识
+## Nạp kiến thức trước khi thực hiện
 
-- 读取 [资产设计方法](knowledge/assetDesign.md) 的“设计依据与画布记录”，按待提取类别读取角色、场景或道具章节。
-- 读取 [画风与视觉规则](knowledge/visualStyles.md) 的共通规则和当前已确认画风小节；未选定画风时先提出有区别的方案，不默认为某种审美。
-- 将具体的媒介、色盘、角色造型边界、场景光源、材质表达写为资产画布的“项目视觉约定”；不能只登记一个画风名称。
+- Đọc phần "Căn cứ thiết kế và ghi chép trên canvas" của [Phương pháp thiết kế tài sản](knowledge/assetDesign.md), rồi đọc chương nhân vật, bối cảnh hoặc đạo cụ theo loại cần trích xuất.
+- Đọc quy tắc chung và mục phong cách vẽ đã xác nhận hiện tại của [Phong cách vẽ và quy tắc hình ảnh](knowledge/visualStyles.md); khi chưa chọn phong cách vẽ thì trước tiên đưa ra các phương án có khác biệt, không mặc định một kiểu thẩm mỹ nào.
+- Ghi phương tiện, bảng màu, ranh giới tạo hình nhân vật, nguồn sáng bối cảnh, cách biểu đạt chất liệu cụ thể thành "Quy ước hình ảnh dự án" trên canvas tài sản; không được chỉ đăng ký một cái tên phong cách vẽ.
 
-## 执行方法
+## Phương pháp thực hiện
 
-1. 按 [画布操作](canvasOperations.md) 回读剧本与资产总画布，先识别现有资产，后补新项。
-2. 逐场识别实际出现的角色、地点与有独立剧情或视觉功能的道具。
-3. 对同一角色的多个称呼统一名称、登记别名；同名不同实体须明确区分，不能仅凭字符串合并。
-4. 新角色描述包含已知外貌、服装和气质；已明确的性别等信息忠于剧本，未知信息标为待定。
-5. 场景描述包含空间、光照、固定陈设和色调；同一地点的日夜等状态先登记为变化需求，不重复建基础资产。
-6. 道具描述包含形状、颜色、材质、尺寸或特殊效果；固定陈设和通用品仅在独立影响剧情时单列。
-7. 每项记录出场集、场号与剧本来源；同一资产跨集复用，新增剧本只补充关联和必要变体需求。
-8. 未有依据的外观选择列为设计提案，等待确认；不能把猜测当作剧本既定事实。
-9. 为各项补齐知识中的设计卡：核心辨识、展示方式、事实与提案、适用范围；角色避免同脸，场景可读布局，道具可读结构与功能。此处只写设计，不发起图片生成。
+1. Theo [Thao tác canvas](canvasOperations.md) đọc lại canvas kịch bản và canvas tổng tài sản, trước tiên nhận diện tài sản hiện có, sau đó bổ sung mục mới.
+2. Nhận diện từng cảnh các nhân vật, địa điểm thực sự xuất hiện và các đạo cụ có chức năng cốt truyện hoặc hình ảnh độc lập.
+3. Với nhiều cách gọi của cùng một nhân vật thì thống nhất tên, đăng ký tên khác; các thực thể khác nhau trùng tên phải phân biệt rõ, không được chỉ dựa vào chuỗi ký tự mà gộp.
+4. Mô tả nhân vật mới gồm ngoại hình, trang phục và khí chất đã biết; các thông tin đã rõ như giới tính thì trung thành với kịch bản, thông tin chưa biết đánh dấu là chờ định.
+5. Mô tả bối cảnh gồm không gian, ánh sáng, bày trí cố định và tông màu; các trạng thái như ngày đêm của cùng một địa điểm trước tiên đăng ký là nhu cầu biến thể, không lập lặp tài sản cơ bản.
+6. Mô tả đạo cụ gồm hình dạng, màu sắc, chất liệu, kích thước hoặc hiệu ứng đặc biệt; bày trí cố định và đồ thông dụng chỉ liệt kê riêng khi ảnh hưởng độc lập tới cốt truyện.
+7. Mỗi mục ghi tập xuất hiện, số cảnh và nguồn kịch bản; cùng một tài sản dùng lại xuyên tập, kịch bản mới chỉ bổ sung liên kết và nhu cầu biến thể cần thiết.
+8. Các lựa chọn ngoại hình chưa có căn cứ liệt kê thành đề xuất thiết kế, chờ xác nhận; không được coi phỏng đoán là sự thật đã định của kịch bản.
+9. Bổ sung đủ thẻ thiết kế theo kiến thức cho từng mục: nhận diện cốt lõi, cách trình bày, sự thật và đề xuất, phạm vi áp dụng; nhân vật tránh trùng mặt, bối cảnh có bố cục đọc được, đạo cụ có cấu trúc và chức năng đọc được. Ở đây chỉ viết thiết kế, không khởi tạo việc tạo ảnh.
 
-## 写入资产总画布
+## Ghi vào canvas tổng tài sản
 
-默认位置为工作区 `画布/资产.json`，全项目只维护这一资产总画布。
+Vị trí mặc định là `Canvas/Tài sản.json` trong workspace, toàn dự án chỉ duy trì một canvas tổng tài sản này.
 
-- “基础资产索引”节点记录分类、名称、出场范围及实际资产节点定位。
-- 按角色、场景、道具分组保存资产说明节点；每项基础资产有唯一、可持续引用的记录。
-- 项目视觉约定与每项设计决定都保存在资产总画布，资产引用同一约定版本；把剧本事实、用户参考和待确认提案分开记录。
-- 已有资产原位更新出场关系，保留已确认视觉设定；不得因新集进入而重建同一资产。
-- 剧本画布保存资产清单的来源定位；每集制作画布只登记本集引用，不复制独立主版本。
-- 所有节点定位使用实际工具返回值，并按 [画布操作](canvasOperations.md) 回读核对。
+- Node "Chỉ mục tài sản cơ bản" ghi phân loại, tên, phạm vi xuất hiện và định vị node tài sản thực tế.
+- Lưu các node mô tả tài sản theo nhóm nhân vật, bối cảnh, đạo cụ; mỗi tài sản cơ bản có một bản ghi duy nhất, có thể tham chiếu lâu dài.
+- Quy ước hình ảnh dự án và mỗi quyết định thiết kế đều lưu trên canvas tổng tài sản, tài sản tham chiếu cùng một phiên bản quy ước; ghi riêng sự thật kịch bản, tham chiếu của người dùng và đề xuất chờ xác nhận.
+- Tài sản đã có thì cập nhật quan hệ xuất hiện tại chỗ, giữ thiết lập hình ảnh đã xác nhận; không được vì tập mới vào mà lập lại cùng một tài sản.
+- Canvas kịch bản lưu định vị nguồn của danh sách tài sản; canvas sản xuất mỗi tập chỉ đăng ký các tham chiếu của tập đó, không sao chép phiên bản chính độc lập.
+- Mọi định vị node dùng giá trị trả về thực tế của công cụ, và đọc lại kiểm tra theo [Thao tác canvas](canvasOperations.md).
 
-清单最少包含：
+Danh sách tối thiểu gồm:
 
-| 规范名称/别名 | 类别 | 视觉描述与依据 | 出场集/场 | 变化需求 | 确认状态 |
+| Tên chuẩn/tên khác | Loại | Mô tả hình ảnh và căn cứ | Tập/cảnh xuất hiện | Nhu cầu biến thể | Trạng thái xác nhận |
 |---|---|---|---|---|---|
-| 唯一实体名称 | 角色/场景/道具 | 已知特征与待定项 | 真实剧本定位 | 日夜、换装等 | 待确认/已确认 |
+| Tên thực thể duy nhất | Nhân vật/Bối cảnh/Đạo cụ | Đặc điểm đã biết và mục chờ định | Định vị kịch bản thật | Ngày đêm, thay trang phục, v.v. | Chờ xác nhận/Đã xác nhận |
 
-## 质量门与确认
+## Cổng chất lượng và xác nhận
 
-- 清单全部来自本次已确认剧本；不把剧情文本本身列为资产，也不臆造未出场资产。
-- 关键角色、场景、剧情道具无遗漏；别名已归并，同名不同实体未误合并。
-- 基础资产与变化需求区分清楚；描述能服务后续视觉设计，已知事实与提案分开。
-- 已应用相应画风知识；角色、场景、道具的材质与展示方式不混用互斥媒介，视觉决定有具体内容可供确认。
-- 出场集、场号与剧本节点可追溯；已有资产被复用且未丢失已确认设定。
-- 写入后回读索引及资产节点，检查数量、分类、重复项和出场关联。
-- 展示新增资产、复用资产、变化需求和待定设计，等待用户明确确认。
-- 用户局部修改时只更新相关资产并检查受影响的集，不重建全部资产库。
+- Toàn bộ danh sách đều đến từ kịch bản đã xác nhận lần này; không liệt kê bản thân văn bản cốt truyện là tài sản, cũng không bịa ra tài sản chưa xuất hiện.
+- Nhân vật, bối cảnh, đạo cụ cốt truyện then chốt không bị bỏ sót; tên khác đã được quy về, các thực thể khác nhau trùng tên không bị gộp nhầm.
+- Tài sản cơ bản và nhu cầu biến thể phân biệt rõ; mô tả phục vụ được thiết kế hình ảnh phía sau, sự thật đã biết và đề xuất tách riêng.
+- Đã áp dụng kiến thức phong cách vẽ tương ứng; chất liệu và cách trình bày của nhân vật, bối cảnh, đạo cụ không trộn các phương tiện loại trừ nhau, quyết định hình ảnh có nội dung cụ thể để xác nhận.
+- Tập xuất hiện, số cảnh và node kịch bản truy ngược được; tài sản đã có được dùng lại và không mất thiết lập đã xác nhận.
+- Sau khi ghi, đọc lại chỉ mục và các node tài sản, kiểm tra số lượng, phân loại, mục trùng lặp và liên kết xuất hiện.
+- Trình bày tài sản mới, tài sản dùng lại, nhu cầu biến thể và thiết kế chờ định, chờ người dùng xác nhận rõ ràng.
+- Khi người dùng sửa cục bộ chỉ cập nhật tài sản liên quan và kiểm tra các tập bị ảnh hưởng, không lập lại toàn bộ kho tài sản.
 
-确认后进入 [资产图片制作](generateAssets.md)；清单确认不等同于图片生成授权或图片验收通过。
+Sau khi xác nhận vào [Sản xuất ảnh tài sản](generateAssets.md); xác nhận danh sách không đồng nghĩa với ủy quyền tạo ảnh hay nghiệm thu ảnh đạt.
 
-## 旧版依据
+## Căn cứ bản cũ
 
-`src/routes/script/extractAssets.ts`、`src/lib/initDB.ts` 与 `src/lib/fixDB.ts` 中的 `scriptAssetExtraction`。
+`scriptAssetExtraction` trong `src/routes/script/extractAssets.ts`, `src/lib/initDB.ts` và `src/lib/fixDB.ts`.

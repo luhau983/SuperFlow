@@ -1,151 +1,151 @@
-# 从剧情事实推导视觉设计
+# Suy luận thiết kế hình ảnh từ sự thật cốt truyện
 
-在角色外观尚不完整、空间难以用于行动、关键道具结构不清或续作需要核对状态时使用。
-已有资产足以完成本次拍摄时，直接复用；本方法不要求补人物生平、独立概念册或未使用的视角。
-把结论写入[资产制作](../assets.md)的对应条目。进入 Seedance PART A 后，本方法只在 A1.2/A4 明确需要设计提案时提供资产/空间锚点，不定义镜头、表演或提示词结构。
-色彩、材质受光和最终观感的推导见[色彩与用光](colorAndLight.md)。
+Dùng khi ngoại hình nhân vật chưa hoàn chỉnh, không gian khó dùng cho hành động, cấu trúc đạo cụ then chốt không rõ hoặc phần tiếp theo cần đối chiếu trạng thái.
+Khi tài sản đã có đủ để hoàn thành lần quay này thì dùng lại trực tiếp; phương pháp này không yêu cầu bổ sung tiểu sử nhân vật, sách concept độc lập hay các góc nhìn không dùng tới.
+Viết kết luận vào mục tương ứng trong [sản xuất tài sản](../assets.md). Sau khi vào Seedance PART A, phương pháp này chỉ cung cấp mốc tài sản/không gian khi A1.2/A4 nêu rõ cần đề xuất thiết kế, không định nghĩa shot, diễn xuất hay cấu trúc prompt.
+Suy luận về màu sắc, chất liệu dưới ánh sáng và cảm quan cuối cùng xem [màu sắc và ánh sáng](colorAndLight.md).
 
-## 1. 先分清事实、约束与提案
+## 1. Trước tiên phân biệt sự thật, ràng buộc và đề xuất
 
-设计的入口是本次剧情需要观众认出什么、人物实际要做什么，不是先给每个人填满外貌字段。
-按“已有事实 → 当前行动约束 → 必要可见提案”逐项推导，已确认内容不因审美偏好被覆盖。
+Điểm vào của thiết kế là cốt truyện lần này cần khán giả nhận ra điều gì, nhân vật thực sự phải làm gì, chứ không phải điền đầy các trường ngoại hình cho mỗi người trước.
+Suy luận từng mục theo "sự thật đã có → ràng buộc hành động hiện tại → đề xuất nhìn thấy được cần thiết", nội dung đã xác nhận không bị ghi đè vì sở thích thẩm mỹ.
 
-| 层次 | 从材料中找什么 | 如何使用 |
+| Tầng | Tìm gì trong tài liệu | Cách dùng |
 | --- | --- | --- |
-| 事实 | 已写明的年龄或生长阶段、外貌、服装、物件、伤势、空间与事件 | 直接继承，保留出处与适用状态 |
-| 约束 | 时代、地域、媒介、身份关系、行动方式、能力边界 | 排除不相容方案，不把约束扩写成新经历 |
-| 提案 | 为辨认、行动或制作必须补足的轮廓、结构、配色与材质 | 标明设计提案及理由，不能新增能力、秘密或剧情线索 |
+| Sự thật | Tuổi hoặc giai đoạn phát triển, ngoại hình, trang phục, vật, vết thương, không gian và sự kiện đã ghi rõ | Kế thừa trực tiếp, giữ xuất xứ và trạng thái áp dụng |
+| Ràng buộc | Thời đại, vùng miền, phương tiện thể hiện, quan hệ thân phận, cách hành động, giới hạn năng lực | Loại bỏ phương án không tương thích, không viết mở rộng ràng buộc thành trải nghiệm mới |
+| Đề xuất | Đường nét, cấu trúc, phối màu và chất liệu bắt buộc phải bổ sung để nhận diện, hành động hoặc sản xuất | Ghi rõ là đề xuất thiết kế và lý do, không được thêm năng lực, bí mật hay manh mối cốt truyện |
 
-先摘出确定项，再列会影响本次画面的缺项，只为后者设计。
-一句“她守在站台”不能推出职业、籍贯和身世；可以在允许设计的范围内补能适应当场天气的服装。
-必要身份、人数或关键功能相互冲突时，保留差异；普通纽扣样式无需升级成剧情澄清。
-每项设计保留一句短依据即可，例如“短衣摆：便于已写明的攀爬，设计提案”。
-输出去向：资产条目的外观或结构锚点、保持项与允许变化；不把推导过程全部塞进生成提示词。
+Trước tiên trích các mục xác định, rồi liệt kê các mục thiếu sẽ ảnh hưởng hình ảnh lần này, chỉ thiết kế cho mục sau.
+Một câu "cô ấy canh ở sân ga" không thể suy ra nghề nghiệp, quê quán và thân thế; có thể bổ sung trong phạm vi được phép thiết kế trang phục thích ứng với thời tiết tại chỗ.
+Khi thân phận cần thiết, số người hoặc chức năng then chốt xung đột nhau thì giữ lại khác biệt; kiểu cúc áo thông thường không cần nâng thành việc làm rõ cốt truyện.
+Mỗi mục thiết kế chỉ cần giữ một câu căn cứ ngắn, ví dụ "vạt áo ngắn: tiện cho việc leo trèo đã ghi rõ, đề xuất thiết kế".
+Đầu ra đi đâu: mốc ngoại hình hoặc cấu trúc, mục giữ nguyên và thay đổi được phép của mục tài sản; không nhét toàn bộ quá trình suy luận vào prompt tạo.
 
-## 2. 角色功能怎样变成造型
+## 2. Chức năng nhân vật biến thành tạo hình như thế nào
 
-适用：新角色缺少可见形态，或现有造型妨碍剧情动作、身份辨认和同场区分。
-先用一句话描述角色在当前戏里的功能，例如“负责带路，却不肯交出钥匙”；不以好人、坏人决定长相。
-再按以下顺序设计，后一步必须能够解释前一步的需要。
+Áp dụng: nhân vật mới thiếu hình thái nhìn thấy được, hoặc tạo hình hiện tại cản trở hành động cốt truyện, nhận diện thân phận và phân biệt trong cùng cảnh.
+Trước tiên dùng một câu mô tả chức năng của nhân vật trong tuồng hiện tại, ví dụ "phụ trách dẫn đường, nhưng không chịu giao chìa khóa"; không lấy người tốt, kẻ xấu để quyết định diện mạo.
+Rồi thiết kế theo thứ tự sau, bước sau phải giải thích được nhu cầu của bước trước.
 
-1. **行为需求**：角色需要奔跑、攀爬、隐蔽、久坐还是精细操作；检查衣摆、袖口、鞋履与携带位置是否允许。
-2. **远处辨认**：先定身体比例、轮廓、发型或头部特征，确保常用景别下仍能认出角色。
-3. **近处辨认**：选择少量稳定面部、表皮或毛发特征；不靠堆叠首饰、伤疤来制造身份。
-4. **身份与环境**：服装层次、制作工艺和使用痕迹符合已知时代、生活方式及当地环境。
-5. **同场关系**：并看经常同框的人物，检查轮廓、体量、明度或色块是否互相混淆。
-6. **媒介适配**：二维保留清晰轮廓与色块；风格化三维强调体积与材质差异；真人方向考虑可信剪裁与佩戴。
+1. **Nhu cầu hành vi**: nhân vật cần chạy, leo, ẩn nấp, ngồi lâu hay thao tác tinh tế; kiểm tra vạt áo, cổ tay áo, giày dép và vị trí mang đồ có cho phép không.
+2. **Nhận diện từ xa**: trước tiên định tỉ lệ cơ thể, đường nét, kiểu tóc hoặc đặc điểm đầu, đảm bảo ở cỡ cảnh thường dùng vẫn nhận ra nhân vật.
+3. **Nhận diện từ gần**: chọn một vài đặc điểm ổn định của mặt, da hoặc lông; không dựa vào chồng chất trang sức, sẹo để tạo thân phận.
+4. **Thân phận và môi trường**: các lớp trang phục, kỹ thuật chế tác và dấu vết sử dụng phù hợp thời đại, lối sống và môi trường địa phương đã biết.
+5. **Quan hệ cùng cảnh**: xem cùng các nhân vật thường xuyên cùng khung, kiểm tra đường nét, khối lượng, độ sáng hoặc mảng màu có lẫn vào nhau không.
+6. **Thích ứng phương tiện thể hiện**: 2D giữ đường nét và mảng màu rõ ràng; 3D cách điệu nhấn mạnh khác biệt về khối và chất liệu; hướng người thật cân nhắc đường cắt may và cách đeo mặc đáng tin.
 
-不必每次同时扩大轮廓、拉高饱和度、增加饰物；通常先改善最影响识别的一项。
-人物性格用于约束选择和行为，不直接等于身体特征；谨慎不必瘦削，强硬不必方脸。
-职业相同也可共享衣料和工艺，再通过身形、穿着方式或磨损位置区分，避免人人一套无关风格。
-行动习惯中稳定且有材料支持的部分可留在角色说明；当场紧张、怒视或弯腰归入镜头表演。
-输出去向：角色基础态中的身份锚点、服装结构和固定携带物；简洁的可见描述进入资产提示词。
+Không cần lần nào cũng đồng thời phóng to đường nét, kéo cao độ bão hòa, thêm đồ trang sức; thường trước tiên cải thiện một mục ảnh hưởng nhận diện nhất.
+Tính cách nhân vật dùng để ràng buộc lựa chọn và hành vi, không trực tiếp bằng đặc điểm cơ thể; thận trọng không nhất thiết gầy gò, cứng rắn không nhất thiết mặt vuông.
+Cùng nghề cũng có thể chung chất liệu vải và kỹ thuật, rồi phân biệt qua dáng người, cách mặc hoặc vị trí mài mòn, tránh mỗi người một phong cách không liên quan.
+Phần ổn định và có tài liệu chống đỡ trong thói quen hành động có thể giữ trong mô tả nhân vật; căng thẳng, trừng mắt hay khom lưng tại chỗ thuộc về diễn xuất trong shot.
+Đầu ra đi đâu: mốc thân phận, cấu trúc trang phục và vật mang theo cố định trong trạng thái cơ sở của nhân vật; mô tả nhìn thấy được ngắn gọn đưa vào prompt tài sản.
 
-**教学例**：剧本只确认“年长修钟师、要钻入钟楼狭窄检修口、腰间有工具袋”。
-可提案短而合体的外衣、收紧袖口、贴身工具袋；工具袋仍在原定位置，不凭职业新增机械义手。
-辨认锚点可选较宽的鼻梁与梳向后侧的灰发，但均标作提案；不补“战场受伤”的虚构经历。
-误用是先写“神秘大师”再堆披风、发光纹章和大武器，导致动作做不了、身份也被擅改。
+**Ví dụ giảng dạy**: kịch bản chỉ xác nhận "thợ sửa đồng hồ lớn tuổi, phải chui vào cửa kiểm tra hẹp của tháp đồng hồ, bên hông có túi đồ nghề".
+Có thể đề xuất áo khoác ngắn vừa người, cổ tay áo bó, túi đồ nghề sát người; túi đồ nghề vẫn ở vị trí đã định, không vì nghề nghiệp mà thêm tay giả cơ khí.
+Mốc nhận diện có thể chọn sống mũi khá rộng và tóc bạc chải ra sau, nhưng đều ghi là đề xuất; không bổ sung trải nghiệm hư cấu "bị thương trên chiến trường".
+Dùng sai là viết "đại sư bí ẩn" trước rồi chồng áo choàng, huy hiệu phát sáng và vũ khí lớn, khiến không làm được động tác, thân phận cũng bị tự ý sửa.
 
-## 3. 基础态与累积变体
+## 3. Trạng thái cơ sở và biến thể tích lũy
 
-适用：换装、持续伤势、明显污损、身体变化或固定物件遗失会影响后续辨认。
-基础态取本次剧情实际入场状态，不等于健康、整洁或完整；旧角色可以从上次已采用的变体入场。
-沿剧情顺序追踪“原状态 → 触发事件 → 新状态 → 持续区间”，只有事件或明确设定允许变化。
+Áp dụng: thay đồ, vết thương kéo dài, vết bẩn rõ rệt, thay đổi cơ thể hoặc mất vật cố định sẽ ảnh hưởng nhận diện về sau.
+Trạng thái cơ sở lấy trạng thái thực tế khi vào cảnh trong cốt truyện lần này, không đồng nghĩa với khỏe mạnh, gọn gàng hay nguyên vẹn; nhân vật cũ có thể vào cảnh từ biến thể đã chọn dùng lần trước.
+Theo thứ tự cốt truyện theo dõi "trạng thái cũ → sự kiện kích hoạt → trạng thái mới → khoảng kéo dài", chỉ sự kiện hoặc thiết lập rõ ràng mới cho phép thay đổi.
 
-| 检查项 | 需要说清的差异 | 通常仍归镜头的内容 |
+| Mục kiểm tra | Khác biệt cần nói rõ | Nội dung thường vẫn thuộc về shot |
 | --- | --- | --- |
-| 身体与样貌 | 哪个部位、何种变化、程度、是否延续 | 皱眉、转头、呼吸与短暂表情 |
-| 服装 | 哪件衣物、哪个部位、更换或污损结果 | 衣摆随动作摆动、落座形成的褶皱 |
-| 固定携带物 | 哪件物品新增、失去、破损及可见结果 | 同一物件换手、举起、短暂遮挡 |
+| Cơ thể và diện mạo | Bộ phận nào, thay đổi gì, mức độ, có kéo dài không | Nhíu mày, quay đầu, hơi thở và biểu cảm ngắn |
+| Trang phục | Món đồ nào, bộ phận nào, kết quả thay hoặc bẩn | Vạt áo đung đưa theo động tác, nếp nhăn khi ngồi xuống |
+| Vật mang theo cố định | Món nào được thêm, mất, hỏng và kết quả nhìn thấy được | Cùng một vật đổi tay, giơ lên, bị che ngắn |
 
-每个变体先确定真实参考图所处的状态，再写相对该参考的完整有效差异。
-引用基础态时，要包含此前仍有效的伤势和损坏；引用最近变体时，要明确继承哪些变化。
-写差异后再列少量不变量，不能用“服装不变”抵消本次明确换装，也不能借污损重画面孔。
-同一资产图只表示一个状态，不能将受伤前后、两套衣服混成一张基础板。
-状态区间相邻但外观完全相同可合并复用；不用每一场都生成一张。
-输出去向：资产表状态与适用场次、变体提示词；触发动作和状态切换点写入片段起止状态。
+Mỗi biến thể trước tiên xác định trạng thái mà ảnh tham chiếu thực đang ở, rồi viết đầy đủ khác biệt hiệu lực so với tham chiếu đó.
+Khi tham chiếu trạng thái cơ sở, phải bao gồm vết thương và hư hỏng trước đó vẫn còn hiệu lực; khi tham chiếu biến thể gần nhất, phải nói rõ kế thừa những thay đổi nào.
+Viết khác biệt rồi liệt kê ít bất biến, không được dùng "trang phục không đổi" để triệt tiêu việc thay đồ đã rõ lần này, cũng không được mượn vết bẩn để vẽ lại khuôn mặt.
+Một ảnh tài sản chỉ biểu thị một trạng thái, không được trộn trước và sau khi bị thương, hai bộ quần áo vào một bảng cơ sở.
+Các khoảng trạng thái liền kề mà ngoại hình hoàn toàn giống nhau có thể gộp và tái sử dụng; không cần mỗi cảnh tạo một ảnh.
+Đầu ra đi đâu: trạng thái và cảnh áp dụng trong bảng tài sản, prompt biến thể; động tác kích hoạt và điểm chuyển trạng thái viết vào trạng thái đầu/cuối của đoạn.
 
-**教学例**：第 2 场左袖撕裂，第 4 场徽章掉落，第 6 场才更衣。
-第 4—5 场若引用基础图，写“左袖裂口保留，胸前徽章已缺失”；不能只去徽章而把袖子复原。
-第 6 场更衣能解除衣物破损，却不能自动治愈同时存在的手背伤口。
+**Ví dụ giảng dạy**: cảnh 2 tay áo trái bị rách, cảnh 4 huy hiệu rơi mất, đến cảnh 6 mới thay đồ.
+Cảnh 4-5 nếu tham chiếu ảnh cơ sở, viết "giữ vết rách tay áo trái, huy hiệu trước ngực đã mất"; không được chỉ bỏ huy hiệu mà khôi phục tay áo.
+Thay đồ ở cảnh 6 có thể xóa hư hỏng quần áo, nhưng không thể tự động chữa lành vết thương mu bàn tay tồn tại cùng lúc.
 
-## 4. 群像用共同规则和必要差异
+## 4. Nhóm người dùng quy tắc chung và khác biệt cần thiết
 
-适用：多人作为群体出现、共同构成画面力量，或大量群众需要稳定的造型范围。
-先从剧本判断是一个无名人物、确定人数的小群体，还是数量较大的群体；无名不等于群像。
-先记录剧情人数或规模，再单独记录为设计采用的样本数量，两者不互相替代。
-群体设计先定共同项：所属身份、衣着年代、材质工艺、配色范围及与主体的关系。
-再挑能覆盖真实差异的样本：年龄或生长阶段、体量、职责服装等；差异不足时不硬造更多人物。
-确定小群体逐人有独立动作或需持续辨认时，给成员稳定标识与必要个人资产。
-大群体样本只定义允许出现的外观范围，不让样本中的三个人变成剧情全部人数。
-画面层次可通过相近色块与简化细节形成整体，但不能为了突出主角抹去剧情要求的关键群众动作。
-输出去向：资产条目中的群体规则、样本与剧情人数说明；视频提示词另写本段实际人数及成员行动。
-误用：把“六名护送者”统一改成“一名典型护卫”，或者为每名背景行人编造姓名和小传。
+Áp dụng: nhiều người xuất hiện như một nhóm, cùng tạo nên sức mạnh hình ảnh, hoặc đám đông lớn cần phạm vi tạo hình ổn định.
+Trước tiên từ kịch bản phán đoán là một nhân vật vô danh, một nhóm nhỏ có số người xác định, hay một nhóm số lượng lớn; vô danh không đồng nghĩa với nhóm người.
+Trước tiên ghi số người hoặc quy mô trong cốt truyện, rồi ghi riêng số mẫu dùng cho thiết kế, hai thứ không thay thế nhau.
+Thiết kế nhóm trước tiên định các mục chung: thân phận trực thuộc, niên đại trang phục, chất liệu kỹ thuật, phạm vi phối màu và quan hệ với chủ thể.
+Rồi chọn các mẫu có thể bao phủ khác biệt thực: tuổi hoặc giai đoạn phát triển, khối lượng, trang phục theo chức trách, v.v.; khác biệt không đủ thì không cố tạo thêm nhân vật.
+Khi nhóm nhỏ xác định có từng người hành động độc lập hoặc cần nhận diện liên tục, cấp cho thành viên định danh ổn định và tài sản cá nhân cần thiết.
+Mẫu của nhóm lớn chỉ định nghĩa phạm vi ngoại hình được phép xuất hiện, không để ba người trong mẫu thành toàn bộ số người trong cốt truyện.
+Tầng lớp hình ảnh có thể tạo thành tổng thể qua mảng màu gần nhau và chi tiết đơn giản hóa, nhưng không được vì làm nổi nhân vật chính mà xóa hành động của quần chúng then chốt mà cốt truyện yêu cầu.
+Đầu ra đi đâu: quy tắc nhóm, mẫu và mô tả số người cốt truyện trong mục tài sản; prompt video viết riêng số người thực tế và hành động của thành viên trong đoạn này.
+Dùng sai: đổi "sáu người hộ tống" thống nhất thành "một hộ vệ điển hình", hoặc bịa tên và tiểu sử cho từng người đi đường ở hậu cảnh.
 
-## 5. 场景先有空间母版，再有取景区域
+## 5. Bối cảnh có không gian gốc trước, rồi mới có khu vực lấy cảnh
 
-适用：同一地点多次使用、取景变近、人物跨区域行动，或现有概念图只好看却不能支持剧情。
-空间母版固定地点的完整边界、结构与关系；子区域只选取母版中已有的一部分。
-场号、机位和构图改变都不自动产生新空间；独立房间也不能仅因同属一栋楼而强行合并。
+Áp dụng: cùng một địa điểm được dùng nhiều lần, lấy cảnh gần hơn, nhân vật hành động xuyên khu vực, hoặc ảnh concept hiện có chỉ đẹp mà không chống đỡ được cốt truyện.
+Không gian gốc cố định ranh giới đầy đủ, cấu trúc và quan hệ của địa điểm; khu vực con chỉ chọn một phần đã có trong không gian gốc.
+Thay đổi số cảnh, vị trí máy và bố cục đều không tự động sinh không gian mới; phòng độc lập cũng không được cưỡng ép gộp chỉ vì cùng thuộc một tòa nhà.
 
-1. 列出这场必须发生的进入、停留、交互和离开，找出空间承担的任务。
-2. 用稳定锚点确定空间：入口、窗、柜台、楼梯、地形边界；多扇门窗使用能区分的名称。
-3. 描述锚点的相邻、相对、连通和高差，再落位普通陈设，保留必要数量与尺度关系。
-4. 检查主行动路径和交互空间，不让家具把必经路线堵死，不为方便运镜凭空加门。
-5. 将同一母版中的局部命名为子区域，记录边界、父级状态、沿用陈设与独有的必要信息。
-6. 真正发生破损、陈设移动或天气影响时另记状态；取景外的物件继续存在。
+1. Liệt kê việc vào, dừng, tương tác và rời đi bắt buộc xảy ra trong cảnh này, tìm ra nhiệm vụ không gian gánh vác.
+2. Dùng mốc ổn định để xác định không gian: lối vào, cửa sổ, quầy, cầu thang, ranh giới địa hình; nhiều cửa ra vào và cửa sổ dùng tên phân biệt được.
+3. Mô tả quan hệ liền kề, tương đối, thông nhau và chênh độ cao của các mốc, rồi mới đặt bài trí thông thường, giữ số lượng và quan hệ tỉ lệ cần thiết.
+4. Kiểm tra lộ trình hành động chính và không gian tương tác, không để đồ đạc chặn mất lối bắt buộc đi qua, không vì tiện chuyển động máy mà bịa thêm cửa.
+5. Đặt tên cục bộ trong cùng không gian gốc là khu vực con, ghi ranh giới, trạng thái cấp cha, bài trí kế thừa và thông tin cần thiết riêng có.
+6. Khi thực sự xảy ra hư hỏng, di chuyển bài trí hoặc ảnh hưởng thời tiết thì ghi riêng trạng thái; vật ngoài khung lấy cảnh vẫn tiếp tục tồn tại.
 
-以“入口正对柜台，侧窗下有长桌，桌与柜台间可供两人错身”表达关系，少用无参照的左右。
-相对尺度足以执行时不用虚构工程尺寸；剧本已经给出的尺寸、专名和必要地理关系仍须保留。
-子区域边界不是新墙体；窗下近景不能把原长桌换成更上镜的圆桌。
-输出去向：场景条目的空间锚点、母版与子区关系、状态；完整继承关系可留文字，不自动产生新图任务。
+Diễn đạt quan hệ bằng "lối vào đối diện quầy, dưới cửa sổ bên có bàn dài, giữa bàn và quầy đủ hai người tránh nhau", ít dùng trái phải không có điểm tham chiếu.
+Khi tỉ lệ tương đối đủ để thực thi thì không dùng kích thước kỹ thuật hư cấu; kích thước, tên riêng và quan hệ địa lý cần thiết kịch bản đã cho vẫn phải giữ.
+Ranh giới khu vực con không phải bức tường mới; cận cảnh dưới cửa sổ không thể đổi bàn dài ban đầu thành bàn tròn ăn ảnh hơn.
+Đầu ra đi đâu: mốc không gian, quan hệ không gian gốc và khu vực con, trạng thái trong mục bối cảnh; quan hệ kế thừa đầy đủ có thể giữ ở dạng chữ, không tự động sinh tác vụ ảnh mới.
 
-**教学例**：车站候车厅包含售票窗前与长椅区，两场戏分别在这两处发生。
-二者继承同一厅的入口、售票窗和长椅落位；封闭的值班室另有边界与结构，才按独立空间判断。
-“长椅区变近”只改取景；“长椅被推至侧墙”才改变空间状态，后续全景也要沿用这个结果。
+**Ví dụ giảng dạy**: phòng chờ nhà ga gồm khu trước cửa bán vé và khu ghế dài, hai cảnh diễn lần lượt xảy ra ở hai nơi này.
+Cả hai kế thừa lối vào, cửa bán vé và vị trí ghế dài của cùng một phòng; phòng trực khép kín có ranh giới và cấu trúc riêng, mới được đánh giá là không gian độc lập.
+"Khu ghế dài gần hơn" chỉ đổi cách lấy cảnh; "ghế dài bị đẩy sát tường bên" mới thay đổi trạng thái không gian, toàn cảnh về sau cũng phải dùng tiếp kết quả này.
 
-## 6. 从行动动线推到构图里的可见空间
+## 6. Từ đường đi hành động suy ra không gian nhìn thấy được trong bố cục
 
-适用：要写自足的环境主视图，或要确认一个镜头能否看见动作、出口和线索。
-把人物路径暂用文字走一遍：从哪个锚点出发、经过哪里、在哪里停留、与什么发生接触。
-再选择能交代主要活动区与稳定地标的观察位置，说明“从入口看向售票窗”等观看关系。
-前景帮助进入空间，中景承载主要动作，后景交代边界或去向；不是每张图都要塞满三层装饰。
-分清“必须存在”与“本图必须可见”：门后区域可以被遮挡，但后续使用时不能声称图中已验证其细节。
-必要隐藏区域尚未定义时补文字提案；不透视重叠墙体以求一图显示一切。
-镜头换向后画面左右会改变，锚点的物理关系保持；移动机位不能移动窗光和家具。
-默认环境素材是一张自足的纯环境主视图，提示词写齐所需空间关系，不仅写“同母版”。
-图片不夹带人物、人影或故事动物；人物占位与行为由视频引用真实角色资产实现。
-输出去向：资产主视图提示词只记录可见结构与空间锚点。若用于 Seedance，机位、遮挡、视线与银幕方向全部由主 `SKILL.md` PART A A5/A7/A9 处理，本方法不得另写。
-误用：为让两个出入口同时入画而改建筑结构，或把每次换机位都变成四向补图任务。
+Áp dụng: cần viết khung nhìn chính môi trường tự đủ, hoặc cần xác nhận một shot có thấy được hành động, lối ra và manh mối không.
+Tạm dùng chữ đi một lượt lộ trình của nhân vật: xuất phát từ mốc nào, đi qua đâu, dừng ở đâu, tiếp xúc với cái gì.
+Rồi chọn vị trí quan sát có thể thể hiện khu hoạt động chính và mốc ổn định, nêu quan hệ quan sát như "từ lối vào nhìn về cửa bán vé".
+Tiền cảnh giúp dẫn vào không gian, trung cảnh chứa hành động chính, hậu cảnh thể hiện ranh giới hoặc hướng đi; không phải ảnh nào cũng phải nhét đầy ba lớp trang trí.
+Phân biệt "bắt buộc tồn tại" và "bắt buộc nhìn thấy trong ảnh này": khu vực sau cửa có thể bị che, nhưng khi dùng về sau không được tuyên bố chi tiết của nó đã được xác minh trong ảnh.
+Khu vực ẩn cần thiết chưa được định nghĩa thì bổ sung đề xuất bằng chữ; không làm tường chồng lên nhau trong suốt để một ảnh hiện được tất cả.
+Sau khi shot đổi hướng, trái phải của khung hình sẽ thay đổi, quan hệ vật lý của mốc giữ nguyên; di chuyển vị trí máy không được di chuyển ánh sáng cửa sổ và đồ đạc.
+Tư liệu môi trường mặc định là một khung nhìn chính thuần môi trường tự đủ, prompt viết đủ quan hệ không gian cần thiết, không chỉ viết "cùng không gian gốc".
+Ảnh không kèm nhân vật, bóng người hay động vật trong truyện; vị trí và hành vi của nhân vật do video tham chiếu tài sản nhân vật thực để thực hiện.
+Đầu ra đi đâu: prompt khung nhìn chính của tài sản chỉ ghi cấu trúc nhìn thấy được và mốc không gian. Nếu dùng cho Seedance, vị trí máy, che khuất, hướng nhìn và hướng màn ảnh hoàn toàn do A5/A7/A9 trong PART A của `SKILL.md` chính xử lý, phương pháp này không được viết riêng.
+Dùng sai: để hai lối ra vào cùng vào khung mà sửa cấu trúc kiến trúc, hoặc biến mỗi lần đổi vị trí máy thành tác vụ bổ sung ảnh bốn hướng.
 
-## 7. 关键道具从功能推到形制
+## 7. Đạo cụ then chốt từ chức năng suy ra hình dáng
 
-适用：剧情靠物件传递信息、触发事件或完成关键交互，现有资产又不足以清楚覆盖。
-先查它是否已属于角色固定造型或场景陈设，沿用同一设计；独立放大细节也不能另造第二版。
-普通杯子不会因为被拿起就自动成为新资产，关键性由本次剧情用途与复用需求判断。
+Áp dụng: cốt truyện dựa vào vật để truyền thông tin, kích hoạt sự kiện hoặc hoàn thành tương tác then chốt, mà tài sản hiện có lại không đủ bao phủ rõ ràng.
+Trước tiên tra xem nó đã thuộc tạo hình cố định của nhân vật hay bài trí bối cảnh chưa, dùng tiếp cùng một thiết kế; phóng to chi tiết riêng cũng không được tạo phiên bản thứ hai.
+Cái cốc thông thường không tự động thành tài sản mới vì được cầm lên, tính then chốt do mục đích cốt truyện lần này và nhu cầu tái sử dụng quyết định.
 
-1. 摘出已确定功能：观众要认出什么，人物必须如何使用，哪个状态变化会推动事件。
-2. 从使用动作倒推结构：抓握位置、开合关系、连接方式、可见信息区与必要尺度。
-3. 选择与时代、环境和操作相容的材质工艺，区分主体、连接件和表面处理。
-4. 将使用痕迹放在有理由的部位，如反复按动的按钮或经常握持的边缘；不均匀撒满划痕。
-5. 写清完整态与必要变化态，保持其余轮廓、连接和文字信息一致。
+1. Trích chức năng đã xác định: khán giả phải nhận ra gì, nhân vật phải sử dụng như thế nào, thay đổi trạng thái nào sẽ đẩy sự kiện.
+2. Từ động tác sử dụng suy ngược cấu trúc: vị trí cầm nắm, quan hệ đóng mở, cách nối, vùng thông tin nhìn thấy được và tỉ lệ cần thiết.
+3. Chọn chất liệu và kỹ thuật tương thích với thời đại, môi trường và thao tác, phân biệt thân chính, bộ phận nối và xử lý bề mặt.
+4. Đặt dấu vết sử dụng ở bộ phận có lý do, như nút bấm được ấn nhiều lần hoặc mép thường xuyên cầm; không rải vết xước đều khắp nơi.
+5. Viết rõ trạng thái nguyên vẹn và trạng thái thay đổi cần thiết, giữ đường nét, mối nối và thông tin chữ còn lại nhất quán.
 
-只在剧情已经提供时写入密码、铭文、印章和符号；未知信件内容不能由美术设计补成答案。
-材质用可见响应描述：拉丝金属保留定向纹理，粗布偏哑光，磨砂玻璃透光但不清楚透视。
-避免把不明口径的反光百分比当作材质事实；无需术语即可说清高光、透明度与表面粗细。
-物件色彩可融入环境、轻微呼应或突出，但显眼程度服从揭示时机，不提前暴露本应隐藏的证据。
-输出去向：道具结构锚点和资产提示词；持有人、开合动作、传递过程与结束位置归入视频片段。
+Chỉ viết mật mã, văn khắc, con dấu và ký hiệu khi cốt truyện đã cung cấp; nội dung thư chưa biết không được thiết kế mỹ thuật bổ sung thành đáp án.
+Chất liệu mô tả bằng phản ứng nhìn thấy được: kim loại xước giữ vân định hướng, vải thô thiên về mờ, kính mờ cho ánh sáng qua nhưng không nhìn xuyên rõ.
+Tránh coi phần trăm phản xạ không rõ chuẩn đo là sự thật chất liệu; không cần thuật ngữ vẫn nói rõ được điểm sáng, độ trong suốt và độ thô mịn bề mặt.
+Màu của vật có thể hòa vào môi trường, hô ứng nhẹ hoặc nổi bật, nhưng mức độ nổi bật tuân theo thời điểm hé lộ, không để lộ sớm bằng chứng vốn phải giấu.
+Đầu ra đi đâu: mốc cấu trúc đạo cụ và prompt tài sản; người nắm giữ, động tác đóng mở, quá trình chuyển giao và vị trí kết thúc thuộc về đoạn video.
 
-**教学例**：剧情确认一只证据盒“滑开侧扣后才能取出纸条”。
-先设计可辨的侧扣、滑动方向与盒盖接缝，再配合时代选择木盒与金属扣；不添加指纹锁或神秘刻纹。
-若纸条内容未给出，只确保它能从盒内取出，不替编剧补文字；盒内外状态分别记录。
+**Ví dụ giảng dạy**: cốt truyện xác nhận một hộp bằng chứng "phải trượt mở khóa bên mới lấy được mẩu giấy".
+Trước tiên thiết kế khóa bên dễ nhận ra, hướng trượt và đường nối nắp hộp, rồi theo thời đại chọn hộp gỗ và khóa kim loại; không thêm khóa vân tay hay hoa văn bí ẩn.
+Nếu nội dung mẩu giấy chưa được cho, chỉ đảm bảo nó lấy ra được từ trong hộp, không viết bổ sung chữ thay biên kịch; trạng thái trong và ngoài hộp ghi riêng.
 
-## 8. 把设计压缩成可使用的资产依据
+## 8. Nén thiết kế thành căn cứ tài sản có thể dùng
 
-先删不可见的赞美和重复形容词，再保留“对象身份、识别锚点、结构关系、当前状态、允许变化”。
-新角色图沿用完整头部特写、正面全身、右侧 90° 全身、背面全身；头顶、身体与脚部完整。
-同一板上的视角保持同一身份和状态；动物按真实设定适配，不因模板增添器官。
-场景沿用自足单图；道具按[资产制作](../assets.md)的默认展示方式或用户已确认版式组织。
-所需画幅由完整展示与实际能力决定，不把本方法变成固定比例或型号要求。
-最后用剧情反查：角色做得了动作，场景走得通，道具用得起来，观众能在需要时认出来。
-只将必要结论带入提示词；采用图片后再核对实际身份、结构和状态，不把设计意图当成图像已实现。
+Trước tiên xóa lời khen không nhìn thấy được và tính từ lặp lại, rồi giữ "thân phận đối tượng, mốc nhận diện, quan hệ cấu trúc, trạng thái hiện tại, thay đổi được phép".
+Ảnh nhân vật mới dùng tiếp cận cảnh đầu hoàn chỉnh, toàn thân chính diện, toàn thân nghiêng phải 90°, toàn thân sau lưng; đỉnh đầu, thân và bàn chân đầy đủ.
+Các góc nhìn trên cùng một bảng giữ cùng thân phận và trạng thái; động vật thích ứng theo thiết lập thực, không vì mẫu mà thêm cơ quan.
+Bối cảnh dùng tiếp ảnh đơn tự đủ; đạo cụ tổ chức theo cách trình bày mặc định trong [sản xuất tài sản](../assets.md) hoặc bố cục người dùng đã xác nhận.
+Tỉ lệ khung cần thiết do việc trình bày đầy đủ và năng lực thực tế quyết định, không biến phương pháp này thành yêu cầu tỉ lệ hay model cố định.
+Cuối cùng dùng cốt truyện tra ngược: nhân vật làm được động tác, bối cảnh đi thông được, đạo cụ dùng được, khán giả nhận ra được khi cần.
+Chỉ đưa kết luận cần thiết vào prompt; sau khi chọn dùng ảnh thì đối chiếu lại thân phận, cấu trúc và trạng thái thực tế, không coi ý đồ thiết kế là ảnh đã thực hiện được.

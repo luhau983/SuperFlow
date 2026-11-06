@@ -1,45 +1,45 @@
-# 项目初始化与归档
+# Khởi tạo và lưu trữ dự án
 
-输入是用户目标、已有小说/故事/剧本、当前项目及画布目录。输出写入唯一的剧本画布；这一步确认项目范围和落点，不生成剧情或媒体。
+Đầu vào là mục tiêu của người dùng, tiểu thuyết/câu chuyện/kịch bản sẵn có, dự án hiện tại và thư mục canvas. Đầu ra ghi vào canvas kịch bản duy nhất; bước này xác nhận phạm vi dự án và nơi lưu, không tạo cốt truyện hay media.
 
-## 确认制作范围
+## Xác nhận phạm vi sản xuất
 
-先读取实际文件与已有画布，只补尚未明确的项目名、目标集数、本次处理集数、单集时长、来源范围、画幅、故事类型和美术风格。原著章节须存在；“第 1–10 章”不能在只有 8 章的输入上直接执行。用户不知道如何分集时，先读取来源概要，给出有依据的方案让其选择。
+Trước tiên đọc các tệp thực tế và canvas sẵn có, chỉ bổ sung những gì chưa rõ: tên dự án, số tập mục tiêu, các tập xử lý lần này, thời lượng mỗi tập, phạm vi nguồn, tỉ lệ khung, thể loại câu chuyện và phong cách mỹ thuật. Các chương nguyên tác phải tồn tại; "chương 1–10" không thể thực hiện trực tiếp trên đầu vào chỉ có 8 chương. Khi người dùng không biết chia tập thế nào, trước tiên đọc tóm tắt nguồn, đưa ra phương án có căn cứ để người dùng chọn.
 
-付费卡点仅在用户计划商业短剧时确认，其他项目写“不适用”。150 字/分钟是旧版剧本规划的粗估口径，不是时长保证；拍摄分镜还需结合对白、停顿与动作重新计时。已有剧本只核对其范围、完整性和定稿状态，不强迫补写改编阶段。
+Điểm chặn trả phí chỉ xác nhận khi người dùng dự định làm phim ngắn thương mại, các dự án khác ghi "không áp dụng". 150 chữ/phút là mức ước tính thô theo cách lập kế hoạch kịch bản của bản cũ, không phải bảo đảm thời lượng; phân cảnh quay còn phải tính lại thời gian dựa trên lời thoại, khoảng dừng và động tác. Kịch bản sẵn có chỉ kiểm tra phạm vi, tính đầy đủ và trạng thái bản chốt, không ép bổ sung giai đoạn chuyển thể.
 
-图像/视频模型先记录用户已有选择；到首次生成前再核对当前节点实际能力并确认参数，不预设供应商或强制 Seedance。只需要剧本或资产时，后续无关制作阶段不启动。
+Mô hình ảnh/video trước tiên ghi lại lựa chọn sẵn có của người dùng; đến trước lần tạo đầu tiên mới kiểm tra năng lực thực tế của node hiện tại và xác nhận tham số, không đặt trước nhà cung cấp hay bắt buộc dùng Seedance. Khi chỉ cần kịch bản hoặc tài sản, các giai đoạn sản xuất không liên quan phía sau không khởi động.
 
-## 选择本项目要使用的知识
+## Chọn kiến thức dùng cho dự án này
 
-读取 [叙事类型](knowledge/narrativeGenres.md) 与 [美术风格](knowledge/visualStyles.md) 的选择说明及符合用户意图的条目。旧版将它们分别作为导演手册与美术手册，本技能仍分别记录：叙事类型负责信息释放、节奏、表演和镜头目的；美术风格负责形态、材质、色彩、光线和动态质感。
+Đọc phần hướng dẫn lựa chọn của [Thể loại tự sự](knowledge/narrativeGenres.md) và [Phong cách mỹ thuật](knowledge/visualStyles.md) cùng các mục phù hợp với ý định người dùng. Bản cũ dùng chúng lần lượt làm cẩm nang đạo diễn và cẩm nang mỹ thuật, skill này vẫn ghi lại riêng: thể loại tự sự phụ trách việc tiết lộ thông tin, nhịp, diễn xuất và mục đích shot; phong cách mỹ thuật phụ trách hình khối, chất liệu, màu sắc, ánh sáng và chất cảm chuyển động.
 
-已有指定类型或参考图时沿用，不重复让用户从预设选一次。需要推荐时，用来源中的具体场景说明选择理由，例如悬疑采用局部信息与可回溯线索、黏土采用手工肌理和有重量的停启；提出主类型/主风格及必要的辅助方向，等用户确认。自定义类型/画风使用最接近的通用方法并写清偏离点，不能假称旧库有该预设。
+Khi đã có thể loại được chỉ định hoặc ảnh tham chiếu thì dùng tiếp, không bắt người dùng chọn lại từ preset. Khi cần đề xuất, dùng các bối cảnh cụ thể trong nguồn để giải thích lý do lựa chọn, ví dụ trinh thám chọn dùng thông tin cục bộ và manh mối có thể truy ngược, đất sét chọn dùng vân thủ công và nhịp dừng-chạy có trọng lượng; đề xuất thể loại chính/phong cách chính và các hướng phụ trợ cần thiết, chờ người dùng xác nhận. Thể loại/phong cách vẽ tùy chỉnh dùng phương pháp chung gần nhất và ghi rõ điểm sai lệch, không được giả vờ thư viện cũ có preset đó.
 
-在“项目配置”中保存 `叙事类型及对应知识条目 / 美术风格及对应知识条目 / 实际采用要点 / 用户自定义覆盖 / 不适用的旧模板限制`。后续阶段读取这些决定，再到知识文件取当前阶段需要的具体方法；选择画风不等于授权重设已有资产外观。
+Trong "Cấu hình dự án" lưu `Thể loại tự sự và mục kiến thức tương ứng / Phong cách mỹ thuật và mục kiến thức tương ứng / Các điểm thực tế chọn dùng / Ghi đè tùy chỉnh của người dùng / Các giới hạn mẫu cũ không áp dụng`. Các giai đoạn sau đọc những quyết định này, rồi đến tệp kiến thức lấy phương pháp cụ thể cần cho giai đoạn hiện tại; chọn phong cách vẽ không đồng nghĩa với cho phép thiết lập lại ngoại hình của tài sản sẵn có.
 
-## 建立画布目录
+## Lập thư mục canvas
 
-先读 [画布执行](canvasOperations.md)，列出现有画布及文件夹。默认 `画布/剧本.json`、`画布/资产.json`；分集画布按实际进度放 `画布/分集/第001集.json`，不预建所有集。
+Trước tiên đọc [Thực thi canvas](canvasOperations.md), liệt kê các canvas và thư mục hiện có. Mặc định `Canvas/Kịch bản.json`, `Canvas/Tài sản.json`; canvas theo tập đặt ở `Canvas/Tập/Tập 001.json` theo tiến độ thực tế, không tạo trước tất cả các tập.
 
-- 复用已有且用途正确的画布；同名但内容不同的画布先核实，不覆盖。
-- 初次项目建立剧本、资产两个空画布；本次只做剧本时资产画布可到资产阶段再建。逐一创建、记录返回 ID，不能并行切换。
-- 当前工具不能在目录内新建/协调移动画布时，先把已创建空画布的当前位置和目标位置列给用户，再请其通过工作区文件树建立目录并归位。说明限制来自当前工具能力；用户回复完成、目标画布重新打开后，再核对文件列表与画布 ID。
-- 同样的归档步骤适用于首次进入每集制作。归位未完成不得开始填该画布或将归档状态写为完成。不要用 `write` 拼画布 JSON，不把斜杠放进 `addCanvas.name`。
-- 素材文件由宿主保存在返回位置。`画布/资产.json` 是资产管理画布，不是生成图片的目录；不移动 `assets/` 文件来模仿画布目录层级。
+- Dùng lại canvas sẵn có và đúng mục đích; canvas cùng tên nhưng nội dung khác thì xác minh trước, không ghi đè.
+- Dự án lần đầu lập hai canvas trống kịch bản và tài sản; nếu lần này chỉ làm kịch bản thì canvas tài sản có thể để đến giai đoạn tài sản mới lập. Tạo từng cái một, ghi lại ID trả về, không được chuyển đổi song song.
+- Khi công cụ hiện tại không thể tạo mới/phối hợp di chuyển canvas trong thư mục, trước tiên liệt kê cho người dùng vị trí hiện tại và vị trí đích của các canvas trống đã tạo, rồi nhờ họ lập thư mục và đặt về đúng chỗ qua cây tệp của workspace. Giải thích rằng giới hạn đến từ năng lực của công cụ hiện tại; sau khi người dùng trả lời đã xong và canvas đích được mở lại, mới kiểm tra danh sách tệp và ID canvas.
+- Các bước lưu trữ tương tự áp dụng khi lần đầu vào sản xuất mỗi tập. Chưa đặt về đúng chỗ thì không được bắt đầu điền canvas đó hoặc ghi trạng thái lưu trữ là hoàn thành. Không dùng `write` để ghép JSON canvas, không đặt dấu gạch chéo vào `addCanvas.name`.
+- Tệp tư liệu do host lưu ở vị trí trả về. `Canvas/Tài sản.json` là canvas quản lý tài sản, không phải thư mục chứa ảnh được tạo; không di chuyển tệp `assets/` để mô phỏng cấp thư mục của canvas.
 
-## 画布产出
+## Đầu ra canvas
 
-在剧本画布创建或更新以下文本节点：
+Tạo hoặc cập nhật các node văn bản sau trên canvas kịch bản:
 
-| 节点 | 内容 |
+| Node | Nội dung |
 | --- | --- |
-| 项目配置 | 作品名、输入类型/路径、来源范围、全剧及本次集数、目标时长、画幅、叙事/美术风格及所采用知识、适用的商业约束 |
-| 画布索引 | 用途、实际相对路径、最新画布 ID；分集画布存在后再加入，不填虚构 ID |
-| 阶段记录 | 本次范围、已有阶段/确认依据、当前停点、待补资料、下一步 |
+| Cấu hình dự án | Tên tác phẩm, loại/đường dẫn đầu vào, phạm vi nguồn, số tập toàn bộ và lần này, thời lượng mục tiêu, tỉ lệ khung, phong cách tự sự/mỹ thuật và kiến thức được chọn dùng, ràng buộc thương mại áp dụng |
+| Chỉ mục canvas | Mục đích, đường dẫn tương đối thực tế, ID canvas mới nhất; canvas theo tập chỉ thêm vào sau khi tồn tại, không điền ID hư cấu |
+| Nhật ký giai đoạn | Phạm vi lần này, các giai đoạn đã có/căn cứ xác nhận, điểm dừng hiện tại, tư liệu cần bổ sung, bước tiếp theo |
 
-已有外部文件或聊天中提供的完整定稿剧本时，目录归位后将其**原样写入剧本总画布的逐集正式文本节点**，记录原始来源和用户定稿依据，再回读完整正文。已有对应正式节点则核对并复用。此分支不重新创作剧本、不要求补做骨架，也不重复确认用户已明确的定稿内容；未在本次制作范围内的集不启动下游。
+Khi đã có kịch bản bản chốt đầy đủ từ tệp bên ngoài hoặc được cung cấp trong chat, sau khi thư mục đã đặt đúng chỗ thì **ghi nguyên văn vào các node văn bản chính thức theo từng tập của canvas tổng kịch bản**, ghi lại nguồn gốc và căn cứ bản chốt của người dùng, rồi đọc lại toàn bộ chính văn. Nếu đã có node chính thức tương ứng thì kiểm tra và dùng lại. Nhánh này không sáng tác lại kịch bản, không yêu cầu bổ sung khung xương, cũng không xác nhận lại nội dung bản chốt mà người dùng đã nói rõ; các tập không thuộc phạm vi sản xuất lần này không khởi động khâu sau.
 
-通过节点函数写入，再回读配置和索引，确认路径实际存在且没有把多集制作混在一张画布。展示配置、目录与下一步，让用户确认。确认后有小说输入的进入 [来源与章节事件](sourceEvents.md)，已有完整定稿剧本的完成正式节点落盘后进入 [基础资产](baseAssets.md) 或指定制作阶段。
+Ghi qua các hàm node, rồi đọc lại cấu hình và chỉ mục, xác nhận đường dẫn thực sự tồn tại và không trộn việc sản xuất nhiều tập vào một canvas. Trình bày cấu hình, thư mục và bước tiếp theo để người dùng xác nhận. Sau khi xác nhận, đầu vào có tiểu thuyết thì vào [Nguồn và sự kiện chương](sourceEvents.md), đã có kịch bản bản chốt đầy đủ thì sau khi các node chính thức được lưu xong vào [Tài sản cơ bản](baseAssets.md) hoặc giai đoạn sản xuất được chỉ định.
 
-来源：v1.1.8 `data/skills/script_agent_decision.md`、`src/routes/project/addProject.ts`。画布与文件夹组织是本技能的迁移约定，非旧版存储结构。
+Nguồn: v1.1.8 `data/skills/script_agent_decision.md`, `src/routes/project/addProject.ts`. Việc tổ chức canvas và thư mục là quy ước di chuyển của skill này, không phải cấu trúc lưu trữ của bản cũ.

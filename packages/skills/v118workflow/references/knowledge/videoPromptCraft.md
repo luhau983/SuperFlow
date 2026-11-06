@@ -1,79 +1,79 @@
-# 视频模式、模型模板与声音知识
+# Kiến thức về chế độ video, mẫu mô hình và âm thanh
 
-用于视频准备与验收。先读取已确认分镜、制作单元及真实参考，再只读本文件中本次适用模板；风格使用 [视觉风格](visualStyles.md) 的当前确认条目，镜头、计时与连续性用 [镜头知识](shotCraft.md)。本文件吸收 v1.1.8 的四份模型提示词，不引入其他 workflow 的 Seedance 路由或默认模型。
+Dùng cho chuẩn bị và nghiệm thu video. Trước tiên đọc phân cảnh đã xác nhận, đơn vị sản xuất và tham chiếu thật, sau đó chỉ đọc mẫu áp dụng cho lần này trong file này; phong cách dùng các mục đã xác nhận hiện tại trong [Phong cách thị giác](visualStyles.md), shot, tính thời gian và tính liên tục dùng [Kiến thức shot](shotCraft.md). File này hấp thụ bốn prompt mô hình của v1.1.8, không đưa vào định tuyến Seedance hay mô hình mặc định của workflow khác.
 
-## 先选实际输入模式
+## Chọn chế độ đầu vào thực tế trước
 
-| 已确认能力与路线 | 可采用的旧版模板 | 制作单位 |
+| Năng lực và lộ trình đã xác nhận | Mẫu bản cũ có thể chọn dùng | Đơn vị sản xuất |
 |---|---|---|
-| Seedance 2.0，实际可用的文本多参输入 | 下文中文三段式 | 一个确认片段，包含原有全部子镜头 |
-| Wan 2.6，实际支持单图首帧 | 下文英文叙事单首帧 | 一个确认镜头及一张首帧 |
-| 已确认首帧/首尾帧，要求连续镜头 | 下文 Visual/Motion/Camera/Audio/Narrative | 一个已确认连续动作单元；本流程首帧路线默认每镜一单元 |
-| 其他实际可用的多参模式 | 下文 References/Instruction | 一个确认片段；真实分镜图可有可无 |
+| Seedance 2.0, đầu vào đa tham chiếu văn bản thực sự khả dụng | Mẫu ba đoạn (gốc tiếng Trung) bên dưới | Một đoạn đã xác nhận, gồm toàn bộ các shot con vốn có |
+| Wan 2.6, thực sự hỗ trợ khung đầu một ảnh | Mẫu khung đầu một ảnh dạng tự sự tiếng Anh bên dưới | Một shot đã xác nhận và một khung đầu |
+| Đã xác nhận khung đầu/khung đầu và khung cuối, yêu cầu shot liên tục | Visual/Motion/Camera/Audio/Narrative bên dưới | Một đơn vị động tác liên tục đã xác nhận; lộ trình khung đầu của quy trình này mặc định mỗi shot một đơn vị |
+| Các chế độ đa tham chiếu thực sự khả dụng khác | References/Instruction bên dưới | Một đoạn đã xác nhận; ảnh phân cảnh thật có hay không đều được |
 
-这张表是内容模板选择，不是模型兼容性白名单。先查模型支持的媒体类型/数量、模式、时长、分辨率、声音与当前节点配置。未指定模型先确认，不因出现“短剧”就选 Seedance；2.5 或其他版本不能冒称已被 v1.1.8 模板验证。
+Bảng này là lựa chọn mẫu nội dung, không phải danh sách trắng tương thích mô hình. Trước tiên tra loại/số lượng media, chế độ, thời lượng, độ phân giải, âm thanh mà mô hình hỗ trợ và cấu hình node hiện tại. Chưa chỉ định mô hình thì xác nhận trước, không vì xuất hiện "phim ngắn" mà chọn Seedance; 2.5 hoặc phiên bản khác không được mạo nhận là đã được mẫu v1.1.8 kiểm chứng.
 
-旧 generateVideoPrompt 路由实际优先级为：数据库已绑定且可读的自定义模型提示词 → 模型名包含 wan 和 2.6 → 名称匹配 Seedance 2.0/2-0 → 首尾帧相关 mode → 字符串数组形式的多参 mode → 通用提示词配置备选。Wan 分支注释写“首尾帧”，实际加载文件和正文都是单图首帧，不能据注释要求尾帧。这些是旧路由事实，当前不访问旧数据库或拼旧 mode 字符串；用户明确选择的模板与当前 schema 优先。
+Thứ tự ưu tiên thực tế của định tuyến generateVideoPrompt cũ là: prompt mô hình tùy chỉnh đã gắn trong cơ sở dữ liệu và đọc được → tên mô hình chứa wan và 2.6 → tên khớp Seedance 2.0/2-0 → mode liên quan khung đầu và khung cuối → mode đa tham chiếu dạng mảng chuỗi → cấu hình prompt chung làm dự phòng. Chú thích nhánh Wan ghi "khung đầu và khung cuối", nhưng file thực tế được tải và nội dung đều là khung đầu một ảnh, không được dựa vào chú thích mà yêu cầu khung cuối. Đây là sự thật về định tuyến cũ, hiện tại không truy cập cơ sở dữ liệu cũ hay ghép chuỗi mode cũ; mẫu mà người dùng chọn rõ ràng và schema hiện tại được ưu tiên.
 
-旧通用模板假定收到 12 项 videoDesc 字段、分镜图标志等，真实路由最终只注入 videoDesc 和 duration。迁移时直接读取本集保存的完整分镜、节点输出和采用记录，不因旧模板写过某字段就认为它实际存在。
+Mẫu chung cũ giả định nhận được 12 trường videoDesc, cờ ảnh phân cảnh..., định tuyến thật cuối cùng chỉ đưa vào videoDesc và duration. Khi chuyển đổi thì đọc trực tiếp phân cảnh đầy đủ, đầu ra node và bản ghi chọn dùng đã lưu của tập này, không vì mẫu cũ từng viết một trường nào đó mà cho rằng nó thực sự tồn tại.
 
-## 所有模板共用的内容约束
+## Ràng buộc nội dung chung cho mọi mẫu
 
-1. 先列单元来源、原镜号顺序、完整台词、声音、动作起终状态、实际参考及总时长；不重新分组、不合并已确认镜头。
-2. 一份提示词只服务当前制作单元。开头或正文的说明要与实际输入一致；资产图负责身份/外观，分镜图负责该镜构图，不把角色三视图说成首帧画面。
-3. 图像、视频、音频必须是真的媒体输入，不是 URL 字符串、文件名或虚构编号。统一输入序列与供应商分类型请求的映射按 [画布执行](../canvasOperations.md) 核对；无法证明映射时停在待确认，不自行改编号。
-4. 模板出现 {{ref N}} 时只是宿主执行引用占位，编号须回读后填写。旧 @图N / @图片N 不直接照抄；尤其不能沿用旧模板把音频称为“图片”。
-5. 说话者与声音归属明确。普通对白有对应口型；OS/VO 不让画面人物跟着张嘴，听者反应镜也不转移说话人。所有台词保持原语言原字句。
-6. 动作写可见过程、速度和结束状态，情绪通过姿态/视线/呼吸体现；不添加台词、动机、地点、人物或装饰事件。
-7. 继承已采用场景光照和视觉风格；不根据旧英文示例另造黄昏、冷调、服装或风向。旧模板光影段仅在确认输入确有相应信息时保留。
-8. 默认只用真实环境声、动作声，不自行配乐。画内文字与画外字幕分开；不能为了默认“无文字”删掉剧本中的信件、招牌、屏幕信息或用户明确字幕需求。
-9. 时长在画布配置与台词容量中必须明确，即使所选写作模板不在 prompt 正文写秒数，也不能交给模型随意推断。单元上限为本流程 15 秒与实际模型能力较小者；不兼容则回分镜确认。
+1. Trước tiên liệt kê nguồn của đơn vị, thứ tự số shot gốc, lời thoại đầy đủ, âm thanh, trạng thái bắt đầu và kết thúc của động tác, tham chiếu thực tế và tổng thời lượng; không phân nhóm lại, không gộp các shot đã xác nhận.
+2. Một prompt chỉ phục vụ đơn vị sản xuất hiện tại. Phần mở đầu hoặc mô tả trong thân phải nhất quán với đầu vào thực tế; ảnh tài sản phụ trách danh tính/ngoại hình, ảnh phân cảnh phụ trách bố cục của shot đó, không gọi ảnh ba góc nhìn của nhân vật là khung hình khung đầu.
+3. Ảnh, video, âm thanh phải là đầu vào media thật, không phải chuỗi URL, tên file hay số thứ tự hư cấu. Ánh xạ giữa chuỗi đầu vào thống nhất và yêu cầu phân loại theo nhà cung cấp được kiểm tra theo [Thực thi canvas](../canvasOperations.md); khi không chứng minh được ánh xạ thì dừng ở trạng thái chờ xác nhận, không tự đổi số thứ tự.
+4. Khi mẫu xuất hiện {{ref N}} thì đó chỉ là placeholder tham chiếu thực thi của host, số thứ tự phải điền sau khi đọc lại. Không chép nguyên cú pháp cũ @ảnhN / @hìnhảnhN (viết bằng chữ Hán); đặc biệt không được tiếp tục theo mẫu cũ mà gọi âm thanh là "ảnh".
+5. Quy thuộc người nói và âm thanh phải rõ ràng. Lời thoại thông thường có khẩu hình tương ứng; OS/VO không để nhân vật trên hình mở miệng theo, shot phản ứng của người nghe cũng không chuyển người nói. Mọi lời thoại giữ nguyên ngôn ngữ gốc và nguyên từng chữ.
+6. Động tác viết quá trình nhìn thấy được, tốc độ và trạng thái kết thúc, cảm xúc thể hiện qua tư thế/ánh nhìn/hơi thở; không thêm lời thoại, động cơ, địa điểm, nhân vật hay sự kiện trang trí.
+7. Kế thừa ánh sáng bối cảnh và phong cách thị giác đã chọn dùng; không dựa vào ví dụ tiếng Anh cũ mà tự tạo hoàng hôn, tông lạnh, trang phục hay hướng gió. Đoạn ánh sáng của mẫu cũ chỉ giữ khi đầu vào đã xác nhận thực sự có thông tin tương ứng.
+8. Mặc định chỉ dùng âm thanh môi trường và âm thanh động tác thật, không tự phối nhạc. Chữ trong khung hình và phụ đề ngoài khung tách riêng; không được vì "không có chữ" mặc định mà xóa lá thư, biển hiệu, thông tin trên màn hình trong kịch bản hoặc nhu cầu phụ đề rõ ràng của người dùng.
+9. Thời lượng phải rõ ràng trong cấu hình canvas và dung lượng lời thoại, kể cả khi mẫu viết đã chọn không ghi số giây trong thân prompt, cũng không được để mô hình tùy ý suy đoán. Giới hạn trên của đơn vị là giá trị nhỏ hơn giữa 15 giây của quy trình này và năng lực mô hình thực tế; không tương thích thì quay lại phân cảnh để xác nhận.
 
-## Seedance 2.0 中文文本多参
+## Seedance 2.0 đa tham chiếu văn bản (mẫu gốc tiếng Trung)
 
-沿用旧模板“三段式”：先定义主体/场景/道具，再依原镜号写全部镜头，最后给简短风格与稳定性约束。只适用于本次确认采用该模型及输入模式时；不强制其他模型改成这套语法。
+Tiếp tục dùng "cấu trúc ba đoạn" của mẫu cũ: trước tiên định nghĩa chủ thể/bối cảnh/đạo cụ, sau đó viết toàn bộ shot theo số shot gốc, cuối cùng đưa ra ràng buộc phong cách và độ ổn định ngắn gọn. Chỉ áp dụng khi lần này đã xác nhận chọn dùng mô hình và chế độ đầu vào đó; không ép các mô hình khác đổi sang cú pháp này.
 
-### 填写方法
+### Cách điền
 
-- 第一段把每个实际参考与两三个核实过的稳定特征绑定，角色用 <主体1>、场景用 <场景1>、道具用 <道具1>；三类标签分别编号。标签是 prompt 内部指代，不是节点 ID。
-- 同场已有确认承接说明，原样放在定义之后，作为首镜起始状态。新场首片段不强行写承接；实际上一段输出还未采用时只记规划状态。
-- 一镜对应原分镜一条，不跳镜、不调序。每镜按“景别及主要运镜 → 动作/表情 → 位置与朝向 → 台词/音效”组织。
-- 一镜使用一个主要运镜；正文用原镜号，不写绝对时间轴。旧模板认为精确秒数表达不稳定，因此采用此写法；真实时长仍配置在节点并留在单元说明。
-- 台词用花括号，音效用尖括号；不把内部资产 ID、工具调用、审核说明塞进执行 prompt。
-
-~~~text
-将 {{ref 1}} 中的[已核实的稳定身份特征]定义为 <主体1>（角色A）；
-将 {{ref 2}} 中的[已确认空间锚点]定义为 <场景1>（场景名）；
-将 {{ref 3}} 中的[已确认结构特征]定义为 <道具1>（道具名）。
-
-[有则逐字保留：承接上镜的确认说明]
-
-镜头1：[景别 + 一个主要运镜]。<主体1> 在 <场景1> 的[位置]面朝[方向]，
-[确认动作及表情的可见演进]，与 <道具1> [真实互动]。
-<主体1> 说 {原台词}，音色：[已确认声音特征或真实音频引用]。<[具体声源]>。
-镜头2：[原分镜的下一镜，沿用身份、道具归属与前镜结束状态]。
-[无台词镜只写无台词及实际音效；OS/VO使用对应标注并保持人物不对口型]
-
-[当前已确认风格的必要短标签]；主体身份与脸部稳定，动作连贯，
-保持明确的角色差异和空间关系，无无依据分身、水印或画外覆盖文字。
-~~~
-
-音色只在有语音时安排。已有确认音频样本且模型支持该输入时，绑定该角色真实音频；无样本不强制用户提供。可按“年龄感、音高、清亮/沙哑等质感、厚薄、发音、气息、语速、情绪特征”提出简洁声音方案，未经确认不把旧表按性别/反派身份给出的默认声音当事实。无需九个维度都堆满，也不能给没有声音能力的模型许诺音色控制。
+- Đoạn thứ nhất gắn mỗi tham chiếu thực tế với hai ba đặc điểm ổn định đã xác minh, nhân vật dùng <Chủ thể1>, bối cảnh dùng <Bối cảnh1>, đạo cụ dùng <Đạo cụ1>; ba loại nhãn được đánh số riêng. Nhãn là cách chỉ định nội bộ trong prompt, không phải ID node.
+- Nếu cùng cảnh đã có mô tả nối tiếp đã xác nhận thì đặt nguyên văn sau phần định nghĩa, làm trạng thái bắt đầu của shot đầu. Đoạn đầu tiên của cảnh mới không ép viết nối tiếp; khi đầu ra thực tế của đoạn trước chưa được chọn dùng thì chỉ ghi trạng thái quy hoạch.
+- Một shot tương ứng với một dòng phân cảnh gốc, không bỏ shot, không đổi thứ tự. Mỗi shot được tổ chức theo "cỡ cảnh và chuyển động máy chính → động tác/biểu cảm → vị trí và hướng → lời thoại/hiệu ứng âm thanh".
+- Một shot dùng một chuyển động máy chính; thân prompt dùng số shot gốc, không viết trục thời gian tuyệt đối. Mẫu cũ cho rằng biểu đạt số giây chính xác không ổn định, vì vậy chọn dùng cách viết này; thời lượng thật vẫn được cấu hình trên node và ghi lại trong mô tả đơn vị.
+- Lời thoại dùng dấu ngoặc nhọn {}, hiệu ứng âm thanh dùng dấu ngoặc góc <>; không nhét ID tài sản nội bộ, lời gọi công cụ, ghi chú kiểm duyệt vào prompt thực thi.
 
 ~~~text
-普通对白：<主体1> 说 {原台词}，音色：[确认描述]；只有该说话者口型对应。
-内心独白：<主体1> 内心OS {原台词}，音色：[确认描述]；嘴部不随声音开合。
-画外音：画外音VO {原台词}，[明确声音来源]；在画人物不跟随旁白对口型。
-无台词：无台词，<[需要的环境声或动作声]>。
+Định nghĩa [đặc điểm danh tính ổn định đã xác minh] trong {{ref 1}} là <Chủ thể1> (nhân vật A);
+định nghĩa [mốc neo không gian đã xác nhận] trong {{ref 2}} là <Bối cảnh1> (tên bối cảnh);
+định nghĩa [đặc điểm cấu trúc đã xác nhận] trong {{ref 3}} là <Đạo cụ1> (tên đạo cụ).
+
+[Nếu có thì giữ nguyên từng chữ: mô tả đã xác nhận nối tiếp shot trước]
+
+Shot 1: [cỡ cảnh + một chuyển động máy chính]. <Chủ thể1> ở [vị trí] của <Bối cảnh1>, mặt hướng về [hướng],
+[diễn tiến nhìn thấy được của động tác và biểu cảm đã xác nhận], [tương tác thật] với <Đạo cụ1>.
+<Chủ thể1> nói {lời thoại gốc}, giọng: [đặc điểm giọng đã xác nhận hoặc tham chiếu âm thanh thật]. <[nguồn âm cụ thể]>.
+Shot 2: [shot tiếp theo của phân cảnh gốc, tiếp tục danh tính, quyền sở hữu đạo cụ và trạng thái kết thúc của shot trước].
+[Shot không lời thoại chỉ viết không có lời thoại và hiệu ứng âm thanh thực tế; OS/VO dùng chú thích tương ứng và giữ nhân vật không khớp khẩu hình]
+
+[Nhãn ngắn cần thiết của phong cách đã xác nhận hiện tại]; danh tính và khuôn mặt chủ thể ổn định, động tác liền mạch,
+giữ khác biệt nhân vật và quan hệ không gian rõ ràng, không có bản sao vô căn cứ, watermark hay chữ phủ ngoài khung.
 ~~~
 
-约束包只加本单元需要的项。普通多主体场景可明确人数与辨识特征，防止克隆；剧情确有双胞胎不能套旧“禁止外形相同人物”删角色。不能因旧模板多人动态例子写“固定机位”就覆盖用户确认的跟拍。
+Giọng nói chỉ sắp xếp khi có lời nói. Khi đã có mẫu âm thanh đã xác nhận và mô hình hỗ trợ đầu vào đó thì gắn âm thanh thật của nhân vật đó; không có mẫu thì không ép người dùng cung cấp. Có thể theo "cảm giác tuổi, cao độ, chất giọng trong/khàn..., độ dày mỏng, phát âm, hơi thở, tốc độ nói, đặc trưng cảm xúc" để đề xuất phương án giọng ngắn gọn, chưa được xác nhận thì không coi giọng mặc định mà bảng cũ đưa ra theo giới tính/thân phận phản diện là sự thật. Không cần lấp đầy cả chín chiều, cũng không được hứa kiểm soát giọng cho mô hình không có năng lực âm thanh.
 
-## Wan 2.6 单图首帧
+~~~text
+Lời thoại thông thường: <Chủ thể1> nói {lời thoại gốc}, giọng: [mô tả đã xác nhận]; chỉ khẩu hình của người nói đó tương ứng.
+Độc thoại nội tâm: <Chủ thể1> OS nội tâm {lời thoại gốc}, giọng: [mô tả đã xác nhận]; miệng không mở đóng theo âm thanh.
+Giọng ngoài hình: giọng ngoài hình VO {lời thoại gốc}, [nguồn âm rõ ràng]; nhân vật trong hình không khớp khẩu hình theo lời dẫn.
+Không lời thoại: không có lời thoại, <[âm thanh môi trường hoặc âm thanh động tác cần thiết]>.
+~~~
 
-输入是一张已采用首帧和一个确认镜头。用英文叙事段落：风格基调 → 主体动作和环境 → 摄像机收尾。没有尾帧，不使用参考编号；首帧仍通过真实图像输入传入。
+Gói ràng buộc chỉ thêm những mục đơn vị này cần. Bối cảnh nhiều chủ thể thông thường có thể nêu rõ số người và đặc điểm nhận diện để tránh nhân bản; cốt truyện thực sự có anh em sinh đôi thì không được áp "cấm nhân vật có ngoại hình giống nhau" cũ mà xóa nhân vật. Không được vì ví dụ động nhiều người của mẫu cũ viết "máy cố định" mà ghi đè lên việc quay bám theo người dùng đã xác nhận.
 
-人物只写由首帧核实的少量识别特征，重点放在接下来怎么动。情绪用动作暗示，例如“目光下落、肩膀缓慢沉下”须是确认表演，不能用模板凭空增加。不用 4K、cinematic、high quality 反复堆砌，不靠英文翻译更改台词语言。
+## Wan 2.6 khung đầu một ảnh
+
+Đầu vào là một khung đầu đã chọn dùng và một shot đã xác nhận. Dùng đoạn tự sự tiếng Anh: tông phong cách → động tác chủ thể và môi trường → kết thúc bằng máy quay. Không có khung cuối, không dùng số tham chiếu; khung đầu vẫn được truyền vào qua đầu vào ảnh thật.
+
+Nhân vật chỉ viết số ít đặc điểm nhận diện đã xác minh từ khung đầu, trọng tâm đặt vào việc sẽ chuyển động thế nào tiếp theo. Cảm xúc được gợi ý bằng động tác, ví dụ "ánh mắt hạ xuống, vai từ từ chùng xuống" phải là diễn xuất đã xác nhận, không được dùng mẫu để thêm vô căn cứ. Không lặp đi lặp lại 4K, cinematic, high quality, không dựa vào bản dịch tiếng Anh để thay đổi ngôn ngữ lời thoại.
 
 ~~~text
 [A concise sentence expressing the approved visual style.]
@@ -81,17 +81,17 @@
 then [the confirmed action, pace and emotional progression], ending in [the confirmed end state].
 [The verified setting, relevant object and spatial relationship; no invented scenery.]
 [Only an already approved and consistent lighting constraint, if necessary.]
-"[原语言完整台词]" — [Speaker] (dialogue / inner monologue, OS / voiceover, VO).
+"[Full dialogue in the original language]" — [Speaker] (dialogue / inner monologue, OS / voiceover, VO).
 [Specific environmental and action sounds, or No dialogue where applicable.]
 Captured in [starting shot size and angle], [the confirmed camera movement and endpoint],
 as one continuous shot.
 ~~~
 
-无台词时删台词行，写 No dialogue；有 OS/VO 时明确人物 silent lips。模板正文不写秒数，节点 duration 仍使用已确认值。旧路由只凭名称命中不能证明今天的 Wan 节点支持同样音频或时长，遇能力冲突先调整方案确认。
+Khi không có lời thoại thì xóa dòng lời thoại, viết No dialogue; khi có OS/VO thì ghi rõ nhân vật silent lips. Thân mẫu không viết số giây, duration của node vẫn dùng giá trị đã xác nhận. Định tuyến cũ chỉ khớp theo tên không thể chứng minh node Wan hôm nay hỗ trợ âm thanh hay thời lượng tương tự, gặp xung đột năng lực thì điều chỉnh phương án và xác nhận trước.
 
-## 通用首帧/首尾帧五段式
+## Mẫu năm đoạn chung cho khung đầu/khung đầu và khung cuối
 
-用于用户已确认的连续镜头：首帧给起始状态，尾帧仅在当前模式支持且实际需要时使用。纯文本描述主体，不在正文内编号引用帧；起尾帧位置由真实模式/输入绑定。
+Dùng cho shot liên tục mà người dùng đã xác nhận: khung đầu cho trạng thái bắt đầu, khung cuối chỉ dùng khi chế độ hiện tại hỗ trợ và thực sự cần. Mô tả chủ thể bằng văn bản thuần, không đánh số tham chiếu khung trong thân; vị trí khung đầu và khung cuối được gắn bởi chế độ/đầu vào thật.
 
 ~~~text
 [Visual]
@@ -108,7 +108,7 @@ as one continuous shot.
 single continuous take, no cuts.
 
 [Audio]
-[Actual planned interval]: "[原语言完整台词]" — [speaker] (dialogue, lip-sync active).
+[Actual planned interval]: "[Full dialogue in the original language]" — [speaker] (dialogue, lip-sync active).
 [OS/VO, if present, with silent lips; other characters remain silent].
 [Specific environmental and action sounds].
 
@@ -116,13 +116,13 @@ single continuous take, no cuts.
 [The existing dramatic beat and its relation to this confirmed unit; no added event].
 ~~~
 
-时间轴只在该模板且真实模式适合时使用，每段至少 1 秒、连续覆盖已确认总时长；秒数需按对白容量和动作分配，不平均切块、不捏造精确控制保证。说话状态可以随区间变化；不同人物各有台词时明确谁何时 speaking，其他时段 silent，不把角色永久标 silent。
+Trục thời gian chỉ dùng khi ở mẫu này và chế độ thật phù hợp, mỗi đoạn ít nhất 1 giây, bao phủ liên tục tổng thời lượng đã xác nhận; số giây cần phân bổ theo dung lượng lời thoại và động tác, không chia đều thành khối, không bịa đảm bảo kiểm soát chính xác. Trạng thái nói có thể thay đổi theo khoảng; khi các nhân vật khác nhau đều có lời thoại thì nêu rõ ai speaking lúc nào, các khoảng khác silent, không đánh dấu nhân vật silent vĩnh viễn.
 
-首尾帧不得表现无法在给定时长内完成的位移/形变，也不能用“无切镜”把原来两场硬拼成一个空间。旧模板示例含多个分镜，但其正文要求一个连续镜头；若现有确认单元包含真实切镜，回模式/分镜确认，不自行删镜去适配。
+Khung đầu và khung cuối không được thể hiện dịch chuyển/biến dạng không thể hoàn thành trong thời lượng cho trước, cũng không được dùng "không cắt shot" để ghép cứng hai cảnh vốn có thành một không gian. Ví dụ của mẫu cũ chứa nhiều phân cảnh, nhưng thân của nó yêu cầu một shot liên tục; nếu đơn vị đã xác nhận hiện có chứa cắt shot thật thì quay lại xác nhận chế độ/phân cảnh, không tự xóa shot để thích ứng.
 
-## 通用多参 References/Instruction
+## Đa tham chiếu chung References/Instruction
 
-适用于其他真实可用多参模式。保留“参考用途清单 + 英文执行说明”，画面身份由实际参考承担；台词保持原文，时长在节点配置中明确。
+Áp dụng cho các chế độ đa tham chiếu thực sự khả dụng khác. Giữ "danh sách mục đích tham chiếu + mô tả thực thi tiếng Anh", danh tính khung hình do tham chiếu thực tế đảm nhận; lời thoại giữ nguyên văn, thời lượng được nêu rõ trong cấu hình node.
 
 ~~~text
 [References]
@@ -136,36 +136,36 @@ Shot [original number]: [Shot size and camera move].
 The character from {{ref 1}} [confirmed action and expression],
 [explicit screen position, facing direction and interaction],
 in the environment of {{ref 2}}.
-"[原语言完整台词]" — [speaker] (dialogue / inner monologue, OS / voiceover, VO).
+"[Full dialogue in the original language]" — [speaker] (dialogue / inner monologue, OS / voiceover, VO).
 [Specific physical sounds; other characters' lip-sync state when needed].
 Shot [next original number]: [Next confirmed shot with matching continuity].
 [Retain the confirmed ending state and exclude only unrequested overlays or duplicates].
 ~~~
 
-如果实际接入了本镜已采用分镜图，可加“Use {{ref N}} as the composition reference for shot K”；缺分镜图便不写这句、不分配假编号，资产参考仍然有效。若整单元确实无媒体输入且模型允许，使用已确认的纯文本路线与可读主体名，不假装多参参考存在。
+Nếu thực tế đã kết nối ảnh phân cảnh đã chọn dùng của shot này thì có thể thêm "Use {{ref N}} as the composition reference for shot K"; thiếu ảnh phân cảnh thì không viết câu này, không cấp số thứ tự giả, tham chiếu tài sản vẫn có hiệu lực. Nếu cả đơn vị thực sự không có đầu vào media và mô hình cho phép, thì dùng lộ trình văn bản thuần đã xác nhận và tên chủ thể dễ đọc, không giả vờ tồn tại tham chiếu đa tham chiếu.
 
-旧通用文件同时写“单条分镜不做跨镜”却用跨分镜示例，又在无分镜图时禁止所有引用；迁移保留其参考与正文分离的写法，以本集确认单位与真实输入为准。多镜只在当前模型/模式和已确认分组允许时使用，不能从这个模板推出所有多参模型都支持镜头切换。
+File chung cũ vừa viết "phân cảnh đơn không làm xuyên shot" lại vừa dùng ví dụ xuyên phân cảnh, đồng thời khi không có ảnh phân cảnh thì cấm mọi tham chiếu; khi chuyển đổi giữ lại cách viết tách tham chiếu và thân, lấy đơn vị đã xác nhận của tập này và đầu vào thật làm chuẩn. Nhiều shot chỉ dùng khi mô hình/chế độ hiện tại và cách phân nhóm đã xác nhận cho phép, không được từ mẫu này suy ra mọi mô hình đa tham chiếu đều hỗ trợ chuyển shot.
 
-## 动作、声音与镜头词汇
+## Từ vựng động tác, âm thanh và shot
 
-镜头术语要精确表达画面，而非盲套旧映射。大远景可用 extreme wide shot，远景 wide shot，全景 full shot，中景 medium shot，近景 medium close-up，特写 close-up，大特写 extreme close-up。近景不能一律翻成面部特写，构图部位有歧义时写清裁切。
+Thuật ngữ shot phải biểu đạt chính xác khung hình, chứ không áp mù quáng ánh xạ cũ. Đại viễn cảnh có thể dùng extreme wide shot, viễn cảnh wide shot, toàn cảnh full shot, trung cảnh medium shot, cận cảnh medium close-up, cận cảnh đặc tả close-up, đại cận cảnh đặc tả extreme close-up. Cận cảnh không được dịch tất cả thành cận cảnh đặc tả khuôn mặt, khi bộ phận bố cục có nhập nhằng thì viết rõ phạm vi cắt khung.
 
-固定为 static camera；推为 push in/dolly in；拉为 pull back/dolly out；跟拍 tracking shot；摇须说明 pan left/right 或 tilt；升降 crane up/down；环绕 orbit around 并说明方向。空间动词如 holding、standing beside、following behind、sitting in 必须与画面和道具归属一致。handheld、slow motion、Dutch angle 只在确认分镜需要时出现。
+Cố định là static camera; đẩy vào là push in/dolly in; kéo ra là pull back/dolly out; quay bám theo là tracking shot; lia phải nói rõ pan left/right hoặc tilt; nâng hạ là crane up/down; quay vòng là orbit around và nói rõ hướng. Các động từ không gian như holding, standing beside, following behind, sitting in phải nhất quán với khung hình và quyền sở hữu đạo cụ. handheld, slow motion, Dutch angle chỉ xuất hiện khi phân cảnh đã xác nhận cần.
 
-英文模板中描述语句可英文，台词原文不翻译。对白时间可跨听者反应镜，声音仍归说话人；OS/VO 的有声信息和无口型关系要同时明确。纯文字信息的语音化、逐行点亮或提示音属于需确认的呈现方案，不因旧模板默认添加。
+Trong mẫu tiếng Anh, câu mô tả có thể bằng tiếng Anh, lời thoại nguyên văn không dịch. Thời gian lời thoại có thể kéo qua shot phản ứng của người nghe, âm thanh vẫn thuộc người nói; với OS/VO phải đồng thời nêu rõ thông tin có tiếng và quan hệ không khẩu hình. Việc lồng tiếng cho thông tin chỉ có chữ, làm sáng từng dòng hoặc âm báo thuộc phương án trình bày cần xác nhận, không vì mẫu cũ mặc định mà thêm vào.
 
-## 本集记录、执行前核对与验收
+## Ghi chép của tập này, kiểm tra trước khi thực thi và nghiệm thu
 
-在本集已有制作说明/阶段记录中保存：
+Lưu trong mô tả sản xuất/ghi chép giai đoạn đã có của tập này:
 
-- 采用模板及理由、当前实际模型/模式、片段或镜头范围、目标时长与规格。
-- 全部原镜号对应提示词段落，完整台词与说话人/OS/VO、声音来源和口型要求。
-- 实际参考类型、顺序、用途、源资产版本与当前节点；首尾帧注明起终作用，未就绪项不删除后重编号。
-- 首镜开始状态、上一片段采用结果或规划依据、结束状态与下一段衔接方式。
-- 完整执行 prompt 和用户确认范围；模板正文不混入审核报告，审核意见保存在可读说明。
+- Mẫu đã chọn dùng và lý do, mô hình/chế độ thực tế hiện tại, phạm vi đoạn hoặc shot, thời lượng mục tiêu và quy cách.
+- Các đoạn prompt tương ứng với toàn bộ số shot gốc, lời thoại đầy đủ và người nói/OS/VO, nguồn âm thanh và yêu cầu khẩu hình.
+- Loại, thứ tự, mục đích tham chiếu thực tế, phiên bản tài sản nguồn và node hiện tại; khung đầu và khung cuối ghi chú vai trò bắt đầu/kết thúc, các mục chưa sẵn sàng không xóa rồi đánh số lại.
+- Trạng thái bắt đầu của shot đầu, kết quả đã chọn dùng của đoạn trước hoặc căn cứ quy hoạch, trạng thái kết thúc và cách nối với đoạn sau.
+- Prompt thực thi đầy đủ và phạm vi người dùng xác nhận; thân mẫu không trộn báo cáo kiểm duyệt, ý kiến kiểm duyệt lưu trong mô tả dễ đọc.
 
-写入后通过节点函数回读 prompt、配置、连线及输出基线，确认用户批准的是这一实际方案。生成状态遵守 [画布执行](../canvasOperations.md)；“generating”、reload 后 idle 或旧输出不能证明本次成功。
+Sau khi ghi, đọc lại prompt, cấu hình, kết nối và mốc đầu ra qua hàm node, xác nhận thứ người dùng phê duyệt chính là phương án thực tế này. Trạng thái tạo tuân theo [Thực thi canvas](../canvasOperations.md); "generating", idle sau reload hoặc đầu ra cũ không thể chứng minh lần này thành công.
 
-验收时看实际媒体的身份、动作/道具接触、人物左右与视线、镜头顺序、对白完整性、声音来源与口型、末尾是否截断，以及前后片段的实际交界状态。逐项写明已查看的证据与问题位置。当前工具无法播放/理解视频或读取音轨时，由用户预览回报，记录“待用户核验”；文件路径与成功状态不能冒充已经看过、听过。用户采用前，成功视频仍是候选。
+Khi nghiệm thu, xem danh tính, tiếp xúc động tác/đạo cụ, trái phải và ánh nhìn của nhân vật, thứ tự shot, độ đầy đủ của lời thoại, nguồn âm thanh và khẩu hình, phần cuối có bị cắt không, cùng trạng thái giao nhau thực tế giữa các đoạn trước sau của media thực tế. Ghi rõ từng mục bằng chứng đã xem và vị trí vấn đề. Khi công cụ hiện tại không thể phát/hiểu video hoặc đọc track âm thanh, thì để người dùng xem trước và phản hồi, ghi "chờ người dùng kiểm tra"; đường dẫn file và trạng thái thành công không thể giả làm đã xem, đã nghe. Trước khi người dùng chọn dùng, video tạo thành công vẫn chỉ là ứng viên.
 
-依据 v1.1.8（cd3e7c4）中 data/modelPrompt/video/seedance2Multi-parameterMode.md、wan2.6Single-imageFirstFrameMode.md、universalFirstAndLastFrameMode.md、universalMulti-parameterMode.md，以及 src/routes/production/workbench/generateVideoPrompt.ts。旧模板描述的语法和效果不是对当前模型的实测承诺。
+Căn cứ vào data/modelPrompt/video/seedance2Multi-parameterMode.md, wan2.6Single-imageFirstFrameMode.md, universalFirstAndLastFrameMode.md, universalMulti-parameterMode.md cùng src/routes/production/workbench/generateVideoPrompt.ts trong v1.1.8 (cd3e7c4). Cú pháp và hiệu quả mà mẫu cũ mô tả không phải là cam kết đã đo thực tế đối với mô hình hiện tại.

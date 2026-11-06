@@ -1,153 +1,153 @@
 ---
 name: canvas
-description: Toonflow 画布操作手册。使用画布工具创建、切换和重命名画布，添加、移动、重命名、连接和删除节点，自动整理整幅画布、调整视口，以及调用节点注册的函数。用户要求操作当前画布或搭建节点流程时使用。
+description: Sổ tay thao tác canvas của Toonflow. Dùng các công cụ canvas để tạo, chuyển đổi và đổi tên canvas; thêm, di chuyển, đổi tên, kết nối và xóa node; tự động sắp xếp toàn bộ canvas, điều chỉnh khung nhìn (viewport) và gọi các hàm do node đăng ký. Dùng khi người dùng yêu cầu thao tác trên canvas hiện tại hoặc dựng luồng node.
 metadata:
   version: "2.1.0"
-  displayName: 画布操作手册
+  displayName: Sổ tay thao tác canvas
   author: Toonflow
   github: https://github.com/HBAI-Ltd/Toonflow-app
 ---
 
-# 画布操作手册
+# Sổ tay thao tác canvas
 
-通过已启用的“画布操作”工具控制当前运行中的画布。工具仅在存在画布上下文时可用；缺少工具时，请用户打开目标项目的画布并确认工具已启用，不通过编辑画布 JSON 绕过工具。
+Điều khiển canvas đang chạy hiện tại thông qua công cụ "Thao tác canvas" đã được bật. Công cụ chỉ khả dụng khi có ngữ cảnh canvas; khi thiếu công cụ, hãy nhờ người dùng mở canvas của dự án mục tiêu và xác nhận công cụ đã được bật, không sửa JSON của canvas để lách qua công cụ.
 
-## 操作流程
+## Quy trình thao tác
 
-1. 已知节点 ID 时直接读取目标；否则用 `getCanvas({})` 确认激活画布概览，用 `findCanvasNodes` 按名称、类型或选择状态查找。仅在需要添加节点时用 `getCanvas({ include: ["nodeTypes"] })` 查询类型。
-2. 根据用户要求选择下面的操作，逐次等待返回。后续调用使用前一步返回的 ID，不猜测 ID、节点类型、端口或节点函数。
-3. 用 `getCanvasNodes` 按需读取目标字段，`getCanvasEdges` 查询局部连接；需要调整节点内容时，用 `getNodeTools` 读取该节点函数的描述和完整 `parameters`，通过 `nodeTools` 调用。
-4. 完成结构调整后，按需调用 `fitCanvas` 展示结果，再用 `getCanvasNodes` / `getCanvasEdges` 只核对受影响节点、名称与连接。`arrangeCanvas` 已自动适配视口，不必重复调用 `fitCanvas`。只报告工具实际完成的操作。
+1. Khi đã biết ID node thì đọc thẳng mục tiêu; nếu không, dùng `getCanvas({})` để xác nhận tổng quan canvas đang kích hoạt, dùng `findCanvasNodes` để tìm theo tên, loại hoặc trạng thái chọn. Chỉ khi cần thêm node mới dùng `getCanvas({ include: ["nodeTypes"] })` để tra loại.
+2. Chọn thao tác bên dưới theo yêu cầu của người dùng, chờ kết quả trả về của từng lần. Các lần gọi sau dùng ID do bước trước trả về, không đoán ID, loại node, cổng (port) hay hàm của node.
+3. Dùng `getCanvasNodes` để đọc các trường mục tiêu khi cần, `getCanvasEdges` để tra kết nối cục bộ; khi cần chỉnh nội dung node, dùng `getNodeTools` để đọc mô tả và `parameters` đầy đủ của hàm node đó, rồi gọi qua `nodeTools`.
+4. Sau khi hoàn tất điều chỉnh cấu trúc, gọi `fitCanvas` khi cần để hiển thị kết quả, rồi dùng `getCanvasNodes` / `getCanvasEdges` chỉ đối chiếu các node, tên và kết nối bị ảnh hưởng. `arrangeCanvas` đã tự động khớp khung nhìn, không cần gọi lại `fitCanvas`. Chỉ báo cáo những thao tác mà công cụ thực sự đã hoàn thành.
 
-故事或视频制作先读取 [制作阶段与确认](references/videoProduction.md#0-逐阶段协作)。默认只落实当前已确认阶段；先逐步收集信息，再展示阶段成果并询问调整，等用户明确继续。不因用户说“做一个短片”就一次创建全部分镜与生成节点，也不把提问失败、跳过或沉默当作确认。
+Với sản xuất câu chuyện hoặc video, trước tiên đọc [Các giai đoạn sản xuất và xác nhận](references/videoProduction.md#0-phối-hợp-từng-giai-đoạn). Mặc định chỉ thực hiện giai đoạn hiện đã được xác nhận; trước hết thu thập thông tin từng bước, sau đó trình bày thành quả giai đoạn và hỏi điều chỉnh, đợi người dùng nói rõ là tiếp tục. Không vì người dùng nói "làm một phim ngắn" mà tạo một lần toàn bộ phân cảnh và node tạo, cũng không coi việc hỏi thất bại, bỏ qua hay im lặng là xác nhận.
 
-默认从本次完整剧本生成角色、场景、道具资产，再拆为多镜头片段；一片段对应一份视频提示词和一个视频节点，资产直接用于多参生成。写资产提示词前读取 [资产图规范](../script/references/assetGuide.md)，写视频提示词前读取 [片段制作指南](../script/references/productionGuide.md)，角色面部特写与正侧背完整三视图不能省成通用单张剧情图。
+Mặc định tạo tài sản nhân vật, bối cảnh, đạo cụ từ kịch bản hoàn chỉnh của lần này, rồi tách thành các đoạn nhiều shot; mỗi đoạn tương ứng một prompt video và một node video, tài sản dùng trực tiếp cho tạo đa tham chiếu. Trước khi viết prompt tài sản, đọc [Quy chuẩn ảnh tài sản](../script/references/assetGuide.md); trước khi viết prompt video, đọc [Hướng dẫn sản xuất đoạn](../script/references/productionGuide.md). Cận cảnh khuôn mặt nhân vật và bộ ba góc nhìn đầy đủ trước-nghiêng-sau không được giản lược thành một ảnh cốt truyện chung duy nhất.
 
-文档内链接相对当前文件目录。跨技能的 `script` 规范按 `available_skills` 中实际 `location` 定位；依赖缺失时说明缺项，仅继续不依赖它的结构操作，不凭简介补造规范。
+Liên kết trong tài liệu tính tương đối theo thư mục của tệp hiện tại. Quy chuẩn `script` xuyên skill được định vị theo `location` thực tế trong `available_skills`; khi thiếu phụ thuộc thì nêu rõ mục thiếu, chỉ tiếp tục các thao tác cấu trúc không phụ thuộc vào nó, không dựa vào phần giới thiệu để bịa ra quy chuẩn.
 
-以下写法表示“工具名（参数对象）”。直接调用对应工具，不额外包一层 `{ name, args }`；只有 `nodeTools` 自身含有 `name` 和 `args` 参数。
+Cách viết dưới đây có nghĩa là "tên công cụ (đối tượng tham số)". Gọi thẳng công cụ tương ứng, không bọc thêm một lớp `{ name, args }`; chỉ riêng `nodeTools` có tham số `name` và `args`.
 
-## 读取画布
+## Đọc canvas
 
-五个读取工具都支持可选 `canvasId`，用于确认当前激活画布，不能用它读取未激活的画布。每次响应最多 64 KiB，不提供全图快照：
+Cả năm công cụ đọc đều hỗ trợ `canvasId` tùy chọn, dùng để xác nhận canvas đang kích hoạt, không thể dùng nó để đọc canvas chưa kích hoạt. Mỗi phản hồi tối đa 64 KiB, không cung cấp ảnh chụp nhanh toàn đồ thị:
 
-| 工具 | 参数与返回 |
+| Công cụ | Tham số và kết quả trả về |
 | --- | --- |
-| `getCanvas` | 默认返回 `id`、节点数、连线数、选中数量和 `viewport`。`include: ["canvases"]` 查询 `{ id, name }` 画布列表，`include: ["nodeTypes"]` 查询 `availableNodeTypes` 的 `{ type, label }`；两类列表共用分页，`limit` 默认 30、最多 100。 |
-| `findCanvasNodes` | 按 `query`（ID 或完整名称）、`types`（最多 20 类）、`selectedOnly` 筛选；省略筛选时分页列举。返回 `nodes` 摘要，名称预览最多 512 字符；`limit` 默认 30、最多 100。 |
-| `getCanvasNodes` | `nodeIds` 每次 1–20 个、不允许重复；`fields` 默认 `label/type/position`，还可选 `ports/data/outputs`。`dataKeys` 限定需要的 data 自身属性，最多 20 个；返回 `nodes` 投影。 |
-| `getCanvasEdges` | `nodeIds` 可选、最多 20 个；`direction` 取 `incoming/outgoing/both`，默认 `both`，省略 ID 才分页遍历全部边。返回 `edges`；`limit` 默认 100、最多 200。 |
-| `getNodeTools` | `nodeIds` 每次 1–20 个、不允许重复，`names` 可筛选最多 20 个完整函数名。返回 `nodeTools`（含 `nodeId/name/description/parameters`）；`limit` 默认 20、最多 50。schema 不截断，单项过大则明确报错。 |
+| `getCanvas` | Mặc định trả về `id`, số node, số dây nối, số mục đang chọn và `viewport`. `include: ["canvases"]` tra danh sách canvas `{ id, name }`, `include: ["nodeTypes"]` tra `{ type, label }` của `availableNodeTypes`; hai loại danh sách dùng chung phân trang, `limit` mặc định 30, tối đa 100. |
+| `findCanvasNodes` | Lọc theo `query` (ID hoặc tên đầy đủ), `types` (tối đa 20 loại), `selectedOnly`; khi bỏ qua bộ lọc thì liệt kê theo trang. Trả về tóm tắt `nodes`, bản xem trước tên tối đa 512 ký tự; `limit` mặc định 30, tối đa 100. |
+| `getCanvasNodes` | `nodeIds` mỗi lần 1–20 cái, không được trùng; `fields` mặc định là `label/type/position`, ngoài ra có thể chọn `ports/data/outputs`. `dataKeys` giới hạn các thuộc tính riêng của data cần lấy, tối đa 20 cái; trả về phép chiếu `nodes`. |
+| `getCanvasEdges` | `nodeIds` tùy chọn, tối đa 20 cái; `direction` nhận `incoming/outgoing/both`, mặc định `both`, chỉ khi bỏ qua ID mới duyệt toàn bộ cạnh theo trang. Trả về `edges`; `limit` mặc định 100, tối đa 200. |
+| `getNodeTools` | `nodeIds` mỗi lần 1–20 cái, không được trùng, `names` có thể lọc tối đa 20 tên hàm đầy đủ. Trả về `nodeTools` (gồm `nodeId/name/description/parameters`); `limit` mặc định 20, tối đa 50. Schema không bị cắt bớt, một mục quá lớn thì báo lỗi rõ ràng. |
 
-分页检查 `hasMore` / `nextCursor`，保留全部原查询参数，仅替换 `cursor`；节点筛选和连线查询每次最多扫描 2000 项，即使当前 `nodes` / `edges` 为空，`hasMore: true` 也表示尚未扫描完。`totalNodes` / `totalEdges` 是整张画布的总量，不是筛选命中数。游标不自行解析或构造，失效后重新查询。`selectedOnly` 按各页读取当时的选择状态筛选，用户编辑可能改变查询结果，不把分页当成冻结快照。
+Với phân trang, kiểm tra `hasMore` / `nextCursor`, giữ nguyên toàn bộ tham số truy vấn ban đầu, chỉ thay `cursor`; lọc node và truy vấn dây nối mỗi lần quét tối đa 2000 mục, kể cả khi `nodes` / `edges` hiện tại rỗng, `hasMore: true` vẫn có nghĩa là chưa quét xong. `totalNodes` / `totalEdges` là tổng số của cả canvas, không phải số kết quả khớp bộ lọc. Không tự phân tích hay tự dựng con trỏ (cursor); khi hết hiệu lực thì truy vấn lại. `selectedOnly` lọc theo trạng thái chọn tại thời điểm đọc từng trang, thao tác chỉnh sửa của người dùng có thể làm thay đổi kết quả truy vấn, không coi phân trang là một ảnh chụp nhanh đã đóng băng.
 
-单节点内部也可能很大。`getCanvasNodes` 用 `path` 选择投影内的子路径，例如 `path: ["data", "promptModel"]` 或 `["outputs", "text", "value"]`，返回该路径的 `value`；首段只能是六种投影字段，`ports` 对应节点的 `data.handles`。数组和对象用 `valueOffset` / `valueLimit` 分页，默认 0 / 30、最多 100 项；字符串用 `textOffset` / `textLimit` 分段，默认 0 / 1000、最多 4000 字符。`valueOffset` 或 `textOffset` 大于 0 时必须提供 `path`，避免所有投影字段一起错位。路径只访问自身属性，不能读取继承属性。
+Bên trong một node cũng có thể rất lớn. `getCanvasNodes` dùng `path` để chọn đường dẫn con trong phép chiếu, ví dụ `path: ["data", "promptModel"]` hoặc `["outputs", "text", "value"]`, trả về `value` của đường dẫn đó; đoạn đầu chỉ có thể là một trong sáu trường chiếu, `ports` tương ứng với `data.handles` của node. Mảng và đối tượng phân trang bằng `valueOffset` / `valueLimit`, mặc định 0 / 30, tối đa 100 mục; chuỗi chia đoạn bằng `textOffset` / `textLimit`, mặc định 0 / 1000, tối đa 4000 ký tự. Khi `valueOffset` hoặc `textOffset` lớn hơn 0 thì bắt buộc phải cung cấp `path`, để tránh mọi trường chiếu cùng bị lệch. Đường dẫn chỉ truy cập thuộc tính riêng, không đọc được thuộc tính kế thừa.
 
-`path` 最多 64 层，每段最多 256 字符（允许 JSON 对象的空键），整个路径的 JSON UTF-8 长度最多 2048 字节。达到路径深度或字节边界时返回 `pathDepthLimit` / `pathBytesLimit`，不得将该标记误认成已读完整内容；超长键用 `keyTooLong` 标记，并提供 `nextOffset` 以继续读取后续字段。
+`path` tối đa 64 tầng, mỗi đoạn tối đa 256 ký tự (cho phép khóa rỗng của đối tượng JSON), độ dài JSON UTF-8 của toàn bộ đường dẫn tối đa 2048 byte. Khi chạm giới hạn độ sâu hoặc số byte của đường dẫn thì trả về `pathDepthLimit` / `pathBytesLimit`, không được nhầm dấu hiệu đó là đã đọc xong toàn bộ nội dung; khóa quá dài được đánh dấu bằng `keyTooLong`, kèm `nextOffset` để tiếp tục đọc các trường phía sau.
 
-顶层 `hasMore/nextCursor` 表示还有节点未返回，保持原参数继续节点分页；每个节点的 `truncated` 表示该节点的值未读全。处理任一截断项时仅查询所属节点，使用该项路径及偏移，不携带原 `cursor`；具体规则：
+`hasMore/nextCursor` ở cấp cao nhất có nghĩa là còn node chưa được trả về, giữ nguyên tham số ban đầu để tiếp tục phân trang node; `truncated` của từng node có nghĩa là giá trị của node đó chưa đọc hết. Khi xử lý bất kỳ mục bị cắt nào, chỉ truy vấn node chứa nó, dùng đường dẫn và offset của mục đó, không mang theo `cursor` ban đầu; quy tắc cụ thể:
 
-- `text`：用该项 `path` 和 `nextOffset` 作为 `textOffset` 续读；`entries`：用该项 `path` 和 `nextOffset` 作为 `valueOffset` 续读。没有 `nextOffset` 表示该路径已到末尾，标记仍可能存在，因为本次只返回了后半段。
-- `depth/budget`：以该项 `path` 发起新的详情查询，缩小读取范围；重新读取路径时不携带原查询的 `cursor`。
-- `pathDepthLimit/pathBytesLimit/keyTooLong/circular` 表示无法完整展开。`keyTooLong` 可按返回的 `nextOffset` 跳过该键继续读取后续字段，但被跳过的值仍未取得；不反复重试硬限制或把它当完整内容。
+- `text`: dùng `path` của mục đó và `nextOffset` làm `textOffset` để đọc tiếp; `entries`: dùng `path` của mục đó và `nextOffset` làm `valueOffset` để đọc tiếp. Không có `nextOffset` nghĩa là đường dẫn đó đã đến cuối, dấu hiệu vẫn có thể còn vì lần này chỉ trả về nửa sau.
+- `depth/budget`: dùng `path` của mục đó để mở một truy vấn chi tiết mới, thu hẹp phạm vi đọc; khi đọc lại đường dẫn không mang theo `cursor` của truy vấn ban đầu.
+- `pathDepthLimit/pathBytesLimit/keyTooLong/circular` có nghĩa là không thể triển khai đầy đủ. `keyTooLong` có thể dùng `nextOffset` trả về để bỏ qua khóa đó và đọc tiếp các trường sau, nhưng giá trị bị bỏ qua vẫn chưa lấy được; không thử lại liên tục với giới hạn cứng hay coi đó là nội dung đầy đủ.
 
-节点内容先读取所需字段，发现截断后再沿路径补齐，不扩大为整图读取。已有文本文件路径交给文件读取工具；核对全文时必须包含已读片段和续读片段。
+Với nội dung node, trước tiên đọc các trường cần thiết, phát hiện bị cắt thì mới bổ sung theo đường dẫn, không mở rộng thành đọc toàn đồ thị. Đường dẫn tệp văn bản đã có thì giao cho công cụ đọc tệp; khi đối chiếu toàn văn phải bao gồm cả đoạn đã đọc và đoạn đọc tiếp.
 
-全局任务逐页处理并记录进度，只在上下文保留当前批次、累计摘要和游标；不要累计全部详情。对全图做增删操作可能使遍历游标失效，重新查询并根据已处理 ID 或结果核对，避免重复执行。节点新增、删除或画布切换后，用 `getNodeTools` 重新发现相关函数。
+Tác vụ toàn cục xử lý từng trang và ghi lại tiến độ, trong ngữ cảnh chỉ giữ lô hiện tại, bản tóm tắt tích lũy và con trỏ; không tích lũy toàn bộ chi tiết. Thao tác thêm/xóa trên toàn đồ thị có thể làm con trỏ duyệt mất hiệu lực, hãy truy vấn lại và đối chiếu theo các ID đã xử lý hoặc kết quả, tránh thực hiện trùng lặp. Sau khi thêm, xóa node hoặc chuyển canvas, dùng `getNodeTools` để khám phá lại các hàm liên quan.
 
-## 画布管理
+## Quản lý canvas
 
-| 工具 | 参数 | 行为与返回 |
+| Công cụ | Tham số | Hành vi và kết quả trả về |
 | --- | --- | --- |
-| `addCanvas` | `{ name? }` | 创建空白画布并切换到它；省略名称时自动使用未占用的“画布N”。返回新激活画布的概览。 |
-| `switchCanvas` | `{ canvasId }` | 等待当前修改保存后切换到指定画布，返回新激活画布的概览。 |
-| `renameCanvas` | `{ canvasId?, name }` | 省略 ID 时重命名激活画布，同时修改 JSON 文件名。返回操作后的激活画布概览。 |
+| `addCanvas` | `{ name? }` | Tạo canvas trống và chuyển sang nó; khi bỏ qua tên thì tự động dùng tên "Canvas N" chưa bị chiếm. Trả về tổng quan canvas mới được kích hoạt. |
+| `switchCanvas` | `{ canvasId }` | Chờ các sửa đổi hiện tại được lưu rồi chuyển sang canvas chỉ định, trả về tổng quan canvas mới được kích hoạt. |
+| `renameCanvas` | `{ canvasId?, name }` | Khi bỏ qua ID thì đổi tên canvas đang kích hoạt, đồng thời sửa tên tệp JSON. Trả về tổng quan canvas đang kích hoạt sau thao tác. |
 
-名称去除首尾空白后为 1–120 个字符，不带 `.json` 扩展名，须为合法文件名；不能包含路径分隔符、文件名非法字符、控制字符，不能以点结尾或使用系统保留名。同名文件不会被覆盖。
+Tên sau khi bỏ khoảng trắng đầu cuối phải dài 1–120 ký tự, không kèm phần mở rộng `.json`, phải là tên tệp hợp lệ; không được chứa dấu phân cách đường dẫn, ký tự không hợp lệ trong tên tệp, ký tự điều khiển, không được kết thúc bằng dấu chấm hay dùng tên dành riêng của hệ thống. Tệp trùng tên sẽ không bị ghi đè.
 
-画布 ID 与文件名关联，重命名后重新读取返回的 ID。重命名非激活画布不会切换过去。通过上述工具成功创建或切换画布后，本轮后续调用会作用于新的激活画布。
+ID canvas gắn với tên tệp, sau khi đổi tên hãy đọc lại ID được trả về. Đổi tên một canvas không kích hoạt sẽ không chuyển sang nó. Sau khi tạo hoặc chuyển canvas thành công qua các công cụ trên, các lần gọi tiếp theo trong lượt này sẽ tác động lên canvas mới được kích hoạt.
 
-## 节点与连线
+## Node và dây nối
 
-| 工具 | 参数 | 行为与返回 |
+| Công cụ | Tham số | Hành vi và kết quả trả về |
 | --- | --- | --- |
-| `addNode` | `{ type, position: { x, y }, label? }` | 新增节点，返回节点信息；函数用 `getNodeTools` 查询。未指定名称时使用类型的 `label`。 |
-| `moveNodes` | `{ moves: [{ nodeId, position: { x, y } }] }` | 批量移动，返回 `nodes` 节点信息。不可拖动的节点会拒绝操作。 |
-| `renameNodes` | `{ renames: [{ nodeId, label }] }` | 批量更新显示名称，返回 `nodes` 节点信息。不改变节点 ID。 |
-| `deleteNodes` | `{ nodeIds: [...] }` | 删除节点及其连接边，返回 `nodeIds`、`removedEdgeCount`、最多 100 项 `removedEdgeIds` 和 `truncated`；截断仅影响回执。 |
-| `connectNodes` | `{ connections: [{ source, sourceHandle, target, targetHandle }] }` | 批量连接输出与输入端口，返回 `{ edges }`。完全相同的连接已存在时返回已有边。 |
-| `deleteEdges` | `{ edgeIds: [...] }` | 删除指定连线，返回 `edgeIds` 及关联节点信息 `nodes`。 |
-| `selectNodes` | `{ nodeIds: [...] }` | 替换当前选择，返回 `selectedCount`、最多 100 项 `selectedNodeIds` 和 `truncated`；空数组取消节点选择。 |
-| `arrangeCanvas` | `{}` | 整理整个当前画布：按真实节点尺寸与连线将顶层节点从左到右排列，子节点随父节点移动，并自动适配视口。返回 `arrangedCount`、最多 100 项 `arrangedNodeIds`、`truncated` 和 `viewport`；不改内容、连线或选择，不触发生成。 |
-| `fitCanvas` | `{ nodeIds?: [...] }` | 调整视口，返回 `fitted`、`viewport`、`nodeCount` 和 `truncated`；传入 `nodeIds` 时另返回最多 100 项 `nodeIds`，省略时展示全部节点。 |
+| `addNode` | `{ type, position: { x, y }, label? }` | Thêm node mới, trả về thông tin node; hàm thì tra bằng `getNodeTools`. Khi không chỉ định tên thì dùng `label` của loại. |
+| `moveNodes` | `{ moves: [{ nodeId, position: { x, y } }] }` | Di chuyển hàng loạt, trả về thông tin node `nodes`. Node không kéo được sẽ từ chối thao tác. |
+| `renameNodes` | `{ renames: [{ nodeId, label }] }` | Cập nhật tên hiển thị hàng loạt, trả về thông tin node `nodes`. Không thay đổi ID node. |
+| `deleteNodes` | `{ nodeIds: [...] }` | Xóa node và các cạnh kết nối của nó, trả về `nodeIds`, `removedEdgeCount`, tối đa 100 mục `removedEdgeIds` và `truncated`; việc cắt bớt chỉ ảnh hưởng đến biên nhận. |
+| `connectNodes` | `{ connections: [{ source, sourceHandle, target, targetHandle }] }` | Kết nối hàng loạt cổng đầu ra với cổng đầu vào, trả về `{ edges }`. Khi kết nối hoàn toàn giống hệt đã tồn tại thì trả về cạnh đã có. |
+| `deleteEdges` | `{ edgeIds: [...] }` | Xóa các dây nối chỉ định, trả về `edgeIds` và thông tin node liên quan `nodes`. |
+| `selectNodes` | `{ nodeIds: [...] }` | Thay thế lựa chọn hiện tại, trả về `selectedCount`, tối đa 100 mục `selectedNodeIds` và `truncated`; mảng rỗng hủy chọn node. |
+| `arrangeCanvas` | `{}` | Sắp xếp toàn bộ canvas hiện tại: theo kích thước thực của node và dây nối, xếp các node cấp cao nhất từ trái sang phải, node con di chuyển theo node cha, và tự động khớp khung nhìn. Trả về `arrangedCount`, tối đa 100 mục `arrangedNodeIds`, `truncated` và `viewport`; không đổi nội dung, dây nối hay lựa chọn, không kích hoạt tạo. |
+| `fitCanvas` | `{ nodeIds?: [...] }` | Điều chỉnh khung nhìn, trả về `fitted`, `viewport`, `nodeCount` và `truncated`; khi truyền `nodeIds` thì trả thêm tối đa 100 mục `nodeIds`, khi bỏ qua thì hiển thị toàn bộ node. |
 
-上述操作回执的 `truncated` 只表示 ID 列表缩略，不表示操作只完成了预览部分。不要为了取全回执重复执行操作；按需用读取工具核对受影响范围。
+`truncated` trong biên nhận của các thao tác trên chỉ có nghĩa là danh sách ID được rút gọn, không có nghĩa là thao tác chỉ hoàn thành phần xem trước. Không thực hiện lại thao tác chỉ để lấy đủ biên nhận; khi cần thì dùng công cụ đọc để đối chiếu phạm vi bị ảnh hưởng.
 
-### 参数约束
+### Ràng buộc tham số
 
-- `position` 使用画布坐标，不是屏幕像素坐标；`x`、`y` 必须是有限数字。开启网格吸附时，新增和移动的位置会按网格取整，以返回的 `node.position` 为准。
-- 节点 `label` 去除首尾空白后为 1–200 个字符。
-- `addNode` 只接受当前 `availableNodeTypes` 中的类型，不接受任意 `data` 或自定义节点 ID。需要填写内容或设置节点参数时使用已注册的节点函数。
-- 上述移动、重命名、删除、连接操作每批 1–64 项，单项也使用数组参数。任一项校验失败则整批不执行；执行期间的异常不代表已产生的副作用自动回滚，恢复前仍需回读。
-- 工具顶层参数采用严格对象校验，不传未声明字段。`nodeTools.args` 还要满足具体节点函数的参数定义。
-- 节点 ID、画布 ID、边 ID 是不同的标识，不用显示名称代替它们。
+- `position` dùng tọa độ canvas, không phải tọa độ pixel màn hình; `x`, `y` phải là số hữu hạn. Khi bật bám lưới, vị trí khi thêm mới và di chuyển sẽ được làm tròn theo lưới, lấy `node.position` được trả về làm chuẩn.
+- `label` của node sau khi bỏ khoảng trắng đầu cuối phải dài 1–200 ký tự.
+- `addNode` chỉ chấp nhận các loại có trong `availableNodeTypes` hiện tại, không chấp nhận `data` tùy ý hay ID node tự định nghĩa. Khi cần điền nội dung hoặc thiết lập tham số node, dùng hàm node đã đăng ký.
+- Các thao tác di chuyển, đổi tên, xóa, kết nối nói trên mỗi lô có 1–64 mục, một mục đơn lẻ cũng dùng tham số mảng. Chỉ cần một mục kiểm tra không đạt thì cả lô không được thực hiện; ngoại lệ xảy ra trong lúc thực hiện không có nghĩa là các tác dụng phụ đã phát sinh được tự động hoàn tác, trước khi khôi phục vẫn cần đọc lại.
+- Tham số cấp cao nhất của công cụ được kiểm tra theo đối tượng nghiêm ngặt, không truyền trường chưa khai báo. `nodeTools.args` còn phải thỏa định nghĩa tham số của hàm node cụ thể.
+- ID node, ID canvas, ID cạnh là các định danh khác nhau, không dùng tên hiển thị thay cho chúng.
 
-### 连接规则
+### Quy tắc kết nối
 
-先通过 `getCanvasNodes({ nodeIds: [...], fields: ["ports"] })` 读取两端端口，每个端口含 `id`、`type`、`dataType`，可能还有 `label`。`source`、`target` 是节点 ID；`sourceHandle`、`targetHandle` 是各自节点内的端口 ID。
+Trước tiên đọc cổng hai đầu bằng `getCanvasNodes({ nodeIds: [...], fields: ["ports"] })`, mỗi cổng gồm `id`, `type`, `dataType`, có thể còn có `label`. `source`, `target` là ID node; `sourceHandle`, `targetHandle` là ID cổng bên trong từng node tương ứng.
 
-- 只能从 `type: "source"` 的输出端口连接到 `type: "target"` 的输入端口。
-- 使用实际端口 ID，不根据“图片输入”等提示文字猜测。不同节点可有同名端口，必须同时确认所属节点。
-- 工具沿用画布和目标节点的连接校验；类型匹配不保证一定可连，目标节点可能有额外规则。连接被拒绝时检查最新端口和函数说明，不修改 JSON 强行接线。
-- 剧本和分镜文本用于规划，不直接作为图片或视频生成节点的输入。先确认角色、场景等资产，再把当前片段的全部镜头转写成一份专用视频提示词；连线只承载本次真正使用的素材。
-- 接好媒体后核对目标的实际引用顺序，再用 `node:setPrompt` 写入 `{{ref N}}`、素材名称和用途。连线成功不等于提示词已绑定素材，详细编号与配置核对见 [制作转换第 3–4 节](references/videoProduction.md)。
-- 节点或连线禁止连接、选择、移动、删除时遵守返回错误。删除有子节点的节点须先删除子节点或将其纳入同一删除批次；若涉及用户未要求删除的内容，先明确范围，不自动扩大删除操作。
+- Chỉ được kết nối từ cổng đầu ra `type: "source"` đến cổng đầu vào `type: "target"`.
+- Dùng ID cổng thực tế, không đoán dựa trên chữ gợi ý như "Đầu vào ảnh". Các node khác nhau có thể có cổng cùng tên, phải đồng thời xác nhận node sở hữu.
+- Công cụ áp dụng quy tắc kiểm tra kết nối của canvas và node đích; khớp loại không đảm bảo chắc chắn kết nối được, node đích có thể có quy tắc bổ sung. Khi kết nối bị từ chối, kiểm tra cổng và mô tả hàm mới nhất, không sửa JSON để ép nối dây.
+- Văn bản kịch bản và phân cảnh dùng để lập kế hoạch, không trực tiếp làm đầu vào cho node tạo ảnh hoặc video. Trước tiên xác nhận các tài sản như nhân vật, bối cảnh, rồi chuyển toàn bộ shot của đoạn hiện tại thành một prompt video chuyên dụng; dây nối chỉ mang những tư liệu thực sự được dùng lần này.
+- Sau khi nối xong media, đối chiếu thứ tự tham chiếu thực tế của node đích, rồi dùng `node:setPrompt` ghi `{{ref N}}`, tên tư liệu và công dụng. Nối dây thành công không có nghĩa là prompt đã gắn với tư liệu; chi tiết đánh số và đối chiếu cấu hình xem [Chuyển đổi sản xuất mục 3–4](references/videoProduction.md).
+- Khi node hoặc dây nối cấm kết nối, chọn, di chuyển, xóa thì tuân theo lỗi được trả về. Xóa node có node con thì phải xóa node con trước hoặc đưa chúng vào cùng lô xóa; nếu liên quan đến nội dung người dùng không yêu cầu xóa, trước tiên làm rõ phạm vi, không tự động mở rộng thao tác xóa.
 
-## 调用节点函数
+## Gọi hàm node
 
-使用 `nodeTools({ nodeId, name, args })`：
+Dùng `nodeTools({ nodeId, name, args })`:
 
-- `nodeId` 与 `name` 必须来自同一项函数清单；`name` 保留完整 `node:` 前缀。
-- 按该项 `parameters` 的 JSON Schema 构造 `args`，遵守必填字段、枚举与数据结构；无参数函数也传 `{}`。
-- 不假定所有节点都有同一组函数，例如设置提示词、导入素材、生成媒体等能力必须以该节点实际注册内容为准。
-- 需要核对或修改生成配置时，若清单提供 `node:getConfig`，通过它读取当前配置和可用模型能力；需要变更的选项使用 `node:setConfig` 按实际参数说明修改，再核对返回结果。配置修改不触发生成；用户已确认的有效设置继续沿用，不因普通编辑任务重新选模型。
-- 图片或视频生成前展示实际模型、对象与数量、规格、提示词、参考及费用，等待用户明确批准算力消耗方案；报价未知就说明未知。单张、小样、追加、重生成和可能收费的重试都受授权范围约束，具体批次可一次确认。使用可用的 `askUser`，没有该工具时文字提问等待答复；未回答不能触发生成。未指定供应商时默认按工具返回顺序选择实际可用且满足需求的 Toonflow 模型，用户明确指定或已确认的选择优先，不能把节点自动默认值当成用户选择；没有适用的 Toonflow 模型时先说明并确认替代供应商或模型。
-- 返回值由节点函数决定；无返回值时为 `null`。五个画布读取工具的 64 KiB 上限不适用于 `nodeTools` 业务函数执行结果。执行成功不自动代表媒体生成成功，须检查返回内容及最新节点状态。
-- 新建节点后可立即用返回的节点 ID 查询 `getNodeTools` 并调用，不必结束当前轮对话。
+- `nodeId` và `name` phải đến từ cùng một mục trong danh sách hàm; `name` giữ nguyên tiền tố đầy đủ `node:`.
+- Dựng `args` theo JSON Schema `parameters` của mục đó, tuân thủ trường bắt buộc, enum và cấu trúc dữ liệu; hàm không có tham số cũng truyền `{}`.
+- Không giả định mọi node đều có cùng một bộ hàm, ví dụ các khả năng như thiết lập prompt, nhập tư liệu, tạo media phải lấy nội dung đăng ký thực tế của node đó làm chuẩn.
+- Khi cần đối chiếu hoặc sửa cấu hình tạo, nếu danh sách có `node:getConfig` thì dùng nó để đọc cấu hình hiện tại và khả năng của các model khả dụng; các tùy chọn cần thay đổi thì sửa bằng `node:setConfig` theo mô tả tham số thực tế, rồi đối chiếu kết quả trả về. Sửa cấu hình không kích hoạt tạo; các thiết lập hợp lệ người dùng đã xác nhận thì tiếp tục dùng, không chọn lại model chỉ vì một tác vụ chỉnh sửa thông thường.
+- Trước khi tạo ảnh hoặc video, trình bày model thực tế, đối tượng và số lượng, quy cách, prompt, tham chiếu và chi phí, chờ người dùng phê duyệt rõ ràng phương án tiêu tốn credit tính toán; không biết giá thì nói là chưa biết. Ảnh đơn, bản mẫu nhỏ, bổ sung thêm, tạo lại và các lần thử lại có thể tính phí đều bị ràng buộc bởi phạm vi ủy quyền, một lô cụ thể có thể xác nhận một lần. Dùng `askUser` nếu có, khi không có công cụ đó thì hỏi bằng văn bản và chờ trả lời; chưa trả lời thì không được kích hoạt tạo. Khi không chỉ định nhà cung cấp, mặc định chọn model Toonflow thực sự khả dụng và đáp ứng yêu cầu theo thứ tự công cụ trả về; lựa chọn người dùng chỉ định rõ hoặc đã xác nhận được ưu tiên, không được coi giá trị mặc định tự động của node là lựa chọn của người dùng; khi không có model Toonflow phù hợp thì trước tiên nêu rõ và xác nhận nhà cung cấp hoặc model thay thế.
+- Giá trị trả về do hàm node quyết định; khi không có giá trị trả về thì là `null`. Giới hạn 64 KiB của năm công cụ đọc canvas không áp dụng cho kết quả thực thi của hàm nghiệp vụ `nodeTools`. Thực thi thành công không tự động có nghĩa là tạo media thành công, phải kiểm tra nội dung trả về và trạng thái node mới nhất.
+- Sau khi tạo node mới có thể dùng ngay ID node được trả về để tra `getNodeTools` và gọi, không cần kết thúc lượt hội thoại hiện tại.
 
-## 常见任务
+## Tác vụ thường gặp
 
-### 把创作方案转成可执行画布
+### Chuyển phương án sáng tác thành canvas có thể thực thi
 
-剧本、小说或创意制作任务需要把分镜、素材和提示词落实为节点时，读取 [视频制作的画布转换](references/videoProduction.md)。其中说明哪些内容放进文本节点、如何复用媒体和连接真实依赖，以及后台生成的完成核对。通用参数仍以本手册和当前工具返回的说明为准。
+Khi tác vụ sản xuất từ kịch bản, tiểu thuyết hay ý tưởng cần biến phân cảnh, tư liệu và prompt thành node, đọc [Chuyển đổi canvas cho sản xuất video](references/videoProduction.md). Tài liệu đó giải thích nội dung nào đưa vào node văn bản, cách tái sử dụng media và kết nối các phụ thuộc thực, cũng như đối chiếu hoàn tất của việc tạo chạy nền. Các tham số chung vẫn lấy sổ tay này và mô tả do công cụ hiện tại trả về làm chuẩn.
 
-### 新建画布并添加节点
+### Tạo canvas mới và thêm node
 
-调用 `addCanvas({ "name": "分镜草稿" })`，再用 `getCanvas({ "include": ["nodeTypes"] })` 查询 `availableNodeTypes`，选取符合用户要求的类型传入 `addNode` 的 `type`。例如位置可用 `{ "x": 120, "y": 160 }`；名称由用户意图决定。记录返回的 `node.id`，用 `getNodeTools` 查询并调用函数填写节点内容，最后调用 `fitCanvas({})`。
+Gọi `addCanvas({ "name": "Bản nháp phân cảnh" })`, rồi dùng `getCanvas({ "include": ["nodeTypes"] })` để tra `availableNodeTypes`, chọn loại phù hợp với yêu cầu của người dùng truyền vào `type` của `addNode`. Ví dụ vị trí có thể dùng `{ "x": 120, "y": 160 }`; tên do ý định của người dùng quyết định. Ghi lại `node.id` được trả về, dùng `getNodeTools` để tra và gọi hàm điền nội dung node, cuối cùng gọi `fitCanvas({})`.
 
-### 连接两个已有节点
+### Kết nối hai node đã có
 
-调用 `findCanvasNodes`，按用户指定的名称或选择状态定位两个节点；已知 ID 时跳过查找，若同名节点无法区分则先明确目标。用 `getCanvasNodes` 读取输出与输入端口后，将实际 ID 填入 `connectNodes` 的 `connections` 数组。检查返回 `edges` 的两端，再按需聚焦这两个节点。
+Gọi `findCanvasNodes`, định vị hai node theo tên hoặc trạng thái chọn mà người dùng chỉ định; khi đã biết ID thì bỏ qua bước tìm, nếu các node cùng tên không phân biệt được thì trước tiên làm rõ mục tiêu. Sau khi dùng `getCanvasNodes` đọc cổng đầu ra và đầu vào, điền ID thực tế vào mảng `connections` của `connectNodes`. Kiểm tra hai đầu của `edges` được trả về, rồi khi cần thì lấy tiêu điểm vào hai node này.
 
-### 查找并读取指定片段
+### Tìm và đọc một đoạn chỉ định
 
-例如用户指定 G51，先调用 `findCanvasNodes({ "query": "G51", "limit": 20 })`，按分页结果确认目标。以下 `目标ID` 须替换成返回的实际 ID：
+Ví dụ người dùng chỉ định G51, trước tiên gọi `findCanvasNodes({ "query": "G51", "limit": 20 })`, xác nhận mục tiêu theo kết quả phân trang. `ID-mục-tiêu` dưới đây phải thay bằng ID thực tế được trả về:
 
-- 核对提示词与输出：`getCanvasNodes({ "nodeIds": ["目标ID"], "fields": ["label", "data", "outputs"], "dataKeys": ["prompt", "referenceOrder"] })`。默认字段不含 `ports/data/outputs`，不能把未请求的字段当作空值。
-- 读取长提示词：`getCanvasNodes({ "nodeIds": ["目标ID"], "path": ["data", "prompt"], "textLimit": 4000 })`；后续使用返回的 `nextOffset`，不自行按请求长度推算。
-- 查询目标入边：`getCanvasEdges({ "nodeIds": ["目标ID"], "direction": "incoming", "limit": 100 })`；查询可调用函数：`getNodeTools({ "nodeIds": ["目标ID"], "limit": 20 })`。
+- Đối chiếu prompt và đầu ra: `getCanvasNodes({ "nodeIds": ["ID-mục-tiêu"], "fields": ["label", "data", "outputs"], "dataKeys": ["prompt", "referenceOrder"] })`. Trường mặc định không gồm `ports/data/outputs`, không được coi trường chưa yêu cầu là giá trị rỗng.
+- Đọc prompt dài: `getCanvasNodes({ "nodeIds": ["ID-mục-tiêu"], "path": ["data", "prompt"], "textLimit": 4000 })`; các lần sau dùng `nextOffset` được trả về, không tự suy ra theo độ dài yêu cầu.
+- Tra cạnh vào của mục tiêu: `getCanvasEdges({ "nodeIds": ["ID-mục-tiêu"], "direction": "incoming", "limit": 100 })`; tra các hàm có thể gọi: `getNodeTools({ "nodeIds": ["ID-mục-tiêu"], "limit": 20 })`.
 
-### 批量整理节点
+### Sắp xếp node hàng loạt
 
-仅当用户明确要求整理整幅当前画布时，在确认目标后调用一次 `arrangeCanvas({})`，不自行计算所有节点坐标再逐个移动。此工具复用画布现有整理功能，不接受 `nodeIds` 或其他局部范围参数。
+Chỉ khi người dùng yêu cầu rõ ràng sắp xếp toàn bộ canvas hiện tại, sau khi xác nhận mục tiêu thì gọi `arrangeCanvas({})` một lần, không tự tính tọa độ của mọi node rồi di chuyển từng cái. Công cụ này tái sử dụng chức năng sắp xếp sẵn có của canvas, không nhận `nodeIds` hay tham số phạm vi cục bộ khác.
 
-待整理节点尚未测量或不可移动时，工具明确返回错误；不要猜测尺寸或绕过移动限制。空画布正常返回空的 `arrangedNodeIds`，不执行布局或视口调整。
+Khi các node cần sắp xếp chưa được đo kích thước hoặc không thể di chuyển, công cụ trả về lỗi rõ ràng; không đoán kích thước hay lách giới hạn di chuyển. Canvas trống trả về bình thường với `arrangedNodeIds` rỗng, không thực hiện bố cục hay điều chỉnh khung nhìn.
 
-只整理指定镜头或局部节点时，读取实际位置与目标范围，用 `moveNodes` 的 `moves` 数组调整这些节点，按需用 `fitCanvas({ "nodeIds": [...] })` 展示。只要求看清内容时直接用 `fitCanvas`，不重排节点。不得为了局部整理调用 `arrangeCanvas` 移动用户其他节点，也不删除或重建节点来代替移动。
+Khi chỉ sắp xếp các shot chỉ định hoặc node cục bộ, đọc vị trí thực tế và phạm vi mục tiêu, dùng mảng `moves` của `moveNodes` để điều chỉnh các node đó, khi cần thì dùng `fitCanvas({ "nodeIds": [...] })` để hiển thị. Khi chỉ yêu cầu nhìn rõ nội dung thì dùng thẳng `fitCanvas`, không xếp lại node. Không được gọi `arrangeCanvas` để sắp xếp cục bộ mà di chuyển các node khác của người dùng, cũng không xóa hay dựng lại node thay cho việc di chuyển.
 
-## 失败后的处理
+## Xử lý sau khi thất bại
 
-- 节点类型未启用、端口不存在、函数未注册：分别用 `getCanvas({ include: ["nodeTypes"] })`、`getCanvasNodes`、`getNodeTools` 查询最新状态并调整操作，不要猜测替代函数。
-- 画布已关闭、用户手动切换项目或画布、本轮上下文失效：停止沿用旧 ID，请用户在目标画布重新发送请求。
-- 超时、取消或保存失败不等于操作已回滚。上下文仍有效时先读取最新画布状态，确认是否已创建节点、连线或画布，再决定是否重试，避免重复创建或重复触发生成。
-- 工具会等待需要保存的操作完成保存；不要另外直接写画布 JSON。当前工具不提供删除画布、任意写入节点数据或任意设置视口参数的通用接口。
+- Loại node chưa bật, cổng không tồn tại, hàm chưa đăng ký: lần lượt dùng `getCanvas({ include: ["nodeTypes"] })`, `getCanvasNodes`, `getNodeTools` để tra trạng thái mới nhất và điều chỉnh thao tác, không đoán hàm thay thế.
+- Canvas đã đóng, người dùng tự tay chuyển dự án hoặc canvas, ngữ cảnh của lượt này mất hiệu lực: ngừng dùng ID cũ, nhờ người dùng gửi lại yêu cầu trên canvas mục tiêu.
+- Hết thời gian, hủy hoặc lưu thất bại không có nghĩa là thao tác đã được hoàn tác. Khi ngữ cảnh vẫn còn hiệu lực, trước tiên đọc trạng thái canvas mới nhất, xác nhận xem đã tạo node, dây nối hay canvas chưa, rồi mới quyết định có thử lại hay không, tránh tạo trùng hoặc kích hoạt tạo trùng.
+- Công cụ sẽ chờ các thao tác cần lưu được lưu xong; không ghi trực tiếp JSON canvas theo cách khác. Công cụ hiện tại không cung cấp giao diện chung để xóa canvas, ghi tùy ý dữ liệu node hay thiết lập tùy ý tham số khung nhìn.

@@ -1,64 +1,64 @@
-# 视频准备、生成与验收
+# Chuẩn bị, tạo và nghiệm thu video
 
-本流程有三个独立确认停点，不能一次越过。所有成果留在当前集画布，例如 `画布/分集/第001集.json`。
-具体节点、工具发现、状态与文件操作见 [canvasOperations.md](canvasOperations.md)。
+Quy trình này có ba điểm dừng xác nhận độc lập, không được vượt qua một lần. Mọi thành quả để trên canvas của tập hiện tại, ví dụ `Canvas/Tập/Tập 001.json`.
+Node cụ thể, khám phá công cụ, trạng thái và thao tác tệp xem [canvasOperations.md](canvasOperations.md).
 
-准备前读取 [视频模式、模型模板与声音知识](knowledge/videoPromptCraft.md)：先读模式选择和共用约束，再完整读本次实际适用的 Seedance 三段、Wan 单首帧、通用首帧/首尾帧或通用多参模板，最后读本集记录与验收。不得只取模板名称；需实际填入本集原镜号、动作、台词、声音及真实引用。风格仅查 [视觉风格](knowledge/visualStyles.md) 的确认条目，计时或衔接有疑问时重读 [镜头知识](knowledge/shotCraft.md) 对应部分。
+Trước khi chuẩn bị, đọc [Kiến thức chế độ video, mẫu mô hình và âm thanh](knowledge/videoPromptCraft.md): trước tiên đọc phần chọn chế độ và ràng buộc chung, rồi đọc đầy đủ mẫu thực tế áp dụng cho lần này trong các mẫu Seedance ba đoạn, Wan khung đầu đơn, khung đầu/khung đầu và khung cuối chung hoặc đa tham chiếu chung, cuối cùng đọc phần ghi chép tập này và nghiệm thu. Không được chỉ lấy tên mẫu; phải thực sự điền số shot gốc, động tác, lời thoại, âm thanh và tham chiếu thật của tập này. Phong cách chỉ tra mục đã xác nhận của [Phong cách hình ảnh](knowledge/visualStyles.md), khi có nghi vấn về tính thời gian hoặc nối tiếp thì đọc lại phần tương ứng của [Kiến thức shot](knowledge/shotCraft.md).
 
-## 一、视频准备
+## I. Chuẩn bị video
 
-输入为已确认分镜表、制作单元、选用资产图，以及所选路线需要的确认分镜图。
-正式台词以 `画布/剧本.json` 为准；资产引用来自 `画布/资产.json`，不建立新的正式资产副本。
+Đầu vào là bảng phân cảnh đã xác nhận, đơn vị sản xuất, ảnh tài sản được chọn dùng, và ảnh phân cảnh đã xác nhận mà tuyến được chọn cần.
+Lời thoại chính thức lấy `Canvas/Kịch bản.json` làm chuẩn; tham chiếu tài sản lấy từ `Canvas/Tài sản.json`, không lập bản sao tài sản chính thức mới.
 
-1. 读取当前视频模型实际支持的输入、参考数量、时长、分辨率、比例、音频和模式，不强制 Seedance。
-2. 文本多参按每个片段准备一个视频；首帧路线按每镜准备一个视频，支持且已选择首尾帧时才加入末帧。
-3. 单元时长受 v1.1.8 的 15 秒上限与当前模型上限共同约束；不兼容的离散时长或输入返回分镜/模式确认。
-4. 依据实际模型/输入模式选知识文件中的适用模板，为每个单元写完整执行提示词：主体与场景、原镜号和全部子镜、动作起终状态、镜头运动、时序、完整台词与具体音效。模板要求单连续镜头却遇已确认多镜时返回分镜/模式确认，不为套格式删镜。
-5. 台词保留原语言与原文，区分对白、OS 和 VO；只有说话者做对应口型，不能让旁白自动变成角色开口。
-6. 参考标记按当前宿主的 `{{ref N}}` 和真实媒体输入顺序建立并核对适配映射，不把旧 `@图N` 或 XML 当作通用协议；图像、视频、音频分别注明实际用途，缺分镜图不虚构构图参考，也不因此丢掉真实资产参考。
-7. 图片缺失、音频不受支持或参考超限时先调整方案并确认，不能丢弃输入后直接生成。
-8. 视频节点与说明写入后回读，核对镜号/片段号、顺序、提示词、时长、实际媒体输入及已有输出基线；模板正文只写执行内容，审阅意见留在可读说明。
+1. Đọc đầu vào, số lượng tham chiếu, thời lượng, độ phân giải, tỉ lệ khung, âm thanh và chế độ mà mô hình video hiện tại thực sự hỗ trợ, không bắt buộc Seedance.
+2. Văn bản đa tham chiếu chuẩn bị một video cho mỗi đoạn; tuyến khung đầu chuẩn bị một video cho mỗi shot, chỉ khi hỗ trợ và đã chọn khung đầu và khung cuối mới thêm khung cuối.
+3. Thời lượng đơn vị đồng thời bị ràng buộc bởi giới hạn 15 giây của v1.1.8 và giới hạn của mô hình hiện tại; thời lượng rời rạc hoặc đầu vào không tương thích thì quay lại xác nhận phân cảnh/chế độ.
+4. Theo mô hình/chế độ đầu vào thực tế chọn mẫu áp dụng trong tệp kiến thức, viết prompt thực thi đầy đủ cho mỗi đơn vị: chủ thể và bối cảnh, số shot gốc và toàn bộ shot con, trạng thái đầu cuối của động tác, chuyển động máy, trình tự thời gian, lời thoại đầy đủ và hiệu ứng âm thanh cụ thể. Khi mẫu yêu cầu một shot liên tục đơn mà gặp nhiều shot đã xác nhận thì quay lại xác nhận phân cảnh/chế độ, không vì khớp định dạng mà xóa shot.
+5. Lời thoại giữ ngôn ngữ gốc và nguyên văn, phân biệt đối thoại, OS và VO; chỉ người nói mới khẩu hình tương ứng, không được để lời dẫn tự động thành nhân vật mở miệng.
+6. Dấu tham chiếu được lập theo `{{ref N}}` của host hiện tại và thứ tự đầu vào media thật, đồng thời kiểm tra ánh xạ thích ứng, không coi `@ảnhN` cũ hay XML là giao thức chung; ảnh, video, âm thanh ghi chú riêng mục đích thực tế, thiếu ảnh phân cảnh thì không hư cấu tham chiếu bố cục, cũng không vì thế mà bỏ tham chiếu tài sản thật.
+7. Khi thiếu ảnh, âm thanh không được hỗ trợ hoặc tham chiếu vượt giới hạn thì trước tiên điều chỉnh phương án và xác nhận, không được bỏ đầu vào rồi tạo thẳng.
+8. Sau khi ghi node video và ghi chú, đọc lại, kiểm tra số shot/số đoạn, thứ tự, prompt, thời lượng, đầu vào media thực tế và mốc đầu ra đã có; chính văn mẫu chỉ viết nội dung thực thi, ý kiến duyệt để trong ghi chú đọc được.
 
-在本集已有制作说明中保存模板选择及理由、模型/模式、完整执行 prompt、原镜号对应关系、台词/OS/VO 与说话人及口型、音色依据、参考来源版本和实际输入映射、起终状态与前后承接。没有真实声音样本不编音频引用，没有音频能力不承诺对白/音色生成；不在此新增正式资产副本。
+Trong ghi chú sản xuất đã có của tập này, lưu lựa chọn mẫu và lý do, mô hình/chế độ, prompt thực thi đầy đủ, quan hệ tương ứng với số shot gốc, lời thoại/OS/VO và người nói cùng khẩu hình, căn cứ âm sắc, phiên bản nguồn tham chiếu và ánh xạ đầu vào thực tế, trạng thái đầu cuối và sự tiếp nối trước sau. Không có mẫu giọng thật thì không bịa tham chiếu âm thanh, không có năng lực âm thanh thì không hứa tạo lời thoại/âm sắc; không thêm bản sao tài sản chính thức ở đây.
 
-**停点 A：准备确认。** 展示提示词、模型/模式、参数、单元数量及范围，等待用户确认或修订。
-将确认范围写回本集画布后停止；对准备内容的确认不自动等于授权启动生成。
+**Điểm dừng A: Xác nhận chuẩn bị.** Trình bày prompt, mô hình/chế độ, tham số, số lượng đơn vị và phạm vi, chờ người dùng xác nhận hoặc sửa.
+Sau khi ghi phạm vi xác nhận ngược vào canvas của tập này thì dừng; xác nhận nội dung chuẩn bị không tự động đồng nghĩa với ủy quyền khởi động tạo.
 
-## 二、视频生成
+## II. Tạo video
 
-进入条件：准备已通过，并已获得针对本批视频的生成指示；同一明确授权范围不反复确认。
+Điều kiện vào: phần chuẩn bị đã thông qua, và đã nhận được chỉ thị tạo cho lô video này; cùng một phạm vi ủy quyền rõ ràng thì không xác nhận đi xác nhận lại.
 
-1. 回读准备结果，确保生成目标和授权范围仍一致，参数变更不得悄悄生效。
-2. 通过实时发现的节点工具启动确认范围，保留旧候选和已有选用版本。
-3. 记录实际节点/任务标识与「生成中」，使用当前可用状态工具查询终态。
-4. 切换画布后继续依据真实标识查询；不能把页面离开解释为任务取消并重复下单。
-5. 成功后回读视频输出并打开验证，失败记录对应单元和原因；请求成功不等于视频成功。
-6. 把成功、失败、仍进行中分别写回本集；未完成项不计入交付完成。
+1. Đọc lại kết quả chuẩn bị, bảo đảm mục tiêu tạo và phạm vi ủy quyền vẫn nhất quán, thay đổi tham số không được lặng lẽ có hiệu lực.
+2. Khởi động phạm vi xác nhận qua công cụ node được khám phá thời gian thực, giữ ứng viên cũ và phiên bản đã chọn dùng.
+3. Ghi lại định danh node/tác vụ thực tế và "Đang tạo", dùng công cụ trạng thái hiện khả dụng để truy vấn trạng thái cuối.
+4. Sau khi chuyển canvas tiếp tục truy vấn theo định danh thật; không được diễn giải việc rời trang thành hủy tác vụ rồi đặt lặp.
+5. Sau khi thành công đọc lại đầu ra video và mở để kiểm chứng, thất bại thì ghi lại đơn vị tương ứng và nguyên nhân; yêu cầu thành công không đồng nghĩa với video thành công.
+6. Ghi ngược riêng các mục thành công, thất bại, vẫn đang chạy vào tập này; mục chưa hoàn thành không tính vào hoàn thành bàn giao.
 
-**停点 B：生成结果确认。** 展示可播放候选和失败范围，等待用户决定验收、局部重试或修改。
-未经明确指示不自动重跑失败项，不把全部成功候选直接标成已选用成片。
+**Điểm dừng B: Xác nhận kết quả tạo.** Trình bày các ứng viên phát được và phạm vi thất bại, chờ người dùng quyết định nghiệm thu, thử lại cục bộ hoặc sửa.
+Chưa có chỉ thị rõ ràng thì không tự động chạy lại mục thất bại, không đánh dấu thẳng toàn bộ ứng viên thành công là thành phẩm đã chọn dùng.
 
-## 三、视频验收与交付
+## III. Nghiệm thu và bàn giao video
 
-进入条件：用户确认进入验收或明确要求选片/交付。实际播放候选，对照分镜和台词检查：
+Điều kiện vào: người dùng xác nhận vào nghiệm thu hoặc yêu cầu rõ ràng chọn đoạn/bàn giao. Phát thực tế các ứng viên, đối chiếu phân cảnh và lời thoại để kiểm tra:
 
-- 人物身份、形态、场景与道具一致，动作和镜头符合确认分镜，没有关键事件缺失。
-- 台词完整、说话者正确、OS/VO 与口型关系正确，音效符合场景；按实际模型能力核查音频。
-- 实际时长、比例、清晰度可用，片段之间动作、场景和情绪连续，没有明显截断或多余尾段。
-- 视频文件可读取且对应正确单元；记录候选差异、问题位置和推荐使用的版本。
+- Thân phận, hình thái nhân vật, bối cảnh và đạo cụ nhất quán, động tác và shot phù hợp phân cảnh đã xác nhận, không thiếu sự kiện then chốt.
+- Lời thoại đầy đủ, người nói đúng, quan hệ giữa OS/VO và khẩu hình đúng, hiệu ứng âm thanh phù hợp bối cảnh; kiểm tra âm thanh theo năng lực mô hình thực tế.
+- Thời lượng thực tế, tỉ lệ khung, độ nét dùng được, động tác, bối cảnh và cảm xúc giữa các đoạn liên tục, không có cắt cụt rõ ràng hay đoạn đuôi thừa.
+- Tệp video đọc được và tương ứng đúng đơn vị; ghi lại khác biệt giữa các ứng viên, vị trí vấn đề và phiên bản khuyến nghị sử dụng.
 
-依视频知识的验收方法把实际查看的证据和问题时间点写回本集。当前工具无法播放/理解视频或读取音轨时，请用户预览回报并保留“待用户核验”，不能用可读路径、成功状态或旧输出冒充已经观看和听取。
+Theo phương pháp nghiệm thu của kiến thức video, ghi bằng chứng đã xem thực tế và thời điểm có vấn đề ngược vào tập này. Khi công cụ hiện tại không thể phát/hiểu video hoặc đọc track âm thanh, nhờ người dùng xem trước và phản hồi, giữ "Chờ người dùng kiểm chứng", không được dùng đường dẫn đọc được, trạng thái thành công hay đầu ra cũ để giả là đã xem và nghe.
 
-**停点 C：选用与交付确认。** 展示逐单元验收意见、选片方案和顺序，等待用户确定采用或重做范围。
-用户确认后，把选用结果与真实视频引用写回本集画布，保留未选候选与问题记录。
+**Điểm dừng C: Xác nhận chọn dùng và bàn giao.** Trình bày ý kiến nghiệm thu từng đơn vị, phương án chọn đoạn và thứ tự, chờ người dùng quyết định phạm vi chọn dùng hoặc làm lại.
+Sau khi người dùng xác nhận, ghi kết quả chọn dùng và tham chiếu video thật ngược vào canvas của tập này, giữ các ứng viên không được chọn và bản ghi vấn đề.
 
-## 交付边界
+## Ranh giới bàn giao
 
-默认可交付为按确认顺序排列的片段及清单，注明集号、镜号/片段号、实际时长、文件引用和未解决项。
-用户要求合成时，先核实当前宿主有可用合成能力，再确认具体方案；没有能力时明确交付为片段。
-只有实际合成、回读文件并播放核验后，才能称为本集成片；不能以清单或未执行任务冒充导出完成。
-旧版 README 提及拼接导出，但该 tag 未提供可据此复用的制作导出路由，不编造旧 API。
-交付文件夹按已确认项目组织保存，画布节点保留真实引用；不随意移动或删除生成原件。
-本集交付状态回写后停止；下一集仍按主流程逐阶段执行，不能把本集确认扩展到全部集数。
+Mặc định có thể bàn giao các đoạn sắp theo thứ tự đã xác nhận và danh sách, ghi rõ số tập, số shot/số đoạn, thời lượng thực tế, tham chiếu tệp và các mục chưa giải quyết.
+Khi người dùng yêu cầu ghép, trước tiên xác minh host hiện tại có năng lực ghép khả dụng, rồi xác nhận phương án cụ thể; không có năng lực thì nói rõ bàn giao dưới dạng các đoạn.
+Chỉ sau khi ghép thực tế, đọc lại tệp và phát kiểm chứng mới được gọi là thành phẩm của tập này; không được dùng danh sách hay tác vụ chưa thực hiện để giả là đã xuất xong.
+README bản cũ có nhắc tới ghép nối xuất, nhưng tag đó không cung cấp route xuất sản xuất nào có thể dựa vào để dùng lại, không bịa API cũ.
+Thư mục bàn giao được lưu theo tổ chức dự án đã xác nhận, node canvas giữ tham chiếu thật; không tùy tiện di chuyển hay xóa bản gốc đã tạo.
+Sau khi ghi ngược trạng thái bàn giao của tập này thì dừng; tập sau vẫn theo quy trình chính thực hiện từng giai đoạn, không được mở rộng xác nhận của tập này cho tất cả các tập.
 
-旧版工作台与当前节点的边界见 [sourceMap.md](sourceMap.md)。
+Ranh giới giữa bàn làm việc bản cũ và node hiện tại xem [sourceMap.md](sourceMap.md).

@@ -1,66 +1,66 @@
-# 衍生资产分析
+# Phân tích tài sản phái sinh
 
-分析当前已确认剧本需要的视觉变体及用户明确追加的设计，不在本阶段生成图片。画布操作见 [canvasOperations.md](canvasOperations.md)。
+Phân tích các biến thể hình ảnh mà kịch bản đã xác nhận hiện tại cần và các thiết kế người dùng yêu cầu bổ sung rõ ràng, không tạo ảnh ở giai đoạn này. Thao tác canvas xem [canvasOperations.md](canvasOperations.md).
 
-## 输入与落点
+## Đầu vào và nơi lưu
 
-- 从 `画布/剧本.json` 读取该集正式剧本；从 `画布/资产.json` 读取基础资产、既有变体及确认状态。
-- 依据剧本与资产描述直接判断，不要求导演规划提供旧版「衍生预划清单」。
-- 衍生清单及父子关系统一写入 `画布/资产.json`，本集画布仅保留引用和适用镜头说明。
-- 父资产必须真实存在；缺基础资产时记录缺口并返回基础资产阶段，不编造父节点或偷偷新建基础资产。
+- Đọc kịch bản chính thức của tập đó từ `Canvas/Kịch bản.json`; đọc tài sản cơ bản, các biến thể sẵn có và trạng thái xác nhận từ `Canvas/Tài sản.json`.
+- Phán đoán trực tiếp dựa trên kịch bản và mô tả tài sản, không yêu cầu kế hoạch đạo diễn cung cấp "Danh sách dự kiến phái sinh" của bản cũ.
+- Danh sách phái sinh và quan hệ cha con ghi thống nhất vào `Canvas/Tài sản.json`, canvas của tập này chỉ giữ tham chiếu và ghi chú shot áp dụng.
+- Tài sản cha phải thực sự tồn tại; thiếu tài sản cơ bản thì ghi lại chỗ thiếu và quay lại giai đoạn tài sản cơ bản, không bịa node cha hay lén tạo mới tài sản cơ bản.
 
-## 执行前加载知识
+## Nạp kiến thức trước khi thực hiện
 
-- 读取 [资产设计方法](knowledge/assetDesign.md) 的角色造型分层、场景变体；遇到用户明确追加的道具状态等需求时再读取相应章节。
-- 读取 [画风与视觉规则](knowledge/visualStyles.md) 的当前分支，并回读资产画布的“项目视觉约定”、父资产设计卡和已确认父图。
-- 用知识细化“不变项、允许变化项、材质/光照的连带变化”，写入资产画布；可用设计知识不等于扩大下表的默认提取范围。
+- Đọc phần phân lớp tạo hình nhân vật, biến thể bối cảnh của [Phương pháp thiết kế tài sản](knowledge/assetDesign.md); khi gặp nhu cầu như trạng thái đạo cụ do người dùng yêu cầu bổ sung rõ ràng thì đọc thêm chương tương ứng.
+- Đọc nhánh hiện tại của [Phong cách vẽ và quy tắc hình ảnh](knowledge/visualStyles.md), và đọc lại "Quy ước hình ảnh dự án", thẻ thiết kế tài sản cha và ảnh cha đã xác nhận trên canvas tài sản.
+- Dùng kiến thức để chi tiết hóa "mục bất biến, mục được phép thay đổi, thay đổi kéo theo về chất liệu/ánh sáng", ghi vào canvas tài sản; có kiến thức thiết kế dùng được không đồng nghĩa với mở rộng phạm vi trích xuất mặc định trong bảng dưới.
 
-## 默认自动提取范围
+## Phạm vi tự động trích xuất mặc định
 
-| 类型 | 可以提取 | 不提取 |
+| Loại | Có thể trích xuất | Không trích xuất |
 |---|---|---|
-| 角色 | 整体换装、变身特效、体型或结构的形态变化 | 瞬时表情、眼眶泛红、手眼嘴局部特写、单镜头姿态 |
-| 场景 | 同一地点的日景、夜景、清晨、黄昏等时段变体 | 单纯换机位、天气变化、破损状态 |
-| 道具 | 本流程不自动衍生 | 所有道具状态变体 |
+| Nhân vật | Thay trang phục toàn bộ, hiệu ứng biến thân, thay đổi hình thái về vóc dáng hoặc cấu trúc | Biểu cảm tức thời, viền mắt đỏ lên, cận cảnh cục bộ tay mắt miệng, tư thế trong một shot |
+| Bối cảnh | Biến thể theo khung giờ như cảnh ngày, cảnh đêm, sáng sớm, hoàng hôn của cùng một địa điểm | Chỉ đổi góc máy, thay đổi thời tiết, trạng thái hư hỏng |
+| Đạo cụ | Quy trình này không tự động phái sinh | Mọi biến thể trạng thái đạo cụ |
 
-这是 v1.1.8 的默认提取边界。用户明确要求天气、机位或道具状态等额外设计时，记录该需求并直接使用对应知识方法，不受表中默认排除项限制；已有明确要求不重复询问是否需要，只确认尚未确定的设计和生成方案。
-默认自动提取以稳定、可复用、改变整体识别外观的资产状态为准；剧情写得重要不等于必须新建资产。用户已确认的额外参考图可保持同一身份和外形，仅改变机位或指定状态。
-同一状态已有确认图片时优先复用；已有待审版本时继续修订，不重复创建同名变体。
-每个父资产通常只需 1～5 个有依据的变体，没有需要时保持零个。
+Đây là ranh giới trích xuất mặc định của v1.1.8. Khi người dùng yêu cầu rõ ràng các thiết kế bổ sung như thời tiết, góc máy hoặc trạng thái đạo cụ, ghi lại nhu cầu đó và trực tiếp dùng phương pháp kiến thức tương ứng, không bị hạn chế bởi các mục loại trừ mặc định trong bảng; đã có yêu cầu rõ ràng thì không hỏi lại có cần không, chỉ xác nhận thiết kế và phương án tạo chưa xác định.
+Tự động trích xuất mặc định lấy các trạng thái tài sản ổn định, dùng lại được, làm thay đổi ngoại hình nhận diện tổng thể làm chuẩn; kịch bản viết là quan trọng không có nghĩa phải tạo tài sản mới. Ảnh tham chiếu bổ sung mà người dùng đã xác nhận có thể giữ cùng thân phận và ngoại hình, chỉ thay đổi góc máy hoặc trạng thái chỉ định.
+Khi cùng một trạng thái đã có ảnh xác nhận thì ưu tiên dùng lại; đã có phiên bản chờ duyệt thì tiếp tục sửa, không tạo lặp biến thể cùng tên.
+Mỗi tài sản cha thường chỉ cần 1~5 biến thể có căn cứ, khi không cần thì giữ ở số không.
 
-## 分析与写入
+## Phân tích và ghi
 
-1. 按资产逐个对照剧本及用户明确需求，记录引发变化的场次、明确语句或需求依据。
-2. 区分基础态和目标态，写清「与基础态的差异」及「需要保留的身份特征」。
-3. 默认自动提取时，核查变化能否由单次分镜的动作、表情或构图表达，可以时不建立衍生；用户已明确要求的独立变体参考图按该范围制作设计草稿。
-4. 核对既有变体，复用或修订；仅对没有对应记录的状态新增草稿。
-5. 写入统一资产画布，并记录父资产的真实画布/节点引用，不能只输出聊天清单。
-6. 按对应知识落实设计：换装写妆容/发型/内搭/主服/鞋/配饰的实际变化而非全量重置；时段写光源、影长与灯的开关变化；额外道具状态写具体材质反应。把风格、色盘、材质与父图锁定项一并写回，待确认后才可用于生成。
+1. Đối chiếu từng tài sản với kịch bản và nhu cầu rõ ràng của người dùng, ghi lại cảnh gây ra thay đổi, câu chữ rõ ràng hoặc căn cứ nhu cầu.
+2. Phân biệt trạng thái cơ bản và trạng thái đích, ghi rõ "khác biệt so với trạng thái cơ bản" và "đặc điểm thân phận cần giữ".
+3. Khi tự động trích xuất mặc định, kiểm tra thay đổi có thể được biểu đạt bằng động tác, biểu cảm hoặc bố cục của một phân cảnh đơn lẻ không, nếu có thể thì không lập phái sinh; ảnh tham chiếu biến thể độc lập mà người dùng đã yêu cầu rõ thì làm bản nháp thiết kế theo phạm vi đó.
+4. Kiểm tra các biến thể sẵn có, dùng lại hoặc sửa; chỉ thêm bản nháp cho trạng thái không có bản ghi tương ứng.
+5. Ghi vào canvas tài sản thống nhất, và ghi lại tham chiếu canvas/node thật của tài sản cha, không được chỉ xuất danh sách trong chat.
+6. Thực hiện thiết kế theo kiến thức tương ứng: thay trang phục ghi thay đổi thực tế của trang điểm/kiểu tóc/áo trong/áo chính/giày/phụ kiện chứ không thiết lập lại toàn bộ; khung giờ ghi thay đổi nguồn sáng, độ dài bóng và việc bật tắt đèn; trạng thái đạo cụ bổ sung ghi phản ứng chất liệu cụ thể. Ghi ngược phong cách, bảng màu, chất liệu cùng các mục khóa theo ảnh cha, sau khi xác nhận mới được dùng để tạo.
 
-## 可验产出
+## Đầu ra kiểm chứng được
 
-每项包含：父资产及父图引用、衍生名称、类型、不变项、变化描述、具体视觉设计、剧本或用户需求依据、适用集数/场次、图片状态。
-名称宜简短并可辨识，例如「角色名·战斗服」或「庭院·夜景」；与父资产保持可追溯关系。
-描述使用「与基础态的差异 · 目标视觉特征」，避免无依据扩写人物身份或世界设定。
-父图未确认或不可读取时可保存设计草稿，但不能标为可生成，也不能宣称有可用参考图。
-没有符合条件的变体时，把「无需新增衍生」及核查范围写入资产画布并同步本集进度。
+Mỗi mục gồm: tài sản cha và tham chiếu ảnh cha, tên phái sinh, loại, mục bất biến, mô tả thay đổi, thiết kế hình ảnh cụ thể, căn cứ kịch bản hoặc nhu cầu người dùng, tập/cảnh áp dụng, trạng thái ảnh.
+Tên nên ngắn gọn và dễ nhận biết, ví dụ "Tên nhân vật·Đồ chiến đấu" hoặc "Sân vườn·Cảnh đêm"; giữ quan hệ truy ngược được với tài sản cha.
+Mô tả dùng "Khác biệt so với trạng thái cơ bản · Đặc điểm hình ảnh đích", tránh viết mở rộng thân phận nhân vật hoặc thiết lập thế giới không có căn cứ.
+Khi ảnh cha chưa xác nhận hoặc không đọc được có thể lưu bản nháp thiết kế, nhưng không được đánh dấu là có thể tạo, cũng không được tuyên bố có ảnh tham chiếu dùng được.
+Khi không có biến thể đủ điều kiện, ghi "Không cần thêm phái sinh" và phạm vi đã kiểm tra vào canvas tài sản, đồng thời đồng bộ tiến độ của tập này.
 
-## 回读与确认
+## Đọc lại và xác nhận
 
-1. 回读资产画布，核对本次新增/复用数量、父资产引用、剧本依据和图片状态。
-   同时核对设计沿用正确的画风约定：换装不改脸，改时段不换地点；媒介表现、材质与状态变化相符，额外变体有单独确认依据。
-2. 展示新增、复用、待补输入三类结果，明确图片尚未生成。
-3. 让用户确认全部、部分、修改或跳过；跳过的变体不得继续作为可用图片引用。
-4. 将确认范围写回资产画布及本集进度，停止本阶段。
-5. 后续按 [generateAssets.md](generateAssets.md) 生成已确认子集；不要自动发起任务。
+1. Đọc lại canvas tài sản, kiểm tra số lượng thêm mới/dùng lại lần này, tham chiếu tài sản cha, căn cứ kịch bản và trạng thái ảnh.
+   Đồng thời kiểm tra thiết kế dùng tiếp đúng quy ước phong cách vẽ: thay trang phục không đổi mặt, đổi khung giờ không đổi địa điểm; biểu hiện phương tiện, chất liệu và thay đổi trạng thái tương xứng, biến thể bổ sung có căn cứ xác nhận riêng.
+2. Trình bày ba loại kết quả thêm mới, dùng lại, chờ bổ sung đầu vào, nói rõ ảnh chưa được tạo.
+3. Để người dùng xác nhận toàn bộ, một phần, sửa hoặc bỏ qua; biến thể bị bỏ qua không được tiếp tục dùng làm tham chiếu ảnh khả dụng.
+4. Ghi phạm vi xác nhận ngược vào canvas tài sản và tiến độ của tập này, dừng giai đoạn này.
+5. Về sau theo [generateAssets.md](generateAssets.md) tạo tập con đã xác nhận; không tự động khởi tạo tác vụ.
 
-## 部分生成或跳过后的交接
+## Bàn giao sau khi tạo một phần hoặc bỏ qua
 
-逐项写明“需要的剧情状态、现有可用图片、用户选择、影响的集/场、后续状态”，不能只留下“已跳过”三个字。
+Ghi rõ từng mục "trạng thái cốt truyện cần có, ảnh khả dụng hiện có, lựa chọn của người dùng, tập/cảnh bị ảnh hưởng, trạng thái về sau", không được chỉ để lại hai chữ "Đã bỏ qua".
 
-- 已有匹配状态的采用图：直接复用，并记录实际来源，不再新生成。
-- 只有基础态而没有所需状态：保留换装、夜景等剧情要求和未生成记录，不能把基础图冒称衍生图。分镜仍可写完整文本草稿，但受影响镜头标为“待素材/待方案确认”，不能进入对应媒体生成或宣称整集可制作。
-- 用户希望沿用现有图片继续时，提出具体替代方案，说明如何保留原剧情和视觉状态；只有该方案获得确认且当前模型确能承载，才更新相关分镜与实际引用。不自动删掉换装/夜景，也不把“跳过生成”解释为已同意视觉降级。
-- 不受缺口影响的镜头可按用户确认的子集继续；整集记录为部分完成，保留未解决范围。用户未重新授权时，不因下游读到缺口就再次发起已跳过的衍生任务。
+- Đã có ảnh chọn dùng ở trạng thái phù hợp: dùng lại trực tiếp, và ghi lại nguồn thực tế, không tạo mới nữa.
+- Chỉ có trạng thái cơ bản mà không có trạng thái cần thiết: giữ yêu cầu cốt truyện như thay trang phục, cảnh đêm và bản ghi chưa tạo, không được đem ảnh cơ bản giả làm ảnh phái sinh. Phân cảnh vẫn có thể viết bản nháp văn bản đầy đủ, nhưng các shot bị ảnh hưởng đánh dấu là "Chờ tư liệu/Chờ xác nhận phương án", không được vào bước tạo media tương ứng hay tuyên bố cả tập có thể sản xuất.
+- Khi người dùng muốn dùng tiếp ảnh hiện có để tiếp tục, đề xuất phương án thay thế cụ thể, nói rõ cách giữ cốt truyện gốc và trạng thái hình ảnh; chỉ khi phương án đó được xác nhận và mô hình hiện tại thực sự đáp ứng được mới cập nhật các phân cảnh liên quan và tham chiếu thực tế. Không tự động xóa thay trang phục/cảnh đêm, cũng không diễn giải "bỏ qua tạo" thành đã đồng ý hạ cấp hình ảnh.
+- Các shot không bị chỗ thiếu ảnh hưởng có thể tiếp tục theo tập con người dùng đã xác nhận; cả tập ghi là hoàn thành một phần, giữ lại phạm vi chưa giải quyết. Khi người dùng chưa ủy quyền lại, không vì khâu sau đọc thấy chỗ thiếu mà khởi tạo lại các tác vụ phái sinh đã bỏ qua.
 
-来源与旧版决策提示词的冲突处理见 [sourceMap.md](sourceMap.md)。
+Cách xử lý xung đột với prompt quyết định của bản cũ và nguồn xem [sourceMap.md](sourceMap.md).

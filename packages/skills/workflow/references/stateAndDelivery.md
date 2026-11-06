@@ -1,80 +1,80 @@
-# 状态、修订与交付
+# Trạng thái, sửa đổi và giao nộp
 
-> **Seedance 使用边界：** 本文件只记录版本、真实生成结果、采用与交付。它不能改写主 `SKILL.md` PART A 已确定的提示词规则；任何 Seedance prompt 修订必须回到 PART A。
+> **Ranh giới sử dụng với Seedance:** File này chỉ ghi lại phiên bản, kết quả tạo thực tế, việc chọn dùng và giao nộp. Nó không được viết lại các quy tắc prompt đã xác định trong PART A của `SKILL.md` chính; mọi sửa đổi prompt Seedance phải quay về PART A.
 
-多阶段或跨轮制作使用一个简洁状态文件和一个画布总览文本节点。优先沿用项目现有台账及确切路径，包括旧版 `production-state.md`；新项目可用 `productionState.md`，多集在项目内各自子目录保存。简单单项文字任务不强制建立整套制作状态。
+Sản xuất nhiều giai đoạn hoặc qua nhiều lượt dùng một file trạng thái gọn và một node văn bản tổng quan trên canvas. Ưu tiên dùng tiếp sổ theo dõi sẵn có của dự án và đường dẫn chính xác, bao gồm `production-state.md` bản cũ; dự án mới có thể dùng `productionState.md`, nhiều tập thì lưu trong thư mục con riêng của từng tập trong dự án. Tác vụ văn bản đơn lẻ đơn giản không bắt buộc lập cả bộ Trạng thái sản xuất.
 
-状态文件记录事实与索引，总览只展示当前范围、有效成果、进度、缺项与下一步。专业正文仍在各自文本节点，不复制进整份台账。只有存在实际成果时添加记录，不预建大量空表或空文件夹。
+File trạng thái ghi sự thật và chỉ mục, tổng quan chỉ hiển thị phạm vi hiện tại, thành phẩm hợp lệ, tiến độ, mục còn thiếu và bước tiếp theo. Nội dung chuyên môn vẫn nằm trong các node văn bản tương ứng, không sao chép vào toàn bộ sổ theo dõi. Chỉ thêm bản ghi khi có thành phẩm thực tế, không dựng sẵn nhiều bảng rỗng hay thư mục rỗng.
 
-## 最少需要记什么
+## Tối thiểu cần ghi những gì
 
 ```markdown
-# 制作状态
+# Trạng thái sản xuất
 
-本次目标与范围：
-当前画布及状态文件路径：
-源剧本或原文版本、采用范围：
-当前阶段、已授权的连续制作范围、待处理事项：
+Mục tiêu và phạm vi lần này:
+Đường dẫn canvas hiện tại và file trạng thái:
+Phiên bản kịch bản nguồn hoặc nguyên văn, phạm vi chọn dùng:
+Giai đoạn hiện tại, phạm vi sản xuất liên tục đã được ủy quyền, việc cần xử lý:
 
-## 成果
-| 标识 | 用途/场次 | 版本 | 画布/节点 | 当前正文或媒体路径 | 采用的固定版本 | 输入依赖 | 状态与确认依据 |
+## Thành phẩm
+| Định danh | Mục đích/cảnh | Phiên bản | Canvas/node | Đường dẫn nội dung hoặc media hiện tại | Phiên bản cố định được chọn dùng | Phụ thuộc đầu vào | Trạng thái và căn cứ xác nhận |
 |---|---|---|---|---|---|---|---|
 
-## 生成尝试
-| 本地尝试标识 | 资产/片段、节点 | 提示词快照 | 模型与完整有效参数 | 参考文件、版本、顺序及用途 | 调用前输出 | 授权范围与剩余次数 | 返回与实际文件 |
+## Lần thử tạo
+| Định danh lần thử cục bộ | Tài sản/đoạn, node | Ảnh chụp prompt | Mô hình và đầy đủ tham số hiệu lực | File tham chiếu, phiên bản, thứ tự và mục đích | Output trước khi gọi | Phạm vi ủy quyền và số lần còn lại | Phản hồi và file thực tế |
 |---|---|---|---|---|---|---|---|
 
-## 片段采用
-| 片段与剧情范围 | 本次视频与生成尝试 | 采用决定与拟用区间 | 实际结束状态及来源 | Agent已检查/未检查项 | 后续依赖 |
+## Chọn dùng đoạn
+| Đoạn và phạm vi cốt truyện | Video lần này và lần thử tạo | Quyết định chọn dùng và khoảng dự kiến dùng | Trạng thái kết thúc thực tế và nguồn | Mục Agent đã kiểm tra/chưa kiểm tra | Phụ thuộc về sau |
 |---|---|---|---|---|---|
 
-## 交付
-实际交付文件及索引：
-已生成/已采用/已合成/已归集范围：
-缺项与继续所需输入：
+## Giao nộp
+File giao nộp thực tế và chỉ mục:
+Phạm vi đã tạo/đã chọn dùng/đã ghép/đã gom về:
+Mục còn thiếu và đầu vào cần để tiếp tục:
 ```
 
-按任务取用字段，不强制每次填满所有表。制作风格、声音方案与规格可放简报并在此索引。尝试标识是本地记录，不能当成宿主未返回的任务 ID。声称存在的路径必须来自真实读取、写入或节点返回。
+Lấy trường theo tác vụ, không bắt buộc lần nào cũng điền đủ mọi bảng. Phong cách sản xuất, phương án âm thanh và thông số có thể để trong bản tóm tắt và đánh chỉ mục ở đây. Định danh lần thử là bản ghi cục bộ, không được coi là task ID mà host chưa trả về. Đường dẫn được tuyên bố là tồn tại phải đến từ việc đọc, ghi thực tế hoặc từ node trả về.
 
-## 确认版本不能只指向可变正文
+## Phiên bản đã xác nhận không thể chỉ trỏ tới nội dung có thể thay đổi
 
-准备提交审阅时，保存该版正文的独立历史快照，并展示该具体版本；用户确认绑定这个快照。用户已明确指定定稿原文时可直接固定该原文。快照只作为历史依据，不进行双向编辑，不仅在 Agent 修改前才补存。
+Khi chuẩn bị nộp để duyệt, lưu một ảnh chụp lịch sử độc lập của nội dung phiên bản đó và trình bày đúng phiên bản cụ thể này; xác nhận của người dùng gắn với ảnh chụp này. Khi người dùng đã chỉ định rõ nguyên văn bản chốt thì có thể cố định trực tiếp nguyên văn đó. Ảnh chụp chỉ làm căn cứ lịch sử, không chỉnh sửa hai chiều, và không chỉ bổ sung lưu khi Agent sắp sửa.
 
-收到确认后重读当前节点。正文若在等待期间被用户改动，原确认仍对应提交的版本，不能顺便批准后来的内容；列明差异并按用户意图处理，历史快照保持不变。原有已确认文件没有快照时，先比对可获得的确认内容，无法还原的历史标记“版本依据待核实”，不把当前文件冒充旧版。
+Sau khi nhận xác nhận, đọc lại node hiện tại. Nếu nội dung bị người dùng sửa trong lúc chờ, xác nhận ban đầu vẫn ứng với phiên bản đã nộp, không thể tiện thể phê duyệt nội dung sau đó; liệt kê khác biệt và xử lý theo ý người dùng, ảnh chụp lịch sử giữ nguyên. Khi file đã xác nhận trước đây không có ảnh chụp, trước tiên so sánh với nội dung xác nhận có thể lấy được, lịch sử không thể khôi phục thì đánh dấu "căn cứ phiên bản cần xác minh", không lấy file hiện tại giả làm bản cũ.
 
-已有只读历史文件可直接复用；普通读写工具不能保证用户永远无法修改快照，读取发现不一致时同样核对。没有可用文件写入但能保留独立文本节点时，保留原节点并另建候选，分别登记节点和实际路径；不能保存历史时不覆盖仍被采用的正文，并说明具体限制。
+File lịch sử chỉ đọc sẵn có có thể dùng lại trực tiếp; công cụ đọc ghi thông thường không đảm bảo người dùng mãi mãi không sửa được ảnh chụp, khi đọc phát hiện không nhất quán cũng phải đối chiếu. Khi không có khả năng ghi file nhưng có thể giữ node văn bản độc lập, giữ node cũ và tạo thêm ứng viên, ghi nhận riêng node và đường dẫn thực tế; khi không thể lưu lịch sử thì không ghi đè nội dung vẫn đang được chọn dùng, và nêu rõ giới hạn cụ thể.
 
-生成前保存实际完整提示词、参数、引用及授权快照；后续编辑不回写这次尝试。提示词版本与结果版本分开：改过文字不代表旧视频由新文字生成。具体执行前复核按[画布执行](canvasExecution.md)。
+Trước khi tạo, lưu ảnh chụp prompt đầy đủ thực tế, tham số, tham chiếu và ủy quyền; chỉnh sửa sau đó không ghi ngược vào lần thử này. Phiên bản prompt và phiên bản kết quả tách riêng: sửa chữ không có nghĩa video cũ được tạo từ chữ mới. Việc rà soát trước khi thực thi cụ thể theo [thực thi canvas](canvasExecution.md).
 
-## 已采用媒体与局部修订
+## Media đã chọn dùng và sửa đổi cục bộ
 
-已采用文件挂载到独立素材节点，记录实际路径和用途。修订图片或视频使用新候选生成节点，采用后再更新确实需要新版的下游；保留旧采用文件、节点、提示词及历史关系，不先切换还依赖旧结果的片段。
+File đã chọn dùng được gắn vào node tư liệu độc lập, ghi đường dẫn thực tế và mục đích. Sửa ảnh hoặc video thì dùng node tạo ứng viên mới, sau khi chọn dùng mới cập nhật những hạ nguồn thực sự cần bản mới; giữ lại file, node, prompt đã chọn dùng cũ và quan hệ lịch sử, không chuyển trước các đoạn vẫn phụ thuộc kết quả cũ.
 
-每次变更沿实际输入依赖查影响：人物外观影响用到该状态的片段，台词影响对应片段容量和口型，空间或动作影响相邻交界。未受影响的结果继续有效。新版兼容时只更新对应关系，需要重生成时说明受影响范围和具体方案。
+Mỗi thay đổi đều tra ảnh hưởng theo phụ thuộc đầu vào thực tế: ngoại hình nhân vật ảnh hưởng các đoạn dùng trạng thái đó, lời thoại ảnh hưởng dung lượng và khẩu hình của đoạn tương ứng, không gian hoặc hành động ảnh hưởng chỗ giao nối liền kề. Kết quả không bị ảnh hưởng tiếp tục có hiệu lực. Khi bản mới tương thích chỉ cập nhật quan hệ tương ứng, khi cần tạo lại thì nêu phạm vi bị ảnh hưởng và phương án cụ thể.
 
-处理 Seedance 实际反馈时，以主 `SKILL.md` PART A 的 A8、A11.4、A12.18.1 与对应 A0–A12 条款定位引用、动作、空间、声音、表演、光色、道具和画面崩坏问题；需要改 prompt 时回到 PART A 的受影响项处理。**禁止再调用独立镜头/表演方法建立第二套修订规则。** 不要把所有问题都处理成增加形容词、重设计资产或重跑全片。
+Khi xử lý phản hồi thực tế về Seedance, dùng A8, A11.4, A12.18.1 và các điều khoản A0–A12 tương ứng trong PART A của `SKILL.md` chính để định vị các vấn đề về tham chiếu, hành động, không gian, âm thanh, diễn xuất, ánh sáng màu sắc, đạo cụ và hình bị vỡ; khi cần sửa prompt thì quay về mục bị ảnh hưởng trong PART A để xử lý. **Cấm gọi thêm phương pháp shot/diễn xuất độc lập để lập bộ quy tắc sửa đổi thứ hai.** Đừng xử lý mọi vấn đề bằng cách thêm tính từ, thiết kế lại tài sản hoặc chạy lại cả phim.
 
-用户已经明确采用的旧资产直接复用，不要求为新模板重新做图。缺少台账时可从用户指定材料和实时画布重建已知索引；未知的确认、生成参数或来源写未知，不凭名称“最终版”、修改时间或最大版本号猜选。
+Tài sản cũ người dùng đã chọn dùng rõ ràng thì dùng lại trực tiếp, không yêu cầu làm lại ảnh cho mẫu mới. Khi thiếu sổ theo dõi có thể dựng lại chỉ mục đã biết từ tài liệu người dùng chỉ định và canvas thời gian thực; xác nhận, tham số tạo hoặc nguồn chưa biết thì ghi là chưa biết, không đoán chọn dựa vào tên "bản cuối", thời gian sửa đổi hay số phiên bản lớn nhất.
 
-## 核验与采用
+## Kiểm định và chọn dùng
 
-读取图片时检查身份、数量、必要视角、服装与物件、环境关系及可读文字。仅工具成功并不证明成图符合要求；用户已明确接受的适用素材不重复要求采用。
+Khi đọc ảnh, kiểm tra thân phận, số lượng, góc nhìn cần thiết, trang phục và vật, quan hệ môi trường và chữ có thể đọc. Chỉ công cụ báo thành công không chứng minh ảnh đạt yêu cầu; tư liệu phù hợp mà người dùng đã chấp nhận rõ ràng thì không yêu cầu chọn dùng lại.
 
-视频检查剧情、对白及说话人、OS/VO、身份和在场关系、动作接触、持物和空间连续性、声音及输出规格；同时检查实际生成穿帮：人物脸/发型/服装漂移，多余或缺失的肢体/手指、手脸融合、人物或道具穿模、关键道具闪现/消失/复制/换手、尺寸与结构突变、商品包装结构融化、镜子/玻璃/阴影出现错误复制。连续片段先按内嵌 PART A A8 判定是否真的有关联：有关联才比较人物世界位置、姿态、朝向、持物与环境状态；无关联则只验本段。检查范围取决于本轮真实能力：文件路径、播放器、文件存在或静帧都不证明 Agent 看过全片、听过音轨。用户上传视频也要确认实际模型/工具能读取，不默认附件等于完成审片。
+Video kiểm tra cốt truyện, lời thoại và người nói, OS/VO, thân phận và quan hệ có mặt, tiếp xúc động tác, vật cầm và tính liên tục không gian, âm thanh và thông số đầu ra; đồng thời kiểm tra lỗi lộ của việc tạo thực tế: mặt/kiểu tóc/trang phục nhân vật bị trôi, chi/ngón tay thừa hoặc thiếu, tay và mặt dính vào nhau, nhân vật hoặc đạo cụ xuyên qua nhau, đạo cụ then chốt lóe hiện/biến mất/nhân bản/đổi tay, kích thước và cấu trúc biến đổi đột ngột, cấu trúc bao bì sản phẩm bị chảy, gương/kính/bóng đổ xuất hiện bản sao sai. Với các đoạn liên tiếp, trước tiên theo A8 của PART A nhúng để xác định có thực sự liên quan không: có liên quan mới so sánh vị trí thế giới, tư thế, hướng, vật cầm của nhân vật và trạng thái môi trường; không liên quan thì chỉ kiểm định đoạn này. Phạm vi kiểm tra phụ thuộc vào năng lực thực tế của lượt này: đường dẫn file, trình phát, file tồn tại hoặc khung hình tĩnh đều không chứng minh Agent đã xem toàn phim, đã nghe track âm thanh. Video người dùng tải lên cũng phải xác nhận mô hình/công cụ thực tế đọc được, không mặc định có tệp đính kèm là đã duyệt phim xong.
 
-没有视频读取能力时，请用户预览当前结果，报告明显问题、是否采用，以及下一段确实依赖的结束状态。记录“用户预览采用”和 Agent 未核验项，不要求无关质量问卷。采用决定、问题反馈与结束状态可在同一次回复获得。
+Khi không có khả năng đọc video, nhờ người dùng xem trước kết quả hiện tại, báo vấn đề rõ ràng, có chọn dùng không, và trạng thái kết thúc mà đoạn tiếp theo thực sự phụ thuộc. Ghi "người dùng xem trước và chọn dùng" và các mục Agent chưa kiểm định, không yêu cầu bảng hỏi chất lượng không liên quan. Quyết định chọn dùng, phản hồi vấn đề và trạng thái kết thúc có thể lấy trong cùng một lần trả lời.
 
-连续片段要有实际依据：人物位置和朝向、持物与动作进度、已发生事件、外观变化及持续声音。使用可查看视频、真实接戏帧或用户反馈，不用计划末态冒充实际末态。将它们写成下一段明确的初始事实；当前结果错误先处理当前段，不把穿帮升级成新剧情。
+Đoạn liên tiếp phải có căn cứ thực tế: vị trí và hướng nhân vật, vật cầm và tiến độ hành động, sự kiện đã xảy ra, thay đổi ngoại hình và âm thanh kéo dài. Dùng video có thể xem, khung nối cảnh thực hoặc phản hồi của người dùng, không lấy trạng thái cuối trong kế hoạch giả làm trạng thái cuối thực tế. Viết chúng thành sự thật ban đầu rõ ràng của đoạn sau; kết quả hiện tại sai thì xử lý đoạn hiện tại trước, không nâng lỗi lộ thành cốt truyện mới.
 
-只有真实需要且工具支持时才抽帧或挂前段媒体；不要为了流程要求用户额外做无用途截图。无时空依赖的片段可按已确认计划和具体批次授权推进，结果仍分别核验与采用。
+Chỉ trích khung hoặc gắn media đoạn trước khi thực sự cần và công cụ hỗ trợ; đừng vì quy trình mà yêu cầu người dùng chụp thêm ảnh màn hình vô dụng. Đoạn không có phụ thuộc thời gian - không gian có thể tiến hành theo kế hoạch đã xác nhận và ủy quyền theo lô cụ thể, kết quả vẫn kiểm định và chọn dùng riêng.
 
-## 按实际完成范围交付
+## Giao nộp theo phạm vi hoàn thành thực tế
 
-- 只要文本：交当前文字、对应节点或真实文件及必要缺项。
-- 分段视频：交已采用片段、顺序、实际生成依据、拟用区间和缺项。生成素材时长合计不等于剪辑成片的实测时长。
-- 单一成片：只有实际提供剪辑、裁切、混音或导出工具且用户已授权时执行；否则说明还需要哪些后期工作，不把两个素材链接称为完整成片。
-- 交付目录：只有具备真实二进制复制能力时才将采用素材复制到项目内目标目录并核验。普通文本 `write` 不能复制图片或视频；能力不足交源文件索引并标记待归集。
+- Chỉ cần văn bản: giao văn bản hiện tại, node tương ứng hoặc file thực và các mục thiếu cần thiết.
+- Video theo đoạn: giao các đoạn đã chọn dùng, thứ tự, căn cứ tạo thực tế, khoảng dự kiến dùng và mục thiếu. Tổng thời lượng tư liệu đã tạo không bằng thời lượng đo thực tế của phim đã dựng.
+- Phim hoàn chỉnh duy nhất: chỉ thực hiện khi thực sự có công cụ dựng, cắt, trộn âm hoặc xuất và người dùng đã ủy quyền; nếu không thì nêu còn cần những công đoạn hậu kỳ nào, không gọi hai đường link tư liệu là phim hoàn chỉnh.
+- Thư mục giao nộp: chỉ khi có khả năng sao chép nhị phân thực sự mới sao chép tư liệu đã chọn dùng vào thư mục đích trong dự án và kiểm định. `write` văn bản thông thường không sao chép được ảnh hay video; năng lực không đủ thì giao chỉ mục file nguồn và đánh dấu chờ gom về.
 
-归集保留原件，旧交付内容不同时使用新版本目录，避免混入落选素材。没有变化且已核验的交付直接复用，不反复复制。默认交付不包含发布、上传或清理源文件；这些按用户另外指定的实际范围执行。
+Gom về giữ nguyên bản gốc, khi nội dung giao nộp cũ khác thì dùng thư mục phiên bản mới, tránh lẫn tư liệu bị loại. Bản giao nộp không thay đổi và đã kiểm định thì dùng lại trực tiếp, không sao chép lặp lại. Giao nộp mặc định không bao gồm phát hành, tải lên hay dọn file nguồn; những việc này thực hiện theo phạm vi thực tế người dùng chỉ định riêng.
 
-最终回复说明做成了什么、真实节点/文件在哪里、哪些内容由谁核验，以及唯一必要的下一步。全部片段采用、成片合成、目录归集分别据实登记，不因为总览或清单完成就把所有状态改成完成。
+Câu trả lời cuối cùng nêu đã làm được gì, node/file thực ở đâu, nội dung nào do ai kiểm định, và bước tiếp theo cần thiết duy nhất. Việc chọn dùng toàn bộ đoạn, ghép phim, gom thư mục được ghi nhận riêng theo thực tế, không vì tổng quan hay danh sách đã xong mà đổi mọi trạng thái thành hoàn thành.

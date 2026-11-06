@@ -1,62 +1,62 @@
-# 单集分镜表与审阅
+# Bảng phân cảnh từng tập và duyệt
 
-只把已确认剧本与导演规划转成可执行分镜。操作见 [canvasOperations.md](canvasOperations.md)。
+Chỉ chuyển kịch bản và kế hoạch đạo diễn đã xác nhận thành phân cảnh có thể thực hiện. Thao tác xem [canvasOperations.md](canvasOperations.md).
 
-开始前完整读取 [镜头设计、表演与审阅知识](knowledge/shotCraft.md) 和 [叙事类型](knowledge/narrativeGenres.md) 中已确认的类型，回读导演规划采用的类型方法，实际用其中景别/角度/运镜、空间连续、对白计时、信息释放与问题分级方法处理本集。涉及风格表现时只查 [视觉风格](knowledge/visualStyles.md) 中已确认条目；不能把知识中的示例新增为剧情。
+Trước khi bắt đầu, đọc đầy đủ [Kiến thức thiết kế shot, diễn xuất và duyệt](knowledge/shotCraft.md) và thể loại đã xác nhận trong [Thể loại tự sự](knowledge/narrativeGenres.md), đọc lại phương pháp thể loại mà kế hoạch đạo diễn đã chọn dùng, thực sự dùng các phương pháp cỡ cảnh/góc máy/chuyển động máy, liên tục không gian, tính thời gian lời thoại, tiết lộ thông tin và phân cấp vấn đề trong đó để xử lý tập này. Khi liên quan đến biểu hiện phong cách chỉ tra các mục đã xác nhận trong [Phong cách hình ảnh](knowledge/visualStyles.md); không được thêm các ví dụ trong kiến thức thành cốt truyện.
 
-## 输入与落点
+## Đầu vào và nơi lưu
 
-- 正式剧本来自 `画布/剧本.json`；导演规划来自当前集画布，例如 `画布/分集/第001集.json`。
-- 可用资产及确认图片来自 `画布/资产.json`，核对真实节点引用、基础态和衍生态。
-- 完整分镜表、审核问题及确认记录保存在当前集画布；不在此修改正式剧本或生成媒体。
-- 缺少会影响后续执行的输入时，记录缺口并返回对应阶段；不得编造资产 ID 或把缺图当作已有图片。
+- Kịch bản chính thức lấy từ `Canvas/Kịch bản.json`; kế hoạch đạo diễn lấy từ canvas của tập hiện tại, ví dụ `Canvas/Tập/Tập 001.json`.
+- Tài sản khả dụng và ảnh đã xác nhận lấy từ `Canvas/Tài sản.json`, kiểm tra tham chiếu node thật, trạng thái cơ bản và trạng thái phái sinh.
+- Bảng phân cảnh đầy đủ, các vấn đề thẩm định và bản ghi xác nhận lưu trên canvas của tập hiện tại; không sửa kịch bản chính thức hay tạo media ở đây.
+- Khi thiếu đầu vào ảnh hưởng tới việc thực hiện về sau, ghi lại chỗ thiếu và quay về giai đoạn tương ứng; không được bịa ID tài sản hoặc coi ảnh còn thiếu là ảnh đã có.
 
-用户已选择部分生成或跳过衍生时，按 [衍生交接规则](deriveAssets.md#部分生成或跳过后的交接) 区分可用图片与未生成状态。可以保留完整分镜草稿及所需状态，但引用只填写真实可用版本；受影响镜头标为待素材，不把草稿整体判为制作就绪，也不擅自重启已跳过的生成。
+Khi người dùng đã chọn tạo một phần hoặc bỏ qua phái sinh, theo [Quy tắc bàn giao phái sinh](deriveAssets.md#bàn-giao-sau-khi-tạo-một-phần-hoặc-bỏ-qua) phân biệt ảnh khả dụng và trạng thái chưa tạo. Có thể giữ bản nháp phân cảnh đầy đủ và các trạng thái cần thiết, nhưng tham chiếu chỉ điền phiên bản thực sự khả dụng; các shot bị ảnh hưởng đánh dấu là chờ tư liệu, không đánh giá cả bản nháp là sẵn sàng sản xuất, cũng không tự ý khởi động lại việc tạo đã bỏ qua.
 
-模型能力可通过已有视频节点的 `node:getConfig` 查询。尚无可查询能力时，按 15 秒口径写规划草稿并标明“待模型校验”，不为查参数提前创建整批媒体节点；转制作节点前必须补齐模型/模式确认，发现时长或参考限制冲突则修订受影响分镜并重新确认。
+Năng lực mô hình có thể truy vấn qua `node:getConfig` của node video đã có. Khi chưa có năng lực để truy vấn, viết bản nháp kế hoạch theo mức 15 giây và ghi rõ "Chờ kiểm định mô hình", không tạo trước cả loạt node media chỉ để tra tham số; trước khi chuyển sang node sản xuất phải bổ sung đủ xác nhận mô hình/chế độ, phát hiện xung đột về thời lượng hoặc giới hạn tham chiếu thì sửa các phân cảnh bị ảnh hưởng và xác nhận lại.
 
-## 拆分方法
+## Phương pháp tách
 
-1. 按确认剧本顺序覆盖场次与关键事件，把导演规划中的情感瞬间、一致性锚点和已确认过渡落实到镜头。
-2. 以情绪转折、动作段落或说话人切换划分片段；每片段上限取 v1.1.8 的 15 秒与当前模型上限中较小者。
-3. 复现 v1.1.8 SOP 时默认按执行层的 4 字/秒粗估，再按旧审核口径加入必要停顿与合计约 1 秒的首尾余量。镜头知识中的 3/2 字/秒是慢速表演的可选方法；用户已有语速/表演要求时沿用，否则先展示其对镜长和片段数的影响并确认，不静默更换默认口径。实际念不完仍须报出并调整方案，不能删词或忽略停顿硬塞进时长。
-4. 同片段长台词或 VO 超过 20 字时，优先按语义停顿拆连续镜头并改变景别/视角，可用听者反应镜承接声音。
-5. 不可切断的语义保留完整，通过动作演进或运镜承载；超过片段容量则重划片段，不静态拖时长。
-6. 按本镜要交代的信息选择景别、观察角度和运镜，明确裁切范围、起幅、路径及落幅；画面描述写可见动作、姿态、表情和状态变化，人物固有外观由确认资产承担。
-7. 每场建立人物左右前后、朝向、视线和持物基准，走位/跨轴写清变化依据。保留在场人物在相邻镜或片段中的可理解落点，特写不硬塞全员；相邻片段写清动作、情绪、视线或声音的承接。
-8. 台词、OS、VO、系统播报和需要传达的屏幕文字逐字保留，标明来源；不新增台词或剧本外情节。
-9. 音效按需写具体环境音和动作音，不擅自添加配乐；沿用场景图，不另写与其冲突的光影。
+1. Theo thứ tự kịch bản đã xác nhận bao phủ các cảnh và sự kiện then chốt, đưa khoảnh khắc cảm xúc, neo nhất quán và chuyển tiếp đã xác nhận trong kế hoạch đạo diễn vào shot.
+2. Chia đoạn theo bước ngoặt cảm xúc, chuỗi động tác hoặc chuyển đổi người nói; giới hạn mỗi đoạn lấy giá trị nhỏ hơn giữa 15 giây của v1.1.8 và giới hạn của mô hình hiện tại.
+3. Khi tái hiện SOP v1.1.8, mặc định ước tính thô 4 chữ/giây theo tầng thực thi, rồi theo mức thẩm định cũ thêm khoảng dừng cần thiết và tổng biên đầu cuối khoảng 1 giây. 3/2 chữ/giây trong kiến thức shot là phương pháp tùy chọn cho diễn xuất chậm; khi người dùng đã có yêu cầu về tốc độ nói/diễn xuất thì dùng tiếp, nếu không thì trước tiên trình bày ảnh hưởng của nó tới độ dài shot và số đoạn rồi xác nhận, không lặng lẽ đổi mức mặc định. Thực tế đọc không hết vẫn phải báo ra và điều chỉnh phương án, không được xóa chữ hoặc bỏ qua khoảng dừng để nhồi vào thời lượng.
+4. Khi lời thoại dài hoặc VO trong cùng đoạn vượt quá 20 chữ, ưu tiên tách thành các shot liên tục theo chỗ ngắt nghĩa và thay đổi cỡ cảnh/góc nhìn, có thể dùng shot phản ứng của người nghe để tiếp nối âm thanh.
+5. Ngữ nghĩa không thể cắt thì giữ trọn, gánh bằng diễn tiến động tác hoặc chuyển động máy; vượt dung lượng đoạn thì chia lại đoạn, không kéo dài thời lượng một cách tĩnh.
+6. Chọn cỡ cảnh, góc quan sát và chuyển động máy theo thông tin mà shot này cần truyền đạt, nói rõ phạm vi cắt khung, khung mở đầu, đường đi và khung kết thúc; mô tả hình ảnh viết động tác, tư thế, biểu cảm và thay đổi trạng thái nhìn thấy được, ngoại hình cố hữu của nhân vật do tài sản đã xác nhận đảm nhận.
+7. Mỗi cảnh lập chuẩn trái phải trước sau, hướng quay, ánh mắt và vật cầm của nhân vật, di chuyển/vượt trục ghi rõ căn cứ thay đổi. Giữ vị trí dễ hiểu của các nhân vật có mặt trong shot hoặc đoạn liền kề, cận cảnh không nhồi cả nhóm; các đoạn liền kề ghi rõ sự tiếp nối về động tác, cảm xúc, ánh mắt hoặc âm thanh.
+8. Lời thoại, OS, VO, thông báo hệ thống và chữ trên màn hình cần truyền đạt được giữ nguyên từng chữ, ghi rõ nguồn; không thêm lời thoại hay tình tiết ngoài kịch bản.
+9. Hiệu ứng âm thanh theo nhu cầu ghi âm môi trường và âm động tác cụ thể, không tự ý thêm nhạc nền; dùng tiếp ảnh bối cảnh, không viết thêm ánh sáng xung đột với nó.
 
-## 输出格式
+## Định dạng đầu ra
 
-按「场 → 片段 → 镜」组织，资产引用放在片段级，使用当前宿主实际的画布/节点标识。
+Tổ chức theo "Cảnh → Đoạn → Shot", tham chiếu tài sản đặt ở cấp đoạn, dùng định danh canvas/node thực tế của host hiện tại.
 
 ```markdown
-## 场1：场景名 ｜ 参演角色：角色A、角色B
-### 片段1（约10s）
-引用资产名称：角色A、角色B、场景
-引用资产：对应的真实画布/节点引用
-| 序号 | 画面描述 | 时长 | 景别 | 运镜 | 台词 | 音效 |
+## Cảnh 1: Tên bối cảnh | Nhân vật tham gia: Nhân vật A, Nhân vật B
+### Đoạn 1 (khoảng 10s)
+Tên tài sản tham chiếu: Nhân vật A, Nhân vật B, Bối cảnh
+Tài sản tham chiếu: tham chiếu canvas/node thật tương ứng
+| STT | Mô tả hình ảnh | Thời lượng | Cỡ cảnh | Chuyển động máy | Lời thoại | Hiệu ứng âm thanh |
 |---|---|---|---|---|---|---|
 ```
 
-朝向、空间关系、动作写入画面描述，不要求旧版已经移除的独立列。
-每镜时长为明确数值，片段时长等于其中镜头时长之和，保持连续镜号和明确场次边界。
-同一角色在一个片段内采用与剧情匹配的基础态或衍生态，不能把父子状态误当成两个人。
+Hướng quay, quan hệ không gian, động tác ghi vào mô tả hình ảnh, không yêu cầu các cột độc lập mà bản cũ đã bỏ.
+Thời lượng mỗi shot là giá trị số rõ ràng, thời lượng đoạn bằng tổng thời lượng các shot trong đó, giữ số shot liên tục và ranh giới cảnh rõ ràng.
+Cùng một nhân vật trong một đoạn chọn dùng trạng thái cơ bản hoặc phái sinh khớp với cốt truyện, không được nhầm trạng thái cha con thành hai người.
 
-在本集已有分镜说明中补充必要的设计依据：关键镜头为何选择该景别/运镜、该镜让观众知道或暂不知道的既有信息、类型节拍如何体现、长台词的字数与语速/停顿估时、每场空间基准和变化点、片段结束状态到下一段开始状态。未生成的末态标为规划；这些是可读说明，不新增工具 schema 字段，也不改变七列表结构。
+Trong phần ghi chú phân cảnh đã có của tập này bổ sung các căn cứ thiết kế cần thiết: vì sao shot then chốt chọn cỡ cảnh/chuyển động máy đó, thông tin sẵn có mà shot đó cho khán giả biết hoặc tạm chưa biết, nhịp thể loại được thể hiện thế nào, số chữ và ước tính thời gian theo tốc độ nói/khoảng dừng của lời thoại dài, chuẩn không gian và điểm thay đổi mỗi cảnh, trạng thái kết thúc của đoạn đến trạng thái bắt đầu của đoạn sau. Trạng thái cuối chưa tạo đánh dấu là kế hoạch; đây là ghi chú đọc được, không thêm trường schema công cụ, cũng không thay đổi cấu trúc bảng bảy cột.
 
-## 写入后审阅
+## Duyệt sau khi ghi
 
-1. 回读画布中的实际分镜表，并对照正式剧本、导演规划和资产来源，不能只审聊天摘要。
-2. 检查台词零删改、场次事件全覆盖、顺序正确、每镜必填字段齐全。
-3. 检查资产引用真实、可辨识人物与场景关联正确、衍生态使用符合剧情、没有虚构可用图片。
-4. 按镜头知识检查镜头合计、片段上限、台词容量、表演节奏和空间/动作连续性；违反执行能力的项必须明确指出，不能把旧单镜 8 秒/长镜 12 秒启发式当当前模型保证。
-5. 报告只列问题，按严重/中等/轻微逐项定位场次/片段/镜号，附实际原文或引用、影响与修订建议；将报告写回本集，不自行改动已确认剧本。旧 A/B/C/D 概览可选，不能代替证据或用户确认。
+1. Đọc lại bảng phân cảnh thực tế trên canvas, và đối chiếu với kịch bản chính thức, kế hoạch đạo diễn và nguồn tài sản, không được chỉ duyệt tóm tắt chat.
+2. Kiểm tra lời thoại không bị xóa sửa chút nào, sự kiện các cảnh được bao phủ toàn bộ, thứ tự đúng, các trường bắt buộc của mỗi shot đầy đủ.
+3. Kiểm tra tham chiếu tài sản là thật, liên kết nhân vật và bối cảnh nhận diện được là đúng, việc dùng trạng thái phái sinh phù hợp cốt truyện, không hư cấu ảnh khả dụng.
+4. Theo kiến thức shot kiểm tra tổng shot, giới hạn đoạn, dung lượng lời thoại, nhịp diễn xuất và tính liên tục không gian/động tác; các mục vi phạm năng lực thực thi phải chỉ rõ, không được coi heuristic cũ shot đơn 8 giây/shot dài 12 giây là bảo đảm của mô hình hiện tại.
+5. Báo cáo chỉ liệt kê vấn đề, theo mức Nghiêm trọng/Trung bình/Nhẹ định vị từng cảnh/đoạn/số shot, kèm nguyên văn thực tế hoặc tham chiếu, ảnh hưởng và đề xuất sửa; ghi báo cáo ngược vào tập này, không tự ý sửa kịch bản đã xác nhận. Tổng quan A/B/C/D cũ là tùy chọn, không thay được bằng chứng hay xác nhận của người dùng.
 
-## 确认点
+## Điểm xác nhận
 
-把分镜表及问题报告展示给用户，记录「通过 / 指定修复 / 重做」的具体范围。
-修复后回读并核查受影响部分；用户确认后保存记录，再停止本阶段。
-未经分镜表确认，不创建可执行媒体批次，不启动分镜图或视频生成。
-来源及旧表结构差异见 [sourceMap.md](sourceMap.md)。
+Trình bày bảng phân cảnh và báo cáo vấn đề cho người dùng, ghi lại phạm vi cụ thể của "Thông qua / Sửa theo chỉ định / Làm lại".
+Sau khi sửa, đọc lại và rà soát phần bị ảnh hưởng; sau khi người dùng xác nhận thì lưu bản ghi, rồi dừng giai đoạn này.
+Chưa xác nhận bảng phân cảnh thì không tạo lô media có thể thực thi, không khởi động tạo ảnh phân cảnh hay video.
+Nguồn và khác biệt với cấu trúc bảng cũ xem [sourceMap.md](sourceMap.md).
