@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :title="`编辑媒体供应商：${provider?.label ?? ''}`"
+    :title="`编辑媒体供应商：${translate(provider?.label ?? '')}`"
     width="min(800px, calc(100vw - 32px))"
     alignCenter
     appendToBody
@@ -11,7 +11,7 @@
     :showClose="!saving"
     @closed="formApi = undefined">
     <div class="providerEditor">
-      <messageMarkdown v-if="provider?.readme" class="providerReadme" :content="provider.readme" />
+      <messageMarkdown v-if="provider?.readme" class="providerReadme" :content="translate(provider.readme)" />
       <form-create v-model="formValues" v-model:api="formApi" :rule="formRules" :option="formOptions" />
       <div class="modelHeader">
         <h4>模型配置 <el-text type="info">{{ models.length }}</el-text></h4>
@@ -23,7 +23,7 @@
             <div class="modelNameWrap">
               <modelIcon :model="item.id" :size="24" />
               <div class="modelInfo">
-                <span class="modelName">{{ item.label }}</span>
+                <span class="modelName">{{ translate(item.label) }}</span>
                 <el-text class="modelId" type="info" size="small">{{ item.id }}</el-text>
               </div>
             </div>
@@ -53,7 +53,7 @@
       :models="models"
       @confirmed="confirmModel" />
   </el-dialog>
-  <el-dialog v-model="testVisible" :title="`测试媒体模型：${testProvider?.label ?? ''}`" width="min(1120px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose :closeOnClickModal="false">
+  <el-dialog v-model="testVisible" :title="`测试媒体模型：${translate(testProvider?.label ?? '')}`" width="min(1120px, calc(100vw - 32px))" alignCenter appendToBody destroyOnClose :closeOnClickModal="false">
     <div class="modelTestBody">
       <providerTestPanel v-if="testVisible && testProvider" :source="testSource" :provider="testProvider" :config="testConfig" :modelId="testModelId" :models="testProvider.models" />
     </div>
@@ -66,7 +66,7 @@ import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import { computed, defineAsyncComponent, onBeforeUnmount, ref, shallowRef, toRaw, watch, type Component } from "vue";
 import { IconPlus, IconTrash, IconDeviceFloppy, IconEdit, IconPlayerPlay } from "@tabler/icons-vue";
-import formCreate, { type Api, type Options } from "@toonflow/provider-web/formCreate";
+import formCreate, { translateProviderRules, type Api, type Options } from "@toonflow/provider-web/formCreate";
 import { modelIcon } from "@toonflow/model-icons";
 import messageMarkdown from "@/components/messageMarkdown.vue";
 import type { MediaProvider, MediaProviderModel } from "@toonflow/provider-web/types";
@@ -112,7 +112,7 @@ watch(visible, isVisible => {
   modelEditorVisible.value = false;
   editingModelIndex.value = undefined;
   const configs = settings.value.mediaProviderConfigs as Record<string, Record<string, unknown>> | undefined;
-  formRules.value = formCreate.copyRules(provider?.rules ?? []);
+  formRules.value = translateProviderRules(provider?.rules ?? []);
   formValues.value = structuredClone(toRaw((provider && configs?.[provider.id]) ?? {}));
   revision.value = provider?.revision ?? "";
   models.value = JSON.parse(JSON.stringify(provider?.models ?? []));

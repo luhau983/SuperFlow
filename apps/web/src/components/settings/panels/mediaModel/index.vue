@@ -2,6 +2,7 @@
   <div class="providerList">
     <div class="itemList">
       <toonflowProviderCard scope="media" :provider="providers.find(item => item.id === 'toonflow')" />
+      <codexProviderCard />
       <el-card v-for="item in visibleProviders" :key="item.fileName" class="providerItem" shadow="never">
         <div class="providerHeader">
           <div v-if="item.icon" class="providerMark" aria-hidden="true">
@@ -9,7 +10,7 @@
           </div>
           <div class="providerInfo">
             <div class="providerHeading">
-              <el-text class="providerName" tag="strong">{{ item.label }}</el-text>
+              <el-text class="providerName" tag="strong">{{ translate(item.label) }}</el-text>
             </div>
             <el-text class="providerId" size="small" type="info" :title="item.fileName">{{ item.fileName }}</el-text>
           </div>
@@ -50,6 +51,7 @@ import type { MediaProvider } from "@toonflow/provider-web/types";
 import { saveSettings } from "@/stores/settings";
 import { invalidateNodeModels } from "@toonflow/nodes-scaffold/nodeAi";
 import toonflowProviderCard from "../../toonflowProviderCard.vue";
+import codexProviderCard from "../../codexProviderCard.vue";
 
 defineProps<{ visible?: boolean }>();
 const mediaProviderDialog = shallowRef<Component>();

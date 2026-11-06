@@ -1,7 +1,7 @@
 <template>
   <el-dialog
     v-model="visible"
-    :title="provider ? `编辑供应商代码：${provider.label}` : mode === 'builtin' ? '添加媒体供应商' : '添加自定义媒体供应商'"
+    :title="provider ? `编辑供应商代码：${translate(provider.label)}` : mode === 'builtin' ? '添加媒体供应商' : '添加自定义媒体供应商'"
     :width="mode === 'builtin' ? 'min(860px, 94vw)' : 'min(760px, 94vw)'"
     alignCenter
     appendToBody
@@ -21,16 +21,16 @@
           @click="selectedProvider = item.id">
           <img v-if="item.icon" class="providerLogo" :src="item.icon" alt="" />
           <modelIcon v-else :model="item.id" :size="18" />
-          <span>{{ item.label }}</span>
+          <span>{{ translate(item.label) }}</span>
         </button>
       </aside>
       <el-scrollbar class="providerDetails">
-        <section v-if="activeProvider" :key="selectedProvider" class="providerContent" :aria-label="activeProvider.label">
+        <section v-if="activeProvider" :key="selectedProvider" class="providerContent" :aria-label="translate(activeProvider.label)">
           <div class="providerHeader">
-            <h3>{{ activeProvider.label }}</h3>
+            <h3>{{ translate(activeProvider.label) }}</h3>
             <el-tag v-if="activeProvider.version" size="small" type="info" effect="plain">v{{ activeProvider.version }}</el-tag>
           </div>
-          <messageMarkdown v-if="providerReadme" class="providerReadme" :content="providerReadme" />
+          <messageMarkdown v-if="providerReadme" class="providerReadme" :content="translate(providerReadme)" />
           <el-divider v-if="providerReadme" contentPosition="left">连接配置</el-divider>
           <form-create v-model:api="formApi" :rule="providerRules" :option="formOptions" />
           <div class="modelHeader">
@@ -38,7 +38,9 @@
           </div>
           <el-table v-if="models.length" class="modelList" :data="models" rowKey="id" aria-label="模型列表">
             <el-table-column prop="id" label="模型 ID" minWidth="220" showOverflowTooltip />
-            <el-table-column prop="label" label="显示名称" minWidth="180" showOverflowTooltip />
+            <el-table-column prop="label" label="显示名称" minWidth="180" showOverflowTooltip>
+              <template #default="{ row }">{{ translate(row.label) }}</template>
+            </el-table-column>
           </el-table>
           <el-alert v-if="formError" :title="formError" type="error" :closable="false" showIcon />
         </section>
@@ -52,7 +54,7 @@
               <template #default="{ item }">
                 <span class="methodOption">
                   <component :is="item.icon" :size="16" aria-hidden="true" />
-                  {{ item.label }}
+                  {{ translate(item.label) }}
                 </span>
               </template>
             </el-segmented>
@@ -112,7 +114,7 @@
 import { translate } from "@toonflow/i18n/vue";
 import axios from "axios";
 import { computed, defineAsyncComponent, onBeforeUnmount, ref, shallowRef, watch, type Component } from "vue";
-import formCreate, { type Api, type Options } from "@toonflow/provider-web/formCreate";
+import formCreate, { translateProviderRules, type Api, type Options } from "@toonflow/provider-web/formCreate";
 import { IconFileCode, IconCode, IconFolderOpen, IconCopy, IconSparkles, IconLink } from "@tabler/icons-vue";
 import { ElMessage } from "element-plus";
 import { mediaProviders } from "@toonflow/providers";
@@ -165,7 +167,7 @@ const formError = ref("");
 const formApi = shallowRef<Api>();
 const addedProvider = shallowRef<MediaProvider>();
 const formOptions = computed<Options>(() => ({ form: { labelPosition: "top", disabled: saving.value }, submitBtn: false, resetBtn: false }));
-const providerRules = computed(() => formCreate.copyRules([...(activeProvider.value?.rules ?? [])]));
+const providerRules = computed(() => translateProviderRules([...(activeProvider.value?.rules ?? [])]));
 const source = computed(() => mode === "builtin" ? providerSources[selectedProvider.value] ?? "" : activeTab.value === "file" ? fileSource.value : code.value);
 const developmentPrompt = computed(() => provider ? `${providerPrompt}
 
