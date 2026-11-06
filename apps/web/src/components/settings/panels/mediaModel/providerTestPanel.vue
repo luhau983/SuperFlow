@@ -2,12 +2,12 @@
   <div class="providerTestPanel" :class="{ compactPanel: compact }">
     <div class="testBody">
       <section class="parameters" aria-label="测试参数">
-        <h3>{{ provider.label }}</h3>
+        <h3>{{ translate(provider.label) }}</h3>
         <form-create v-model="configValues" v-model:api="formApi" :rule="formRules" :option="formOptions" />
         <el-form labelPosition="top" :disabled="busy || disabled">
           <el-form-item label="模型">
             <el-select v-model="selectedModelId" placeholder="选择模型" aria-label="测试模型">
-              <el-option v-for="model in mediaModels" :key="model.id" :label="model.label" :value="model.id" />
+              <el-option v-for="model in mediaModels" :key="model.id" :label="translate(model.label)" :value="model.id" />
             </el-select>
           </el-form-item>
           <el-form-item label="提示词">
@@ -110,7 +110,7 @@ import axios from "axios";
 import { IconPlus, IconX, IconMusic, IconPlayerPlay, IconPlayerStop } from "@tabler/icons-vue";
 import type { Provider } from "@toonflow/providers";
 import videoPlayer from "@/components/videoPlayer.vue";
-import formCreate, { type Api, type Options, type Rule } from "@toonflow/provider-web/formCreate";
+import formCreate, { translateProviderRules, type Api, type Options, type Rule } from "@toonflow/provider-web/formCreate";
 import type { MediaProvider, MediaProviderModel } from "@toonflow/provider-web/types";
 
 type DebugLog = { id: number; method: string; url: string; state: string; status?: number; duration?: number; request?: string; response?: string; error?: string };
@@ -400,7 +400,8 @@ watch(() => [props.source, props.provider.id, props.provider.rules] as const, (_
   const values = sameProvider ? formApi.value?.formData() ?? configValues.value : props.config ?? {};
   const rules = (props.provider.rules ?? []) as Rule[];
   configValues.value = Object.fromEntries(rules.filter(rule => rule.field).map(rule => [rule.field!, rule.field! in values ? values[rule.field!] : props.config?.[rule.field!] ?? rule.value]));
-  if (JSON.stringify(rules) !== JSON.stringify(formRules.value)) formRules.value = formCreate.copyRules(rules);
+  const translatedRules = translateProviderRules(rules);
+  if (JSON.stringify(translatedRules) !== JSON.stringify(formRules.value)) formRules.value = translatedRules;
 }, { immediate: true });
 watch(() => props.modelId, modelId => { if (modelId) selectedModelId.value = modelId; }, { immediate: true });
 watch(mediaModels, models => {

@@ -20,6 +20,7 @@
 </template>
 
 <script setup lang="ts">
+import { translate } from "@toonflow/i18n/vue";
 import { computed, nextTick, onBeforeUnmount, ref, shallowRef, watch } from "vue";
 import axios from "axios";
 import { ElMessage } from "element-plus";
@@ -94,7 +95,7 @@ async function selectFile() {
     } else {
       const picker = (window as Window & { showOpenFilePicker?: (options: unknown) => Promise<FileHandle[]> }).showOpenFilePicker;
       if (!picker) throw new Error("当前环境不支持文件授权，请使用 HTTPS／localhost 下的 Chrome、Edge 或桌面端");
-      const [selected] = await picker.call(window, { multiple: false, types: [{ description: "TypeScript 供应商", accept: { "text/plain": [".ts"] } }] });
+      const [selected] = await picker.call(window, { multiple: false, types: [{ description: translate("TypeScript 供应商"), accept: { "text/plain": [".ts"] } }] });
       if (!selected) return;
       const file = await selected.getFile();
       signal.throwIfAborted();

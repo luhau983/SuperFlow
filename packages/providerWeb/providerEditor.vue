@@ -10,7 +10,7 @@
           <template v-if="method !== 'manual'">
             <el-form-item v-if="method === 'preset'" :label="translate('内置供应商')" for="providerPreset">
               <el-select id="providerPreset" v-model="presetId" :disabled="busy" @change="selectPreset">
-                <el-option v-for="preset in availablePresets" :key="preset.id" :value="preset.id" :label="preset.label" />
+                <el-option v-for="preset in availablePresets" :key="preset.id" :value="preset.id" :label="translate(preset.label)" />
               </el-select>
             </el-form-item>
             <el-form-item v-if="method === 'file'" :label="translate('供应商文件')">
@@ -100,11 +100,12 @@
 import { computed, onBeforeUnmount, ref, shallowRef, watch } from "vue";
 import { translate } from "@toonflow/i18n/vue";
 import { ElAlert, ElButton, ElDialog, ElForm, ElFormItem, ElInput, ElInputNumber, ElOption, ElSegmented, ElSelect, ElTable, ElTableColumn, ElTag } from "element-plus";
-import formCreate, { type Api, type Options } from "./formCreate";
+import formCreate, { translateProviderRules, type Api, type Options } from "./formCreate";
 import modelEditor from "./modelEditorDialog.vue";
 import type { MediaProviderModel } from "./types";
 import type { ProviderConfiguration, ProviderDescription, ProviderInspection, ProviderKind } from "./providerTypes";
 import deepSeekSource from "@toonflow/providers/language/deepSeek?raw";
+import cheapAiModelSource from "@toonflow/providers/language/cheapAiModel?raw";
 import apiMartSource from "@toonflow/providers/media/apiMart?raw";
 import metasoSource from "@toonflow/providers/media/metaso?raw";
 import compshareSource from "@toonflow/providers/media/compshare?raw";
@@ -128,6 +129,7 @@ const visible = defineModel<boolean>({ default: false });
 const emit = defineEmits<{ save: [provider: ProviderConfiguration]; reload: [] }>();
 const presets = [
   { kind: "text", id: "deepSeek", label: "DeepSeek", source: deepSeekSource },
+  { kind: "text", id: "cheapAiModel", label: "CheapAIModel", source: cheapAiModelSource },
   { kind: "media", id: "apiMart", label: "APIMart", source: apiMartSource },
   { kind: "media", id: "metaso", label: "秘塔", source: metasoSource },
   { kind: "media", id: "compshare", label: "优刻得", source: compshareSource },
@@ -173,7 +175,7 @@ function applyDescription(value: ProviderDescription) {
   description.value = clone(value);
   draft.value = { kind: value.kind, id: value.id, label: value.label, source: value.source, config: clone(value.config) };
   models.value = clone(value.models);
-  formRules.value = formCreate.copyRules(value.rules ?? []);
+  formRules.value = translateProviderRules(value.rules ?? []);
   formValues.value = clone(value.config);
   formApi.value = undefined;
   headers.value = JSON.stringify(value.config.headers ?? {}, null, 2);

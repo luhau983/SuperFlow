@@ -293,8 +293,8 @@ function addGroup(parentId: string) {
   const parent = menuEntries.value.find(entry => entry.item.id === parentId);
   if (parentId && (!parent?.item.children || parent.depth >= 2)) return;
   const labels = new Set(menuEntries.value.filter(entry => entry.item.children).map(entry => entry.item.label));
-  let label = "新分组";
-  for (let index = 2; labels.has(label); index++) label = `新分组 ${index}`;
+  let label = translate("新分组");
+  for (let index = 2; labels.has(label); index++) label = `${translate("新分组")} ${index}`;
   const group = { id: `group:${crypto.randomUUID()}`, label, hidden: false, children: [] };
   (parent?.item.children ?? menuItems.value).push(group);
   selectItem(group);

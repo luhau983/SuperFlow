@@ -1,4 +1,5 @@
 import formCreate from "@form-create/element-ui";
+import { translate } from "@toonflow/i18n/vue";
 import {
   ElForm, ElFormItem, ElRow, ElCol, ElInput, ElInputNumber, ElSwitch,
   ElSelect, ElOption, ElCheckbox, ElCheckboxGroup, ElRadio, ElRadioGroup,
@@ -25,4 +26,21 @@ for (const [name, component] of Object.entries({
 })) formCreate.component(name, component);
 
 export type { Api, Options, Rule } from "@form-create/element-ui";
+
+export function translateProviderRules(rules: Parameters<typeof formCreate.copyRules>[0]) {
+  const copied = formCreate.copyRules(rules);
+  function visit(value: unknown) {
+    if (Array.isArray(value)) return value.forEach(visit);
+    if (!value || typeof value !== "object") return;
+    const record = value as Record<string, unknown>;
+    for (const [key, item] of Object.entries(record)) {
+      if (["title", "label", "info", "description", "placeholder", "message"].includes(key) && typeof item === "string") {
+        record[key] = translate(item);
+      } else if (["children", "control", "rule", "props", "options", "validate"].includes(key)) visit(item);
+    }
+  }
+  visit(copied);
+  return copied;
+}
+
 export default formCreate;

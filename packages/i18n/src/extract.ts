@@ -38,6 +38,11 @@ async function scan(directory: string) {
         const name = owner?.type === "VariableDeclarator" && owner.id.type === "Identifier" ? owner.id.name
           : owner?.type === "ObjectProperty" && owner.key.type === "Identifier" ? owner.key.name : "";
         const protectedMessage = /(?:prompt|instructions|rawCode|sourceCode)/i.test(name);
+        if (/packages[\\/]providers[\\/]src[\\/]/.test(path) && node.type === "ObjectProperty" && node.key.type === "Identifier"
+          && ["label", "readme", "title", "info", "placeholder", "message"].includes(node.key.name)) {
+          if (node.value.type === "StringLiteral") add(node.value.value, path);
+          if (node.value.type === "TemplateLiteral" && !node.value.expressions.length) add(node.value.quasis[0]!.value.cooked ?? node.value.quasis[0]!.value.raw, path);
+        }
         if (node.type === "TaggedTemplateExpression" && node.tag.type === "Identifier" && ["t", "msg"].includes(node.tag.name)) {
           add(node.quasi.quasis.map((part, index) => (node.quasi.expressions.length ? escapeMessageText(part.value.cooked ?? part.value.raw) : part.value.cooked ?? part.value.raw) + (index < node.quasi.expressions.length ? `{${index}}` : "")).join(""), path);
         }
@@ -57,6 +62,6 @@ async function scan(directory: string) {
     }
   }
 }
-for (const path of ["apps/web/src", "apps/server/src", "apps/desktop/src", "apps/mobile/src", "packages/mcp/src", "packages/ffmpeg/src", "packages/multiTenant", "packages/providerWeb"]) await scan(resolve(root, path));
+for (const path of ["apps/web/src", "apps/server/src", "apps/desktop/src", "apps/mobile/src", "packages/mcp/src", "packages/ffmpeg/src", "packages/multiTenant", "packages/providerWeb", "packages/providers/src"]) await scan(resolve(root, path));
 await writeAtomic(resolve(import.meta.dirname, "messageSources.json"), JSON.stringify(Object.fromEntries([...catalog].map(([key, value]) => [key, [...value]])), null, 2) + "\n");
 console.log(`Extracted ${catalog.size} messages`);

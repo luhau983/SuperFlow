@@ -12,20 +12,29 @@
           @click="selectedProvider = item.id">
           <img v-if="item.icon" class="providerLogo" :src="item.icon" alt="" />
           <modelIcon v-else :model="item.id" :size="18" />
-          <span>{{ item.label }}</span>
+          <span>{{ translate(item.label) }}</span>
         </button>
       </aside>
       <el-scrollbar class="providerDetails">
-        <section v-if="activeProvider" :key="selectedProvider" class="providerContent" :aria-label="activeProvider.label">
+        <section v-if="activeProvider" :key="selectedProvider" class="providerContent" :aria-label="translate(activeProvider.label)">
           <div class="providerHeader">
-            <h3>{{ activeProvider.label }}</h3>
+            <h3>{{ translate(activeProvider.label) }}</h3>
             <el-tag v-if="activeProvider.version" size="small" type="info" effect="plain">v{{ activeProvider.version }}</el-tag>
           </div>
-          <messageMarkdown v-if="providerReadme" class="providerReadme" :content="providerReadme" />
+          <messageMarkdown v-if="providerReadme" class="providerReadme" :content="translate(providerReadme)" />
           <el-divider v-if="providerReadme" contentPosition="left">连接配置</el-divider>
+          <el-form labelPosition="top" :disabled="saving" @submit.prevent>
+            <el-form-item label="Base URL">
+              <div class="apiUrlField">
+                <el-input v-model="apiUrl" type="url" aria-label="Base URL" :disabled="!editingApiUrl || saving" />
+                <el-button :disabled="saving" @click="editingApiUrl = !editingApiUrl">{{ editingApiUrl ? '完成' : '编辑' }}</el-button>
+              </div>
+            </el-form-item>
+          </el-form>
           <form-create v-model="formValues" v-model:api="formApi" :rule="providerRules" :option="formOptions" />
           <div class="modelHeader">
             <el-text tag="strong">模型列表 <el-text type="info">{{ models.length }}</el-text></el-text>
+            <el-checkbox v-if="models.length" :modelValue="selectedIds.size === models.length" :indeterminate="selectedIds.size > 0 && selectedIds.size < models.length" @change="value => selectedIds = new Set(value ? models.map(model => model.id) : [])">全选</el-checkbox>
             <el-text v-if="fetching" type="info" size="small">正在获取…</el-text>
             <el-button v-else-if="modelError" size="small" text :icon="IconRefresh" @click="modelRefresh++">重试</el-button>
           </div>
@@ -44,39 +53,56 @@
     </div>
     <template #footer>
       <el-button :disabled="saving" @click="visible = false">取消</el-button>
-      <el-button type="primary" :loading="saving" :disabled="!activeProvider || fetching || !!modelError" @click="addProvider">确定添加供应商</el-button>
+      <el-button type="primary" :loading="saving" :disabled="!activeProvider || fetching || !!modelError || !selectedIds.size" @click="addProvider">确定添加供应商</el-button>
     </template>
   </el-dialog>
 </template>
 
 <script setup lang="ts">
-import { computed, ref, shallowRef, watch } from "vue";
+import { t, translate } from "@toonflow/i18n/vue";
+import { computed, h, ref, shallowRef, watch } from "vue";
 import axios from "axios";
 import { IconRefresh } from "@tabler/icons-vue";
-import formCreate, { type Api, type Options } from "@toonflow/provider-web/formCreate";
+import formCreate, { translateProviderRules, type Api, type Options } from "@toonflow/provider-web/formCreate";
 import { languageProviders } from "@toonflow/providers";
 import { modelIcon } from "@toonflow/model-icons";
 import messageMarkdown from "@/components/messageMarkdown.vue";
-import type { Column } from "element-plus";
+import { ElCheckbox, type Column } from "element-plus";
 import { saveSettings, type CustomProviderModel } from "@/stores/settings";
 
 const visible = defineModel<boolean>({ default: false });
 const selectedProvider = ref<string>(languageProviders[0]?.id ?? "");
+const apiUrl = ref(languageProviders[0]?.apiUrl ?? "");
+const editingApiUrl = ref(false);
 const formApi = shallowRef<Api>();
 const formValues = ref<Record<string, unknown>>({});
 const models = shallowRef<CustomProviderModel[]>([]);
+const selectedIds = ref(new Set<string>());
 const fetching = ref(false);
 const modelError = ref("");
 const modelRefresh = ref(0);
-const modelColumns: Column[] = [
+const modelColumns = computed<Column[]>(() => [
+  {
+    key: "selection", width: 42,
+    cellRenderer: ({ rowData }) => h(ElCheckbox, {
+      modelValue: selectedIds.value.has(rowData.id),
+      ariaLabel: t`选择 ${rowData.id}`,
+      onChange: (value: boolean | string | number) => {
+        if (value) selectedIds.value.add(rowData.id);
+        else selectedIds.value.delete(rowData.id);
+      },
+    }),
+  },
   { key: "id", dataKey: "id", title: "模型 ID", width: 220, flexGrow: 1 },
   { key: "label", dataKey: "label", title: "显示名称", width: 180, flexGrow: 1 },
-];
+]);
 const saving = ref(false);
 const formError = ref("");
 watch(selectedProvider, () => {
   formError.value = "";
   formValues.value = {};
+  apiUrl.value = languageProviders.find(provider => provider.id === selectedProvider.value)?.apiUrl ?? "";
+  editingApiUrl.value = false;
 }, { flush: "sync" });
 const activeProvider = computed(() => languageProviders.find(provider => provider.id === selectedProvider.value));
 const providerReadme = computed(() => {
@@ -85,33 +111,50 @@ const providerReadme = computed(() => {
 });
 const formOptions = computed<Options>(() => ({ form: { labelPosition: "top", disabled: saving.value }, submitBtn: false, resetBtn: false }));
 const providerRules = computed(() =>
-  formCreate.copyRules(activeProvider.value?.rules ?? []),
+  translateProviderRules(activeProvider.value?.rules ?? []),
 );
 
+function getApiUrl(value: unknown, fallback: string) {
+  const address = typeof value === "string" ? value.trim() : fallback;
+  try {
+    const url = new URL(address);
+    if (!["http:", "https:"].includes(url.protocol) || url.username || url.password || url.search || url.hash) throw new Error();
+    return address.replace(/\/+$/, "");
+  } catch {
+    throw new Error(translate("请输入有效的 HTTP API 基础地址，不包含查询参数"));
+  }
+}
+
 watch(
-  [visible, activeProvider, () => formValues.value.apiKey, modelRefresh],
-  ([isVisible, provider, key], _previous, onCleanup) => {
+  [visible, activeProvider, () => formValues.value.apiKey, apiUrl, modelRefresh],
+  ([isVisible, provider, key, address], _previous, onCleanup) => {
     models.value = [];
+    selectedIds.value = new Set();
     modelError.value = "";
     fetching.value = false;
     if (!isVisible || !provider) return;
     if (provider.models.length) {
       models.value = structuredClone(provider.models);
+      selectedIds.value = new Set(models.value.map(model => model.id));
       return;
     }
     const apiKey = typeof key === "string" ? key.trim() : "";
     if (!apiKey) return;
+    let requestApiUrl: string;
+    try { requestApiUrl = getApiUrl(address, provider.apiUrl); }
+    catch (error) { modelError.value = (error as Error).message; return; }
     const controller = new AbortController();
     fetching.value = true;
     // ACT: 输入停顿后自动获取；输入变化时立即取消旧请求，避免逐字请求和结果串到新密钥。
     const timer = setTimeout(async () => {
       try {
         const { data } = await axios.post("/api/providers/models", {
-          apiUrl: provider.apiUrl, protocol: provider.protocol, apiKey,
+          apiUrl: requestApiUrl, protocol: provider.protocol, apiKey,
         }, { signal: controller.signal, timeout: 35000 });
         if (controller.signal.aborted) return;
         if (data.code !== 200 || !Array.isArray(data.data)) throw new Error(data.message || "获取模型列表失败");
         models.value = data.data;
+        selectedIds.value = new Set(models.value.map(model => model.id));
       } catch (error) {
         if (!controller.signal.aborted) modelError.value = axios.isAxiosError(error)
           ? error.response?.data?.message || "获取模型列表失败，请检查 API Key 后重试"
@@ -130,13 +173,15 @@ watch(
 
 function resetForm() {
   selectedProvider.value = languageProviders[0]?.id ?? "";
+  apiUrl.value = languageProviders[0]?.apiUrl ?? "";
+  editingApiUrl.value = false;
   formError.value = "";
   formApi.value = undefined;
   formValues.value = {};
 }
 
 async function addProvider() {
-  if (saving.value || fetching.value || modelError.value || !activeProvider.value || !formApi.value) return;
+  if (saving.value || fetching.value || modelError.value || !selectedIds.value.size || !activeProvider.value || !formApi.value) return;
   formError.value = "";
   const provider = activeProvider.value;
   const values = formApi.value.formData();
@@ -152,9 +197,9 @@ async function addProvider() {
       label: provider.label,
       icon: provider.icon,
       apiKey,
-      apiUrl: "apiUrl" in provider ? provider.apiUrl : "",
+      apiUrl: getApiUrl(apiUrl.value, provider.apiUrl),
       protocol: "protocol" in provider ? provider.protocol : "",
-      models: models.value.map(model => ({ ...model })),
+      models: models.value.filter(model => selectedIds.value.has(model.id)).map(model => ({ ...model })),
     };
     await saveSettings(settings => {
       const existing = settings.customProviders;
@@ -225,6 +270,12 @@ async function addProvider() {
 
     .providerContent {
       padding-right: 12px;
+
+      .apiUrlField {
+        display: flex;
+        width: 100%;
+        gap: 8px;
+      }
 
       .providerHeader {
         display: flex;

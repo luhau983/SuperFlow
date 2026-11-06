@@ -25,6 +25,7 @@ function propertyName(node: ObjectProperty | Node): string | undefined {
   if (!("key" in node) || !("computed" in node) || node.computed) return;
   if (node.key.type === "Identifier") return node.key.name;
   if (node.key.type === "StringLiteral") return node.key.value;
+  if (node.key.type === "NumericLiteral") return String(node.key.value);
 }
 
 function getBindingName(ancestors: Node[]): string {
