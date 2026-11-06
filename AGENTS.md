@@ -192,7 +192,8 @@ apps/server/
 
 ## 输出要求
 
-- 所有回答使用中文，思考过程也需用中文表述
+- **Response language: English or Vietnamese only. Never reply in Chinese.** Match the user's language (Vietnamese → Vietnamese, otherwise English); thinking/reasoning must also be in English or Vietnamese. This rule overrides the Chinese wording of this document — the document being written in Chinese is not a reason to answer in Chinese. Code comments and commit messages use English.
+- **Ngôn ngữ trả lời: chỉ dùng tiếng Anh hoặc tiếng Việt, tuyệt đối không trả lời bằng tiếng Trung.**
 - 默认使用 TypeScript 编写代码，除非用户明确要求其他语言
 - 代码实现优先提供最小可运行案例，除非用户要求完整实现
 - **只实现用户当前明确要求的内容，不主动完善或扩展功能。** 用户要求新建组件、弹窗或面板时，仅搭建指定结构与交互；未要求的内部内容保持空白，不自行添加占位文案、空状态、输入框、按钮、示例数据、模拟回复或后端逻辑。
