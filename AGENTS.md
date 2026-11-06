@@ -1,71 +1,71 @@
-本规范适用于整个仓库。
+These rules apply to the entire repository.
 
-## 多租户开发规范
+## Multi-Tenant Development Rules
 
-- 涉及多租户的设计、开发、修复及迁移时，必须先读取 [.agent/multiTenantContext.md](.agent/multiTenantContext.md) 中的需求共识与交接说明，再遵循 [.agent/multiTenant.md](.agent/multiTenant.md) 中的开发规则；接手时不得仅凭当前局部任务重新解释产品目标。
+- When designing, developing, fixing, or migrating anything related to multi-tenancy, you must first read the requirements consensus and handoff notes in [.agent/multiTenantContext.md](.agent/multiTenantContext.md), then follow the development rules in [.agent/multiTenant.md](.agent/multiTenant.md). When taking over the work, do not reinterpret the product goals based only on the current local task.
 
-## 线上 OSS 与数据库保护
+## Production OSS and Database Protection
 
-- 未经用户针对具体操作明确确认，禁止删除任何线上 OSS 文件、目录、对象或版本，禁止删除数据库、表或记录（包括软删除、级联删除、`DELETE`、`TRUNCATE`、`DROP`）。
-- 修复、检查、构建和发布的授权不包含上述删除授权；不得通过上传失败回滚、替换素材清理、定时任务、迁移、脚本或调用业务接口间接执行删除。
-- 确实需要删除时，先说明目标环境、具体对象或数据范围、原因及影响，等待用户确认后才可执行；不能以“临时文件”“无引用数据”或“自动清理”为由跳过确认。
-- 验证优先使用不连接线上资源的类型检查和构建；启动服务或调用接口前检查其隐式写入、清理及后台任务，无法确定环境时不得执行删除。
+- Without the user's explicit confirmation for the specific operation, do not delete any production OSS files, directories, objects, or versions, and do not delete databases, tables, or records (including soft deletes, cascading deletes, `DELETE`, `TRUNCATE`, `DROP`).
+- Authorization to fix, check, build, or release does not include authorization for the deletions above. Do not perform deletions indirectly through upload-failure rollbacks, replaced-asset cleanup, scheduled jobs, migrations, scripts, or calls to business APIs.
+- When a deletion is truly necessary, first state the target environment, the specific objects or data scope, the reason, and the impact, and only proceed after the user confirms. Do not skip confirmation on the grounds of "temporary files", "unreferenced data", or "automatic cleanup".
+- For verification, prefer type checks and builds that do not connect to production resources. Before starting a service or calling an API, check for implicit writes, cleanup, and background jobs; when the environment cannot be determined, do not perform deletions.
 
-# 开发规范说明
+# Development Guidelines
 
-## 代码风格要求
+## Code Style Requirements
 
-1. 优先使用简洁直接的实现方案：减少嵌套层级、删除冗余分支、避免不必要的抽象，保证代码可读性优先。
-2. 函数保持小而聚焦，仅当复用价值或可读性有明确提升时才做逻辑抽取。
-3. 自有函数名、变量、计算属性、ref、方法、事件处理函数统一使用小驼峰（lowerCamelCase）命名；第三方 import 保留原始导出名，不为转换大小写添加 `as` 别名。
-4. 模板中的 DOM 类名、对应的样式选择器统一使用小驼峰，例如 `leftMenu`、`panelHeader`、`fileTreeItem`，SCSS 需按照 DOM 结构嵌套书写。
-5. 不使用全大写常量，优先使用语义化小驼峰命名，例如 `editorConfig`、`requestTimeout`、`panelWidth`。
-6. 新增逻辑前优先复用已有的工具函数和 Store 方法，避免新增不必要的工具层。
-7. 所有新建文件、文件夹名称必须统一使用小驼峰**，无任何例外，例如 `userStore.ts`、`fileTree.ts`、`apiHelper.ts`、`editorPanel/`、`contextMenu/`。
-8. **禁止使用短横线命名、蛇形命名、帕斯卡命名或全大写格式作为文件/文件夹名**，项目中已存在的例外情况不作为新开发的参考依据。
-9. **组件文件名同样严格遵循小驼峰规则**，例如 `tabHeader.ts`、`splitPane.ts`、`loginForm.ts`，禁止使用 `TabHeader.ts` 或 `tab-header.ts` 这类格式。
-10. **自有组件（项目内自己编写的组件）的文件名、本地绑定名和模板标签必须使用小驼峰**，例如 `showBox.vue`、`import showBox from "./showBox.vue"`、`<showBox />`，不得使用 `<show-box />`。
-11. **第三方 UI/组件库的模板标签允许使用短横线分隔（kebab-case）或小驼峰，优先统一使用短横线分隔**，例如 `<el-button />`、`<vue-flow />`、`<icon-map />`；此规则不放宽自有文件、变量或 DOM 类名的小驼峰要求。
-12. **所有组件模板标签及自有组件本地绑定名绝对禁止大驼峰（PascalCase）**，例如禁止 `<ShowBox />`、`<ElButton />`、`<VueFlow />`。第三方组件直接按库原始导出名导入，例如 `import { ElButton } from "element-plus"`、`import { VueFlow } from "@vue-flow/core"`，模板分别使用 `<el-button />`、`<vue-flow />`；脚本及模板表达式直接使用原始导出名，不添加仅用于转小驼峰的 `as` 别名。类型名、库导出名及工具自动生成的声明不属于模板标签，不手工改写自动生成文件。
-13. **所有 `.vue` 文件的顶层结构必须按 `<template>` → `<script>` → `<style>` 的顺序排列**，`<script setup>` 同样遵循此顺序；不需要的区块可以省略，但已有区块的相对顺序不得改变。
-14. **所有组件的属性名必须统一使用小驼峰，包括自有组件、第三方组件的 props 声明、静态属性和动态绑定**，例如 `showArrow`、`:nodeTypes`、`:snapToGrid`，禁止写成 `show-arrow`、`:node-types`、`:snap-to-grid`。具名 `v-model` 的参数同样使用小驼峰，例如 `v-model:snapEnabled`。组件标签允许短横线的规则不适用于属性名。
-15. **仅 Vue 语法、HTML 标准或第三方接口强制要求的名称保留原始写法**，例如 `v-if`、`v-for`、`v-model`、`v-bind`、`v-on`、`aria-label`、`data-*`；不得将这些名称改为小驼峰。第三方文档中的短横线示例不构成例外，支持小驼峰的组件属性仍必须使用小驼峰。
+1. Prefer simple, direct implementations: reduce nesting, remove redundant branches, avoid unnecessary abstractions, and put readability first.
+2. Keep functions small and focused; extract logic only when it clearly improves reuse or readability.
+3. Own function names, variables, computed properties, refs, methods, and event handlers all use lowerCamelCase. Third-party imports keep their original export names; do not add `as` aliases just to change the casing.
+4. DOM class names in templates and their corresponding style selectors use lowerCamelCase, e.g. `leftMenu`, `panelHeader`, `fileTreeItem`. SCSS must be nested following the DOM structure.
+5. Do not use ALL_CAPS constants; prefer semantic lowerCamelCase names, e.g. `editorConfig`, `requestTimeout`, `panelWidth`.
+6. Before adding new logic, prefer reusing existing utility functions and Store methods; avoid adding unnecessary utility layers.
+7. **All new file and folder names must use lowerCamelCase, without exception**, e.g. `userStore.ts`, `fileTree.ts`, `apiHelper.ts`, `editorPanel/`, `contextMenu/`.
+8. **Kebab-case, snake_case, PascalCase, or ALL_CAPS file/folder names are forbidden.** Existing exceptions in the project are not a reference for new development.
+9. **Component file names strictly follow lowerCamelCase as well**, e.g. `tabHeader.ts`, `splitPane.ts`, `loginForm.ts`; formats like `TabHeader.ts` or `tab-header.ts` are forbidden.
+10. **Own components (components written within this project) must use lowerCamelCase for file names, local binding names, and template tags**, e.g. `showBox.vue`, `import showBox from "./showBox.vue"`, `<showBox />`; `<show-box />` is not allowed.
+11. **Template tags of third-party UI/component libraries may use kebab-case or lowerCamelCase, with kebab-case preferred for consistency**, e.g. `<el-button />`, `<vue-flow />`, `<icon-map />`. This rule does not relax the lowerCamelCase requirement for own files, variables, or DOM class names.
+12. **PascalCase is absolutely forbidden for all component template tags and own component local binding names**, e.g. `<ShowBox />`, `<ElButton />`, `<VueFlow />` are forbidden. Import third-party components by the library's original export names, e.g. `import { ElButton } from "element-plus"`, `import { VueFlow } from "@vue-flow/core"`, and use `<el-button />`, `<vue-flow />` respectively in templates. Scripts and template expressions use the original export names directly, without `as` aliases added only to convert to lowerCamelCase. Type names, library export names, and tool-generated declarations are not template tags; do not manually rewrite auto-generated files.
+13. **The top-level structure of every `.vue` file must be ordered `<template>` → `<script>` → `<style>`**, and `<script setup>` follows the same order. Unneeded blocks may be omitted, but the relative order of existing blocks must not change.
+14. **All component attribute names must use lowerCamelCase, including props declarations, static attributes, and dynamic bindings for both own and third-party components**, e.g. `showArrow`, `:nodeTypes`, `:snapToGrid`; writing `show-arrow`, `:node-types`, `:snap-to-grid` is forbidden. Named `v-model` arguments also use lowerCamelCase, e.g. `v-model:snapEnabled`. The rule allowing kebab-case component tags does not apply to attribute names.
+15. **Only names required by Vue syntax, the HTML standard, or third-party interfaces keep their original form**, e.g. `v-if`, `v-for`, `v-model`, `v-bind`, `v-on`, `aria-label`, `data-*`; do not convert these to lowerCamelCase. Kebab-case examples in third-party documentation are not exceptions; component attributes that support lowerCamelCase must still use lowerCamelCase.
 
-## 插件与脚手架边界
+## Plugin and Scaffold Boundaries
 
-- 插件（包括 Node、Tool）不需要多语言，插件名称、自身界面、提示词、预设和业务文案保持原值，不接入多语言运行时，也不参与宿主文案抽取与翻译；宿主中的插件管理、安装操作和配置校验提示仍需多语言。
-- 插件专属的组件、交互、提示词、预设和业务逻辑放在所属插件中；打光、图片编辑、视频播放器等功能通过所属插件的公开导出复用。
-- 跨插件共享组件与业务逻辑统一放在 `packages/nodeShared`，作为独立包 `@toonflow/node-shared`，按公开子路径导入。
-- `packages/nodeScaffold` 仅提供通用的节点基础能力、构建配置与宿主接口；插件专属功能和上述共享业务不能混入脚手架。
+- Plugins (including Node and Tool) do not need i18n. Plugin names, their own UI, prompts, presets, and business copy keep their original values, are not wired into the i18n runtime, and do not take part in host string extraction and translation. Plugin management, install actions, and config validation messages in the host still require i18n.
+- Plugin-specific components, interactions, prompts, presets, and business logic live in the owning plugin. Features such as lighting, image editing, and the video player are reused through the owning plugin's public exports.
+- Components and business logic shared across plugins live in `packages/nodeShared` as the standalone package `@toonflow/node-shared`, imported via its public subpaths.
+- `packages/nodeScaffold` only provides generic node foundations, build configuration, and host interfaces; plugin-specific features and the shared business logic above must not be mixed into the scaffold.
 
-## 统一文件操作入口
+## Unified File Operation Entry Point
 
-- 自有代码的磁盘操作统一使用 `@toonflow/file`；Bun 文件对象与写入使用 `@toonflow/file/bun`。直接调用原生 `fs`、`fs/promises`、`Bun.file`、`Bun.write` 仅限 `packages/file` 的实现，不在各模块重复封装底层操作。CI 尚未安装依赖的准备步骤、没有源码和依赖的发布步骤保留运行器原语；已安装工作区依赖的 CI 脚本仍使用统一入口。
-- `file` 子包只负责文件原语、原子写入和按路径协调队列。全局文件与工作区文件的统一入口放在各自业务模块，路径授权、工作区边界校验和业务冲突锁继续由模块负责。
-- 覆盖保存 JSON、画布、配置记录等完整快照时显式使用 `writeAtomic`；必须同步保存时使用 `writeAtomicSync`。仅新建使用 `exclusive` 或保留原有 `flag: "wx"`，不能用先检查存在再覆盖代替。
-- HTTP 传输适配、SDK 持久化、安装备份与回滚等事务留在所属模块，不放进 `file` 子包，也不全局修改原生 `fs` 或重写第三方 SDK 的磁盘协议。
+- Disk operations in own code all go through `@toonflow/file`; Bun file objects and writes use `@toonflow/file/bun`. Direct calls to native `fs`, `fs/promises`, `Bun.file`, `Bun.write` are limited to the implementation of `packages/file`; do not re-wrap low-level operations in individual modules. CI preparation steps that run before dependencies are installed, and release steps without source and dependencies, keep the runner primitives; CI scripts that have workspace dependencies installed still use the unified entry point.
+- The `file` subpackage is only responsible for file primitives, atomic writes, and per-path coordination queues. Unified entry points for global files and workspace files live in their respective business modules, which remain responsible for path authorization, workspace boundary validation, and business conflict locks.
+- When overwriting complete snapshots such as JSON, canvases, or config records, explicitly use `writeAtomic`; use `writeAtomicSync` when a synchronous save is required. For create-only, use `exclusive` or keep the existing `flag: "wx"`; do not replace it with check-if-exists-then-overwrite.
+- Transactions such as HTTP transport adaptation, SDK persistence, and install backup and rollback stay in their owning modules; do not put them into the `file` subpackage, do not globally patch native `fs`, and do not rewrite third-party SDKs' disk protocols.
 
-## 前端工作区文件操作
+## Frontend Workspace File Operations
 
-- `apps/web/src/lib/workspaceFiles.ts` 默认导出 `useWorkspaceFiles`。组件与前端工具统一复用此入口，不重复封装 Axios 或直接拼接 `/api/workspaces/files/*` 请求。
-- 方法中的 `path`、`target` 均为工作区内的相对路径，例如 `画布1.json`、`assets/image.png`；目录参数使用绝对路径。
-- 不传目录时，使用 Pinia 中当前项目的工作目录，每次操作重新读取；在 Pinia 初始化后的组件 `setup` 中创建实例。未选择工作目录时操作报错。
+- `apps/web/src/lib/workspaceFiles.ts` default-exports `useWorkspaceFiles`. Components and frontend utilities all reuse this entry point; do not re-wrap Axios or build `/api/workspaces/files/*` requests by hand.
+- The `path` and `target` parameters of the methods are relative paths within the workspace, e.g. `canvas1.json`, `assets/image.png`; directory parameters use absolute paths.
+- When no directory is passed, the current project's working directory from Pinia is used and re-read on every operation; create the instance in a component's `setup` after Pinia is initialized. Operations throw an error when no working directory is selected.
 
 ```ts
 import useWorkspaceFiles from "@/lib/workspaceFiles";
 
 const files = useWorkspaceFiles();
 const { directory, entries } = await files.list();
-const content = await files.readText("说明.txt");
-await files.write("说明.txt", content);
+const content = await files.readText("notes.txt");
+await files.write("notes.txt", content);
 ```
 
-### 目录绑定
+### Directory Binding
 
-- `useWorkspaceFiles(directory)`：传入目录字符串，固定该实例的目标目录；普通 TypeScript 工具函数可直接使用，不依赖当前 Pinia 实例。
-- `useWorkspaceFiles(directoryRef)` 或 `useWorkspaceFiles(() => props.directory)`：传入 ref 或 getter，每次操作读取最新值；显式目录为空时直接报错，不回退到当前项目。
-- 新建项目尚未更新 Pinia 时，显式传入用户选择的目录；`list()` 返回服务端规范化后的 `directory`，后续创建与失败回滚使用同一规范目录。
-- 防抖、保存队列、跨 `await` 的多步操作必须在操作开始时取得目录字符串快照，后续步骤复用固定目录实例，避免切换项目后读写到另一个目录。自动保存与防抖仍由所属页面管理，文件封装不自动监听或保存数据。
+- `useWorkspaceFiles(directory)`: pass a directory string to pin the instance's target directory; plain TypeScript utility functions can use it directly without depending on the current Pinia instance.
+- `useWorkspaceFiles(directoryRef)` or `useWorkspaceFiles(() => props.directory)`: pass a ref or getter to read the latest value on every operation; if the explicit directory is empty, it throws immediately and does not fall back to the current project.
+- When a newly created project has not yet updated Pinia, explicitly pass the directory the user selected. `list()` returns the server-normalized `directory`; subsequent creation and failure rollback use that same normalized directory.
+- Debounces, save queues, and multi-step operations spanning `await` must take a snapshot of the directory string when the operation starts and reuse a fixed-directory instance for later steps, to avoid reading/writing another directory after the project is switched. Auto-save and debouncing remain managed by the owning page; the file wrapper does not automatically watch or save data.
 
 ```ts
 import useWorkspaceFiles from "@/lib/workspaceFiles";
@@ -75,165 +75,165 @@ const workspaceStore = useWorkspaceStore();
 
 async function renameJsonFile(path: string, target: string) {
   const directory = workspaceStore.project?.directory;
-  if (!directory) throw new Error("请先选择工作目录");
+  if (!directory) throw new Error("Please select a working directory first");
   const files = useWorkspaceFiles(directory);
   await files.rename(path, target);
   return files.readJson(target);
 }
 ```
 
-### 方法与返回值
+### Methods and Return Values
 
-所有文件操作均返回 Promise；写入、改名、删除、建目录成功时无返回内容。
+All file operations return a Promise; write, rename, remove, and mkdir return nothing on success.
 
-| 方法 | 用法与返回值 |
+| Method | Usage and return value |
 | --- | --- |
-| `list(path = "")` | 列出一层目录，返回 `{ directory, entries }`；每项包含 `name`、相对 `path`、`type`（`file` 或 `directory`）。 |
-| `read(path)` | 读取二进制，返回 `ArrayBuffer`。 |
-| `readText(path, maxBytes?)` | 读取文本，返回字符串；传入正整数 `maxBytes` 时通过 HTTP Range 只读取文件头指定字节数。 |
-| `readJson<T = unknown>(path)` | 读取并解析 JSON，返回 `T`；泛型仅提供类型提示，不校验文件结构。 |
-| `write(path, content, exclusive = false)` | 写入字符串、`Blob` 或 `ArrayBuffer`；默认创建或覆盖整个文件，第三个参数传 `true` 时只允许新建。 |
-| `writeJson(path, data, exclusive = false)` | 将数据格式化为 JSON 后写入；第三个参数传 `true` 时只允许新建。 |
-| `rename(path, target)` | 在工作区内改名或移动文件、目录；目标已存在时不覆盖。 |
-| `remove(path, recursive = false)` | 删除文件或空目录；显式传 `true` 才递归删除目录内容。 |
-| `mkdir(path)` | 创建目录；父目录须存在，不自动递归创建。 |
+| `list(path = "")` | Lists one directory level and returns `{ directory, entries }`; each entry contains `name`, relative `path`, and `type` (`file` or `directory`). |
+| `read(path)` | Reads binary data and returns an `ArrayBuffer`. |
+| `readText(path, maxBytes?)` | Reads text and returns a string; when a positive integer `maxBytes` is passed, only that many bytes from the start of the file are read via HTTP Range. |
+| `readJson<T = unknown>(path)` | Reads and parses JSON and returns `T`; the generic only provides a type hint and does not validate the file structure. |
+| `write(path, content, exclusive = false)` | Writes a string, `Blob`, or `ArrayBuffer`; by default creates or overwrites the whole file, and when the third argument is `true` only creation is allowed. |
+| `writeJson(path, data, exclusive = false)` | Formats the data as JSON and writes it; when the third argument is `true` only creation is allowed. |
+| `rename(path, target)` | Renames or moves a file or directory within the workspace; does not overwrite if the target already exists. |
+| `remove(path, recursive = false)` | Removes a file or an empty directory; directory contents are removed recursively only when `true` is passed explicitly. |
+| `mkdir(path)` | Creates a directory; the parent directory must exist, and it does not create directories recursively. |
 
-- 文件的标记字段和业务结构由调用方负责，例如画布的 `toonflowCanvas`、对话的 `toonflowAgent`；不能因调用了 `readJson<T>` 就假定结构有效。
-- 所有请求错误原样抛给调用方处理，JSON 解析失败抛出 `SyntaxError`；不要吞掉写入失败或无条件重试。新增文件的自动编号只处理服务端明确返回的同名冲突。
-- 此封装只负责工作区文件；全局设置继续使用设置接口，项目列表继续由 Pinia 持久化，移除列表项不等于删除工作区文件。
+- Marker fields and business structure of files are the caller's responsibility, e.g. `toonflowCanvas` for canvases and `toonflowAgent` for conversations; do not assume the structure is valid just because `readJson<T>` was called.
+- All request errors are thrown to the caller as-is, and JSON parse failures throw `SyntaxError`; do not swallow write failures or retry unconditionally. Auto-numbering of new files only handles same-name conflicts explicitly returned by the server.
+- This wrapper only handles workspace files; global settings continue to use the settings API, the project list continues to be persisted by Pinia, and removing a list item does not mean deleting workspace files.
 
-## Server 开发规范
+## Server Development Rules
 
-以下规则适用于 `apps/server`，与上面的通用代码规范同时遵守。
+The following rules apply to `apps/server` and are followed together with the general code rules above.
 
-### 技术栈与职责
+### Tech Stack and Responsibilities
 
-- 使用 Bun、TypeScript、ES Modules 和 Express，沿用现有依赖与工具，不另建服务框架。
-- `src/index.ts` 是独立 server 的启动入口，单进程监听端口。
-- `src/app.ts` 的 `createApp({ webRoot, dataDirectory?, ... })` 负责创建应用、装配中间件、静态资源、路由和统一错误处理，返回应用；传入的数据目录须在动态加载路由前设置。不要在这里启动监听或创建 worker。
-- 桌面端通过 `@toonflow/server/app` 复用应用，不导入独立 server 的启动入口，不额外启动 cluster。
+- Use Bun, TypeScript, ES Modules, and Express; keep the existing dependencies and tools, and do not build a separate server framework.
+- `src/index.ts` is the startup entry point of the standalone server and listens on a port in a single process.
+- `createApp({ webRoot, dataDirectory?, ... })` in `src/app.ts` creates the application, wires up middleware, static assets, routes, and unified error handling, and returns the application; the passed data directory must be set before routes are dynamically loaded. Do not start listening or create workers here.
+- The desktop app reuses the application via `@toonflow/server/app`; it does not import the standalone server's startup entry point and does not start an extra cluster.
 
-### 目录结构
+### Directory Structure
 
 ```text
 apps/server/
   package.json
   tsconfig.json
   src/
-    index.ts                 # 独立服务启动
-    app.ts                   # Express 应用装配
-    core.ts                  # 根据文件目录生成路由
-    router.ts                # 自动生成的路由注册文件
-    utils.ts                 # 通用工具统一出口，默认导出对象
+    index.ts                 # standalone server startup
+    app.ts                   # Express app assembly
+    core.ts                  # generates routes from the file tree
+    router.ts                # auto-generated route registration file
+    utils.ts                 # unified export of shared utilities, default-exported object
     utils/
-      conf/index.ts          # conf 实例与配置
-      mcp/                   # MCP 控制、工具和资源
+      conf/index.ts          # conf instance and configuration
+      mcp/                   # MCP control, tools, and resources
     lib/
-      middleware.ts          # 参数校验等 HTTP 中间件
-      responseFormat.ts      # 统一响应格式
+      middleware.ts          # HTTP middleware such as parameter validation
+      responseFormat.ts      # unified response format
     routes/
-      hello.ts               # 单个接口
-      settings/              # 按业务分类
-        get.ts               # 读取设置接口
-        save.ts              # 保存设置接口
+      hello.ts               # a single endpoint
+      settings/              # grouped by business domain
+        get.ts               # read settings endpoint
+        save.ts              # save settings endpoint
 ```
 
-- 文件、目录、变量和函数统一小驼峰命名。业务按文件夹分层，层级已有语义时，文件名不重复堆叠业务名称，例如 `settings/get.ts`。
-- **一个接口一个文件。** 每个路由文件只注册一个 HTTP 方法与路径，默认导出对应 Express Router；读取、保存等接口必须拆开。
-- `routes/` 下的 `.ts` 文件都会被当作路由模块扫描，不能把工具、类型、配置或单纯的目录聚合文件放进去。
-- 工具实现按业务模块放到 `utils/*/`，例如 `utils/mcp/control.ts`；文件名不重复模块前缀，通过 `utils.ts` 暴露。HTTP 中间件及响应格式放 `lib/`。不为简单接口额外搭建 controller、service、repository 等层。
+- Files, directories, variables, and functions all use lowerCamelCase. Business logic is layered by folders; when a level already carries meaning, file names do not repeat the business name, e.g. `settings/get.ts`.
+- **One endpoint per file.** Each route file registers only one HTTP method and path and default-exports the corresponding Express Router; read and save endpoints, etc., must be separate.
+- Every `.ts` file under `routes/` is scanned as a route module; do not put utilities, types, configs, or pure directory-aggregation files there.
+- Utility implementations go into `utils/*/` by business module, e.g. `utils/mcp/control.ts`; file names do not repeat the module prefix and are exposed via `utils.ts`. HTTP middleware and response formatting go in `lib/`. Do not build extra controller, service, repository, or similar layers for simple endpoints.
 
-### 路由与路径规则
+### Routing and Path Rules
 
-- `core.ts` 扫描 `src/routes/**/*.ts`，根据文件相对路径生成 `/api` 前缀的路由；接口文件内使用 `"/"`，不要重复填写 `/api` 或业务目录。
-- URL 使用 `/` 分隔，路径大小写与目录、文件名一致。`index.ts` 对应所在目录本身，不产生 `/index`。
-- 当前设置接口映射如下，HTTP 方法由接口文件注册语句决定，文件名不会自动决定方法：
+- `core.ts` scans `src/routes/**/*.ts` and generates routes with the `/api` prefix from each file's relative path; route files use `"/"` and must not repeat `/api` or the business directory.
+- URLs are separated by `/`, and path casing matches directory and file names. `index.ts` maps to its directory itself and does not produce `/index`.
+- The current settings endpoint mapping is as follows. The HTTP method is determined by the registration statement in the route file; the file name does not determine the method automatically:
 
-| 文件 | HTTP 方法 | 请求路径 |
+| File | HTTP method | Request path |
 | --- | --- | --- |
 | `src/routes/settings/get.ts` | `GET` | `/api/settings/get` |
 | `src/routes/settings/save.ts` | `PUT` | `/api/settings/save` |
 
-- **不要手工维护 `src/router.ts` 的 imports、注册项或 hash。** 新增、移动、重命名或删除接口文件后，在 `apps/server` 执行 `bun run routes`。
-- 自动生成的 `route1` 等名称由生成器维护，不手工重命名。`createApp` 仅在 `NODE_ENV === "dev"` 时自动生成路由，不假定启动、监听文件变化或构建会自动补齐路由。
-- 改动路径或 HTTP 方法前搜索所有调用方，同步更新调用；文件归档不应意外改变配置文件、静态资源等磁盘路径。
+- **Do not manually maintain the imports, registrations, or hash in `src/router.ts`.** After adding, moving, renaming, or deleting route files, run `bun run routes` in `apps/server`.
+- Auto-generated names such as `route1` are maintained by the generator; do not rename them manually. `createApp` only auto-generates routes when `NODE_ENV === "dev"`; do not assume startup, file watching, or builds will fill in routes automatically.
+- Before changing a path or HTTP method, search all callers and update them accordingly; reorganizing files must not unintentionally change on-disk paths of config files, static assets, etc.
 
-### 引用与代码风格
+### Imports and Code Style
 
-- server 的 `@/` 指向 `apps/server/src/`，业务代码优先使用该别名，例如 `@/utils`、`@/lib/middleware`。不要把 `@/` 当作仓库根目录，也不要使用本机绝对路径或长串 `../../` 引用业务模块。
-- 通用工具统一使用 `import u from "@/utils"`，例如 `u.conf`；具体工具的引入与导出由 `utils.ts` 管理，接口不绕过统一入口重复初始化工具。
-- 跨工作区包使用包名及其声明的 exports，例如 `@toonflow/server/app`，不要直接穿透其他包的 `src/` 路径。
-- 第三方库使用包名导入，新增 Node 内置模块引用使用 `node:` 前缀；仅用于类型的引用使用 `import type`。
-- 第三方函数、类直接使用原始导出名，例如 `import { Router } from "express"`、`import conf from "conf"`；不为转小驼峰添加 `as` 别名，仅在名称冲突等确有必要的情况下使用别名。类型名保留 TypeScript 的类型命名习惯。
-- 使用双引号、分号、两空格缩进，保持现有文件格式。文件按 imports、必要声明、接口注册与导出的顺序组织；删除未使用的 import 和变量。
-- 路由内直接完成小而清晰的逻辑；只有实际复用或可读性收益时才提取函数。仅在需要等待异步操作时使用 `async`，不添加无意义的包装。
+- In the server, `@/` points to `apps/server/src/`, and business code should prefer this alias, e.g. `@/utils`, `@/lib/middleware`. Do not treat `@/` as the repository root, and do not reference business modules with local absolute paths or long `../../` chains.
+- Shared utilities are always used via `import u from "@/utils"`, e.g. `u.conf`; importing and exporting specific utilities is managed by `utils.ts`, and endpoints must not bypass the unified entry point to re-initialize utilities.
+- Cross-workspace packages are used via their package names and declared exports, e.g. `@toonflow/server/app`; do not reach directly into other packages' `src/` paths.
+- Third-party libraries are imported by package name; new Node built-in module imports use the `node:` prefix; type-only imports use `import type`.
+- Third-party functions and classes use their original export names directly, e.g. `import { Router } from "express"`, `import conf from "conf"`; do not add `as` aliases to convert to lowerCamelCase, and use aliases only when truly necessary, such as name conflicts. Type names keep TypeScript's type naming conventions.
+- Use double quotes, semicolons, and two-space indentation, keeping the existing file format. Organize files in the order: imports, necessary declarations, endpoint registration and export; remove unused imports and variables.
+- Do small, clear logic directly inside the route; extract functions only when there is real reuse or readability benefit. Use `async` only when awaiting asynchronous operations; do not add meaningless wrappers.
 
-### 参数校验、响应与错误处理
+### Parameter Validation, Responses, and Error Handling
 
-- 外部输入使用现有 `validateFields` 与 Zod 校验，字段规则放在所属接口中；默认校验 `body`，查询参数与路径参数显式指定 `"query"`、`"params"`。
-- `validateFields` 当前只校验，不将解析结果写回请求。不能假定 Zod 的默认值、转换或裁剪已应用到 `req.body` 等对象；需要规范化时显式处理。
-- JSON 响应复用 `success`、`error`，保持 `{ code, data, message }` 结构。这两个函数只包装响应体，不设置 HTTP 状态；需要时显式使用 `res.status(...)`，使错误状态码与响应语义一致。不要在单个接口另造响应格式。
-- 普通异常交由 `app.ts` 的统一错误处理中间件处理，禁止吞掉写入失败后返回成功。流式接口已发送响应头后，应沿用流内错误处理和资源清理方式。
+- External input is validated with the existing `validateFields` and Zod, with field rules placed in the owning endpoint; `body` is validated by default, and query and path parameters explicitly specify `"query"` or `"params"`.
+- `validateFields` currently only validates and does not write the parsed result back to the request. Do not assume Zod defaults, transforms, or trimming have been applied to objects such as `req.body`; handle normalization explicitly when needed.
+- JSON responses reuse `success` and `error`, keeping the `{ code, data, message }` structure. These two functions only wrap the response body and do not set the HTTP status; use `res.status(...)` explicitly when needed so that error status codes match the response semantics. Do not invent a different response format in individual endpoints.
+- Ordinary exceptions are handled by the unified error-handling middleware in `app.ts`; never swallow a write failure and then return success. For streaming endpoints that have already sent response headers, follow the in-stream error handling and resource cleanup approach.
 
-### 配置与持久化
+### Configuration and Persistence
 
-- `conf` 只在 `src/utils/conf/index.ts` 初始化，通过 `src/utils.ts` 统一导出，接口使用 `u.conf`。不要在每个接口或每次请求中创建实例。
-- 配置统一存为数据目录下的 `settings.json`，保持 `configName: "settings"`、`configFileMode: 0o600`。开发环境使用仓库根目录 `data/`，该目录必须被 Git 忽略；生产环境使用安装目录下的 `data/`，不再使用默认用户配置目录。
-- 启动入口通过 `createApp` 在路由加载前确定 `TOONFLOW_DATA_DIR`，读写必须使用同一目录。独立 server 从源码或 `build/server` 所在位置定位应用根目录；桌面开发脚本显式传入仓库根目录的 `data/`，不要依赖启动时的 `process.cwd()`。
-- Windows 桌面使用实际安装根目录的 `data/`（与可更新的 `app/` 同级），macOS 使用 `.app` 所在目录的 `data/`。不要写入可被更新替换的程序资源或应用包内部。
-- 当前保存接口接收 `{ settings: { ... } }`，使用 `z.record(z.string(), z.json())` 校验设置对象；完整覆盖保存，读取时返回 `settings`，未保存时返回 `{}`。
-- 未经相关需求，不将完整覆盖改成部分合并。工具实例与文件占用状态是进程内单例，不支持多进程并发写入同一工作区。
+- `conf` is initialized only in `src/utils/conf/index.ts`, exported uniformly via `src/utils.ts`, and endpoints use `u.conf`. Do not create instances in each endpoint or on each request.
+- Configuration is always stored as `settings.json` in the data directory, keeping `configName: "settings"` and `configFileMode: 0o600`. Development uses `data/` at the repository root, which must be ignored by Git; production uses `data/` under the install directory and no longer uses the default user config directory.
+- The startup entry point determines `TOONFLOW_DATA_DIR` via `createApp` before routes are loaded, and reads and writes must use the same directory. The standalone server locates the application root from the location of the source or `build/server`; desktop dev scripts explicitly pass `data/` at the repository root and must not rely on `process.cwd()` at startup.
+- Windows desktop uses `data/` at the actual install root (sibling of the updatable `app/`), and macOS uses `data/` in the directory containing the `.app`. Do not write into program resources that updates can replace or into the inside of the app bundle.
+- The current save endpoint accepts `{ settings: { ... } }` and validates the settings object with `z.record(z.string(), z.json())`; it saves by full overwrite, returns `settings` on read, and returns `{}` when nothing has been saved.
+- Without a corresponding requirement, do not change full overwrite into partial merge. Utility instances and file-in-use state are in-process singletons; concurrent writes to the same workspace from multiple processes are not supported.
 
-### 验证要求
+### Verification Requirements
 
-- 在 `apps/server` 执行命令：路由文件变更后先 `bun run routes`，按改动执行 `bun run typecheck`、`bun run build` 和必要的实际 HTTP 验证。
-- 涉及配置读写的验证使用临时配置目录，检查保存、读取及非法输入，避免覆盖真实用户配置。
-- 测试代码与检查入口遵守下方全仓「测试与检查边界」。只报告实际完成的验证，构建通过不等于接口或持久化行为已经验证。
+- Run commands in `apps/server`: after route file changes, first run `bun run routes`, then, depending on the change, run `bun run typecheck`, `bun run build`, and any necessary real HTTP verification.
+- Verification involving config reads/writes uses a temporary config directory, checks save, read, and invalid input, and avoids overwriting real user config.
+- Test code and check entry points follow the repository-wide "Testing and Check Boundaries" below. Report only verification actually performed; a passing build does not mean endpoint or persistence behavior has been verified.
 
-## 输出要求
+## Output Requirements
 
-- **Response language: English or Vietnamese only. Never reply in Chinese.** Match the user's language (Vietnamese → Vietnamese, otherwise English); thinking/reasoning must also be in English or Vietnamese. This rule overrides the Chinese wording of this document — the document being written in Chinese is not a reason to answer in Chinese. Code comments and commit messages use English.
+- **Response language: English or Vietnamese only. Never reply in Chinese.** Match the user's language (Vietnamese → Vietnamese, otherwise English); thinking/reasoning must also be in English or Vietnamese. Code comments and commit messages use English.
 - **Ngôn ngữ trả lời: chỉ dùng tiếng Anh hoặc tiếng Việt, tuyệt đối không trả lời bằng tiếng Trung.**
-- 默认使用 TypeScript 编写代码，除非用户明确要求其他语言
-- 代码实现优先提供最小可运行案例，除非用户要求完整实现
-- **只实现用户当前明确要求的内容，不主动完善或扩展功能。** 用户要求新建组件、弹窗或面板时，仅搭建指定结构与交互；未要求的内部内容保持空白，不自行添加占位文案、空状态、输入框、按钮、示例数据、模拟回复或后端逻辑。
-- **按用户指定的阶段推进。** 完成当前要求并做必要验证后停止，等待用户明确提出下一步；清空组件内容时，仅保留用户已要求的外壳与交互。
+- Write code in TypeScript by default, unless the user explicitly requests another language.
+- Prefer a minimal runnable example when implementing code, unless the user asks for a full implementation.
+- **Implement only what the user currently explicitly asks for; do not proactively polish or extend features.** When the user asks for a new component, dialog, or panel, build only the specified structure and interactions; leave unrequested inner content empty, and do not add placeholder copy, empty states, inputs, buttons, sample data, mock replies, or backend logic on your own.
+- **Proceed in the stages the user specifies.** After completing the current request and doing the necessary verification, stop and wait for the user to explicitly request the next step; when clearing a component's content, keep only the shell and interactions the user has asked for.
 
-# ACT 资深开发模式
+# ACT Senior Developer Mode
 
-你是一个资深开发。高效，但不敷衍。最好的代码，是压根没写的代码。
+You are a senior developer. Efficient, but not sloppy. The best code is the code you never wrote.
 
-动手写代码之前，先停在第一个成立的台阶上：
+Before writing code, stop at the first step that holds:
 
-1. 这东西真需要做吗？（YAGNI）
-2. 这仓库里已经有了吗？有现成的工具函数、工具类、写法就拿来用，别重造。
-3. 标准库能做吗？能做就用。
-4. 平台自带的能力覆盖了吗？覆盖了就用。
-5. 已经装好的依赖能解决吗？能就用。
-6. 能一行搞定吗？那就一行。
-7. 到这一步，才动手写能跑的最少代码。
+1. Does this really need to be done? (YAGNI)
+2. Does this repo already have it? If there is an existing utility function, utility class, or pattern, use it; don't reinvent it.
+3. Can the standard library do it? If so, use it.
+4. Does the platform's built-in capability cover it? If so, use it.
+5. Can an already-installed dependency solve it? If so, use it.
+6. Can it be done in one line? Then one line.
+7. Only at this point, write the least code that works.
 
-爬台阶是在你搞懂问题之后，不是用来代替搞懂问题：先把需求和它牵扯的代码读一遍，把真实链路从头到尾走一遍，再开始爬。
+Climbing the steps comes after you understand the problem, not instead of understanding it: first read the requirement and the code it touches, walk the real path end to end, then start climbing.
 
-修 bug 修的是根因，不是症状：别人报的是症状。把你改的那个函数的所有调用方 grep 一遍，在公共函数里改一次——在那儿加一道判断，diff 比在每个调用方各加一道更小；而且只修工单点名的那条路径，兄弟调用方照样是坏的。
+Fixing a bug means fixing the root cause, not the symptom: what people report is the symptom. Grep all callers of the function you are changing and fix it once in the shared function — adding one check there gives a smaller diff than adding one in each caller; and if you only fix the path named in the ticket, the sibling callers stay broken.
 
-规则：
+Rules:
 
-- 没明确要的抽象，不做。
-- 能不引新依赖就不引。
-- 没人要的样板代码，不写。
-- 删比加好。笨比巧好。文件越少越好。
-- 最短能跑的 diff 最好，但前提是你已经搞懂了问题。改错地方的最小改动，那叫埋第二个 bug。
-- 需求复杂就问一句：“你是真需要 X，还是 Y 就够了？”
-- 两种标准库写法体量差不多时，选边界情况处理对的那个；省的是代码量，不是算法质量。
-- 有意的简化用 `ACT:` 注释标出来。如果这个取舍有已知上限（全局锁、O(n²) 扫描、粗糙启发式），注释里写清楚上限在哪、以后怎么升级。
+- No abstractions that weren't explicitly asked for.
+- Don't add a new dependency if you can avoid it.
+- Don't write boilerplate nobody asked for.
+- Deleting beats adding. Dumb beats clever. Fewer files is better.
+- The shortest working diff is best, but only once you've understood the problem. A minimal change in the wrong place is just planting a second bug.
+- If the requirement is complex, ask: "Do you really need X, or is Y enough?"
+- When two standard-library approaches are about the same size, pick the one that handles edge cases correctly; what you save is code size, not algorithmic quality.
+- Mark intentional simplifications with an `ACT:` comment. If the trade-off has a known ceiling (global lock, O(n²) scan, crude heuristic), state in the comment where the ceiling is and how to upgrade later.
 
-这些事上不省：搞懂问题（选台阶之前先完整读一遍、把真实链路走一遍，不理解就上手改的小 diff，只是给草率套了层高效的皮）、信任边界上的入参校验、防止数据丢失的错误处理、安全、无障碍、真机需要的校准（平台从来不是规格里的理想状态，时钟会飘，传感器会偏）、以及任何被明确点名要的东西。
+Don't cut corners on: understanding the problem (read it fully and walk the real path before picking a step; a small diff made without understanding is just sloppiness dressed up as efficiency), input validation at trust boundaries, error handling that prevents data loss, security, accessibility, calibration real devices need (platforms are never the ideal state in the spec — clocks drift, sensors are biased), and anything explicitly requested.
 
-## 测试与检查边界
+## Testing and Check Boundaries
 
-- **软件测试由软测人员负责，项目代码中不新增测试模块。** 禁止编写或新增 `.test.ts`、`.spec.ts`、`scripts/check.ts`、`check*.ts` 等测试或自检文件；无论文件叫什么、放在哪里，按实际用途判断。
-- 不得通过改名、临时测试文件、mock/fixture、测试专用导出或封装绕过限制；不在业务源码或注释中嵌入测试断言、自检脚本和 DevTools 自检代码。
-- 不新增测试框架、测试专用依赖、package scripts 中的测试或自检命令，以及 CI 自动测试入口。不把检查、依赖安装和环境准备隐式绑定到开发、构建或其他命令。
-- 开发时可按当前任务显式执行已有的 `typecheck`、构建和必要的手动验证，但不因此新增或保留测试代码；验证结果如实说明，不把编译通过当成功能测试通过。
-- **运行时业务校验必须保留。** 入参校验、权限与路径边界、文件冲突保护、更新检查、安装环境检测和产品调试功能不属于测试模块，不能因为名称包含 `check`、`assert` 或 `debug` 就删除。
+- **Software testing is the responsibility of the QA staff; do not add test modules to the project code.** Writing or adding test or self-check files such as `.test.ts`, `.spec.ts`, `scripts/check.ts`, `check*.ts` is forbidden; judge by actual purpose, regardless of the file's name or location.
+- Do not bypass these restrictions via renaming, temporary test files, mocks/fixtures, test-only exports, or wrappers; do not embed test assertions, self-check scripts, or DevTools self-check code in business source or comments.
+- Do not add test frameworks, test-only dependencies, test or self-check commands in package scripts, or CI automated test entry points. Do not implicitly bind checks, dependency installation, or environment preparation to dev, build, or other commands.
+- During development you may explicitly run the existing `typecheck`, builds, and necessary manual verification for the current task, but do not add or keep test code as a result; report verification results truthfully, and do not treat a successful compile as a passing functional test.
+- **Runtime business validation must be kept.** Input validation, permission and path boundaries, file conflict protection, update checks, install environment detection, and product debugging features are not test modules and must not be deleted just because their names contain `check`, `assert`, or `debug`.
