@@ -109,6 +109,7 @@ import cheapAiModelSource from "@toonflow/providers/language/cheapAiModel?raw";
 import apiMartSource from "@toonflow/providers/media/apiMart?raw";
 import metasoSource from "@toonflow/providers/media/metaso?raw";
 import compshareSource from "@toonflow/providers/media/compshare?raw";
+import waveSpeedSource from "@toonflow/providers/media/waveSpeed?raw";
 import "element-plus/es/components/alert/style/css";
 import "element-plus/es/components/button/style/css";
 import "element-plus/es/components/dialog/style/css";
@@ -133,6 +134,7 @@ const presets = [
   { kind: "media", id: "apiMart", label: "APIMart", source: apiMartSource },
   { kind: "media", id: "metaso", label: "秘塔", source: metasoSource },
   { kind: "media", id: "compshare", label: "优刻得", source: compshareSource },
+  { kind: "media", id: "waveSpeed", label: "WaveSpeed", source: waveSpeedSource },
 ];
 const availablePresets = computed(() => presets.filter(item => item.kind === props.kind));
 const method = ref("manual");

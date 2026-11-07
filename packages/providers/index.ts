@@ -5,6 +5,7 @@ import cheapAiModel from "./src/language/cheapAiModel";
 import apiMart from "./src/media/apiMart";
 import metaso from "./src/media/metaso";
 import compshare from "./src/media/compshare";
+import waveSpeed from "./src/media/waveSpeed";
 
 export type Provider = ProviderDefinition;
 export type ProviderPrice = NonNullable<Awaited<ReturnType<NonNullable<Provider["getPrice"]>>>>;
@@ -17,4 +18,4 @@ export type AudioConvertOptions = Parameters<ProviderTools["audio"]["convert"]>[
 export type { FfmpegFactory, FfmpegCommand } from "@toonflow/ffmpeg/types";
 
 export const languageProviders = [deepSeek, cheapAiModel] as const;
-export const mediaProviders = [apiMart, metaso, compshare] as const;
+export const mediaProviders = [apiMart, metaso, compshare, waveSpeed] as const;
