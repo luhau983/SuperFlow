@@ -1,44 +1,48 @@
 const rules = [
   {
     type: "input",
-    field: "baseUrl" as const,
-    title: "Địa chỉ server",
-    value: "http://localhost:8000/v1",
-    props: { placeholder: "http://localhost:8000/v1" },
+    field: "apiKey" as const,
+    title: "API Key",
+    value: "",
+    props: { type: "password", showPassword: true, autocomplete: "off", placeholder: "vn_sk_..." },
   },
   {
     type: "input",
-    field: "apiKey" as const,
-    title: "API Key (VIENEU_API_KEY, để trống nếu không đặt)",
-    value: "",
-    props: { type: "password", showPassword: true, autocomplete: "off" },
+    field: "baseUrl" as const,
+    title: "Địa chỉ API",
+    value: "https://api.vieneu.io/api/v1",
+    props: { placeholder: "https://api.vieneu.io/api/v1" },
   },
 ] as const;
 
-const version = "1.0.0";
-const sampleRates = [48000, 24000, 16000, 8000];
+const version = "2.0.0";
+const formats: Record<string, string> = { wav: "wav", mp3: "mp3", pcm: "pcm", ogg_opus: "opus" };
 
-// The server streams a WAV header with unknown (0xFFFFFFFF) sizes; patch them so WAV parsers accept the finished file.
-function finalizeWav(data: Uint8Array) {
-  const view = new DataView(data.buffer, data.byteOffset, data.byteLength);
-  view.setUint32(4, data.byteLength - 8, true);
-  view.setUint32(40, data.byteLength - 44, true);
-  return data;
+function baseUrl(config: ProviderConfig<typeof rules>) {
+  const url = config.baseUrl.trim().replace(/\/+$/, "");
+  if (!url) throw new Error("Vui lòng cấu hình địa chỉ API VieNeu");
+  return url;
+}
+
+function authHeaders(config: ProviderConfig<typeof rules>) {
+  const apiKey = config.apiKey.trim();
+  if (!apiKey) throw new Error("Vui lòng cấu hình API Key VieNeu");
+  return { Authorization: `Bearer ${apiKey}` };
 }
 
 export default {
   id: "vieNeuTts",
-  label: "VieNeu TTS (local)",
+  label: "VieNeu TTS",
   version,
-  readme: `Đọc tiếng Việt bằng [VieNeu-TTS](https://github.com/pnnbao97/VieNeu-TTS) qua API tương thích OpenAI chạy trên máy của bạn.
- \n Khởi chạy server: \`uv run python -m apps.openai_speech\` hoặc \`docker compose -f docker/docker-compose.yml --profile api-cpu up\` (mặc định cổng 8000).
- \n Giọng tự thêm qua \`POST /v1/voices\` có thể dùng bằng cách nhập đúng tên giọng vào mục giọng đọc của node. Server chỉ trả wav/pcm; mp3 được chuyển đổi trong ứng dụng.`,
+  readme: `Đọc tiếng Việt bằng [VieNeu Cloud API](https://docs.vieneu.io/docs/cloud-api/overview/) (engine v4, 48 kHz).
+ \n Lấy API Key ở trang Developer của [vieneu.io](https://vieneu.io). Key \`vn_test_\` giới hạn 100 từ mỗi lần gọi.
+ \n Chi phí: số ký tự (tối thiểu 50) × hệ số engine × hệ số toàn cục, xem \`GET /v1/engines\`. Giọng đọc có thể chọn từ danh sách hoặc gõ tên bất kỳ giọng nào trong [catalog](https://api.vieneu.io/api/v1/voices?engine=v4), kể cả giọng clone (\`clone_...\`) tạo trên web Studio.`,
   rules,
   // Static metadata parsing requires models to be an inline JSON literal.
   models: [
     {
-      id: "vieneu-v3-turbo",
-      label: "VieNeu v3 Turbo",
+      id: "vieneu-v4",
+      label: "VieNeu v4",
       type: "audio",
       rules: [
         {
@@ -46,72 +50,76 @@ export default {
           field: "voice",
           title: "Giọng đọc",
           value: "",
+          // ACT: The catalog has 700+ voices; list a curated subset and let users type any other id or clone_ id.
+          props: { filterable: true, allowCreate: true, defaultFirstOption: true },
           options: [
-            { label: "Mặc định của server", value: "" },
-            { label: "Hải Đăng (nam, Bắc, tự nhiên)", value: "Hải Đăng" },
-            { label: "Mai Anh (nữ, Bắc, tin tức)", value: "Mai Anh" },
-            { label: "Trúc Ly (nữ, Bắc, tự nhiên)", value: "Trúc Ly" },
-            { label: "Thiện Minh (nam, Bắc, kể chuyện)", value: "Thiện Minh" },
-            { label: "Adam bựa (nam, Bắc, tự nhiên)", value: "Adam bựa" },
-            { label: "Thiền Tâm Đức (nam, Bắc, kể chuyện)", value: "Thiền Tâm Đức" },
-            { label: "Ngọc Huyền (nữ, Bắc, tự nhiên)", value: "Ngọc Huyền" },
-            { label: "Minh Đức (nam, Bắc, tin tức)", value: "Minh Đức" },
-            { label: "Phạm Tuyên (nam, Bắc, tự nhiên)", value: "Phạm Tuyên" },
-            { label: "Xuân Vĩnh (nam, Bắc, tự nhiên)", value: "Xuân Vĩnh" },
-            { label: "Thanh Bình (nam, Bắc, kể chuyện)", value: "Thanh Bình" },
-            { label: "Ngọc Linh (nữ, Bắc, kể chuyện)", value: "Ngọc Linh" },
-            { label: "Đoan Trang (nữ, Bắc, tự nhiên)", value: "Đoan Trang" },
-            { label: "Quỳnh Anh (nữ, Bắc, đọc truyện)", value: "Quỳnh Anh" },
-            { label: "Quốc Tuấn (nam, Bắc, tự nhiên)", value: "Quốc Tuấn" },
-            { label: "Quang Sơn (nam, Trung, tự nhiên)", value: "Quang Sơn" },
-            { label: "Ngọc Trân (nữ, Trung, tự nhiên)", value: "Ngọc Trân" },
+            { label: "Mặc định của VieNeu", value: "" },
+            { label: "Ngọc Lan (nữ, Nam, trầm dịu dàng)", value: "Ngọc Lan" },
+            { label: "Ban Mai (nữ, Bắc, tin tức)", value: "Ban Mai" },
+            { label: "Mai Phương (nữ, Bắc, tin tức)", value: "Mai Phương" },
+            { label: "Huyền My (nữ, Bắc, tin tức)", value: "Huyền My" },
+            { label: "Bích Ngọc (nữ, Bắc, kể chuyện)", value: "Bích Ngọc" },
+            { label: "Ái Cúc (nữ, Bắc, podcast)", value: "Ái Cúc" },
+            { label: "Thái Duy Bình (nam, Bắc, tin tức)", value: "Thái Duy Bình" },
+            { label: "Mạnh Dũng 1 (nam, Bắc, tin tức)", value: "Mạnh Dũng 1" },
+            { label: "Anh Khôi (nam, Bắc, kể chuyện)", value: "Anh Khôi" },
+            { label: "Thế Kiên (nam, Bắc, kể chuyện)", value: "Thế Kiên" },
+            { label: "Yến Nhi - Huế (nữ, Trung, tự nhiên)", value: "Yến Nhi - Huế" },
+            { label: "Mẫn Huỳnh (nữ, Trung, tự nhiên)", value: "Mẫn Huỳnh" },
+            { label: "Hoàng Sơn (nam, Trung, tự nhiên)", value: "Hoàng Sơn" },
+            { label: "Trung Dũng (nam, Trung, gần gũi)", value: "Trung Dũng" },
             { label: "Thùy Dung (nữ, Nam, tin tức)", value: "Thùy Dung" },
-            { label: "Thái Sơn (nam, Nam, kể chuyện)", value: "Thái Sơn" },
-            { label: "Thục Đoan (nữ, Nam, kể chuyện)", value: "Thục Đoan" },
-            { label: "Minh Triết (nam, Nam, tin tức)", value: "Minh Triết" },
-            { label: "Mỹ Duyên (nữ, Nam, đọc truyện)", value: "Mỹ Duyên" },
-            { label: "Đức Trí (nam, Nam, đọc truyện)", value: "Đức Trí" },
-            { label: "Kim Thanh (nữ, Nam, đọc truyện)", value: "Kim Thanh" },
-            { label: "Adam (nam, Nam, tự nhiên)", value: "Adam" },
+            { label: "Tưởng Vy (nữ, Nam, truyền cảm)", value: "Tưởng Vy" },
+            { label: "Phương Nghi (nữ, Nam, kể chuyện)", value: "Phương Nghi" },
+            { label: "Quốc Tài (nam, Nam, kể chuyện)", value: "Quốc Tài" },
+            { label: "Đăng Quân (nam, Nam, review)", value: "Đăng Quân" },
+          ],
+        },
+        {
+          type: "select",
+          field: "emotion",
+          title: "Phong cách",
+          value: "natural",
+          options: [
+            { label: "Tự nhiên", value: "natural" },
+            { label: "Kể chuyện", value: "storytelling" },
           ],
         },
         {
           type: "inputNumber",
-          field: "temperature",
-          title: "Temperature",
-          value: 0.8,
-          props: { min: 0, max: 2, step: 0.1 },
+          field: "speed",
+          title: "Tốc độ",
+          value: 1,
+          props: { min: 0.5, max: 3, step: 0.1, precision: 1 },
         },
       ],
     },
   ] satisfies ProviderModel[],
+  async getBalance() {
+    const response = await this.tool.fetch(`${baseUrl(this.config)}/balance`, { headers: authHeaders(this.config), signal: this.signal });
+    if (!response.ok) throw new Error(`Không lấy được số dư VieNeu (HTTP ${response.status}): ${this.tool.errorMessage(await response.text())}`);
+    const data = await response.json() as { spendableTokens: number };
+    return { balance: data.spendableTokens, unit: "token" };
+  },
   async generateAudio(request: AudioRequest): Promise<MediaAsset[]> {
     const text = request.text?.trim() || request.prompt?.trim();
     if (!text) throw new Error("Vui lòng nhập văn bản cần đọc");
-    const format = request.format || "wav";
-    if (format !== "wav" && format !== "mp3" && format !== "pcm") throw new Error(`VieNeu TTS không hỗ trợ định dạng ${format}, hãy chọn wav, mp3 hoặc pcm`);
+    const format = formats[request.format || "mp3"];
+    if (!format) throw new Error(`VieNeu TTS không hỗ trợ định dạng ${request.format}`);
     const other = request.other ?? {};
-    const voice = (typeof other.voice === "string" && other.voice) || request.voice || undefined;
-    const temperature = typeof other.temperature === "number" ? other.temperature : undefined;
-    // Unsupported rates are synthesized natively and resampled locally below.
-    const sampleRate = request.sampleRate && sampleRates.includes(request.sampleRate) ? request.sampleRate : undefined;
-    if (format === "pcm" && request.sampleRate && !sampleRate) throw new Error(`Định dạng pcm chỉ hỗ trợ tần số ${sampleRates.join(", ")} Hz`);
-    const baseUrl = this.config.baseUrl.trim().replace(/\/+$/, "");
-    if (!baseUrl) throw new Error("Vui lòng cấu hình địa chỉ server VieNeu TTS");
-    const apiKey = this.config.apiKey.trim();
-    const response = await this.tool.fetch(`${baseUrl}/audio/speech`, {
+    const voice = (typeof other.voice === "string" && other.voice.trim()) || request.voice || undefined;
+    const emotion = typeof other.emotion === "string" && other.emotion ? other.emotion : undefined;
+    const speed = typeof other.speed === "number" ? other.speed : request.speed;
+    const response = await this.tool.fetch(`${baseUrl(this.config)}/audio/speech`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", ...(apiKey ? { Authorization: `Bearer ${apiKey}` } : {}) },
-      body: JSON.stringify({ model: request.model, input: text, voice, response_format: format === "pcm" ? "pcm" : "wav", sample_rate: sampleRate, temperature }),
+      headers: { ...authHeaders(this.config), "Content-Type": "application/json" },
+      body: JSON.stringify({ model: request.model, input: text, voice, emotion, speed, response_format: format, sample_rate: request.sampleRate }),
       signal: this.signal,
     });
     if (!response.ok) throw new Error(`VieNeu TTS lỗi HTTP ${response.status}: ${this.tool.errorMessage(await response.text())}`);
     const data = new Uint8Array(await response.arrayBuffer());
-    if (data.byteLength <= 44) throw new Error("VieNeu TTS không trả về dữ liệu âm thanh");
-    if (format === "pcm") return [{ mediaType: "audio", type: "binary", data, mimeType: "audio/pcm" }];
-    const wav = finalizeWav(data);
-    if (format === "wav" && (sampleRate || !request.sampleRate)) return [{ mediaType: "audio", type: "binary", data: wav, mimeType: "audio/wav" }];
-    const converted = await this.tool.audio.convert(wav, { format, sampleRate: request.sampleRate, bitrateKbps: request.bitrateKbps });
-    return [{ mediaType: "audio", type: "binary", ...converted }];
+    if (!data.byteLength) throw new Error("VieNeu TTS không trả về dữ liệu âm thanh");
+    const mimeType = response.headers.get("content-type")?.split(";")[0] || "application/octet-stream";
+    return [{ mediaType: "audio", type: "binary", data, mimeType }];
   },
 } satisfies ProviderDefinition<typeof rules>;
