@@ -15,7 +15,7 @@ const rules = [
   },
 ] as const;
 
-const version = "2.0.0";
+const version = "2.1.0";
 const formats: Record<string, string> = { wav: "wav", mp3: "mp3", pcm: "pcm", ogg_opus: "opus" };
 
 function baseUrl(config: ProviderConfig<typeof rules>) {
@@ -54,11 +54,22 @@ export default {
           props: { filterable: true, allowCreate: true, defaultFirstOption: true },
           options: [
             { label: "Mặc định của VieNeu", value: "" },
+            // Featured voices from the vieneu.io homepage demo.
+            { label: "Nhật Phong (nam, Bắc, trẻ trung dễ gần)", value: "Nhật Phong" },
             { label: "Ngọc Lan (nữ, Nam, trầm dịu dàng)", value: "Ngọc Lan" },
+            { label: "Trâm Anh (nữ, miền Tây, thân thương)", value: "Trâm Anh" },
+            { label: "Trung Dũng (nam, Trung - Bình Định, gần gũi)", value: "Trung Dũng" },
+            { label: "Thành Sen (nữ, Trung - Hà Tĩnh, gần gũi)", value: "Thành Sen" },
+            { label: "Bảo Long (nam, Bắc, trầm ấm)", value: "Bảo Long" },
+            { label: "Bích Ngọc (nữ, Bắc, kể chuyện)", value: "Bích Ngọc" },
+            { label: "Kiều Linh (nữ, Nam, nhịp nhanh)", value: "Kiều Linh" },
+            { label: "Adam vui (nam, Nam, vui nhộn)", value: "Adam vui" },
+            { label: "Adam (nam, tiếng Anh)", value: "Adam" },
+            { label: "Phạm Tuyên (nam, Bắc, trang trọng)", value: "Phạm Tuyên" },
+            { label: "Trúc Ly (nữ, Bắc, trẻ trung)", value: "Trúc Ly" },
             { label: "Ban Mai (nữ, Bắc, tin tức)", value: "Ban Mai" },
             { label: "Mai Phương (nữ, Bắc, tin tức)", value: "Mai Phương" },
             { label: "Huyền My (nữ, Bắc, tin tức)", value: "Huyền My" },
-            { label: "Bích Ngọc (nữ, Bắc, kể chuyện)", value: "Bích Ngọc" },
             { label: "Ái Cúc (nữ, Bắc, podcast)", value: "Ái Cúc" },
             { label: "Thái Duy Bình (nam, Bắc, tin tức)", value: "Thái Duy Bình" },
             { label: "Mạnh Dũng 1 (nam, Bắc, tin tức)", value: "Mạnh Dũng 1" },
@@ -67,7 +78,6 @@ export default {
             { label: "Yến Nhi - Huế (nữ, Trung, tự nhiên)", value: "Yến Nhi - Huế" },
             { label: "Mẫn Huỳnh (nữ, Trung, tự nhiên)", value: "Mẫn Huỳnh" },
             { label: "Hoàng Sơn (nam, Trung, tự nhiên)", value: "Hoàng Sơn" },
-            { label: "Trung Dũng (nam, Trung, gần gũi)", value: "Trung Dũng" },
             { label: "Thùy Dung (nữ, Nam, tin tức)", value: "Thùy Dung" },
             { label: "Tưởng Vy (nữ, Nam, truyền cảm)", value: "Tưởng Vy" },
             { label: "Phương Nghi (nữ, Nam, kể chuyện)", value: "Phương Nghi" },
