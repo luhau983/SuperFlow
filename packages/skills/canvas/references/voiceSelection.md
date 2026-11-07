@@ -12,9 +12,10 @@ Call `node:getConfig` and work only from what it returns:
 - The speed field differs per provider. Read the rule `title` and range before setting it:
   - Edge TTS: `rate`, a percentage change (`0` = normal, `12` = 12% faster), range -50 to 100.
   - Google Cloud TTS (all its models): `speed`, a multiplier (`1` = normal, `1.12` = 12% faster), range 0.25 to 2.
-- Never invent a voice ID, provider or field that is not in the result.
+  - VieNeu TTS: `speed`, a multiplier like Google's, range 0.5 to 3.
+- Never invent a voice ID, provider or field that is not in the result. VieNeu's `voice` options are a curated part of its catalog; use another VieNeu voice name or a cloned `clone_…` ID only when the user gives it to you.
 
-Only Gemini TTS takes a style prompt (section 3.2). For Edge and Google WaveNet/Standard, "style" is the combination of **voice + speed + how the text is written** (section 4); do not write stage directions such as `[sad]` or `(whispering)` into their text, they are read aloud.
+Only Gemini TTS takes a style prompt (section 3.2). VieNeu has an `emotion` field instead: `natural` or `storytelling`. For Edge, Google WaveNet/Standard and VieNeu, "style" is the combination of **voice + speed (+ VieNeu `emotion`) + how the text is written** (section 4); do not write stage directions such as `[sad]` or `(whispering)` into their text, they are read aloud.
 
 ## 2. Pick the provider
 
@@ -23,9 +24,10 @@ Only Gemini TTS takes a style prompt (section 3.2). For Edge and Google WaveNet/
 | Edge TTS | Free, no key | Default. |
 | Google Cloud TTS (WaveNet / Standard) | 4M characters/month free, then paid; needs an API key | When the user asks for a more natural voice, or Edge keeps failing on the same line. Prefer WaveNet over Standard (same price). |
 | Google Gemini 2.5 Flash TTS | Paid from the first second (about $0.015 per minute of audio); needs an API key with Vertex AI permission | When the user wants acted delivery: emotion, sighs, laughs, a tone that changes within a line. |
+| VieNeu TTS | Uses tokens from the user's VieNeu plan: characters (at least 50 per line) × 3.9; needs an API key | When the user wants a native Vietnamese voice, a regional accent (Bắc, Trung, Nam), or more Vietnamese voices than Edge has. |
 
-- **Paid or key-based providers need the user's explicit OK.** Use Google WaveNet/Standard or Gemini only when the user named it, already selected it on a node, or agreed after you proposed it. Before the first Gemini batch, state the estimate (minutes of audio × $0.015) and wait for a yes.
-- Use a provider only if it appears in `getConfig`. If a generation fails with an API key or permission error (Gemini: 403 about `aiplatform.endpoints.predict`), tell the user what is missing; do not fall back silently.
+- **Paid or key-based providers need the user's explicit OK.** Use Google WaveNet/Standard, Gemini or VieNeu only when the user named it, already selected it on a node, or agreed after you proposed it. Before the first Gemini batch, state the estimate (minutes of audio × $0.015) and wait for a yes. Before the first VieNeu batch, state the token estimate (sum over lines of max(characters, 50) × 3.9) and wait for a yes; short lines cost the 50-character minimum, so merge very short lines of the same speaker when the script allows.
+- Use a provider only if it appears in `getConfig`. If a generation fails with an API key or permission error (Gemini: 403 about `aiplatform.endpoints.predict`; VieNeu: 401 bad key, 403 out of tokens), tell the user what is missing; do not fall back silently.
 - Switching provider mid-project changes the voice: ask first, and regenerate every line of the affected speaker so the video stays consistent.
 
 ## 3. Match the voice to the content
@@ -34,7 +36,7 @@ Only Gemini TTS takes a style prompt (section 3.2). For Edge and Google WaveNet/
 
 Start from the row that fits the content and audience, then adjust to the user's wording ("trầm", "vui", "nhanh hơn", ...).
 
-| Content | Voice | Edge `rate` | Google `speed` |
+| Content | Voice | Edge `rate` | Google / VieNeu `speed` |
 | --- | --- | --- | --- |
 | Documentary, history | Male, steady | 0 to +10 | 1.0 to 1.1 |
 | Explainer, lesson, tutorial | Male or female, clear | +10 to +15 | 1.1 to 1.15 |
@@ -43,7 +45,8 @@ Start from the row that fits the content and audience, then adjust to the user's
 | Story for children | Female, warm | -10 to -5 | 0.9 to 0.95 |
 | Relaxation, meditation | Female, soft | -20 to -15 | 0.8 to 0.85 |
 
-- Vietnamese voices (as labeled in `getConfig`): Edge has Hoài My (female) and Nam Minh (male); Google WaveNet/Standard A and C are female, B and D are male.
+- Vietnamese voices (as labeled in `getConfig`): Edge has Hoài My (female) and Nam Minh (male); Google WaveNet/Standard A and C are female, B and D are male. VieNeu labels give gender, region (Bắc, Trung, Nam) and style (tin tức, kể chuyện, ...): match the region to the setting or character and the style to the content.
+- VieNeu `emotion`: `storytelling` for documentary, history, stories and children's content; `natural` for everything else.
 - About +12% is ~5 syllables per second in Vietnamese, the usual pace for 4-5 second scenes.
 - If several voices fit, do not guess their timbre from the name; generate samples (section 5).
 
@@ -55,12 +58,12 @@ Gemini has 30 voices (the `voice` options; the label gives the gender) that spea
 - The style prompt is part of the speaker's preset: one prompt per speaker for the whole project. Changing it is a preset change (6.4), even for a single scene.
 - Let the text carry the emotion too: a scared prompt works best on text that sounds scared.
 - In the text itself you may use these tags, which are not read aloud: `[sigh]`, `[laughing]`, `[uhm]`, `[whispering]`, `[shouting]`, `[extremely fast]`, `[short pause]`, `[medium pause]`, `[long pause]`. Do not use emotion adjectives as tags (`[scared]`, `[curious]`, `[bored]`): Gemini speaks the word. Put emotions in the style prompt instead.
-- Tags are Gemini-only: remove them before sending the same line to Edge or WaveNet, and keep them out of subtitles.
+- Tags are Gemini-only: remove them before sending the same line to Edge, WaveNet or VieNeu, and keep them out of subtitles.
 
 ### 3.3 Several speakers
 
 - Give each character one fixed voice for the whole project; use different genders or providers to keep them apart, and keep the narrator distinct from all characters.
-- With only two Vietnamese voices on Edge, more than two speakers needs Google (with the user's OK), or speed differences of at least 10 points. Say so instead of reusing one voice for two characters.
+- With only two Vietnamese voices on Edge, more than two speakers needs Google or VieNeu (with the user's OK), or speed differences of at least 10 points. Say so instead of reusing one voice for two characters. VieNeu offers the most Vietnamese voices, and different regions keep characters apart.
 - Each speaker's provider / voice / speed (and Gemini style prompt) goes into the preset file (section 6).
 
 ## 4. Shape the text for the voice
@@ -71,7 +74,7 @@ Gemini has 30 voices (the `voice` options; the label gives the gender) that spea
 
 ## 5. Confirm before the batch
 
-1. Configure one node with the chosen settings and generate 1-2 representative lines (one per speaker). With Gemini, every sample is billed: keep samples short and do not regenerate the whole batch to compare voices.
+1. Configure one node with the chosen settings and generate 1-2 representative lines (one per speaker). With Gemini and VieNeu, every sample is billed (VieNeu at least 50 characters each): keep samples short and do not regenerate the whole batch to compare voices.
 2. Tell the user the provider, voice and speed you chose and why, in one line, and ask them to listen.
 3. Only after approval, write the preset file (section 6), then configure every line from it and generate.
 4. If the user rejects the sample, change one thing at a time (voice, then speed) and regenerate the sample.
@@ -107,10 +110,11 @@ After each batch and before assembly, call `getConfig` on every audio node and c
 
 ### 6.4 Changing the preset
 
-Change the preset only when the user asks. Update the file first, then reconfigure and regenerate **every** line of the affected speaker (or all lines, for a `shared` change), and run the check in 6.3. With Gemini, give the cost estimate before regenerating.
+Change the preset only when the user asks. Update the file first, then reconfigure and regenerate **every** line of the affected speaker (or all lines, for a `shared` change), and run the check in 6.3. With Gemini or VieNeu, give the cost estimate before regenerating.
 
 ## 7. When generation fails
 
 - Edge "No audio was received": the free service throttles in bursts and the host already retries. Retry that line later. Moving the speaker to another provider is a preset change (6.4): it needs the user's OK and applies to all of that speaker's lines, never to the failed line alone.
+- VieNeu 400 "unknown voice": the voice name is wrong or not on the v4 engine; use a `voice` option from `getConfig` or ask the user for the exact name. VieNeu 429: rate limit or daily/weekly plan cap; wait and retry, and tell the user if it is the plan cap.
 - An error naming the text (empty or no readable words): fix the line as in section 4.
 - Report which lines failed and what you changed; never claim audio exists for a line that failed.
