@@ -48,10 +48,21 @@ Keep each character identical to its reference sheet. No text, no watermark.
 
 References: connect the approved sheets of every character in the scene - `front` first, plus 1 matching expression if the scene has a clear emotion (afraid -> `scared`). Do not exceed the model's reference limit (check with `node:getConfig`); if exceeded, keep only each character's `front`. When the model uses `{{ref N}}`, number by the real edge order.
 
+### Mechanism scenes
+
+A process cannot be shown by one still image plus a small motion. For the scenes that carry the beat-5 causal chain:
+
+- One scene = one **state** of the process (before / during / after; legs tucked vs extended). Consecutive scenes using the same teaching model must differ in state - pose, highlighted part, arrow - not only in camera.
+- Encode amounts visually: a large vs a small arrow/arc for "more" vs "less". Keep the model's look identical across the sequence (reference the previous approved state image).
+- Image models draw no text, so plan the labels the viewer needs ("compact -> spins more") in `overlays.csv` (`id,text,position`, position `top` / `bottom` / `left` / `right`). They are burned in at [assembly](assembly.md#4-subtitles-and-title). Keep each label ≤ 6 words, at most 1-2 per scene.
+
+### Batch review
+
 Run in batches of 10-15 scenes. After each batch, present it as a grid (id + image) for a quick review:
 
 - Characters match their design, no extra/missing characters
 - Correct style, 16:9 frame, correct shot type (close/medium/wide)
 - No text, no watermark, no distortion
+- The scene shows what its spoken line says (the stated pose/state, not a generic shot of the character); mechanism scenes show distinct states
 
 Off scene: adjust that scene's prompt only (never the style block/desc) and regenerate just that scene. The approved image is the only input to its clip in step 6.

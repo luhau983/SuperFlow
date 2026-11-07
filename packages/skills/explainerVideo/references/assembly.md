@@ -50,6 +50,7 @@ Check available filters with `operation: { "method": "availableFilters" }`.
 
 - `subtitles` available: burn subtitles in - `-vf subtitles=explainer/<slug>/subtitles.srt:force_style='FontName=Arial,FontSize=22,Outline=2,MarginV=40'`, `-c:a copy` -> `final.mp4`.
 - `drawtext` also available and the user wants the title question fixed on screen (beat 1): write the title to `explainer/<slug>/build/title.txt` and add to the same `-vf` chain `drawtext=textfile=...:fontfile=<font that supports the narration language>:fontsize=44:fontcolor=white:borderw=3:x=(w-text_w)/2:y=40`. Ask the user for the font file if unknown; never guess.
+- `overlays.csv` exists and `drawtext` is available: for each row add a `drawtext` to the same `-vf` chain, enabled only during that scene's slot (`enable='between(t,<start>,<end>)'` from the cumulative timeline), placed by `position` and kept clear of the subtitle area. Same font rule as the title. Without `drawtext`, list the overlays as pending in the report.
 - `subtitles` not available: deliver `joined.mp4` + `subtitles.srt` (sidecar subtitles) and say so.
 
 ## 5. Check and deliver

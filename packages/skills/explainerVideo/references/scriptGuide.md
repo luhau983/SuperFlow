@@ -15,8 +15,8 @@ Role: writer of short-form science explainer videos, humorous and anthropomorphi
 | 1. Title question | fixed on screen | Paradox, two contrasting halves | Bears that eat raw salmon get worms - so why are people fine eating sashimi? |
 | 2. Familiar opening | 5% | An experience everyone knows | Fatty sashimi that melts in your mouth |
 | 3. Context | 15% | Journey / origin | Salmon are born in rivers and swim out to the open sea |
-| 4. Threat | 20% | Personified villain | Anisakis worms; the bear's gut becomes a "5-star hotel" |
-| 5. Scientific answer | 25% | Mechanism + figures | Farmed fish and deep freezing destroy the parasites |
+| 4. Threat / obstacle | 20% | Personified villain, or the obstacle/paradox that makes the question hard | Anisakis worms; the bear's gut becomes a "5-star hotel" |
+| 5. Scientific answer | 25% | Mechanism as a causal chain + figures | Farmed fish and deep freezing destroy the parasites |
 | 6. Historical/business twist | 20% | Little-known fact | Japanese people didn't eat raw salmon before the 1980s; Norway's campaign |
 | 7. Comic close | 15% | Debunk a common myth | Wasabi does not kill parasites |
 
@@ -24,11 +24,27 @@ Role: writer of short-form science explainer videos, humorous and anthropomorphi
 
 - Each line = 1 drawable image. If a line can't be pictured as a scene, rewrite it.
 - Personify everything: fish, worms, cells, companies... all are characters with personalities.
-- Every 4-6 lines include 1 comic comparison (5-star hotel, hot-spring bath...).
+- Every 4-6 lines include 1 comic comparison (5-star hotel, hot-spring bath...). In beat 5 a comparison must map the mechanism itself (same cause, same effect); a generic "teamwork / office / dance troupe" image that only says "the parts cooperate" explains nothing - cut it.
 - Beats 5 and 6 contain at least 1 concrete figure or date.
 - At most 3-4 recurring characters; other scenes are settings/objects.
 - No line longer than 30 syllables (subtitles would exceed 3 lines).
 - Write for the voice: spell out numbers/years that are easily misread and expand abbreviations. Foreign words are **not** changed in the script; add them to `pronunciation.csv` (`from,to`).
+
+## Explaining the mechanism (beat 5)
+
+Beat 5 is where the title question is answered; everything else serves it.
+
+- Write the mechanism as ordered steps. Each step names the action -> what changes -> the **direction** of the effect (more/less, faster/slower, easier/harder). "Changes", "differs", "affects" without saying how are not allowed.
+- At most 1-2 technical terms, each paired with its plain meaning the first time; otherwise use plain words.
+- One anchor analogy the viewer has seen or can try (e.g. a figure skater pulling in their arms spins faster), reused across the steps instead of a new metaphor per line.
+- Close beat 5 with a payoff line that answers the title question in one sentence and resolves the paradox raised in beat 4.
+- The core causal chain alone takes at least 15% of the lines; context (beat 3) must not outweigh it.
+
+## Caveats and safety
+
+- State each caveat once, where it pays off (usually beat 6). Do not open beat 3 with corrections or disclaimers - it kills the momentum the hook just built.
+- Hedge/caveat lines ("not always", "this is a simplified model", "not every case") total at most ~10% of the lines. Safety advice for viewers: at most 3 lines, in beat 7.
+- Narration speaks only to the viewer. Production constraints (how an image must be drawn, which models the film uses, that no real animal was used) belong in `scenes.csv` / `sources.md`, never in a spoken line.
 
 ## Fact-checking (mandatory)
 
@@ -51,7 +67,7 @@ Role: writer of short-form science explainer videos, humorous and anthropomorphi
    ```
 
 2. **Scene table** (`scenes.csv` + text node "Scene table"): columns `id,characters,scene,camera,motion`.
-   - 1 row per spoken line, `id` matches the line number.
+   - 1 row per spoken line, `id` matches the line number. No indentation or leading spaces on any row (they become part of `id`); the same applies to `001.` lines in the script.
    - `scene`, `camera`, `motion` in **English**. `camera` is `close-up` / `medium shot` / `wide shot` (variants like `medium close-up` allowed).
    - `characters` uses only names that have (or will have) a desc, separated by `;`, empty if no character.
    - `motion`: at most 1 character action + (optional) 1 camera move, separated by `;`. See the rules in [Audio and motion](audioMotion.md#writing-the-motion-column).
@@ -70,6 +86,11 @@ Role: writer of short-form science explainer videos, humorous and anthropomorphi
 - [ ] Title is a contrasting question, understood on first read
 - [ ] Line count matches the target (45-55 for 3-4 minutes), no line > 30 syllables
 - [ ] All 7 beats present, with a twist in beat 6
+- [ ] Line count per beat reported and within ±5 points of its target %
+- [ ] Retell test: from beat 5 alone, write the one-sentence answer to the title question a non-expert would give; show it to the user
+- [ ] Every mechanism step states a direction of effect; every beat-5 analogy maps the mechanism
+- [ ] No production notes in narration; no caveat repeated; safety advice ≤ 3 lines
 - [ ] Every figure has a source in "Sources", no `[NEEDS SOURCE]` left
 - [ ] Recurring characters ≤ 4, each with a description
-- [ ] Scene table has all columns and exactly the same `id` set as the script
+- [ ] Scene table has all columns and exactly the same `id` set as the script, no leading spaces
+- [ ] Mechanism scenes planned per [Visuals](visualAssets.md#mechanism-scenes), with `overlays.csv` for the labels they need

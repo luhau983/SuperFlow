@@ -2,7 +2,7 @@
 name: explainerVideo
 description: Make a short science explainer video (3-4 minutes, ~50 scenes, 16:9) on the Toonflow canvas following the "AI Explainer" template - a 7-beat script with anthropomorphized characters, one consistent low-poly 3D style, character sheets, scene images, per-line voiceover, motion prompts, image-to-video clips, and a final cut with subtitles. Use when the user wants an explainer / "why does...?" video in this template; do not use when only discussing or editing the skill itself.
 metadata:
-  version: "1.1.0"
+  version: "1.2.0"
   displayName: Science Explainer Video (Explainer template)
   author: SuperFlow
 ---
@@ -22,7 +22,8 @@ Canvas operations (reading nodes, `addNode`, `nodeTools`, edges, `node:getConfig
 - **1 spoken line = 1 scene = 1 image = 1 clip**, sharing one three-digit `id` (`001`, `002`, ...) across the script, scene table, images, audio, motion prompts and clips.
 - **Never spend quota on your own.** Before every image/audio/video generation batch: state node count, model, parameters and estimated cost ("unknown" if it cannot be looked up) and wait for approval. Run in batches of 10-15 scenes.
 - **No invented facts.** Every figure, year, campaign name or scientific mechanism needs a source; without one, drop it or say it in general terms.
-- Never let image/video models draw text, subtitles or watermarks; subtitles are added at the assembly step.
+- Never let image/video models draw text, subtitles or watermarks; subtitles and mechanism labels (`overlays.csv`) are added at the assembly step.
+- **Clarity before polish.** The video exists to answer its title question. A script that is sourced and funny but whose mechanism a non-expert cannot retell is not ready, whatever else passes.
 
 ## Canvas layout
 
@@ -36,14 +37,14 @@ One canvas per video, named after the topic. Lay out steps left to right, scenes
 | 4 | Per scene: audio node "Line 001" |
 | 5 | Per scene: video generation node "Clip 001" (connected to the approved scene image) |
 
-In parallel, save workspace files for reuse and assembly: `explainer/<slug>/script.md`, `scenes.csv`, `sources.md`, `style.md`, `characters/<name>.txt`, `pronunciation.csv`, `timing.csv`, `motionPrompts.csv`, `subtitles.srt`. Only cite a path after actually writing/reading it.
+In parallel, save workspace files for reuse and assembly: `explainer/<slug>/script.md`, `scenes.csv`, `sources.md`, `style.md`, `characters/<name>.txt`, `pronunciation.csv`, `overlays.csv`, `timing.csv`, `motionPrompts.csv`, `subtitles.srt`. Only cite a path after actually writing/reading it.
 
 ## Steps and approval gates
 
 | Step | Work | Read first | Gate |
 |---|---|---|---|
 | 0 | Lock topic, voice (male/female), target length, image/video/audio models | - | User confirms the settings |
-| 1 | 7-beat script + scene table + new characters + sources | [Script](references/scriptGuide.md) | Script approved, checklist complete |
+| 1 | 7-beat script + scene table + new characters + sources | [Script](references/scriptGuide.md) | Script approved, checklist complete (beat line counts + retell sentence shown to the user) |
 | 2 | Style block + character descs -> character sheets | [Visuals](references/visualAssets.md) | Each character approved (front first, then angles/expressions) |
 | 3 | Scene images in batches | [Visuals](references/visualAssets.md#3-scene-images) | Each batch approved; off scenes regenerated individually |
 | 4 | Per-line voiceover + timing table | [Audio and motion](references/audioMotion.md) | User listens; pronunciation fixed |
