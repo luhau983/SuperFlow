@@ -21,6 +21,8 @@ Control the currently running canvas through the enabled "canvas operations" too
 
 For story or video production, first read [Production stages and confirmation](references/videoProduction.md#0-stage-by-stage-collaboration). By default, implement only the currently confirmed stage; collect information step by step first, then present the stage's results and ask for adjustments, and wait until the user explicitly continues. Do not create all storyboard and generation nodes at once just because the user says "make a short film", and do not treat a failed question, a skip or silence as confirmation.
 
+Before configuring an audio generation node for narration or dialogue, read [Choosing a voice](references/voiceSelection.md) to pick the provider, voice and speed.
+
 By default, generate character, location and prop assets from this complete script, then split it into multi-shot segments; one segment corresponds to one video prompt and one video node, and assets are used directly for multi-reference generation. Before writing asset prompts, read [Asset image guidelines](../script/references/assetGuide.md); before writing video prompts, read [Segment production guide](../script/references/productionGuide.md). Character facial close-ups and complete front/side/back three-view sheets cannot be reduced to a generic single story image.
 
 Links in documents are relative to the current file's directory. Cross-skill `script` guidelines are located by the actual `location` in `available_skills`; when a dependency is missing, state what is missing and continue only with structural operations that do not depend on it. Do not fabricate guidelines from the summary.
