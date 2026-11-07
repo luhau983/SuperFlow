@@ -7,6 +7,7 @@ import metaso from "./src/media/metaso";
 import compshare from "./src/media/compshare";
 import waveSpeed from "./src/media/waveSpeed";
 import edgeTts from "./src/media/edgeTts";
+import vieNeuTts from "./src/media/vieNeuTts";
 
 export type Provider = ProviderDefinition;
 export type ProviderPrice = NonNullable<Awaited<ReturnType<NonNullable<Provider["getPrice"]>>>>;
@@ -20,4 +21,4 @@ export type EdgeTtsOptions = Parameters<ProviderTools["edgeTts"]>[0];
 export type { FfmpegFactory, FfmpegCommand } from "@toonflow/ffmpeg/types";
 
 export const languageProviders = [deepSeek, cheapAiModel] as const;
-export const mediaProviders = [edgeTts, apiMart, metaso, compshare, waveSpeed] as const;
+export const mediaProviders = [edgeTts, vieNeuTts, apiMart, metaso, compshare, waveSpeed] as const;
