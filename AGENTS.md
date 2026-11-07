@@ -1,5 +1,9 @@
 These rules apply to the entire repository.
 
+## Git Branch
+
+- `master` is the only development branch and the GitHub default. Base all work on `master` and integrate changes into `master`; the old `main` branch was deleted on 2026-11-07, so do not recreate it or push to it.
+
 ## Multi-Tenant Development Rules
 
 - When designing, developing, fixing, or migrating anything related to multi-tenancy, you must first read the requirements consensus and handoff notes in [.agent/multiTenantContext.md](.agent/multiTenantContext.md), then follow the development rules in [.agent/multiTenant.md](.agent/multiTenant.md). When taking over the work, do not reinterpret the product goals based only on the current local task.
