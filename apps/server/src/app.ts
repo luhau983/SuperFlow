@@ -13,7 +13,7 @@ import initializePlugins from "@/utils/plugins/initialize";
 import { languageRequest, setLocaleFallback, translateError, translateMessage } from "@/lib/i18n";
 import { normalizeLocale } from "@toonflow/i18n";
 
-const autoInstallProviders = ["edgeTts.ts", "vieNeuTts.ts", "apiMart.ts", "metaso.ts", "compshare.ts", "waveSpeed.ts"];
+const autoInstallProviders = ["edgeTts.ts", "vieNeuTts.ts", "googleTts.ts", "apiMart.ts", "metaso.ts", "compshare.ts", "waveSpeed.ts"];
 
 export async function createApp({
   webRoot,

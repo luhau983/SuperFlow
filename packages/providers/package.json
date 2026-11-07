@@ -16,6 +16,7 @@
     "./media/compshare": "./src/media/compshare.ts",
     "./media/waveSpeed": "./src/media/waveSpeed.ts",
     "./media/edgeTts": "./src/media/edgeTts.ts",
-    "./media/vieNeuTts": "./src/media/vieNeuTts.ts"
+    "./media/vieNeuTts": "./src/media/vieNeuTts.ts",
+    "./media/googleTts": "./src/media/googleTts.ts"
   }
 }
