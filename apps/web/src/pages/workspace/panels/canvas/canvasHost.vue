@@ -15,7 +15,8 @@
       :settingsVisible="settingsVisible"
       :activateCanvas="activateCanvas"
       :resolveCanvasContext="resolveCanvasContext"
-      :flushCanvases="flushSave" />
+      :flushCanvases="flushSave"
+      @reload="reloadCanvas(entry.key)" />
     <uploadPluginDialog v-if="pendingUpload" :plugin="pendingUpload.plugin" :pluginFile="pendingUpload.file" :token="toonflowAccountToken" @closed="pendingUpload = undefined" />
   </div>
 </template>
@@ -23,6 +24,7 @@
 <script setup lang="ts">
 import { computed, nextTick, onScopeDispose, provide, shallowReactive, shallowRef, ref, watch, type ComponentPublicInstance } from "vue";
 import type { CanvasContext } from "@toonflow/tool-canvas/runtime";
+import { ElMessage } from "element-plus";
 import { waitForControlValue } from "@/lib/mcpControl";
 import canvasPanel from "./index.vue";
 import useWorkspaceFiles from "@/lib/workspaceFiles";
@@ -47,8 +49,9 @@ const canvasListReady = computed(() => activeInstance.value?.canvasListReady ?? 
 const lifetime = new AbortController();
 const workspaceStore = useWorkspaceStore();
 const pendingUpload = providePluginUpload();
-const canvases = shallowRef<{ id: string; name: string }[]>([]);
+const canvases = shallowRef<{ id: string; name: string; flow?: unknown }[]>([]);
 let fileActionBusy = false;
+let reloading = false;
 provide("canvasList", canvases);
 provide("canvasFolders", shallowRef([]));
 provide("canvasLoadedDirectories", shallowRef<string[]>([]));
@@ -124,6 +127,27 @@ async function ensureCanvas(fileName: string, signal?: AbortSignal, activate = f
 async function activateCanvas(fileName: string, signal?: AbortSignal) {
   if (fileActionBusy) throw new Error("工作区文件正在操作，请稍后重试");
   await ensureCanvas(fileName, signal, true);
+}
+
+async function reloadCanvas(key: string) {
+  const panel = instances.get(key);
+  const fileName = panel?.canvasId;
+  if (!panel || !fileName || reloading) return;
+  if (fileActionBusy) return ElMessage.error("工作区文件正在操作，请稍后重试");
+  reloading = true;
+  try {
+    // 先落盘再换实例，新实例从工作区重新读取画布 JSON；卸载会中止该画布上进行中的节点任务。
+    await panel.flushSave();
+    const canvas = canvases.value.find(item => item.id === fileName);
+    if (canvas) delete canvas.flow;
+    const nextKey = crypto.randomUUID();
+    entries.value = entries.value.map(entry => entry.key === key ? { key: nextKey, fileName } : entry);
+    if (activeKey.value === key) activeKey.value = nextKey;
+  } catch (error) {
+    ElMessage.error(error instanceof Error ? error.message : "重新加载画布失败");
+  } finally {
+    reloading = false;
+  }
 }
 
 async function focusDocumentNode(directory: string, canvasPath: string, nodeId: string) {

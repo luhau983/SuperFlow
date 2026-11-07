@@ -75,6 +75,11 @@
             <icon-focus-centered :size="18" />
           </el-button>
         </el-tooltip>
+        <el-tooltip :showArrow="false" content="重新加载画布" placement="top" :hideAfter="0" :enterable="false" :triggerKeys="[]">
+          <el-button class="toolButton" text aria-label="重新加载画布" @click="emit('reload')">
+            <icon-refresh :size="18" />
+          </el-button>
+        </el-tooltip>
         <el-tooltip :showArrow="false"
           content="缩放菜单（滚轮调整缩放）"
           placement="top"
@@ -130,6 +135,7 @@ const props = defineProps<{
   directory: string | undefined;
   batchHistory: (action: () => Promise<void>) => Promise<void>;
 }>();
+const emit = defineEmits<{ reload: [] }>();
 const snapEnabled = defineModel<boolean>("snapEnabled", { required: true });
 const showEdges = defineModel<boolean>("showEdges", { required: true });
 const assetsVisible = defineModel<boolean>("assetsVisible", { default: false });

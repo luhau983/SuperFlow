@@ -83,7 +83,8 @@
         :canvasId="canvasId"
         :directory="project?.directory"
         :batchHistory="canvasHistory.batch"
-        @update:showEdges="edgeDisconnect = undefined" />
+        @update:showEdges="edgeDisconnect = undefined"
+        @reload="emit('reload')" />
       <nodeMenu
         :key="JSON.stringify(['nodeMenu', project?.directory, canvasId])"
         ref="nodeMenuRef"
@@ -206,6 +207,7 @@ const props = withDefaults(defineProps<{
   resolveCanvasContext?: (canvasId: string) => CanvasContext | undefined;
   flushCanvases?: (action?: () => Promise<void>) => Promise<void>;
 }>(), { active: true, settingsVisible: false });
+const emit = defineEmits<{ reload: [] }>();
 const { project } = storeToRefs(useWorkspaceStore());
 
 const canvasElement = ref<HTMLElement>();
