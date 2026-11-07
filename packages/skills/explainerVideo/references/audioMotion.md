@@ -17,12 +17,12 @@ A comma = a short pause. For emphasis, split the sentence (edit the script and g
 
 Target settings from the template: a clear male voice (female if the user chooses), about 12% faster than normal (~5 syllables/second for Vietnamese), 0.25 seconds of silence between lines.
 
-- **On the canvas:** one audio generation node "Line <id>" per line. Call `node:getConfig` first and only use a model that can speak the **narration language** (provider-dependent; the node's language options may list only zh/en while the model still accepts other text). Choose the provider, voice and speed with the canvas skill's [Choosing a voice](../../canvas/references/voiceSelection.md) guide, using the target settings above as the starting row. Generate 1-2 sample lines for the user to approve the voice before running the whole batch.
+- **On the canvas:** one audio generation node "Line <id>" per line. Call `node:getConfig` first and only use a model that can speak the **narration language** (provider-dependent; the node's language options may list only zh/en while the model still accepts other text). Choose the provider, voice and speed with the canvas skill's [Choosing a voice](../../canvas/references/voiceSelection.md) guide, using the target settings above as the starting row. Generate 1-2 sample lines for the user to approve the voice before running the whole batch, then save the approved preset at `explainer/<slug>/audio/voicePreset.json` and configure every line from it (guide section 6).
 - **No suitable model:** say so and suggest generating outside the app (e.g. edge-tts; for Vietnamese `vi-VN-NamMinhNeural` / `vi-VN-HoaiMyNeural` with rate `+12%`), one file per line at `explainer/<slug>/audio/<id>.mp3` in the workspace; then create audio node "Line <id>" and attach the file with `node:setAudio` using a path that really exists. Never attach a path that doesn't exist yet.
 
 ### Timing and subtitles
 
-Measure each approved audio file with the `ffprobe` tool (`format.duration`). Write:
+Before measuring, check every audio node against the preset (guide section 6.3). Measure each approved audio file with the `ffprobe` tool (`format.duration`). Write:
 
 - `timing.csv`: `id,text,duration` (seconds, 2 decimals).
 - `subtitles.srt`: one entry per line; the first starts at 0, each following line starts at the previous end + 0.25 seconds. Subtitle text is the original script line (with `[...]` removed), wrapped to at most 2 lines.

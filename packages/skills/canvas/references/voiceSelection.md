@@ -2,6 +2,8 @@
 
 Use this when you configure an audio generation node for narration or dialogue and the user has not fixed every setting. An explicit user choice (provider, voice, gender, speed) always wins; this guide only fills the gaps.
 
+**All audio in a project must sound like one production.** Each speaker has exactly one approved preset, every line of that speaker uses it unchanged, and every audio node shares the same language, sample rate and format. The preset file (section 6) is the single source of truth; node settings are copies of it.
+
 ## 1. Read what is really available
 
 Call `node:getConfig` and work only from what it returns:
@@ -50,7 +52,7 @@ Start from the row that fits the content and audience, then adjust to the user's
 Gemini has 30 voices (the `voice` options; the label gives the gender) that speak any language, and a `stylePrompt` field that sets the delivery for the whole line.
 
 - Write the style prompt in the narration language, one or two sentences: who is speaking, to whom, tone, pace. Example: `Người dẫn phim tài liệu lịch sử, giọng trầm ấm, chậm rãi, nhấn nhá ở các mốc thời gian.`
-- Keep one style prompt per speaker for the whole project, like the voice; change it only when the scene's mood really changes, and say so.
+- The style prompt is part of the speaker's preset: one prompt per speaker for the whole project. Changing it is a preset change (6.4), even for a single scene.
 - Let the text carry the emotion too: a scared prompt works best on text that sounds scared.
 - In the text itself you may use these tags, which are not read aloud: `[sigh]`, `[laughing]`, `[uhm]`, `[whispering]`, `[shouting]`, `[extremely fast]`, `[short pause]`, `[medium pause]`, `[long pause]`. Do not use emotion adjectives as tags (`[scared]`, `[curious]`, `[bored]`): Gemini speaks the word. Put emotions in the style prompt instead.
 - Tags are Gemini-only: remove them before sending the same line to Edge or WaveNet, and keep them out of subtitles.
@@ -59,7 +61,7 @@ Gemini has 30 voices (the `voice` options; the label gives the gender) that spea
 
 - Give each character one fixed voice for the whole project; use different genders or providers to keep them apart, and keep the narrator distinct from all characters.
 - With only two Vietnamese voices on Edge, more than two speakers needs Google (with the user's OK), or speed differences of at least 10 points. Say so instead of reusing one voice for two characters.
-- Record the speaker → provider / voice / speed (and Gemini style prompt) mapping in the production notes and reuse it for every line.
+- Each speaker's provider / voice / speed (and Gemini style prompt) goes into the preset file (section 6).
 
 ## 4. Shape the text for the voice
 
@@ -71,11 +73,44 @@ Gemini has 30 voices (the `voice` options; the label gives the gender) that spea
 
 1. Configure one node with the chosen settings and generate 1-2 representative lines (one per speaker). With Gemini, every sample is billed: keep samples short and do not regenerate the whole batch to compare voices.
 2. Tell the user the provider, voice and speed you chose and why, in one line, and ask them to listen.
-3. Only after approval, apply the same settings to all lines with `node:setConfig` and generate.
+3. Only after approval, write the preset file (section 6), then configure every line from it and generate.
 4. If the user rejects the sample, change one thing at a time (voice, then speed) and regenerate the sample.
 
-## 6. When generation fails
+## 6. Keep every line on the preset
 
-- Edge "No audio was received": the free service throttles in bursts and the host already retries. Retry that line later, or with the user's OK, switch the speaker to Google for the whole project.
+### 6.1 The preset file
+
+Save the approved settings as `audio/voicePreset.json` in the workspace, or under the project's own folder when the active skill defines one (for example `explainer/<slug>/audio/voicePreset.json`):
+
+```json
+{
+  "shared": { "language": "vi", "sampleRate": 24000, "format": "mp3" },
+  "speakers": {
+    "narrator": { "providerId": "edgeTts", "modelId": "edge-tts", "other": { "voice": "vi-VN-NamMinhNeural", "rate": 12 } }
+  }
+}
+```
+
+- `shared` applies to every audio node. Default to 24000 Hz and mp3 unless the user or the assembly step needs something else; never mix rates or formats in one project.
+- `other` holds **every** field of that model's `rules` with its approved value, not only the ones you changed.
+- Speaker keys are stable names (`narrator`, character names). With more than one speaker, add the speaker to each audio node's name, for example `Line 012 · narrator`.
+
+### 6.2 Configuring a line
+
+1. Read the preset file. If it is missing but audio nodes already exist, rebuild it from the approved nodes' `getConfig`, show it to the user and wait for confirmation before generating anything.
+2. Call `node:setConfig` with the speaker's `providerId` and `modelId`, the `shared` values, and the full `other` object. Always send all of them: switching model resets fields to the new model's defaults, and fields you omit keep whatever the node had.
+3. Never adjust a single line's voice, speed or style prompt to fix it; fix the text instead (section 4). A speaker without a preset needs its own sample and approval first (section 5).
+
+### 6.3 Checking the batch
+
+After each batch and before assembly, call `getConfig` on every audio node and compare it with the preset: provider, model, `shared` values and each `other` field. Re-apply the preset with `setConfig` on any node that differs, regenerate only those lines, and report which lines you fixed. Matching settings do not prove a node's existing audio was made with them: any node whose settings were changed after it generated must be regenerated too. If you cannot tell, ask the user to listen to the suspect lines. Do not hand off audio for editing while any node differs.
+
+### 6.4 Changing the preset
+
+Change the preset only when the user asks. Update the file first, then reconfigure and regenerate **every** line of the affected speaker (or all lines, for a `shared` change), and run the check in 6.3. With Gemini, give the cost estimate before regenerating.
+
+## 7. When generation fails
+
+- Edge "No audio was received": the free service throttles in bursts and the host already retries. Retry that line later. Moving the speaker to another provider is a preset change (6.4): it needs the user's OK and applies to all of that speaker's lines, never to the failed line alone.
 - An error naming the text (empty or no readable words): fix the line as in section 4.
 - Report which lines failed and what you changed; never claim audio exists for a line that failed.
