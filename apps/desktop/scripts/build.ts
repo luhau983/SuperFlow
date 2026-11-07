@@ -101,7 +101,7 @@ if (isWindows) {
 }
 // ACT: 开发套件随插件内置，清理旧版宿主 SDK 缓存，不改动已安装的用户工具。
 rmSync(resolve(projectDir, "build/desktop/pluginSdk"), { recursive: true, force: true });
-// ACT: 团队暂不打包；恢复时也在 package.json 的 dev:plugins 中加回 --filter './packages/teams/*'。
+// ACT: 团队暂不打包；恢复时也在 package.json 的 dev:plugins 中加回 'packages/teams/*'。
 if (mode === "dev") {
   await $`${process.execPath} run dev:plugins`.cwd(projectDir);
 } else {
