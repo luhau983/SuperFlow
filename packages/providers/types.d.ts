@@ -79,6 +79,19 @@ interface AudioConvertOptions {
   bitrateKbps?: number;
 }
 
+interface EdgeTtsOptions {
+  text: string;
+  /** Edge 音色短名，如 vi-VN-HoaiMyNeural。 */
+  voice: string;
+  /** 语速百分比偏移，-100 到 200，0 为正常语速。 */
+  rate?: number;
+  /** 音量百分比偏移，-100 到 200。 */
+  volume?: number;
+  format?: "wav" | "mp3" | "pcm" | "ogg_opus";
+  /** 输出采样率，单位 Hz，缺省 24000。 */
+  sampleRate?: number;
+}
+
 /** 缺少可用 FFmpeg 时抛出；由宿主前端询问下载安装，供应商应继续向上抛出。 */
 interface FfmpegRequiredError extends Error {
   name: "FfmpegRequiredError";
@@ -103,6 +116,11 @@ interface ProviderTools {
   audio: {
     convert(input: Uint8Array, options: AudioConvertOptions): Promise<{ data: Uint8Array; mimeType: string }>;
   };
+  /**
+   * 调用本机已安装的 edge-tts 命令行（pip install edge-tts）合成语音；未安装时抛出 status 为 424 的错误。
+   * 非 24 kHz mp3 的输出经 FFmpeg 转码，缺少 FFmpeg 时抛出 FfmpegRequiredError。
+   */
+  edgeTts(options: EdgeTtsOptions): Promise<{ data: Uint8Array; mimeType: string }>;
   /**
    * 获取绑定当前工作区的原生 @renmu/fluent-ffmpeg 工厂，沿用链式调用、事件、流和 ffprobe 回调。
    * 仅显式文件路径经过工作区边界检查；原始参数、滤镜及清单中的间接 I/O 不是沙箱。

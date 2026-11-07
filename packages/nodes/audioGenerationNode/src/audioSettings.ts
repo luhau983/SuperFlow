@@ -1,4 +1,5 @@
 export const languageOptions = [
+  { label: "Tiếng Việt", value: "vi" },
   { label: "Tiếng Trung", value: "zh-CN" },
   { label: "Tiếng Anh", value: "en" },
 ];

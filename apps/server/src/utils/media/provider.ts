@@ -4,13 +4,14 @@ import { createHash } from "node:crypto";
 import { lstat, mkdir, readFile, readdir, unlink, writeAtomicSync } from "@toonflow/file";
 import { dirname, join } from "node:path";
 import { createContext, SourceTextModule } from "node:vm";
-import type { AudioConvertOptions, Provider, ProviderTaskData, ProviderTools } from "@toonflow/providers";
+import type { AudioConvertOptions, EdgeTtsOptions, Provider, ProviderTaskData, ProviderTools } from "@toonflow/providers";
 import { parse, parseExpression } from "@babel/parser";
 import { z } from "zod";
 import conf from "@/utils/conf";
 import { accountProviderSchema, getAccountProvider, getAccountToken, providerSchema } from "@/utils/ai/provider";
 import type { ProviderSources } from "@/utils/channel/types";
 import { convertAudio } from "@/utils/media/audioProcessor";
+import { synthesizeEdgeTts } from "@/utils/media/edgeTts";
 import { createWorkspaceFfmpeg } from "@/utils/ffmpeg";
 import { lockWorkspaceFiles, writeWorkspaceFile } from "@/utils/workspace/files";
 
@@ -595,6 +596,7 @@ export async function loadMediaProviderSource(source: string, config: Record<str
       image: Bun.Image,
       media: createMediaTools(fetchRequest),
       audio: { convert: (input: Uint8Array, options: AudioConvertOptions) => convertAudio(input, options, signal) },
+      edgeTts: (options: EdgeTtsOptions) => synthesizeEdgeTts(options, signal),
       ffmpeg: async () => {
         if (!cwd) throw new Error("当前操作没有工作目录，无法使用 FFmpeg");
         return createWorkspaceFfmpeg(cwd, signal);

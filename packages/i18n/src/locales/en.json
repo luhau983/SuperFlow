@@ -4100,5 +4100,12 @@
   "秘塔科技提供高性价比的 MiniMax H3 视频生成服务：768P 仅 0.09 元/秒，2K 仅 0.15 元/秒。支持原生 2K、音画同步，API 兼容 OpenAI 协议，同时支持 ComfyUI、无限画布，无需自行部署 GPU。\n \n 👉 点击 [前往平台](https://metaso.cn/minimax-h3/?s=toon) 获取密钥": "Metaso offers MiniMax H3 video generation: 768P from CNY 0.09/second and 2K from CNY 0.15/second. Supports native 2K, synchronized audio and video, an OpenAI-compatible API, ComfyUI and infinite canvas, without deploying your own GPU.\n\n👉 [Open the platform](https://metaso.cn/minimax-h3/?s=toon) to obtain an API key.",
   "优云智算\n\n**优云智算 API Key**：图片与视频模型用，获取地址 https://console.compshare.cn/light-gpu/api-keys\n**MiniMax API Key**：只有 `MiniMax-H3` 用，获取地址 https://www.compshare.cn/video-studio": "CompShare\n\n**CompShare API Key**: for image and video models; obtain it at https://console.compshare.cn/light-gpu/api-keys\n**MiniMax API Key**: only for `MiniMax-H3`; obtain it at https://www.compshare.cn/video-studio",
   "新分组": "New group",
-  "使用 CheapAIModel API Key 获取可用模型。": "Enter your CheapAIModel API key to fetch the available models."
+  "使用 CheapAIModel API Key 获取可用模型。": "Enter your CheapAIModel API key to fetch the available models.",
+  "朗读文本不能为空且不超过 20000 字": "Text to read must be non-empty and at most 20000 characters",
+  "Edge TTS 音色无效": "Invalid Edge TTS voice",
+  "Edge TTS 输出格式仅支持 wav、mp3、pcm、ogg_opus": "Edge TTS only supports wav, mp3, pcm, ogg_opus output",
+  "Edge TTS 语速或音量无效": "Invalid Edge TTS rate or volume",
+  "Edge TTS 采样率无效": "Invalid Edge TTS sample rate",
+  "未找到 edge-tts 命令，请先运行 pip install edge-tts 安装": "edge-tts command not found; install it with pip install edge-tts",
+  "edge-tts 未返回音频": "edge-tts returned no audio"
 }
