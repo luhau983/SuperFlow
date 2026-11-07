@@ -3117,7 +3117,8 @@
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
   ],
   "完成": [
-    "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
+    "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue",
+    "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue"
   ],
   "读取文件扩展失败": [
     "apps/web/src/components/settings/panels/general/extensionAssociationsDialog.vue"
@@ -3263,7 +3264,8 @@
     "apps/desktop/src/index.ts",
     "packages/multiTenant/adminWeb/pages/models.vue",
     "packages/multiTenant/adminWeb/pages/providers.vue",
-    "packages/providerWeb/providerEditor.vue"
+    "packages/providerWeb/providerEditor.vue",
+    "apps/web/src/components/settings/panels/languageModel/addProviderDialog.vue"
   ],
   "编辑菜单": [
     "apps/web/src/components/settings/panels/general/nodeMenuSettings.vue"
@@ -6245,7 +6247,8 @@
   ],
   "选择工作目录": [
     "apps/web/src/pages/home/index.vue",
-    "apps/web/src/pages/home/workspacePicker.vue"
+    "apps/web/src/pages/home/workspacePicker.vue",
+    "apps/server/src/routes/workspaces/selectDirectory.ts"
   ],
   "请先选择一个空文件夹作为工作目录，画布和素材会保存在这里。": [
     "apps/web/src/pages/home/index.vue"
@@ -10324,6 +10327,27 @@
   "参考媒体已变化，请重试估价": [
     "apps/server/src/utils/media/priceReference.ts"
   ],
+  "朗读文本不能为空且不超过 20000 字": [
+    "apps/server/src/utils/media/edgeTts.ts"
+  ],
+  "Edge TTS 音色无效": [
+    "apps/server/src/utils/media/edgeTts.ts"
+  ],
+  "Edge TTS 输出格式仅支持 wav、mp3、pcm、ogg_opus": [
+    "apps/server/src/utils/media/edgeTts.ts"
+  ],
+  "Edge TTS 语速或音量无效": [
+    "apps/server/src/utils/media/edgeTts.ts"
+  ],
+  "Edge TTS 采样率无效": [
+    "apps/server/src/utils/media/edgeTts.ts"
+  ],
+  "未找到 edge-tts 命令，请先运行 pip install edge-tts 安装": [
+    "apps/server/src/utils/media/edgeTts.ts"
+  ],
+  "edge-tts 未返回音频": [
+    "apps/server/src/utils/media/edgeTts.ts"
+  ],
   "供应商 ID 不能是系统保留文件名": [
     "apps/server/src/utils/media/provider.ts"
   ],
@@ -12876,6 +12900,18 @@
   "doubao-seedance 2.0（文/图生视频 / 参考素材）": [
     "packages/providers/src/media/compshare.ts"
   ],
+  "Xiaoxiao (中文, nữ)": [
+    "packages/providers/src/media/edgeTts.ts"
+  ],
+  "Xiaoyi (中文, nữ)": [
+    "packages/providers/src/media/edgeTts.ts"
+  ],
+  "Yunxi (中文, nam)": [
+    "packages/providers/src/media/edgeTts.ts"
+  ],
+  "Yunjian (中文, nam)": [
+    "packages/providers/src/media/edgeTts.ts"
+  ],
   "请求地址": [
     "packages/providers/src/media/metaso.ts"
   ],
@@ -12884,5 +12920,8 @@
   ],
   "秘塔科技提供高性价比的 MiniMax H3 视频生成服务：768P 仅 0.09 元/秒，2K 仅 0.15 元/秒。支持原生 2K、音画同步，API 兼容 OpenAI 协议，同时支持 ComfyUI、无限画布，无需自行部署 GPU。\n \n 👉 点击 [前往平台](https://metaso.cn/minimax-h3/?s=toon) 获取密钥": [
     "packages/providers/src/media/metaso.ts"
+  ],
+  "## WaveSpeed\nWaveSpeedAI 提供 Seedance、Kling、Wan 等视频模型的统一异步 API。\n\n🔗 在 [WaveSpeed 控制台](https://wavespeed.ai/accesskey) 创建 API Key。": [
+    "packages/providers/src/media/waveSpeed.ts"
   ]
 }

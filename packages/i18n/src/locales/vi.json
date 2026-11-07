@@ -4175,5 +4175,10 @@
   "Edge TTS 语速或音量无效": "Tốc độ hoặc âm lượng Edge TTS không hợp lệ",
   "Edge TTS 采样率无效": "Tần số lấy mẫu Edge TTS không hợp lệ",
   "未找到 edge-tts 命令，请先运行 pip install edge-tts 安装": "Không tìm thấy lệnh edge-tts, hãy cài bằng pip install edge-tts",
-  "edge-tts 未返回音频": "edge-tts không trả về âm thanh"
+  "edge-tts 未返回音频": "edge-tts không trả về âm thanh",
+  "Xiaoxiao (中文, nữ)": "Xiaoxiao (tiếng Trung, nữ)",
+  "Xiaoyi (中文, nữ)": "Xiaoyi (tiếng Trung, nữ)",
+  "Yunxi (中文, nam)": "Yunxi (tiếng Trung, nam)",
+  "Yunjian (中文, nam)": "Yunjian (tiếng Trung, nam)",
+  "## WaveSpeed\nWaveSpeedAI 提供 Seedance、Kling、Wan 等视频模型的统一异步 API。\n\n🔗 在 [WaveSpeed 控制台](https://wavespeed.ai/accesskey) 创建 API Key。": "## WaveSpeed\nWaveSpeedAI cung cấp API bất đồng bộ thống nhất cho các mô hình video như Seedance, Kling, Wan.\n\n🔗 Tạo API Key trong [bảng điều khiển WaveSpeed](https://wavespeed.ai/accesskey)."
 }

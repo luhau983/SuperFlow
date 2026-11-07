@@ -49,7 +49,7 @@ end try`;
       ? await runFile(powershell, ["-NoProfile", "-NonInteractive", "-STA", "-Command", windowsScript], { windowsHide: true })
       : process.platform === "linux"
         // zenity exits with code 1 when the dialog is cancelled.
-        ? await runFile("zenity", ["--file-selection", "--directory", "--title=选择工作目录"]).catch((cause: { code?: unknown }) => {
+        ? await runFile("zenity", ["--file-selection", "--directory", "--title", "选择工作目录"]).catch((cause: { code?: unknown }) => {
           if (cause.code === 1) return { stdout: "" };
           throw cause;
         })

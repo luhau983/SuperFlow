@@ -4109,5 +4109,10 @@
   "Edge TTS 语速或音量无效": "Invalid Edge TTS rate or volume",
   "Edge TTS 采样率无效": "Invalid Edge TTS sample rate",
   "未找到 edge-tts 命令，请先运行 pip install edge-tts 安装": "edge-tts command not found; install it with pip install edge-tts",
-  "edge-tts 未返回音频": "edge-tts returned no audio"
+  "edge-tts 未返回音频": "edge-tts returned no audio",
+  "Xiaoxiao (中文, nữ)": "Xiaoxiao (Chinese, female)",
+  "Xiaoyi (中文, nữ)": "Xiaoyi (Chinese, female)",
+  "Yunxi (中文, nam)": "Yunxi (Chinese, male)",
+  "Yunjian (中文, nam)": "Yunjian (Chinese, male)",
+  "## WaveSpeed\nWaveSpeedAI 提供 Seedance、Kling、Wan 等视频模型的统一异步 API。\n\n🔗 在 [WaveSpeed 控制台](https://wavespeed.ai/accesskey) 创建 API Key。": "## WaveSpeed\nWaveSpeedAI provides a unified async API for video models such as Seedance, Kling, and Wan.\n\n🔗 Create an API Key in the [WaveSpeed console](https://wavespeed.ai/accesskey)."
 }
