@@ -10330,6 +10330,9 @@
   "朗读文本不能为空且不超过 20000 字": [
     "apps/server/src/utils/media/edgeTts.ts"
   ],
+  "朗读文本需包含可朗读的文字": [
+    "apps/server/src/utils/media/edgeTts.ts"
+  ],
   "Edge TTS 音色无效": [
     "apps/server/src/utils/media/edgeTts.ts"
   ],

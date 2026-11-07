@@ -4104,6 +4104,7 @@
   "新分组": "New group",
   "使用 CheapAIModel API Key 获取可用模型。": "Enter your CheapAIModel API key to fetch the available models.",
   "朗读文本不能为空且不超过 20000 字": "Text to read must be non-empty and at most 20000 characters",
+  "朗读文本需包含可朗读的文字": "Text to read must contain letters or digits to speak",
   "Edge TTS 音色无效": "Invalid Edge TTS voice",
   "Edge TTS 输出格式仅支持 wav、mp3、pcm、ogg_opus": "Edge TTS only supports wav, mp3, pcm, ogg_opus output",
   "Edge TTS 语速或音量无效": "Invalid Edge TTS rate or volume",

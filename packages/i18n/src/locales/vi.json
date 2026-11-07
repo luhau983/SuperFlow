@@ -4170,6 +4170,7 @@
   "新分组": "Nhóm mới",
   "使用 CheapAIModel API Key 获取可用模型。": "Nhập API key CheapAIModel để lấy danh sách mô hình khả dụng.",
   "朗读文本不能为空且不超过 20000 字": "Văn bản cần đọc không được để trống và tối đa 20000 ký tự",
+  "朗读文本需包含可朗读的文字": "Văn bản cần đọc phải có chữ hoặc số để đọc",
   "Edge TTS 音色无效": "Giọng đọc Edge TTS không hợp lệ",
   "Edge TTS 输出格式仅支持 wav、mp3、pcm、ogg_opus": "Edge TTS chỉ hỗ trợ định dạng wav, mp3, pcm, ogg_opus",
   "Edge TTS 语速或音量无效": "Tốc độ hoặc âm lượng Edge TTS không hợp lệ",
