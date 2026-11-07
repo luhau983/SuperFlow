@@ -1,6 +1,6 @@
 import { stat } from "@toonflow/file";
 import { spawn } from "node:child_process";
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
 import { Router } from "express";
 import { z } from "zod";
 import u from "@/utils";
@@ -20,7 +20,10 @@ export default router.post("/", validateFields({ directory: z.string().min(1).ma
   else {
     const child = process.platform === "win32"
       ? spawn(resolve(process.env.WINDIR ?? "C:\\Windows", "explorer.exe"), ["/select,", path], { windowsHide: true, stdio: "ignore" })
-      : spawn("/usr/bin/open", ["-R", path], { stdio: "ignore" });
+      : process.platform === "linux"
+        // ACT: xdg-open only opens the parent folder; selecting the file needs a file-manager-specific D-Bus call.
+        ? spawn("xdg-open", [dirname(path)], { stdio: "ignore" })
+        : spawn("/usr/bin/open", ["-R", path], { stdio: "ignore" });
     await new Promise<void>((resolve, reject) => { child.once("error", reject); child.once("spawn", resolve); });
     child.unref();
   }

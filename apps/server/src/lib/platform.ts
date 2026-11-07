@@ -11,7 +11,7 @@ export function getRuntimePlatform() {
   const development = process.env.NODE_ENV === "dev";
   const desktop = runtimeHost === "desktop";
   const mobile = runtimeHost === "mobile";
-  const desktopSystem = process.platform === "win32" || process.platform === "darwin";
+  const desktopSystem = os === "win32" || os === "darwin" || os === "linux";
   const nativeDevelopment = desktopSystem && development;
   // local 表示本机任意工作目录能力，不代替请求授权。
   const local = desktop || nativeDevelopment;

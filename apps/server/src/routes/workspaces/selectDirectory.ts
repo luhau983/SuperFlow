@@ -47,7 +47,13 @@ end try`;
   try {
     const { stdout } = process.platform === "win32"
       ? await runFile(powershell, ["-NoProfile", "-NonInteractive", "-STA", "-Command", windowsScript], { windowsHide: true })
-      : await runFile("/usr/bin/osascript", ["-e", macScript]);
+      : process.platform === "linux"
+        // zenity exits with code 1 when the dialog is cancelled.
+        ? await runFile("zenity", ["--file-selection", "--directory", "--title=选择工作目录"]).catch((cause: { code?: unknown }) => {
+          if (cause.code === 1) return { stdout: "" };
+          throw cause;
+        })
+        : await runFile("/usr/bin/osascript", ["-e", macScript]);
     const selected = stdout.replace(/\r?\n$/, "");
     const directory = selected ? await realpath(selected) : null;
     res.json(success({ native: true, directory }));
