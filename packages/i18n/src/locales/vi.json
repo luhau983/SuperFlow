@@ -2167,6 +2167,8 @@
   "适合屏幕": "Phù hợp với màn hình",
   "适应画布": "Thích ứng với canvas",
   "适应视图": "Thích ứng với chế độ xem",
+  "重新加载画布": "Tải lại canvas",
+  "重新加载画布失败": "Tải lại canvas không thành công",
   "收藏": "Yêu thích",
   "收藏成功": "Đã thêm vào yêu thích",
   "收到重复的画布调用": "Đã nhận được cuộc gọi canvas trùng lặp",

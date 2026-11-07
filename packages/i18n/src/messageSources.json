@@ -6947,6 +6947,12 @@
   "适应视图": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],
+  "重新加载画布": [
+    "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
+  ],
+  "重新加载画布失败": [
+    "apps/web/src/pages/workspace/panels/canvas/canvasHost.vue"
+  ],
   "缩放菜单（滚轮调整缩放）": [
     "apps/web/src/pages/workspace/panels/canvas/components/canvasControls.vue"
   ],

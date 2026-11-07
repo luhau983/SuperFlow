@@ -2167,6 +2167,8 @@
   "适合屏幕": "Fit to screen",
   "适应画布": "Fit canvas",
   "适应视图": "Fit view",
+  "重新加载画布": "Reload canvas",
+  "重新加载画布失败": "Canvas reload failed",
   "收藏": "Favorites",
   "收藏成功": "Added to favorites",
   "收到重复的画布调用": "Duplicate canvas call received",
